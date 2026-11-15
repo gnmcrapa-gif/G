@@ -5,8 +5,6 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
-import pandas as pd
-
 from btc_quant.acquisition import download_binance_daily, download_bitstamp_recent, write_manifest
 from btc_quant.research import cross_check_venues, walk_forward
 from btc_quant.validation import validate_ohlcv
