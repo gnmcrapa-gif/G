@@ -7,7 +7,7 @@ name = "btc-quant-desk"
 version = "0.1.0"
 description = "Validation-first BTC quantitative research scaffold"
 requires-python = ">=3.11"
-dependencies = ["numpy>=1.26", "pandas>=2.1"]
+dependencies = ["numpy>=1.26", "pandas>=2.1", "requests>=2.31"]
 
 [project.optional-dependencies]
 dev = ["pytest>=8.0", "ruff>=0.5"]
