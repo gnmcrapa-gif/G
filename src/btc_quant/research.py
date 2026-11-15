@@ -99,3 +99,29 @@ def score_predictions(predictions: pd.DataFrame) -> dict:
         results[str(int(horizon))] = scores
     return {"status": "SCORED_NOT_PROMOTED", "horizons": results,
             "promotion": "No promotion is automatic; require >=200 matured OOS forecasts per horizon, robust lift, calibration, regime stability and cost tests."}
+
+
+def cross_check_venues(primary: pd.DataFrame, secondary: pd.DataFrame) -> dict:
+    """Compare aligned daily returns and quote-basis diagnostics without merging price series."""
+    left = primary[["timestamp", "close"]].copy()
+    right = secondary[["timestamp", "close"]].copy()
+    left["timestamp"] = pd.to_datetime(left["timestamp"], utc=True).dt.floor("D")
+    right["timestamp"] = pd.to_datetime(right["timestamp"], utc=True).dt.floor("D")
+    left = left.drop_duplicates("timestamp").set_index("timestamp").sort_index()
+    right = right.drop_duplicates("timestamp").set_index("timestamp").sort_index()
+    aligned = left.join(right, how="inner", lsuffix="_primary", rsuffix="_secondary")
+    if len(aligned) < 30:
+        return {"status": "WARN", "overlap_rows": int(len(aligned)),
+                "reason": "fewer than 30 overlapping daily closes; no correlation claim"}
+    ret_left = np.log(aligned["close_primary"]).diff()
+    ret_right = np.log(aligned["close_secondary"]).diff()
+    corr = float(ret_left.corr(ret_right))
+    basis = np.log(aligned["close_primary"] / aligned["close_secondary"])
+    return {
+        "status": "PASS" if np.isfinite(corr) else "WARN",
+        "overlap_rows": int(len(aligned)),
+        "return_correlation": corr,
+        "median_absolute_log_basis": float(basis.abs().median()),
+        "p99_absolute_log_basis": float(basis.abs().quantile(0.99)),
+        "warning": "USDT/USD quote basis is not FX-adjusted; venues remain separate and are not concatenated.",
+    }
