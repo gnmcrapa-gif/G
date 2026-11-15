@@ -7,7 +7,7 @@ import io
 import json
 import time
 import zipfile
-from datetime import date, datetime, timezone
+from datetime import UTC, date, datetime
 from pathlib import Path
 
 import pandas as pd
@@ -40,7 +40,7 @@ def _month_range(start: date, end: date):
 def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1)) -> tuple[pd.DataFrame, dict]:
     """Download monthly daily-klines archives through the last completed UTC month."""
     output_dir.mkdir(parents=True, exist_ok=True)
-    today = datetime.now(timezone.utc).date()
+    today = datetime.now(UTC).date()
     last_month = date(today.year, today.month, 1)
     frames, objects, failures = [], [], []
     session = requests.Session()
@@ -79,7 +79,7 @@ def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1)) -> 
             objects.append({
                 "source": "Binance Vision spot monthly klines",
                 "url": url,
-                "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
+                "retrieved_at_utc": datetime.now(UTC).isoformat(),
                 "file": str(raw_path),
                 "size_bytes": raw_path.stat().st_size,
                 "sha256": _sha256(raw_path),
@@ -89,7 +89,7 @@ def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1)) -> 
                 "quote_currency": "USDT",
             })
             time.sleep(0.05)
-        except Exception as exc:  # preserve exact error in manifest
+        except Exception as exc:  # noqa: BLE001 - preserve exact source failure in manifest  # noqa: BLE001 - preserve exact source failure in manifest
             failures.append({"url": url, "error": f"{type(exc).__name__}: {exc}"})
     # Fetch current-month daily archives through yesterday; the current UTC day is incomplete.
     from datetime import timedelta
@@ -127,7 +127,7 @@ def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1)) -> 
             objects.append({
                 "source": "Binance Vision spot daily klines",
                 "url": url,
-                "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
+                "retrieved_at_utc": datetime.now(UTC).isoformat(),
                 "file": str(raw_path),
                 "size_bytes": raw_path.stat().st_size,
                 "sha256": _sha256(raw_path),
@@ -149,7 +149,7 @@ def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1)) -> 
         "symbol": "BTCUSDT",
         "quote_currency": "USDT",
         "interval": "1d",
-        "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "objects": objects,
         "failures": failures,
         "first_timestamp": data.timestamp.min().isoformat(),
@@ -162,7 +162,7 @@ def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1)) -> 
 def download_bitstamp_recent(output_dir: Path, days: int = 900) -> tuple[pd.DataFrame, dict]:
     """Download Bitstamp BTC/USD daily candles in <=1000-bar windows."""
     output_dir.mkdir(parents=True, exist_ok=True)
-    end_ts = int(datetime.now(timezone.utc).timestamp())
+    end_ts = int(datetime.now(UTC).timestamp())
     start_ts = end_ts - days * 86400
     cursor = start_ts
     rows, requests_log = [], []
@@ -200,7 +200,7 @@ def download_bitstamp_recent(output_dir: Path, days: int = 900) -> tuple[pd.Data
         "symbol": "BTC/USD",
         "quote_currency": "USD",
         "interval": "1d",
-        "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "requests": requests_log,
         "file": str(csv_path),
         "size_bytes": csv_path.stat().st_size,
@@ -214,5 +214,5 @@ def download_bitstamp_recent(output_dir: Path, days: int = 900) -> tuple[pd.Data
 
 def write_manifest(manifests: list[dict], path: Path) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps({"generated_at_utc": datetime.now(timezone.utc).isoformat(),
+    path.write_text(json.dumps({"generated_at_utc": datetime.now(UTC).isoformat(),
                                 "sources": manifests}, indent=2), encoding="utf-8")
