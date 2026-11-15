@@ -111,7 +111,7 @@ def cross_check_venues(primary: pd.DataFrame, secondary: pd.DataFrame) -> dict:
     right = right.drop_duplicates("timestamp").set_index("timestamp").sort_index()
     aligned = left.join(right, how="inner", lsuffix="_primary", rsuffix="_secondary")
     if len(aligned) < 30:
-        return {"status": "WARN", "overlap_rows": int(len(aligned)),
+        return {"status": "WARN", "overlap_rows": len(aligned),
                 "reason": "fewer than 30 overlapping daily closes; no correlation claim"}
     ret_left = np.log(aligned["close_primary"]).diff()
     ret_right = np.log(aligned["close_secondary"]).diff()
