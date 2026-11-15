@@ -159,7 +159,7 @@ def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1)) -> 
     return data, manifest
 
 
-def download_bitstamp_recent(output_dir: Path, days: int = 900) -> tuple[pd.DataFrame, dict]:
+def download_bitstamp_recent(output_dir: Path, days: int = 3650) -> tuple[pd.DataFrame, dict]:
     """Download Bitstamp BTC/USD daily candles in <=1000-bar windows."""
     output_dir.mkdir(parents=True, exist_ok=True)
     end_ts = int(datetime.now(UTC).timestamp())
