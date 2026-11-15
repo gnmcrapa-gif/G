@@ -1,0 +1,53 @@
+import numpy as np
+import pandas as pd
+import pytest
+
+from btc_quant.validation import (
+    DataValidationError,
+    forward_open_log_return,
+    validate_ohlcv,
+)
+
+
+def sample_frame():
+    return pd.DataFrame(
+        {
+            "timestamp": pd.date_range("2024-01-01", periods=3, freq="D", tz="UTC"),
+            "open": [100.0, 101.0, 102.0],
+            "high": [102.0, 103.0, 104.0],
+            "low": [99.0, 100.0, 101.0],
+            "close": [101.0, 102.0, 103.0],
+            "volume": [10.0, 11.0, 12.0],
+        }
+    )
+
+
+def test_valid_ohlcv_passes():
+    result = validate_ohlcv(sample_frame())
+    assert result["rows"] == 3
+
+
+def test_duplicate_timestamps_fail():
+    frame = sample_frame()
+    frame.loc[2, "timestamp"] = frame.loc[1, "timestamp"]
+    with pytest.raises(DataValidationError, match="duplicate"):
+        validate_ohlcv(frame)
+
+
+def test_invalid_high_fails():
+    frame = sample_frame()
+    frame.loc[0, "high"] = 98.0
+    with pytest.raises(DataValidationError, match="high"):
+        validate_ohlcv(frame)
+
+
+def test_target_alignment_matches_next_open_to_future_open():
+    opens = pd.Series([100.0, 110.0, 121.0, 133.1])
+    target = forward_open_log_return(opens, horizon=1)
+    assert target.iloc[0] == pytest.approx(np.log(121.0 / 110.0))
+    assert target.iloc[-2:].isna().all()
+
+
+def test_non_positive_open_fails():
+    with pytest.raises(DataValidationError, match="positive"):
+        forward_open_log_return(pd.Series([100.0, 0.0, 110.0]), horizon=1)
