@@ -1,0 +1,45 @@
+name: daily-research
+
+on:
+  workflow_dispatch:
+  schedule:
+    # 16:00 UTC is 17:00 in Italy during CET; the ChatGPT report remains scheduled in Europe/Rome.
+    - cron: "0 16 * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: btc-quant-daily-research
+  cancel-in-progress: false
+
+jobs:
+  acquire-qa-evaluate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+      - name: Install project
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Run tests
+        run: pytest
+      - name: Lint
+        run: ruff check src tests scripts
+      - name: Acquire, QA, cross-check, and evaluate
+        run: python scripts/run_research.py
+      - name: Preserve run report, manifest, predictions, and raw archives
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: btc-quant-run-${{ github.run_id }}
+          path: |
+            reports/latest/
+            data/raw/
+          if-no-files-found: warn
+          retention-days: 30
