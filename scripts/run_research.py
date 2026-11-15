@@ -46,7 +46,7 @@ def main() -> int:
         predictions.to_csv(output_dir / "oos_predictions.csv", index=False)
         (output_dir / "scores.json").write_text(json.dumps(scores, indent=2), encoding="utf-8")
         run["steps"].append({"step": "walk_forward", "status": scores["status"],
-                             "oos_rows": int(len(predictions)), "scores": scores})
+                             "oos_rows": len(predictions), "scores": scores})
         run["status"] = "COMPLETE_NOT_PROMOTED" if scores["status"] == "SCORED_NOT_PROMOTED" else "BLOCKED"
         run["limitations"].append("This runner scores statistical forecasts only; it does not validate an executable trading strategy or Risk Overlay.")
     except Exception as exc:
