@@ -1,0 +1,1 @@
+forecast_id,issued_at_utc,model_version,code_commit,data_manifest_sha256,target,horizon,feature_cutoff_utc,regime_ex_ante,forecast,benchmark,expiry_utc,realized_outcome,scoring_status,invalidation_reason,notes
