@@ -91,8 +91,56 @@ def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1)) -> 
             time.sleep(0.05)
         except Exception as exc:  # preserve exact error in manifest
             failures.append({"url": url, "error": f"{type(exc).__name__}: {exc}"})
+    # Fetch current-month daily archives through yesterday; the current UTC day is incomplete.
+    from datetime import timedelta
+    day = last_month
+    yesterday = today - timedelta(days=1)
+    while day <= yesterday:
+        name = f"BTCUSDT-1d-{day.isoformat()}.zip"
+        url = f"{BINANCE_BASE}/daily/klines/BTCUSDT/1d/{name}"
+        try:
+            response = session.get(url, timeout=45)
+            if response.status_code == 404:
+                failures.append({"url": url, "status": 404, "reason": "daily_archive_not_yet_available"})
+                day += timedelta(days=1)
+                continue
+            response.raise_for_status()
+            archive = zipfile.ZipFile(io.BytesIO(response.content))
+            csv_names = [n for n in archive.namelist() if n.lower().endswith(".csv")]
+            if not csv_names:
+                raise ValueError("ZIP contains no CSV")
+            frame = pd.read_csv(archive.open(csv_names[0]), header=None)
+            if frame.empty:
+                raise ValueError("empty CSV")
+            if str(frame.iloc[0, 0]).lower() in {"open_time", "open time"}:
+                frame = frame.iloc[1:].copy()
+            if frame.shape[1] < 6:
+                raise ValueError(f"expected at least 6 columns, got {frame.shape[1]}")
+            frame = frame.iloc[:, :6].copy()
+            frame.columns = ["timestamp", "open", "high", "low", "close", "volume"]
+            frame["timestamp"] = pd.to_datetime(pd.to_numeric(frame["timestamp"]), unit="ms", utc=True)
+            for col in ["open", "high", "low", "close", "volume"]:
+                frame[col] = pd.to_numeric(frame[col], errors="coerce")
+            frames.append(frame)
+            raw_path = output_dir / name
+            raw_path.write_bytes(response.content)
+            objects.append({
+                "source": "Binance Vision spot daily klines",
+                "url": url,
+                "retrieved_at_utc": datetime.now(timezone.utc).isoformat(),
+                "file": str(raw_path),
+                "size_bytes": raw_path.stat().st_size,
+                "sha256": _sha256(raw_path),
+                "rows": len(frame),
+                "venue": "Binance",
+                "symbol": "BTCUSDT",
+                "quote_currency": "USDT",
+            })
+        except Exception as exc:
+            failures.append({"url": url, "error": f"{type(exc).__name__}: {exc}"})
+        day += timedelta(days=1)
     if not frames:
-        raise RuntimeError(f"No Binance monthly data acquired; failures={json.dumps(failures[:5])}")
+        raise RuntimeError(f"No Binance monthly/daily data acquired; failures={json.dumps(failures[:5])}")
     data = pd.concat(frames, ignore_index=True).sort_values("timestamp")
     data = data.drop_duplicates(subset=["timestamp"], keep="last").reset_index(drop=True)
     manifest = {
