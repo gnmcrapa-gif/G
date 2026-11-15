@@ -1,0 +1,57 @@
+[project]
+name = "btc-quant-desk"
+protocol = "V5.3"
+timezone = "UTC"
+bar_interval = "1d"
+horizons = [1, 3, 7, 30]
+target = "log(open[t+h+1] / open[t+1])"
+feature_cutoff = "close[t]"
+entry = "open[t+1]"
+exit = "open[t+h+1]"
+no_lookahead = true
+no_forward_fill = true
+
+[sources.binance]
+venue = "Binance"
+market = "BTCUSDT"
+quote_currency = "USDT"
+role = "primary_candidate"
+grade = "unassigned_until_qa"
+
+[sources.bitstamp]
+venue = "Bitstamp"
+market = "BTC/USD"
+quote_currency = "USD"
+role = "independent_cross_check"
+grade = "unassigned_until_qa"
+
+[sources.coinbase]
+venue = "Coinbase"
+market = "BTC-USD"
+quote_currency = "USD"
+role = "recent_cross_check"
+grade = "unassigned_until_qa"
+
+[sources.kraken]
+venue = "Kraken"
+market = "XBT/USD"
+quote_currency = "USD"
+role = "recent_cross_check"
+grade = "unassigned_until_qa"
+
+[validation]
+method = "chronological_walk_forward"
+purge_embargo_min_sessions = 30
+tune_on_validation_only = true
+final_holdout_untouched = true
+required_benchmarks = ["zero_return", "training_drift", "fixed_momentum"]
+ridge_status = "challenger_only"
+probabilistic_claim_min_matured_oos_per_horizon = 200
+
+[risk]
+overlay_version = "1.1"
+mode = "paper_only"
+frozen = true
+auto_trading = false
+automatic_exposure_increase = false
+theoretical_exposure_if_stale_or_qa_fail = 0.0
