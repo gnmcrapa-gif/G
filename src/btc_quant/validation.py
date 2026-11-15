@@ -42,7 +42,7 @@ def validate_ohlcv(frame: pd.DataFrame) -> dict[str, int]:
         raise DataValidationError("low violates OHLC invariant")
 
     return {
-        "rows": int(len(frame)),
+        "rows": len(frame),
         "duplicates": int(ts.duplicated().sum()),
         "missing_volume": int(frame["volume"].isna().sum()),
     }
