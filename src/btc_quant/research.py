@@ -36,7 +36,7 @@ def _ridge_predict(x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray,
     return float(y_mean + xt @ beta)
 
 
-def walk_forward(frame: pd.DataFrame, min_train_rows: int = 730, ridge_alpha: float = 10.0) -> tuple[pd.DataFrame, dict]:
+def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095, ridge_alpha: float = 10.0) -> tuple[pd.DataFrame, dict]:
     """Expanding-window OOS forecasts. Training labels must have matured by signal close."""
     validate_ohlcv(frame)
     data = frame.sort_values("timestamp").reset_index(drop=True).copy()
