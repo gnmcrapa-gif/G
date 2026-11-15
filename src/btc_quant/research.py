@@ -90,7 +90,7 @@ def score_predictions(predictions: pd.DataFrame) -> dict:
             p = group[model].to_numpy(dtype=float)
             err = p - y
             scores[model] = {
-                "n": int(len(y)),
+                "n": len(y),
                 "mae": float(np.mean(np.abs(err))),
                 "rmse": float(np.sqrt(np.mean(err ** 2))),
                 "directional_accuracy": float(np.mean(np.sign(p) == np.sign(y))),
@@ -119,7 +119,7 @@ def cross_check_venues(primary: pd.DataFrame, secondary: pd.DataFrame) -> dict:
     basis = np.log(aligned["close_primary"] / aligned["close_secondary"])
     return {
         "status": "PASS" if np.isfinite(corr) else "WARN",
-        "overlap_rows": int(len(aligned)),
+        "overlap_rows": len(aligned),
         "return_correlation": corr,
         "median_absolute_log_basis": float(basis.abs().median()),
         "p99_absolute_log_basis": float(basis.abs().quantile(0.99)),
