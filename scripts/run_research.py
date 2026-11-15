@@ -8,7 +8,7 @@ from pathlib import Path
 import pandas as pd
 
 from btc_quant.acquisition import download_binance_daily, download_bitstamp_recent, write_manifest
-from btc_quant.research import walk_forward
+from btc_quant.research import cross_check_venues, walk_forward
 from btc_quant.validation import validate_ohlcv
 
 
@@ -34,14 +34,23 @@ def main() -> int:
         manifests.append(bs_manifest)
         bs_qa = validate_ohlcv(bitstamp)
         run["steps"].append({"step": "bitstamp_acquisition_and_qa", "status": "PASS", "qa": bs_qa})
+        venue_check = cross_check_venues(binance, bitstamp)
+        run["steps"].append({"step": "venue_cross_check", **venue_check})
         write_manifest(manifests, output_dir / "data_manifest.json")
-        # Venue and quote currencies remain separate. Only the Binance series is used for modelling.
+        # Keep venue/quote series separate. Binance alone is the modelling series.
         predictions, scores = walk_forward(binance, min_train_rows=args.min_train_rows)
+        if len(predictions):
+            counts = predictions.groupby("horizon").size().to_dict()
+            run["matured_oos_counts_by_horizon"] = {str(k): int(v) for k, v in counts.items()}
+            run["probabilistic_claims_allowed"] = all(v >= 200 for v in counts.values())
+        else:
+            run["probabilistic_claims_allowed"] = False
         predictions.to_csv(output_dir / "oos_predictions.csv", index=False)
         (output_dir / "scores.json").write_text(json.dumps(scores, indent=2), encoding="utf-8")
         run["steps"].append({"step": "walk_forward", "status": scores["status"],
                              "oos_rows": int(len(predictions)), "scores": scores})
-        run["status"] = "COMPLETE_WITH_ABSTENTION" if scores["status"] != "SCORED_NOT_PROMOTED" else "COMPLETE_NOT_PROMOTED"
+        run["status"] = "COMPLETE_NOT_PROMOTED" if scores["status"] == "SCORED_NOT_PROMOTED" else "BLOCKED"
+        run["limitations"].append("This runner scores statistical forecasts only; it does not validate an executable trading strategy or Risk Overlay.")
     except Exception as exc:
         run["status"] = "BLOCKED"
         run["error"] = f"{type(exc).__name__}: {exc}"
