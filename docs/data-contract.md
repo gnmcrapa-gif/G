@@ -46,4 +46,4 @@ No silent row dropping, forward-fill, or imputation of market bars. Any exclusio
 
 ## Forecast-time contract
 
-Every feature row carries an as-of timestamp and a source-availability timestamp. Require availability <= forecast cutoff. Target rows are constructed separately from features; split boundaries are chronological and embargoed by at least the target horizon.
+Every feature row carries an as-of timestamp and a source-availability timestamp. Require availability <= forecast cutoff. Target rows are constructed separately from features. For the scheduled daily run, the executable target is `log(Open[t+h+2]/Open[t+2])`: one full daily bar is reserved for operational latency. The ledger rejects entries that are not strictly future to the actual issue timestamp. Split boundaries are chronological and embargoed by the target horizon plus this latency buffer.
