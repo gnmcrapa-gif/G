@@ -1,6 +1,6 @@
 [project]
 name = "btc-quant-desk"
-protocol = "V5.4"
+protocol = "V5.5"
 timezone = "UTC"
 bar_interval = "1d"
 horizons = [1, 3, 7, 30]
@@ -50,7 +50,10 @@ paired_loss_hac_lags = "horizon_minus_1"
 regime_diagnostics = ["bull", "bear", "range"]
 max_data_age_days = 1
 tune_on_validation_only = true
-final_holdout_untouched = true
+final_holdout_training_and_tuning_excluded = true
+historical_holdout_globally_unseen = false
+historical_holdout_role = "continuity_diagnostic_only"
+prospective_evidence_source = "append_only_forecast_ledger_score_events"
 required_benchmarks = ["zero_return", "training_drift", "fixed_momentum"]
 ridge_status = "challenger_only"
 probabilistic_claim_min_matured_oos_per_horizon = 200
