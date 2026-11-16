@@ -4,7 +4,7 @@ Research-only BTC quantitative research project. This repository is not an execu
 
 ## Current verified status — 2026-11-16
 
-- Protocol: **V5.3.1**.
+- Protocol: **V5.4** (research upgrade; previous holdout preserved).
 - Latest complete GitHub Actions run: **daily-research #42 — SUCCESS**.
 - Research state: **COMPLETE_NOT_PROMOTED**. The data pipeline, QA, cross-checks, holdout evaluation, forecast ledger, and repository persistence all completed.
 - Champion: zero-return baseline. Ridge remains a challenger and is **not promoted**.
@@ -13,7 +13,7 @@ Research-only BTC quantitative research project. This repository is not an execu
 
 ### Persisted market data
 
-The public repository contains 132 raw source objects (864,570 bytes), their manifest, SHA-256 hashes, retrieval timestamps, parser/schema versions, source grades, and provider-terms caveats.
+The public repository currently contains 132 raw source objects (864,570 bytes), their manifest, SHA-256 hashes, retrieval timestamps, parser/schema versions, source grades, and provider-terms caveats. V5.4 adds explicit UTC-offset enforcement and blocks data more than one UTC day behind the current date.
 
 | Source | Quote | Daily rows | Range UTC | Grade | QA |
 |---|---|---:|---|---|---|
@@ -28,9 +28,9 @@ Provider terms apply to public endpoints/archives; no separate legal licensing r
 
 ### Latest out-of-sample evaluation
 
-Final holdout: **2025-11-16 through 2026-11-15 UTC**, untouched by training or tuning. Target horizons: 1, 3, 7, 30 days. The evaluation uses a one-daily-bar operational latency buffer so ledger entries are genuinely in the future at issue time.
+Final holdout: **2025-11-16 through 2026-11-15 UTC**, untouched by training or tuning. Target horizons: 1, 3, 7, 30 days. The evaluation uses a one-daily-bar operational latency buffer so ledger entries are genuinely in the future at issue time. Ridge alpha is now selected across three purged, expanding chronological validation folds; the final holdout remains untouched. The report also includes Newey-West HAC paired absolute-loss comparisons (lag h-1 for overlapping targets) and ex-ante bull/bear/range diagnostics.
 
-MAE is in **log-return units**, not percent.
+MAE is in **log-return units**, not percent. The historical metrics below are the V5.3.1 baseline and must not be represented as V5.4 rerun results until the V5.4 pipeline completes.
 
 | Horizon | OOS n | Zero MAE | Drift MAE | Momentum MAE | Ridge MAE |
 |---:|---:|---:|---:|---:|---:|
@@ -91,3 +91,13 @@ python scripts/run_research.py
 ## Security and limitations
 
 The repository is public. Do not commit credentials, personal data, exchange account exports, or non-public/licensed datasets. This is a price-only research model; no strategy PnL, fees/spread/slippage/funding stress test, regime-stratified significance, multiple-testing correction, derivatives, ETF, options, on-chain, or macro model is claimed. Those gaps must be addressed before any economic or live-trading conclusion.
+
+
+## V5.4 research upgrade
+
+- Strictly reject naive or non-UTC source timestamps; data must be explicitly UTC.
+- Daily crypto data older than one UTC calendar day now blocks the run (yesterday's candle is expected at the 16:00 UTC schedule).
+- Ridge alpha tuning uses three expanding chronological validation folds, each purged so validation labels cannot leak into training.
+- Report paired absolute-loss differences versus zero-return and training-drift baselines using Newey-West HAC standard errors with horizon-1 lags for overlapping returns. P-values use a normal approximation and are diagnostics, not standalone promotion criteria.
+- Report ex-ante bull/bear/range holdout slices. Regime labels use only close versus SMA200 and the 20-session SMA200 slope.
+- The V5.3.1 final holdout is not retuned or reused for V5.4 model selection. V5.4 evaluation uses the same historical holdout strictly as a diagnostic continuity check; a future promotion requires a new, untouched prospective period and independent economic tests.
