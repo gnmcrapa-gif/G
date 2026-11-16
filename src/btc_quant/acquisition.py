@@ -21,7 +21,7 @@ def _sha256_bytes(payload: bytes) -> str:
 
 
 def _save_raw(output_dir: Path, name: str, payload: bytes, url: str, source: str,
-              venue: str, symbol: str, quote: str) -> dict:
+              venue: str, symbol: str, quote: str, source_grade: str = "B") -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
     path = output_dir / name
     path.write_bytes(payload)
@@ -29,6 +29,8 @@ def _save_raw(output_dir: Path, name: str, payload: bytes, url: str, source: str
         "source": source, "url": url, "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "file": str(path), "size_bytes": len(payload), "sha256": _sha256_bytes(payload),
         "venue": venue, "symbol": symbol, "quote_currency": quote,
+        "schema_version": "1.0", "source_grade": source_grade,
+        "license_terms_note": "Public endpoint/archive; provider terms apply; legal review not performed.",
     }
 
 
@@ -95,7 +97,7 @@ def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1)) -> 
             frames.append(frame)
             objects.append(_save_raw(output_dir, name, response.content, url,
                                      "Binance Vision spot monthly klines", "Binance",
-                                     "BTCUSDT", "USDT"))
+                                     "BTCUSDT", "USDT", source_grade="A"))
             objects[-1]["rows"] = len(frame)
         except Exception as exc:  # noqa: BLE001 - source failures belong in manifest
             failures.append({"url": url, "error": f"{type(exc).__name__}: {exc}"})
@@ -114,7 +116,7 @@ def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1)) -> 
                 frames.append(frame)
                 objects.append(_save_raw(output_dir, name, response.content, url,
                                          "Binance Vision spot daily klines", "Binance",
-                                         "BTCUSDT", "USDT"))
+                                         "BTCUSDT", "USDT", source_grade="A"))
                 objects[-1]["rows"] = len(frame)
         except Exception as exc:  # noqa: BLE001
             failures.append({"url": url, "error": f"{type(exc).__name__}: {exc}"})
@@ -129,6 +131,8 @@ def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1)) -> 
     manifest = {
         "source": "Binance Vision", "venue": "Binance", "symbol": "BTCUSDT",
         "quote_currency": "USDT", "interval": "1d", "timezone": "UTC",
+        "schema_version": "1.0", "source_grade": "A",
+        "license_terms_note": "Public endpoint/archive; provider terms apply; legal review not performed.",
         "retrieved_at_utc": datetime.now(UTC).isoformat(), "parser": "pandas CSV + zipfile",
         "parser_version": "btc-quant-acquisition-0.2", "schema": ["timestamp_utc", "open", "high", "low", "close", "volume"], "objects": objects,
         "failures": failures, "duplicates_removed": duplicates,
@@ -159,7 +163,7 @@ def download_bitstamp_recent(output_dir: Path, days: int = 3650) -> tuple[pd.Dat
         candles = body.get("data", {}).get("ohlc", [])
         raw = _save_raw(output_dir / "raw", f"bitstamp_ohlc_{request_number:03d}.json",
                         payload, response.url, "Bitstamp public OHLC API", "Bitstamp",
-                        "BTC/USD", "USD")
+                        "BTC/USD", "USD", source_grade="A")
         raw["rows"] = len(candles)
         objects.append(raw)
         if not candles:
@@ -196,6 +200,8 @@ def download_bitstamp_recent(output_dir: Path, days: int = 3650) -> tuple[pd.Dat
     manifest = {
         "source": "Bitstamp public OHLC API", "venue": "Bitstamp", "symbol": "BTC/USD",
         "quote_currency": "USD", "interval": "1d", "timezone": "UTC",
+        "schema_version": "1.0", "source_grade": "A",
+        "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
         "retrieved_at_utc": datetime.now(UTC).isoformat(), "parser": "requests JSON + pandas",
         "parser_version": "btc-quant-acquisition-0.2", "schema": ["timestamp_utc", "open", "high", "low", "close", "volume"], "objects": objects,
         "failures": failures, "duplicates_removed_at_page_boundaries": duplicates_removed,
@@ -226,9 +232,11 @@ def download_coinbase_recent(output_dir: Path, limit_days: int = 300) -> tuple[p
     frame = frame[frame["timestamp"].dt.date < end.date()]
     frame = frame.sort_values("timestamp").reset_index(drop=True)
     obj = _save_raw(output_dir, "coinbase_btcusd_1d_recent.json", raw, response.url,
-                    "Coinbase Exchange candles API", "Coinbase", "BTC-USD", "USD")
+                    "Coinbase Exchange candles API", "Coinbase", "BTC-USD", "USD", source_grade="B")
     return frame, {"source": obj["source"], "venue": "Coinbase", "symbol": "BTC-USD",
                    "quote_currency": "USD", "interval": "1d", "timezone": "UTC",
+                   "schema_version": "1.0", "source_grade": "B",
+                   "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
                    "retrieved_at_utc": datetime.now(UTC).isoformat(),
                    "parser": "Coinbase candle array parser", "parser_version": "0.2",
                    "objects": [obj], "rows": len(frame),
@@ -257,10 +265,12 @@ def download_kraken_recent(output_dir: Path) -> tuple[pd.DataFrame, dict]:
     frame = frame[["timestamp", "open", "high", "low", "close", "volume"]]
     frame = frame[frame.timestamp < pd.Timestamp(datetime.now(UTC).date(), tz="UTC")]
     obj = _save_raw(output_dir, "kraken_btcusd_1d_recent.json", raw, response.url,
-                    "Kraken public OHLC API", "Kraken", "XBT/USD", "USD")
+                    "Kraken public OHLC API", "Kraken", "XBT/USD", "USD", source_grade="B")
     return frame.sort_values("timestamp").reset_index(drop=True), {
         "source": obj["source"], "venue": "Kraken", "symbol": "XBT/USD",
         "quote_currency": "USD", "interval": "1d", "timezone": "UTC",
+        "schema_version": "1.0", "source_grade": "B",
+        "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
         "retrieved_at_utc": datetime.now(UTC).isoformat(), "parser": "Kraken OHLC parser",
         "parser_version": "0.2", "objects": [obj], "rows": len(frame),
         "first_timestamp": frame.timestamp.min().isoformat(),
