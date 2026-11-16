@@ -190,13 +190,16 @@ def download_bitstamp_recent(output_dir: Path, days: int = 3650) -> tuple[pd.Dat
         frame[col] = pd.to_numeric(frame[col], errors="coerce")
     frame = frame[["timestamp", "open", "high", "low", "close", "volume"]]
     frame = frame[frame["timestamp"].dt.date < now.date()]
-    frame = frame.drop_duplicates("timestamp").sort_values("timestamp").reset_index(drop=True)
+    duplicates_removed = int(frame["timestamp"].duplicated().sum())
+    # Overlap can occur at capped API page boundaries; record it explicitly.
+    frame = frame.drop_duplicates("timestamp", keep="last").sort_values("timestamp").reset_index(drop=True)
     manifest = {
         "source": "Bitstamp public OHLC API", "venue": "Bitstamp", "symbol": "BTC/USD",
         "quote_currency": "USD", "interval": "1d", "timezone": "UTC",
         "retrieved_at_utc": datetime.now(UTC).isoformat(), "parser": "requests JSON + pandas",
         "parser_version": "btc-quant-acquisition-0.2", "schema": ["timestamp_utc", "open", "high", "low", "close", "volume"], "objects": objects,
-        "failures": failures, "rows": len(frame),
+        "failures": failures, "duplicates_removed_at_page_boundaries": duplicates_removed,
+        "rows": len(frame),
         "first_timestamp": frame.timestamp.min().isoformat(),
         "last_timestamp": frame.timestamp.max().isoformat(),
     }
