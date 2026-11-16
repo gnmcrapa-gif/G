@@ -18,6 +18,7 @@ from btc_quant.acquisition import (
 from btc_quant.ledger import (
     append_events,
     generate_forecast_events,
+    invalidate_late_forecasts,
     read_events,
     score_matured_events,
 )
@@ -72,8 +73,12 @@ def main() -> int:
         run["cross_checks"] = cross_checks
         manifest_path = output_dir / "data_manifest.json"
         write_manifest(manifests, manifest_path)
-        object_hashes = sorted(item["sha256"] for source in manifests
-                               for item in source.get("objects", []) if item.get("sha256"))
+        # The model consumes Binance BTCUSDT only. Keep the forecast idempotency
+        # hash tied to model inputs, not dynamic optional cross-check payloads.
+        object_hashes = sorted(
+            item["sha256"] for source in manifests if source.get("venue") == "Binance"
+            for item in source.get("objects", []) if item.get("sha256")
+        )
         manifest_sha256 = hashlib.sha256(json.dumps(object_hashes).encode()).hexdigest()
         predictions, scores = walk_forward(binance, min_train_rows=args.min_train_rows)
         counts = predictions.groupby("horizon").size().to_dict() if len(predictions) else {}
@@ -82,7 +87,8 @@ def main() -> int:
         predictions.to_csv(output_dir / "oos_predictions.csv", index=False)
         (output_dir / "scores.json").write_text(json.dumps(scores, indent=2), encoding="utf-8")
         previous_events = read_events(ledger_path)
-        score_events = score_matured_events(previous_events, binance)
+        invalidation_events = invalidate_late_forecasts(previous_events)
+        score_events = score_matured_events(previous_events + invalidation_events, binance)
         ridge_alpha_by_horizon = {
             int(horizon): float(details["selected_alpha"])
             for horizon, details in scores.get("validation_tuning", {}).items()
@@ -95,8 +101,9 @@ def main() -> int:
             )
             if scores.get("status") == "SCORED_NOT_PROMOTED" else []
         )
-        appended = append_events(ledger_path, score_events + forecast_events)
-        run["ledger"] = {"score_events_created": len(score_events),
+        appended = append_events(ledger_path, invalidation_events + score_events + forecast_events)
+        run["ledger"] = {"invalidations_created": len(invalidation_events),
+                         "score_events_created": len(score_events),
                          "forecast_events_created": len(forecast_events),
                          "events_appended": appended, "existing_events_before_run": len(previous_events),
                          "append_only": True}
