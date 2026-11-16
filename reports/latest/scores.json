@@ -1,0 +1,182 @@
+{
+  "status": "SCORED_NOT_PROMOTED",
+  "holdout_metrics": {
+    "1": {
+      "zero": {
+        "n": 363,
+        "mae": 0.01591035799613019,
+        "rmse": 0.02324147889217478,
+        "directional_accuracy": null,
+        "mean_error": 0.0010601874859896062
+      },
+      "drift": {
+        "n": 363,
+        "mae": 0.015977035375556507,
+        "rmse": 0.023304884513204355,
+        "directional_accuracy": 0.4793388429752066,
+        "mean_error": 0.0020187368783066754
+      },
+      "momentum": {
+        "n": 363,
+        "mae": 0.02687384950368651,
+        "rmse": 0.03224112341977861,
+        "directional_accuracy": 0.5179063360881543,
+        "mean_error": -0.0018778278651094642
+      },
+      "ridge": {
+        "n": 363,
+        "mae": 0.01600141995041781,
+        "rmse": 0.023262065301898078,
+        "directional_accuracy": 0.46005509641873277,
+        "mean_error": 0.0013912424146448469
+      }
+    },
+    "3": {
+      "zero": {
+        "n": 361,
+        "mae": 0.028471884447173513,
+        "rmse": 0.03972490901051344,
+        "directional_accuracy": null,
+        "mean_error": 0.0026257559052254354
+      },
+      "drift": {
+        "n": 361,
+        "mae": 0.02869312665639273,
+        "rmse": 0.04002404123004468,
+        "directional_accuracy": 0.48753462603878117,
+        "mean_error": 0.0055452749764615715
+      },
+      "momentum": {
+        "n": 361,
+        "mae": 0.04796905487570169,
+        "rmse": 0.05617535510801458,
+        "directional_accuracy": 0.4930747922437673,
+        "mean_error": -0.0025094085912754282
+      },
+      "ridge": {
+        "n": 361,
+        "mae": 0.028874197366418573,
+        "rmse": 0.03996852105261151,
+        "directional_accuracy": 0.45706371191135736,
+        "mean_error": 0.003961616340257194
+      }
+    },
+    "7": {
+      "zero": {
+        "n": 357,
+        "mae": 0.042372152400795324,
+        "rmse": 0.059755645794596544,
+        "directional_accuracy": null,
+        "mean_error": 0.004388949399426239
+      },
+      "drift": {
+        "n": 357,
+        "mae": 0.04321175681958886,
+        "rmse": 0.06063648154862857,
+        "directional_accuracy": 0.46218487394957986,
+        "mean_error": 0.011194130921988309
+      },
+      "momentum": {
+        "n": 357,
+        "mae": 0.07554422121314028,
+        "rmse": 0.08745824704110666,
+        "directional_accuracy": 0.5014005602240896,
+        "mean_error": -0.0030120873461065025
+      },
+      "ridge": {
+        "n": 357,
+        "mae": 0.043168704419990225,
+        "rmse": 0.06046024778673063,
+        "directional_accuracy": 0.42857142857142855,
+        "mean_error": 0.007993584129995783
+      }
+    },
+    "30": {
+      "zero": {
+        "n": 334,
+        "mae": 0.10132116275043017,
+        "rmse": 0.13556617283737196,
+        "directional_accuracy": null,
+        "mean_error": 0.013078548631106265
+      },
+      "drift": {
+        "n": 334,
+        "mae": 0.10250872239366007,
+        "rmse": 0.14134964902494027,
+        "directional_accuracy": 0.5508982035928144,
+        "mean_error": 0.04210207234801869
+      },
+      "momentum": {
+        "n": 334,
+        "mae": 0.1850986693194282,
+        "rmse": 0.21757344455656602,
+        "directional_accuracy": 0.4341317365269461,
+        "mean_error": 0.0055658062191497725
+      },
+      "ridge": {
+        "n": 334,
+        "mae": 0.10347569783438547,
+        "rmse": 0.14277420005619917,
+        "directional_accuracy": 0.4880239520958084,
+        "mean_error": 0.03314879660507518
+      }
+    }
+  },
+  "promotion": "No promotion. Require >=200 matured OOS forecasts per horizon, robust lift, calibration, regime stability and cost tests.",
+  "validation_tuning": {
+    "1": {
+      "selected_alpha": 100.0,
+      "validation_mae_by_alpha": {
+        "0.1": 0.01657682407017181,
+        "1.0": 0.01657654179635625,
+        "10.0": 0.016573802442493915,
+        "100.0": 0.016553518082374048
+      },
+      "validation_rows": 450,
+      "final_train_rows": 2950,
+      "final_holdout_rows": 363
+    },
+    "3": {
+      "selected_alpha": 100.0,
+      "validation_mae_by_alpha": {
+        "0.1": 0.02962005019687041,
+        "1.0": 0.02961951649955863,
+        "10.0": 0.029614349279989804,
+        "100.0": 0.02957894195866509
+      },
+      "validation_rows": 448,
+      "final_train_rows": 2948,
+      "final_holdout_rows": 361
+    },
+    "7": {
+      "selected_alpha": 100.0,
+      "validation_mae_by_alpha": {
+        "0.1": 0.04336047910497244,
+        "1.0": 0.0433596043195496,
+        "10.0": 0.04335103688099165,
+        "100.0": 0.04328199175759002
+      },
+      "validation_rows": 444,
+      "final_train_rows": 2944,
+      "final_holdout_rows": 357
+    },
+    "30": {
+      "selected_alpha": 100.0,
+      "validation_mae_by_alpha": {
+        "0.1": 0.09302010584742659,
+        "1.0": 0.09301958721237602,
+        "10.0": 0.09301484867277762,
+        "100.0": 0.09297517091754873
+      },
+      "validation_rows": 421,
+      "final_train_rows": 2921,
+      "final_holdout_rows": 334
+    }
+  },
+  "holdout_start_utc": "2025-11-16T00:00:00+00:00",
+  "holdout_end_utc": "2026-11-15T00:00:00+00:00",
+  "holdout_is_untouched": true,
+  "training_uses_holdout": false,
+  "features": "price-only BTC close returns, rolling volatility and trend",
+  "target": "log(Open[t+h+1]/Open[t+1]); signal after close t; entry next open"
+}
