@@ -1,5 +1,5 @@
 {
-  "started_at_utc": "2026-11-16T19:26:51.922397+00:00",
+  "started_at_utc": "2026-11-16T19:28:04.301702+00:00",
   "status": "COMPLETE_NOT_PROMOTED",
   "protocol": "V5.3.1",
   "steps": [
@@ -40,17 +40,17 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-16T19:27:31.074687+00:00",
+      "retrieved_at_utc": "2026-11-16T19:28:48.940778+00:00",
       "parser": "Coinbase candle array parser",
       "parser_version": "0.2",
       "objects": [
         {
           "source": "Coinbase Exchange candles API",
           "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=2026-01-20T00%3A00%3A00%2B00%3A00&end=2026-11-16T00%3A00%3A00%2B00%3A00",
-          "retrieved_at_utc": "2026-11-16T19:27:31.074600+00:00",
+          "retrieved_at_utc": "2026-11-16T19:28:48.940718+00:00",
           "file": "data/raw/coinbase/coinbase_btcusd_1d_recent.json",
           "size_bytes": 18462,
-          "sha256": "ca22220018c80ee5822e0e7997b8c5961e9b484724621b99c807dbfe03380812",
+          "sha256": "a555b0abf558c0bc0930334e32fdb640810aca5e5e97b8c43fdd5f0657bdd5df",
           "venue": "Coinbase",
           "symbol": "BTC-USD",
           "quote_currency": "USD",
@@ -85,17 +85,17 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-16T19:27:31.276083+00:00",
+      "retrieved_at_utc": "2026-11-16T19:28:48.979584+00:00",
       "parser": "Kraken OHLC parser",
       "parser_version": "0.2",
       "objects": [
         {
           "source": "Kraken public OHLC API",
           "url": "https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1440",
-          "retrieved_at_utc": "2026-11-16T19:27:31.275852+00:00",
+          "retrieved_at_utc": "2026-11-16T19:28:48.979275+00:00",
           "file": "data/raw/kraken/kraken_btcusd_1d_recent.json",
           "size_bytes": 62327,
-          "sha256": "627c13a3172319e5147a48dbb0942efad8249b28ea030268004772871c5f1903",
+          "sha256": "0a665eab567e5d318baad7bbed1ed305d2bfae24f703fbab9cea601698c41bc4",
           "venue": "Kraken",
           "symbol": "XBT/USD",
           "quote_currency": "USD",
@@ -348,5 +348,5 @@
     "existing_events_before_run": 12,
     "append_only": true
   },
-  "finished_at_utc": "2026-11-16T19:27:31.349845+00:00"
+  "finished_at_utc": "2026-11-16T19:28:49.056752+00:00"
 }
