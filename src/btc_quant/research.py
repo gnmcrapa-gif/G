@@ -28,7 +28,8 @@ def make_features(frame: pd.DataFrame) -> pd.DataFrame:
 def _ridge_predict(x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray,
                    alpha: float = 10.0) -> np.ndarray:
     mean = x_train.mean(axis=0)
-    scale = x_train.std(axis=0)
+    # NumPy 2.4 may expose a read-only reduction view; own a writable copy.
+    scale = np.array(x_train.std(axis=0), dtype=float, copy=True)
     scale[scale < 1e-12] = 1.0
     x = (x_train - mean) / scale
     xt = (x_test - mean) / scale
