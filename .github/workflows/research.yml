@@ -33,7 +33,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref || github.ref }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
           persist-credentials: true
       - uses: actions/setup-python@v5
         with:
@@ -62,7 +62,11 @@ jobs:
             echo "No persistent changes to commit"
           else
             git commit -m "chore(research): persist BTC Quant Desk run ${{ github.run_id }}"
-            git push
+            # Rebase the evidence commit onto the latest main to avoid a non-fast-forward
+            # if a documentation/code commit landed while this run was executing.
+            git fetch origin main
+            git rebase origin/main
+            git push origin HEAD:main
           fi
       - name: Upload diagnostic artifact
         if: always()
