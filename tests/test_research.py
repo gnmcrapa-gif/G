@@ -127,3 +127,15 @@ def test_walk_forward_uses_three_purged_validation_folds():
     for horizon in ("1", "3", "7", "30"):
         assert len(summary["validation_tuning"][horizon]["validation_folds"]) == 3
     assert "regime" in predictions
+
+
+def test_holm_adjustment_controls_familywise_error():
+    from btc_quant.research import _holm_adjust
+
+    raw = [0.01, 0.04, 0.03, 0.20]
+    adjusted = _holm_adjust(raw)
+    assert len(adjusted) == len(raw)
+    assert all(adj >= p for adj, p in zip(adjusted, raw, strict=True))
+    assert adjusted[0] == 0.04
+    assert adjusted[2] == 0.09
+    assert adjusted[1] == 0.09
