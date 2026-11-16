@@ -8,10 +8,18 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from btc_quant.acquisition import (
-    download_binance_daily, download_bitstamp_recent, download_coinbase_recent,
-    download_kraken_recent, write_manifest,
+    download_binance_daily,
+    download_bitstamp_recent,
+    download_coinbase_recent,
+    download_kraken_recent,
+    write_manifest,
 )
-from btc_quant.ledger import append_events, generate_forecast_events, read_events, score_matured_events
+from btc_quant.ledger import (
+    append_events,
+    generate_forecast_events,
+    read_events,
+    score_matured_events,
+)
 from btc_quant.research import cross_check_venues, walk_forward
 from btc_quant.validation import validate_ohlcv
 
