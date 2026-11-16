@@ -28,7 +28,7 @@ Provider terms apply to public endpoints/archives; no separate legal licensing r
 
 ### Latest out-of-sample evaluation
 
-Final holdout: **2025-11-16 through 2026-11-15 UTC**, untouched by training or tuning. Target horizons: 1, 3, 7, 30 days. The evaluation uses a one-daily-bar operational latency buffer so ledger entries are genuinely in the future at issue time. Ridge alpha is now selected across three purged, expanding chronological validation folds; the final holdout remains untouched. The report also includes Newey-West HAC paired absolute-loss comparisons (lag h-1 for overlapping targets) and ex-ante bull/bear/range diagnostics.
+Final holdout: **2025-11-16 through 2026-11-15 UTC**, untouched by training or tuning. Target horizons: 1, 3, 7, 30 days. The evaluation uses a one-daily-bar operational latency buffer so ledger entries are genuinely in the future at issue time. Ridge alpha is now selected across three purged, expanding chronological validation folds; the final holdout remains untouched. The report also includes Newey-West HAC paired absolute-loss comparisons (lag h-1 for overlapping targets), Holm family-wise multiple-testing correction, and ex-ante bull/bear/range diagnostics.
 
 MAE is in **log-return units**, not percent. The historical metrics below are the V5.3.1 baseline and must not be represented as V5.4 rerun results until the V5.4 pipeline completes.
 
