@@ -32,6 +32,7 @@ def generate_forecast_events(
     code_commit: str,
     min_train_rows: int = 1095,
     ridge_alpha: float = 10.0,
+    ridge_alpha_by_horizon: dict[int, float] | None = None,
 ) -> list[dict]:
     """Emit point forecasts after the latest complete daily close; no probability claims."""
     data = frame.sort_values("timestamp").reset_index(drop=True)
@@ -58,6 +59,7 @@ def generate_forecast_events(
 
     events = []
     for horizon in HORIZONS:
+        selected_alpha = (ridge_alpha_by_horizon or {}).get(horizon, ridge_alpha)
         target = np.log(data["open"].shift(-(horizon + 1)) / data["open"].shift(-1))
         last_train = t - horizon - 1
         if last_train < 0:
@@ -70,7 +72,7 @@ def generate_forecast_events(
             continue
         y_train = target.iloc[train_idx].to_numpy(dtype=float)
         x_train = features.iloc[train_idx].to_numpy(dtype=float)
-        ridge = _ridge_predict(x_train, y_train, x_now.reshape(1, -1), ridge_alpha)
+        ridge = _ridge_predict(x_train, y_train, x_now.reshape(1, -1), selected_alpha)
         drift = float(y_train.mean())
         momentum_scale = float(np.mean(np.abs(y_train)))
         momentum_sign = np.sign(np.log(close.iloc[t] / close.iloc[t - 20]))
@@ -79,7 +81,7 @@ def generate_forecast_events(
             "training_drift": drift,
             "fixed_momentum": float(momentum_sign * momentum_scale),
         }
-        model_version = "ridge-challenger-0.1"
+        model_version = f"ridge-challenger-0.2-alpha-{selected_alpha:g}"
         forecast_id = hashlib.sha256(
             f"{signal_ts.isoformat()}|{horizon}|{model_version}|{manifest_sha256}".encode()
         ).hexdigest()[:24]
@@ -104,7 +106,10 @@ def generate_forecast_events(
             "entry_timestamp_utc": entry.isoformat(),
             "expiry_timestamp_utc": expiry.isoformat(),
             "scoring_status": "PENDING",
-            "notes": "Point forecast only; challenger, not promoted; no probability claim.",
+            "notes": (
+                f"Point forecast only; challenger, not promoted; validation-selected "
+                f"Ridge alpha={selected_alpha:g}; no probability claim."
+            ),
         })
     return events
 
