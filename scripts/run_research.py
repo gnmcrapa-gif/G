@@ -48,7 +48,7 @@ def main() -> int:
     data_dir, output_dir, ledger_path = Path(args.data_dir), Path(args.output_dir), Path(args.ledger)
     output_dir.mkdir(parents=True, exist_ok=True)
     run = {"started_at_utc": datetime.now(UTC).isoformat(), "status": "BLOCKED",
-           "protocol": "V5.3.1",  # Production version; V5.4 remains unmerged until its PR passes. "steps": [], "limitations": []}
+           "protocol": "V5.3.1", "steps": [], "limitations": []}
     manifests = []
     try:
         binance, binance_manifest = download_binance_daily(data_dir / "binance")
