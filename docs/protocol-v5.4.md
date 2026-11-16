@@ -25,7 +25,7 @@ Features are available only through close t. Entry is Open[t+2] and expiry is Op
 - Each fold's training labels must mature before that fold's first validation signal; the horizon-specific purge is enforced.
 - Holdout predictions are scored against zero-return, training-drift, fixed-momentum, and Ridge.
 - The report includes MAE, RMSE, mean error, directional accuracy where meaningful, ex-ante bull/bear/range slices, and paired absolute-loss tests versus zero and drift.
-- Paired loss tests use Newey-West HAC standard errors with max lag h-1 to account for overlapping target returns. P-values are asymptotic normal approximations and are diagnostics, not proof or automatic promotion criteria.
+- Paired loss tests use Newey-West HAC standard errors with max lag h-1 to account for overlapping target returns. Raw asymptotic normal-approximation p-values are adjusted across all horizon/benchmark comparisons using Holm's step-down family-wise error correction. These are diagnostics, not proof or automatic promotion criteria.
 
 ## Promotion and risk
 
