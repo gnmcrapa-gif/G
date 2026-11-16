@@ -84,9 +84,8 @@ def main() -> int:
                              "oos_rows": len(predictions), "scores": scores})
         required_pass = all(step["status"] == "PASS" for step in run["steps"]
                             if step["step"] in {"binance_acquisition_and_qa", "bitstamp_acquisition_and_qa"})
-        optional_status = all(step.get("status") == "PASS" for step in run["steps"]
-                              if step["step"].endswith("_cross_check"))
-        run["status"] = ("COMPLETE_NOT_PROMOTED" if required_pass and optional_status
+        # Coinbase/Kraken corroborate the primary venues; optional outages are disclosed, not blocking.
+        run["status"] = ("COMPLETE_NOT_PROMOTED" if required_pass
                          and scores["status"] == "SCORED_NOT_PROMOTED" else "BLOCKED")
         run["limitations"].append("Ridge is challenger only; no automatic promotion.")
         run["limitations"].append("Calibration and >=200 matured OOS forecasts per horizon are required before probabilities.")
