@@ -166,8 +166,19 @@ def download_bitstamp_recent(output_dir: Path, days: int = 3650) -> tuple[pd.Dat
             break
         rows.extend(candles)
         newest = max(int(c["timestamp"]) for c in candles)
+        # The API may return its latest 1,000 candles when the requested window
+        # reaches the present. Once yesterday's UTC candle is present, the
+        # remaining response would repeat the same capped page.
+        latest_closed_start = int(datetime.combine(
+            now.date() - timedelta(days=1), datetime.min.time(), tzinfo=UTC
+        ).timestamp())
+        if newest >= latest_closed_start:
+            break
         if newest <= cursor:
-            raise RuntimeError("Bitstamp pagination did not advance")
+            raise RuntimeError(
+                f"Bitstamp pagination did not advance before latest closed candle; "
+                f"cursor={cursor}, newest={newest}, url={response.url}"
+            )
         cursor = newest + 1
         request_number += 1
         time.sleep(0.15)
