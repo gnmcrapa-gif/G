@@ -1,7 +1,13 @@
 import numpy as np
 import pandas as pd
 
-from btc_quant.research import _hac_loss_difference, _ridge_predict, _valid_indices, make_features, score_predictions
+from btc_quant.research import (
+    _hac_loss_difference,
+    _ridge_predict,
+    _valid_indices,
+    make_features,
+    score_predictions,
+)
 
 
 def test_features_use_only_current_and_past_closes():
