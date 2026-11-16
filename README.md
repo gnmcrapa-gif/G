@@ -5,7 +5,7 @@ Research-only BTC quantitative research project. This repository is not an execu
 ## Current verified status — 2026-11-16
 
 - Protocol: **V5.3.1**.
-- Latest complete GitHub Actions run: **daily-research #41 — SUCCESS**.
+- Latest complete GitHub Actions run: **daily-research #42 — SUCCESS**.
 - Research state: **COMPLETE_NOT_PROMOTED**. The data pipeline, QA, cross-checks, holdout evaluation, forecast ledger, and repository persistence all completed.
 - Champion: zero-return baseline. Ridge remains a challenger and is **not promoted**.
 - No calibrated probabilities, no trading orders, and no automatic position sizing.
