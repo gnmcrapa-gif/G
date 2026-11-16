@@ -124,7 +124,7 @@ def _metric_block(group: pd.DataFrame) -> dict:
         prediction = group[model].to_numpy(dtype=float)
         error = prediction - y
         absolute_error = np.abs(error)
-        tail_count = max(1, int(math.ceil(0.10 * len(absolute_error))))
+        tail_count = max(1, math.ceil(0.10 * len(absolute_error)))
         worst_tail = np.sort(absolute_error)[-tail_count:]
         scores[model] = {
             "n": len(y),
