@@ -1,6 +1,7 @@
-from btc_quant.acquisition import _parse_binance_zip
 import io
 import zipfile
+
+from btc_quant.acquisition import _parse_binance_zip
 
 
 def test_parse_binance_zip_preserves_venue_ohlcv_schema():
