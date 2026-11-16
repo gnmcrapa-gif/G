@@ -23,7 +23,9 @@ def _safe_optional_acquisition(label, function, directory):
         return frame, {**manifest, "qa": {"status": "PASS", **qa}, "status": "PASS"}
     except Exception as exc:  # noqa: BLE001 - record each independent source failure
         return None, {"source": label, "status": "FAIL",
-                      "error": f"{type(exc).__name__}: {exc}", "retrieved_at_utc": datetime.now(UTC).isoformat()}
+                      "url": {"Coinbase": "https://api.exchange.coinbase.com/products/BTC-USD/candles", "Kraken": "https://api.kraken.com/0/public/OHLC"}.get(label),
+                      "attempted_at_utc": datetime.now(UTC).isoformat(),
+                      "error": f"{type(exc).__name__}: {exc}"}
 
 
 def main() -> int:
