@@ -113,6 +113,17 @@ The repository is public. Do not commit credentials, personal data, exchange acc
 - Ledger is append-only. Run #54 added no new forecast or score event and suppressed four duplicate candidates because four forecasts for the same signal bar were already pending. The pending ledger records are from Ridge challenger 0.3; V5.4's challenger 0.4 will issue only on a new signal bar. No prior record was overwritten.
 
 
+## V5.5 verified execution
+
+- Merged to main: [PR #5](https://github.com/gnmcrapa-gif/G/pull/5), merge commit `9b7ba1af745638ee59b78ae0c3d877a32a8c283d`.
+- Final main-branch run: [daily-research #57 — SUCCESS](https://github.com/gnmcrapa-gif/G/actions/runs/43946659530), 16 November 2026, 20:08:54–20:09:40 UTC.
+- Tests: **29 passed**; Ruff: **all checks passed**.
+- Binance and Bitstamp primary QA PASS; Coinbase and Kraken recent cross-checks PASS. All source series end at the 2026-11-15 closed UTC candle.
+- The historical continuity diagnostic still shows zero-return MAE below Ridge at all four horizons. This is not fresh independent evidence; zero-return remains champion.
+- Prospective ledger: **0 matured SCORE events** at this run; four already-pending forecasts suppressed as duplicates. No calibration or prospective edge claim.
+- Risk: paper-only, live trading disabled, theoretical exposure **0%**.
+- Registered experiment `V5.5-OHLCV-001` is **PROPOSED_NOT_RUN**, not an implemented or validated model improvement.
+
 ## V5.5 verified scope
 
 V5.5 adds prospective matured-ledger scoring against the zero, drift and momentum forecasts saved at issuance; p90/p99 and worst-decile error diagnostics; low-sample regime warnings; explicit 0% theoretical exposure/abstention; a structured audit; and an append-only experiment proposal register. The historical 2025-11-16–2026-11-15 holdout is explicitly **not globally unseen** because it was previously inspected under V5.3.1. It is continuity diagnostics only. The next OHLCV feature experiment is registered as PROPOSED_NOT_RUN and is not represented as an achieved improvement.
