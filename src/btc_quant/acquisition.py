@@ -222,6 +222,8 @@ def download_coinbase_recent(output_dir: Path, limit_days: int = 300) -> tuple[p
     for col in ["open", "high", "low", "close", "volume"]:
         frame[col] = pd.to_numeric(frame[col], errors="coerce")
     frame = frame[["timestamp", "open", "high", "low", "close", "volume"]]
+    # Coinbase can include today's still-forming UTC daily candle; exclude it.
+    frame = frame[frame["timestamp"].dt.date < end.date()]
     frame = frame.sort_values("timestamp").reset_index(drop=True)
     obj = _save_raw(output_dir, "coinbase_btcusd_1d_recent.json", raw, response.url,
                     "Coinbase Exchange candles API", "Coinbase", "BTC-USD", "USD")
