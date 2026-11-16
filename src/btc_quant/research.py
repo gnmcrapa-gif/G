@@ -223,6 +223,21 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
     return predictions, summary
 
 
+def _holm_adjust(p_values: list[float]) -> list[float]:
+    """Holm step-down family-wise adjustment; output order matches input order."""
+    if not p_values:
+        return []
+    order = np.argsort(np.asarray(p_values, dtype=float))
+    adjusted = np.empty(len(p_values), dtype=float)
+    running_max = 0.0
+    total = len(p_values)
+    for rank, original_index in enumerate(order):
+        candidate = min(1.0, (total - rank) * float(p_values[int(original_index)]))
+        running_max = max(running_max, candidate)
+        adjusted[int(original_index)] = running_max
+    return adjusted.tolist()
+
+
 def score_predictions(predictions: pd.DataFrame) -> dict:
     if predictions.empty:
         return {"status": "BLOCKED", "reason": "no out-of-sample forecasts"}
@@ -242,9 +257,23 @@ def score_predictions(predictions: pd.DataFrame) -> dict:
                 str(regime): {"n": len(regime_group), "metrics": _metric_block(regime_group)}
                 for regime, regime_group in group.groupby("regime")
             }
+    test_refs = [
+        (horizon, comparison)
+        for horizon, comparisons in paired_tests.items()
+        for comparison in comparisons
+    ]
+    raw_p_values = [
+        paired_tests[horizon][comparison]["two_sided_p_value_normal_approx"]
+        for horizon, comparison in test_refs
+    ]
+    adjusted = _holm_adjust(raw_p_values)
+    for (horizon, comparison), adjusted_p in zip(test_refs, adjusted, strict=True):
+        paired_tests[horizon][comparison]["holm_adjusted_p_value"] = adjusted_p
+        paired_tests[horizon][comparison]["familywise_alpha_0_05_reject"] = adjusted_p < 0.05
     return {
         "status": "SCORED_NOT_PROMOTED", "holdout_metrics": results,
-        "paired_loss_tests": paired_tests, "regime_metrics": regime_results,
+        "paired_loss_tests": paired_tests, "multiple_testing_correction": "Holm step-down across all horizon/benchmark comparisons",
+        "regime_metrics": regime_results,
         "promotion": (
             "No promotion. Require consistent OOS lift over zero and drift, HAC-aware "
             "paired-loss evidence, regime stability, calibration and cost-adjusted tests."
