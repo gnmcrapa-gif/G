@@ -8,7 +8,12 @@ from datetime import UTC, datetime
 from pathlib import Path
 
 from btc_quant.acquisition import download_binance_daily, download_bitstamp_recent, write_manifest
-from btc_quant.ledger import append_events, generate_forecast_events, read_events, score_matured_events
+from btc_quant.ledger import (
+    append_events,
+    generate_forecast_events,
+    read_events,
+    score_matured_events,
+)
 from btc_quant.research import cross_check_venues, walk_forward
 from btc_quant.validation import validate_ohlcv
 
@@ -74,7 +79,7 @@ def main() -> int:
         run["status"] = "COMPLETE_NOT_PROMOTED" if scores["status"] == "SCORED_NOT_PROMOTED" else "BLOCKED"
         run["limitations"].append("Ridge is a challenger only. Calibration, regime-stratified significance, multiple-testing correction, cost-adjusted strategy backtest, and independent Python replication remain incomplete.")
         run["limitations"].append("Probabilistic forecast claims are disabled until calibration is independently validated.")
-    except Exception as exc:
+    except Exception as exc:  # noqa: BLE001 - record the failure in the run report
         run["status"] = "BLOCKED"
         run["error"] = f"{type(exc).__name__}: {exc}"
         run["limitations"].append("No model claim or positive exposure is permitted when acquisition, QA, or evaluation is blocked.")

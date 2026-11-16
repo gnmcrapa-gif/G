@@ -89,7 +89,7 @@ def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1)) -> 
                 "quote_currency": "USDT",
             })
             time.sleep(0.05)
-        except Exception as exc:  # noqa: BLE001 - preserve exact source failure in manifest  # noqa: BLE001 - preserve exact source failure in manifest
+        except Exception as exc:  # noqa: BLE001 - preserve exact source failure in manifest
             failures.append({"url": url, "error": f"{type(exc).__name__}: {exc}"})
     # Fetch current-month daily archives through yesterday; the current UTC day is incomplete.
     from datetime import timedelta

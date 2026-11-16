@@ -72,7 +72,7 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095, ridge_alpha: f
                 "drift": drift,
                 "momentum": float(momentum_sign * momentum_scale),
                 "ridge": ridge,
-                "train_rows": int(len(train_idx)),
+                "train_rows": len(train_idx),
             })
     predictions = pd.DataFrame(outputs)
     summary = score_predictions(predictions)
