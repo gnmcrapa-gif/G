@@ -69,6 +69,7 @@ def main() -> int:
             if frame is not None:
                 cross_checks.append({"venue": label, **cross_check_venues(binance.tail(len(frame)), frame)})
             run["steps"].append({"step": f"{label.lower()}_recent_cross_check", **record})
+        run["cross_checks"] = cross_checks
         manifest_path = output_dir / "data_manifest.json"
         write_manifest(manifests, manifest_path)
         object_hashes = sorted(item["sha256"] for source in manifests
