@@ -24,6 +24,7 @@ def test_score_predictions_counts_oos_forecasts():
     })
     result = score_predictions(frame)
     assert result["holdout_metrics"]["1"]["zero"]["n"] == 3
+    assert result["holdout_metrics"]["1"]["zero"]["directional_accuracy"] is None
     assert result["status"] == "SCORED_NOT_PROMOTED"
 
 
