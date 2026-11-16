@@ -1,7 +1,11 @@
 import numpy as np
 import pandas as pd
 
-from btc_quant.ledger import (generate_forecast_events, invalidate_late_forecasts, summarize_scored_events)
+from btc_quant.ledger import (
+    generate_forecast_events,
+    invalidate_late_forecasts,
+    summarize_scored_events,
+)
 
 
 def test_forecast_ledger_uses_validation_selected_alpha_by_horizon():
