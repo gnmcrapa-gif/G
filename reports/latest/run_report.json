@@ -1,5 +1,5 @@
 {
-  "started_at_utc": "2026-11-16T19:24:36.660195+00:00",
+  "started_at_utc": "2026-11-16T19:26:51.922397+00:00",
   "status": "COMPLETE_NOT_PROMOTED",
   "protocol": "V5.3.1",
   "steps": [
@@ -37,20 +37,26 @@
       "quote_currency": "USD",
       "interval": "1d",
       "timezone": "UTC",
-      "retrieved_at_utc": "2026-11-16T19:25:22.930886+00:00",
+      "schema_version": "1.0",
+      "source_grade": "B",
+      "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
+      "retrieved_at_utc": "2026-11-16T19:27:31.074687+00:00",
       "parser": "Coinbase candle array parser",
       "parser_version": "0.2",
       "objects": [
         {
           "source": "Coinbase Exchange candles API",
           "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=2026-01-20T00%3A00%3A00%2B00%3A00&end=2026-11-16T00%3A00%3A00%2B00%3A00",
-          "retrieved_at_utc": "2026-11-16T19:25:22.930857+00:00",
+          "retrieved_at_utc": "2026-11-16T19:27:31.074600+00:00",
           "file": "data/raw/coinbase/coinbase_btcusd_1d_recent.json",
-          "size_bytes": 18461,
-          "sha256": "f6077baf476010f19e9c8e17abb037e73aaa5073ec35b9e8b8ea13d8930bab5d",
+          "size_bytes": 18462,
+          "sha256": "ca22220018c80ee5822e0e7997b8c5961e9b484724621b99c807dbfe03380812",
           "venue": "Coinbase",
           "symbol": "BTC-USD",
-          "quote_currency": "USD"
+          "quote_currency": "USD",
+          "schema_version": "1.0",
+          "source_grade": "B",
+          "license_terms_note": "Public endpoint/archive; provider terms apply; legal review not performed."
         }
       ],
       "rows": 300,
@@ -76,20 +82,26 @@
       "quote_currency": "USD",
       "interval": "1d",
       "timezone": "UTC",
-      "retrieved_at_utc": "2026-11-16T19:25:23.100332+00:00",
+      "schema_version": "1.0",
+      "source_grade": "B",
+      "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
+      "retrieved_at_utc": "2026-11-16T19:27:31.276083+00:00",
       "parser": "Kraken OHLC parser",
       "parser_version": "0.2",
       "objects": [
         {
           "source": "Kraken public OHLC API",
           "url": "https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1440",
-          "retrieved_at_utc": "2026-11-16T19:25:23.100032+00:00",
+          "retrieved_at_utc": "2026-11-16T19:27:31.275852+00:00",
           "file": "data/raw/kraken/kraken_btcusd_1d_recent.json",
           "size_bytes": 62327,
-          "sha256": "762c29a79bf3f32823f0e470ba857fd61db19548c8c7ec9bda473f595c1ad8c0",
+          "sha256": "627c13a3172319e5147a48dbb0942efad8249b28ea030268004772871c5f1903",
           "venue": "Kraken",
           "symbol": "XBT/USD",
-          "quote_currency": "USD"
+          "quote_currency": "USD",
+          "schema_version": "1.0",
+          "source_grade": "B",
+          "license_terms_note": "Public endpoint/archive; provider terms apply; legal review not performed."
         }
       ],
       "rows": 720,
@@ -134,14 +146,14 @@
               "mae": 0.02729179191582222,
               "rmse": 0.032469114581938824,
               "directional_accuracy": 0.5220994475138122,
-              "mean_error": -0.001878543716401332
+              "mean_error": -0.0018785437164013316
             },
             "ridge": {
               "n": 362,
               "mae": 0.015956371251956876,
               "rmse": 0.02329521751295763,
               "directional_accuracy": 0.47513812154696133,
-              "mean_error": 0.0014422806994801262
+              "mean_error": 0.0014422806994801266
             }
           },
           "3": {
@@ -171,7 +183,7 @@
               "mae": 0.028751504182599637,
               "rmse": 0.03993816392395621,
               "directional_accuracy": 0.43333333333333335,
-              "mean_error": 0.00407605044919966
+              "mean_error": 0.0040760504491996604
             }
           },
           "7": {
@@ -198,10 +210,10 @@
             },
             "ridge": {
               "n": 356,
-              "mae": 0.043009198587488,
+              "mae": 0.043009198587487994,
               "rmse": 0.0604016377497902,
               "directional_accuracy": 0.41292134831460675,
-              "mean_error": 0.008120815151220718
+              "mean_error": 0.008120815151220723
             }
           },
           "30": {
@@ -228,10 +240,10 @@
             },
             "ridge": {
               "n": 333,
-              "mae": 0.10335044957994545,
+              "mae": 0.10335044957994548,
               "rmse": 0.14308643751118227,
               "directional_accuracy": 0.4984984984984985,
-              "mean_error": 0.03350059448231986
+              "mean_error": 0.03350059448231985
             }
           }
         },
@@ -267,7 +279,7 @@
               "0.1": 0.04338360401988733,
               "1.0": 0.04338257819662776,
               "10.0": 0.04337256701877216,
-              "100.0": 0.04329349562337209
+              "100.0": 0.043293495623372084
             },
             "validation_rows": 443,
             "final_train_rows": 2943,
@@ -276,9 +288,9 @@
           "30": {
             "selected_alpha": 100.0,
             "validation_mae_by_alpha": {
-              "0.1": 0.09341330480170826,
-              "1.0": 0.09341254324772653,
-              "10.0": 0.09340519678691087,
+              "0.1": 0.09341330480170824,
+              "1.0": 0.0934125432477265,
+              "10.0": 0.09340519678691085,
               "100.0": 0.09333735233213286
             },
             "validation_rows": 420,
@@ -328,13 +340,13 @@
   },
   "probabilistic_claims_allowed": false,
   "ledger": {
-    "invalidations_created": 4,
+    "invalidations_created": 0,
     "score_events_created": 0,
-    "forecast_events_created": 4,
-    "duplicate_forecasts_suppressed": 0,
-    "events_appended": 8,
-    "existing_events_before_run": 4,
+    "forecast_events_created": 0,
+    "duplicate_forecasts_suppressed": 4,
+    "events_appended": 0,
+    "existing_events_before_run": 12,
     "append_only": true
   },
-  "finished_at_utc": "2026-11-16T19:25:23.225589+00:00"
+  "finished_at_utc": "2026-11-16T19:27:31.349845+00:00"
 }
