@@ -37,6 +37,7 @@ def generate_forecast_events(
     """Emit point forecasts after the latest complete daily close; no probability claims."""
     data = frame.sort_values("timestamp").reset_index(drop=True)
     features = make_features(data)
+    now_utc = datetime.now(UTC)
     t = len(data) - 1
     if t < 1:
         return []
@@ -60,8 +61,8 @@ def generate_forecast_events(
     events = []
     for horizon in HORIZONS:
         selected_alpha = (ridge_alpha_by_horizon or {}).get(horizon, ridge_alpha)
-        target = np.log(data["open"].shift(-(horizon + 1)) / data["open"].shift(-1))
-        last_train = t - horizon - 1
+        target = np.log(data["open"].shift(-(horizon + 2)) / data["open"].shift(-2))
+        last_train = t - horizon - 2
         if last_train < 0:
             continue
         train_idx = np.arange(0, last_train + 1)
@@ -85,18 +86,21 @@ def generate_forecast_events(
         forecast_id = hashlib.sha256(
             f"{signal_ts.isoformat()}|{horizon}|{model_version}|{manifest_sha256}".encode()
         ).hexdigest()[:24]
-        expiry = signal_ts + pd.Timedelta(days=horizon + 1)
-        entry = signal_ts + pd.Timedelta(days=1)
+        expiry = signal_ts + pd.Timedelta(days=horizon + 2)
+        entry = signal_ts + pd.Timedelta(days=2)
+        # A delayed daily run must never issue a forecast whose entry is already past.
+        if entry <= pd.Timestamp(now_utc):
+            continue
         events.append({
             "event_id": f"forecast-{forecast_id}",
             "event_type": "FORECAST",
             "forecast_id": forecast_id,
-            "recorded_at_utc": datetime.now(UTC).isoformat(),
-            "issued_at_utc": datetime.now(UTC).isoformat(),
+            "recorded_at_utc": now_utc.isoformat(),
+            "issued_at_utc": now_utc.isoformat(),
             "model_version": model_version,
             "code_commit": code_commit,
             "data_manifest_sha256": manifest_sha256,
-            "target": "log(Open[t+h+1]/Open[t+1])",
+            "target": "log(Open[t+h+2]/Open[t+2])",
             "horizon": horizon,
             "signal_timestamp_utc": signal_ts.isoformat(),
             "feature_cutoff_utc": feature_cutoff.isoformat(),
@@ -114,16 +118,59 @@ def generate_forecast_events(
     return events
 
 
-def score_matured_events(existing_events: list[dict], frame: pd.DataFrame) -> list[dict]:
-    """Append score events for forecasts whose exit open is now available."""
+def invalidate_late_forecasts(existing_events: list[dict]) -> list[dict]:
+    """Append invalidations for forecasts issued after their stated entry time."""
+    now = pd.Timestamp.now(tz="UTC")
     scored = {row.get("forecast_id") for row in existing_events if row.get("event_type") == "SCORE"}
+    invalidated = {row.get("forecast_id") for row in existing_events if row.get("event_type") == "INVALIDATION"}
+    output = []
+    for forecast in existing_events:
+        if forecast.get("event_type") != "FORECAST":
+            continue
+        forecast_id = forecast.get("forecast_id")
+        if forecast_id in scored or forecast_id in invalidated:
+            continue
+        entry = pd.Timestamp(forecast["entry_timestamp_utc"])
+        issued = pd.Timestamp(forecast["issued_at_utc"])
+        if entry > issued:
+            continue
+        output.append({
+            "event_id": f"invalidate-{forecast_id}-late-entry",
+            "event_type": "INVALIDATION",
+            "forecast_id": forecast_id,
+            "recorded_at_utc": now.isoformat(),
+            "issued_at_utc": forecast["issued_at_utc"],
+            "model_version": forecast["model_version"],
+            "code_commit": forecast["code_commit"],
+            "data_manifest_sha256": forecast["data_manifest_sha256"],
+            "target": forecast["target"],
+            "horizon": forecast["horizon"],
+            "signal_timestamp_utc": forecast["signal_timestamp_utc"],
+            "feature_cutoff_utc": forecast["feature_cutoff_utc"],
+            "regime_ex_ante": forecast["regime_ex_ante"],
+            "forecast": forecast["forecast"],
+            "benchmark_forecasts": forecast["benchmark_forecasts"],
+            "entry_timestamp_utc": forecast["entry_timestamp_utc"],
+            "expiry_timestamp_utc": forecast["expiry_timestamp_utc"],
+            "scoring_status": "INVALIDATED",
+            "notes": "Invalidated: entry timestamp was not in the future at actual issuance; excluded from forecast scoring.",
+        })
+    return output
+
+
+def score_matured_events(existing_events: list[dict], frame: pd.DataFrame) -> list[dict]:
+    """Append score events for valid forecasts whose exit open is now available."""
+    scored = {row.get("forecast_id") for row in existing_events if row.get("event_type") == "SCORE"}
+    invalidated = {row.get("forecast_id") for row in existing_events if row.get("event_type") == "INVALIDATION"}
     data = frame.copy()
     data["timestamp"] = pd.to_datetime(data["timestamp"], utc=True)
     open_by_ts = {row.timestamp: float(row.open) for row in data.itertuples()}
     latest = data["timestamp"].max()
     output = []
     for forecast in existing_events:
-        if forecast.get("event_type") != "FORECAST" or forecast.get("forecast_id") in scored:
+        if (forecast.get("event_type") != "FORECAST"
+                or forecast.get("forecast_id") in scored
+                or forecast.get("forecast_id") in invalidated):
             continue
         expiry = pd.Timestamp(forecast["expiry_timestamp_utc"])
         entry = pd.Timestamp(forecast["entry_timestamp_utc"])
