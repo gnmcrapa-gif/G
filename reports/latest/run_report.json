@@ -1,5 +1,5 @@
 {
-  "started_at_utc": "2026-11-16T19:30:22.908919+00:00",
+  "started_at_utc": "2026-11-16T19:52:33.906621+00:00",
   "status": "COMPLETE_NOT_PROMOTED",
   "protocol": "V5.3.1",
   "steps": [
@@ -40,17 +40,17 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-16T19:31:08.308851+00:00",
+      "retrieved_at_utc": "2026-11-16T19:53:12.395488+00:00",
       "parser": "Coinbase candle array parser",
       "parser_version": "0.2",
       "objects": [
         {
           "source": "Coinbase Exchange candles API",
           "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=2026-01-20T00%3A00%3A00%2B00%3A00&end=2026-11-16T00%3A00%3A00%2B00%3A00",
-          "retrieved_at_utc": "2026-11-16T19:31:08.308798+00:00",
+          "retrieved_at_utc": "2026-11-16T19:53:12.395450+00:00",
           "file": "data/raw/coinbase/coinbase_btcusd_1d_recent.json",
           "size_bytes": 18462,
-          "sha256": "a555b0abf558c0bc0930334e32fdb640810aca5e5e97b8c43fdd5f0657bdd5df",
+          "sha256": "4a7bc4e3956179207262bb242ab5ca7dfa989a20cad8442f0b54ae754cc647cb",
           "venue": "Coinbase",
           "symbol": "BTC-USD",
           "quote_currency": "USD",
@@ -85,17 +85,17 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-16T19:31:08.343446+00:00",
+      "retrieved_at_utc": "2026-11-16T19:53:12.557968+00:00",
       "parser": "Kraken OHLC parser",
       "parser_version": "0.2",
       "objects": [
         {
           "source": "Kraken public OHLC API",
           "url": "https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1440",
-          "retrieved_at_utc": "2026-11-16T19:31:08.343171+00:00",
+          "retrieved_at_utc": "2026-11-16T19:53:12.557688+00:00",
           "file": "data/raw/kraken/kraken_btcusd_1d_recent.json",
           "size_bytes": 62327,
-          "sha256": "5c72ed569c29a17bbe098a65bc66950d58c3a549931facea54350e6939d440cc",
+          "sha256": "7f4071e4b732593f84860f88fab72301b4e80e87677cb72900f9c605e5bb8abb",
           "venue": "Kraken",
           "symbol": "XBT/USD",
           "quote_currency": "USD",
@@ -146,14 +146,14 @@
               "mae": 0.02729179191582222,
               "rmse": 0.032469114581938824,
               "directional_accuracy": 0.5220994475138122,
-              "mean_error": -0.0018785437164013316
+              "mean_error": -0.001878543716401332
             },
             "ridge": {
               "n": 362,
               "mae": 0.015956371251956876,
               "rmse": 0.02329521751295763,
               "directional_accuracy": 0.47513812154696133,
-              "mean_error": 0.0014422806994801266
+              "mean_error": 0.0014422806994801262
             }
           },
           "3": {
@@ -183,7 +183,7 @@
               "mae": 0.028751504182599637,
               "rmse": 0.03993816392395621,
               "directional_accuracy": 0.43333333333333335,
-              "mean_error": 0.0040760504491996604
+              "mean_error": 0.00407605044919966
             }
           },
           "7": {
@@ -210,10 +210,10 @@
             },
             "ridge": {
               "n": 356,
-              "mae": 0.043009198587487994,
+              "mae": 0.043009198587488,
               "rmse": 0.0604016377497902,
               "directional_accuracy": 0.41292134831460675,
-              "mean_error": 0.008120815151220723
+              "mean_error": 0.008120815151220718
             }
           },
           "30": {
@@ -240,10 +240,10 @@
             },
             "ridge": {
               "n": 333,
-              "mae": 0.10335044957994548,
+              "mae": 0.10335044957994545,
               "rmse": 0.14308643751118227,
               "directional_accuracy": 0.4984984984984985,
-              "mean_error": 0.03350059448231985
+              "mean_error": 0.03350059448231986
             }
           }
         },
@@ -279,7 +279,7 @@
               "0.1": 0.04338360401988733,
               "1.0": 0.04338257819662776,
               "10.0": 0.04337256701877216,
-              "100.0": 0.043293495623372084
+              "100.0": 0.04329349562337209
             },
             "validation_rows": 443,
             "final_train_rows": 2943,
@@ -288,9 +288,9 @@
           "30": {
             "selected_alpha": 100.0,
             "validation_mae_by_alpha": {
-              "0.1": 0.09341330480170824,
-              "1.0": 0.0934125432477265,
-              "10.0": 0.09340519678691085,
+              "0.1": 0.09341330480170826,
+              "1.0": 0.09341254324772653,
+              "10.0": 0.09340519678691087,
               "100.0": 0.09333735233213286
             },
             "validation_rows": 420,
@@ -348,5 +348,5 @@
     "existing_events_before_run": 12,
     "append_only": true
   },
-  "finished_at_utc": "2026-11-16T19:31:08.419445+00:00"
+  "finished_at_utc": "2026-11-16T19:53:12.681471+00:00"
 }
