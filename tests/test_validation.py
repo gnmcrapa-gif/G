@@ -64,3 +64,23 @@ def test_target_alignment_matches_next_open_to_future_open():
 def test_non_positive_open_fails():
     with pytest.raises(DataValidationError, match="positive"):
         forward_open_log_return(pd.Series([100.0, 0.0, 110.0]), horizon=1)
+
+
+
+def test_naive_timestamps_are_rejected():
+    frame = sample_frame()
+    frame["timestamp"] = frame["timestamp"].dt.tz_localize(None)
+    with pytest.raises(DataValidationError, match="explicit UTC timezone"):
+        validate_ohlcv(frame, now=pd.Timestamp("2024-01-04T12:00:00Z"))
+
+
+def test_non_utc_timestamps_are_rejected():
+    frame = sample_frame()
+    frame["timestamp"] = frame["timestamp"].dt.tz_convert("Europe/Rome")
+    with pytest.raises(DataValidationError, match="must be UTC"):
+        validate_ohlcv(frame, now=pd.Timestamp("2024-01-04T12:00:00Z"))
+
+
+def test_two_day_stale_data_are_rejected():
+    with pytest.raises(DataValidationError, match="stale daily data"):
+        validate_ohlcv(sample_frame(), now=pd.Timestamp("2024-01-05T12:00:00Z"))
