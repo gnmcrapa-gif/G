@@ -150,7 +150,11 @@ def score_predictions(predictions: pd.DataFrame) -> dict:
             scores[model] = {
                 "n": len(y), "mae": float(np.mean(np.abs(err))),
                 "rmse": float(np.sqrt(np.mean(err ** 2))),
-                "directional_accuracy": float(np.mean(np.sign(p) == np.sign(y))),
+                # A zero-return forecast has no direction; do not report its
+                # sign match rate as a misleading 0% directional accuracy.
+                "directional_accuracy": (
+                    None if model == "zero" else float(np.mean(np.sign(p) == np.sign(y)))
+                ),
                 "mean_error": float(np.mean(err)),
             }
         results[str(int(horizon))] = scores
