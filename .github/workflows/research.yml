@@ -2,9 +2,25 @@ name: daily-research
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "tests/**"
+      - ".github/workflows/research.yml"
+  pull_request:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "tests/**"
+      - ".github/workflows/research.yml"
+  schedule:
+    - cron: "0 16 * * *"
 
 permissions:
-  contents: read
+  contents: write
 
 concurrency:
   group: btc-quant-daily-research
@@ -13,9 +29,12 @@ concurrency:
 jobs:
   acquire-qa-evaluate:
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
+          persist-credentials: true
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
@@ -24,13 +43,27 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e ".[dev]"
-      - name: Run tests
+      - name: Unit tests
         run: pytest
       - name: Lint
         run: ruff check src tests scripts
       - name: Acquire, QA, cross-check, and evaluate
+        id: research
+        continue-on-error: true
         run: python scripts/run_research.py
-      - name: Preserve run report, manifest, predictions, and raw archives
+      - name: Persist raw data, manifests, reports and append-only ledger
+        if: github.event_name != 'pull_request'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/raw reports/latest ledger/forecast_ledger.csv
+          if git diff --cached --quiet; then
+            echo "No persistent changes to commit"
+          else
+            git commit -m "chore(research): persist BTC Quant Desk run ${{ github.run_id }}"
+            git push
+          fi
+      - name: Upload diagnostic artifact
         if: always()
         uses: actions/upload-artifact@v4
         with:
@@ -39,4 +72,7 @@ jobs:
             reports/latest/
             data/raw/
           if-no-files-found: warn
-          retention-days: 30
+          retention-days: 90
+      - name: Fail run when research is blocked
+        if: steps.research.outcome == 'failure'
+        run: exit 1
