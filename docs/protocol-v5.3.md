@@ -1,4 +1,4 @@
-# BTC Quant Desk — Protocol V5.3
+# BTC Quant Desk — Protocol V5.3.1
 
 **Purpose:** reproducible quantitative research on BTC market behaviour. This is not an execution engine, auto-trader, or personalized investment advice.
 
@@ -60,9 +60,9 @@ Assign source grades A/B/C/D; D is excluded. Never forward-fill market bars. Tra
 
 For close index `t` and horizon `h ∈ {1,3,7,30}`:
 
-`y[t,h] = log(Open[t+h+1] / Open[t+1])`
+`y[t,h] = log(Open[t+h+2] / Open[t+2])`
 
-Signal is formed after close `t`; entry is at next open; exit is at the open after `h` sessions. Features must be known at or before close `t`. No lookahead, leakage, or use of incomplete bars in historical training.
+Signal is formed after close `t`; the feature cutoff is the close timestamp. Because the daily research job runs after the UTC session boundary, one complete daily bar is reserved for operational latency: entry is at `Open[t+2]`, exit is at `Open[t+h+2]`. The ledger must reject any forecast whose entry timestamp is not strictly later than its actual issue timestamp. This avoids backdating an entry to an open that has already passed. Features must be known at or before close `t`. No lookahead, leakage, or use of incomplete bars in historical training.
 
 ## 6. Benchmarks and models
 
@@ -75,7 +75,7 @@ Ridge is a challenger, not champion by default. Historical reported MAE values a
 
 ## 7. Evaluation
 
-Use chronological walk-forward splits. Purge/embargo at least the maximum target horizon at each boundary. Tune only on validation. Keep final holdout untouched and never use it for model selection.
+Use chronological walk-forward splits. Purge/embargo at least the maximum target horizon plus the one-bar execution-latency buffer at each boundary. Tune only on validation. Keep final holdout untouched and never use it for model selection.
 
 Report by horizon and regime:
 - MAE, RMSE, directional accuracy, rank IC where meaningful;
