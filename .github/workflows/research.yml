@@ -2,9 +2,6 @@ name: daily-research
 
 on:
   workflow_dispatch:
-  schedule:
-    # 16:00 UTC is 17:00 in Italy during CET; the ChatGPT report remains scheduled in Europe/Rome.
-    - cron: "0 16 * * *"
 
 permissions:
   contents: read
