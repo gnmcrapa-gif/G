@@ -26,6 +26,9 @@ def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
         raise DataValidationError("duplicate timestamps")
     if not ts.is_monotonic_increasing:
         raise DataValidationError("timestamps are not strictly increasing")
+    current = pd.Timestamp.now(tz="UTC") if now is None else pd.Timestamp(now).tz_convert("UTC")
+    if require_closed and (ts.dt.floor("D") >= current.floor("D")).any():
+        raise DataValidationError("dataset contains current or future UTC daily candle")
     if require_daily:
         if not (ts == ts.dt.floor("D")).all():
             raise DataValidationError("daily candle timestamps must align to 00:00 UTC")
@@ -33,9 +36,6 @@ def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
         if (gaps != pd.Timedelta(days=1)).any():
             missing_count = int((gaps / pd.Timedelta(days=1)).round().sub(1).clip(lower=0).sum())
             raise DataValidationError(f"daily cadence gap detected; missing_days={missing_count}")
-    current = pd.Timestamp.now(tz="UTC") if now is None else pd.Timestamp(now).tz_convert("UTC")
-    if require_closed and (ts.dt.floor("D") >= current.floor("D")).any():
-        raise DataValidationError("dataset contains current or future UTC daily candle")
     numeric = frame[["open", "high", "low", "close", "volume"]].apply(pd.to_numeric, errors="coerce")
     values = numeric[["open", "high", "low", "close"]].to_numpy(dtype=float)
     volume = numeric["volume"].to_numpy(dtype=float)
