@@ -78,7 +78,7 @@ def _hac_loss_difference(challenger: np.ndarray, benchmark: np.ndarray,
         long_run_variance += 2.0 * weight * autocov
     standard_error = math.sqrt(max(long_run_variance, 0.0) / n)
     if standard_error == 0.0:
-        z_score = 0.0 if mean == 0.0 else math.copysign(float("inf"), mean)
+        z_score = 0.0 if mean == 0.0 else None
         p_value = 1.0 if mean == 0.0 else 0.0
     else:
         z_score = mean / standard_error
@@ -231,7 +231,7 @@ def score_predictions(predictions: pd.DataFrame) -> dict:
         results[str(int(horizon))] = _metric_block(group)
         actual = group["actual"].to_numpy(dtype=float)
         paired_tests[str(int(horizon))] = {
-            challenger: _hac_loss_difference(
+            f"{challenger}_vs_{benchmark}": _hac_loss_difference(
                 group[challenger].to_numpy(dtype=float),
                 group[benchmark].to_numpy(dtype=float), actual, max_lag=int(horizon) - 1,
             )
