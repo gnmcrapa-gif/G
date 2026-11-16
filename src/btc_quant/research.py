@@ -39,8 +39,10 @@ def _ridge_predict(x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray,
 
 
 def _valid_indices(target: pd.Series, features: pd.DataFrame, indices: np.ndarray) -> np.ndarray:
-    mask = target.iloc[indices].notna().to_numpy()
-    mask &= features.iloc[indices].notna().all(axis=1).to_numpy()
+    # pandas may expose read-only NumPy views; the mask is intentionally mutated below.
+    mask = target.iloc[indices].notna().to_numpy(dtype=bool, copy=True)
+    feature_mask = features.iloc[indices].notna().all(axis=1).to_numpy(dtype=bool, copy=True)
+    mask &= feature_mask
     return indices[mask]
 
 
