@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 import os
+import traceback
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -103,6 +104,7 @@ def main() -> int:
     except Exception as exc:  # noqa: BLE001 - write a durable failure report for diagnosis
         run["status"] = "BLOCKED"
         run["error"] = f"{type(exc).__name__}: {exc}"
+        run["error_traceback"] = traceback.format_exc()
         run["limitations"].append("No model claim or positive exposure is permitted when acquisition, QA, or evaluation is blocked.")
         write_manifest(manifests, output_dir / "data_manifest.json")
     run["finished_at_utc"] = datetime.now(UTC).isoformat()
