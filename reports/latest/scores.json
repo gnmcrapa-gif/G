@@ -122,61 +122,664 @@
       }
     }
   },
-  "promotion": "No promotion. Require >=200 matured OOS forecasts per horizon, robust lift, calibration, regime stability and cost tests.",
+  "paired_loss_tests": {
+    "1": {
+      "ridge_vs_zero": {
+        "n": 362,
+        "mean_absolute_loss_difference": 6.269176698573186e-05,
+        "hac_standard_error": 7.073476537699365e-05,
+        "z_score": 0.886293559490935,
+        "two_sided_p_value_normal_approx": 0.37545935870774944,
+        "hac_lags": 0,
+        "interpretation": "challenger_worse",
+        "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
+        "holm_adjusted_p_value": 1.0,
+        "familywise_alpha_0_05_reject": false
+      },
+      "ridge_vs_drift": {
+        "n": 362,
+        "mean_absolute_loss_difference": -2.1110070363102634e-06,
+        "hac_standard_error": 7.240179898512435e-05,
+        "z_score": -0.029156831265256134,
+        "two_sided_p_value_normal_approx": 0.9767395102426,
+        "hac_lags": 0,
+        "interpretation": "challenger_better",
+        "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
+        "holm_adjusted_p_value": 1.0,
+        "familywise_alpha_0_05_reject": false
+      }
+    },
+    "3": {
+      "ridge_vs_zero": {
+        "n": 360,
+        "mean_absolute_loss_difference": 0.0002814557693583606,
+        "hac_standard_error": 0.00019037162054048022,
+        "z_score": 1.4784544490364961,
+        "two_sided_p_value_normal_approx": 0.13928618072335058,
+        "hac_lags": 2,
+        "interpretation": "challenger_worse",
+        "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
+        "holm_adjusted_p_value": 0.980408302145738,
+        "familywise_alpha_0_05_reject": false
+      },
+      "ridge_vs_drift": {
+        "n": 360,
+        "mean_absolute_loss_difference": 7.031974014989062e-05,
+        "hac_standard_error": 0.00017705186078249488,
+        "z_score": 0.39717029710451446,
+        "two_sided_p_value_normal_approx": 0.6912418841331827,
+        "hac_lags": 2,
+        "interpretation": "challenger_worse",
+        "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
+        "holm_adjusted_p_value": 1.0,
+        "familywise_alpha_0_05_reject": false
+      }
+    },
+    "7": {
+      "ridge_vs_zero": {
+        "n": 356,
+        "mean_absolute_loss_difference": 0.0007486977818813179,
+        "hac_standard_error": 0.0004848595400694588,
+        "z_score": 1.5441539662683812,
+        "two_sided_p_value_normal_approx": 0.12255103776821726,
+        "hac_lags": 6,
+        "interpretation": "challenger_worse",
+        "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
+        "holm_adjusted_p_value": 0.980408302145738,
+        "familywise_alpha_0_05_reject": false
+      },
+      "ridge_vs_drift": {
+        "n": 356,
+        "mean_absolute_loss_difference": -7.54911156681346e-05,
+        "hac_standard_error": 0.00042318599507671864,
+        "z_score": -0.17838755664503725,
+        "two_sided_p_value_normal_approx": 0.8584186209333247,
+        "hac_lags": 6,
+        "interpretation": "challenger_better",
+        "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
+        "holm_adjusted_p_value": 1.0,
+        "familywise_alpha_0_05_reject": false
+      }
+    },
+    "30": {
+      "ridge_vs_zero": {
+        "n": 333,
+        "mean_absolute_loss_difference": 0.0019360960320487046,
+        "hac_standard_error": 0.005971385345308013,
+        "z_score": 0.3242289552741698,
+        "two_sided_p_value_normal_approx": 0.7457647019894993,
+        "hac_lags": 29,
+        "interpretation": "challenger_worse",
+        "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
+        "holm_adjusted_p_value": 1.0,
+        "familywise_alpha_0_05_reject": false
+      },
+      "ridge_vs_drift": {
+        "n": 333,
+        "mean_absolute_loss_difference": 0.0008511227049475309,
+        "hac_standard_error": 0.0020616703167216964,
+        "z_score": 0.412831623972216,
+        "two_sided_p_value_normal_approx": 0.6797299801206075,
+        "hac_lags": 29,
+        "interpretation": "challenger_worse",
+        "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
+        "holm_adjusted_p_value": 1.0,
+        "familywise_alpha_0_05_reject": false
+      }
+    }
+  },
+  "multiple_testing_correction": "Holm step-down across all horizon/benchmark comparisons",
+  "regime_metrics": {
+    "1": {
+      "bear": {
+        "n": 266,
+        "metrics": {
+          "zero": {
+            "n": 266,
+            "mae": 0.016161250723236136,
+            "rmse": 0.023678319563256774,
+            "directional_accuracy": null,
+            "mean_error": 0.0008409509412886087
+          },
+          "drift": {
+            "n": 266,
+            "mae": 0.016225291648742125,
+            "rmse": 0.02373210983540892,
+            "directional_accuracy": 0.4774436090225564,
+            "mean_error": 0.001804831955019262
+          },
+          "momentum": {
+            "n": 266,
+            "mae": 0.02739209166518061,
+            "rmse": 0.033205759498283006,
+            "directional_accuracy": 0.5338345864661654,
+            "mean_error": -0.0027234130495377893
+          },
+          "ridge": {
+            "n": 266,
+            "mae": 0.016192438870240244,
+            "rmse": 0.023757578944392878,
+            "directional_accuracy": 0.48872180451127817,
+            "mean_error": 0.0010859831896833792
+          }
+        }
+      },
+      "bull": {
+        "n": 70,
+        "metrics": {
+          "zero": {
+            "n": 70,
+            "mae": 0.013103664339460936,
+            "rmse": 0.01945520204916584,
+            "directional_accuracy": null,
+            "mean_error": 0.0021951767685010498
+          },
+          "drift": {
+            "n": 70,
+            "mae": 0.01319543173962361,
+            "rmse": 0.019587387059033137,
+            "directional_accuracy": 0.4857142857142857,
+            "mean_error": 0.003159057782231703
+          },
+          "momentum": {
+            "n": 70,
+            "mae": 0.026433850366926748,
+            "rmse": 0.029597848976184175,
+            "directional_accuracy": 0.4714285714285714,
+            "mean_error": -0.0005137398645270134
+          },
+          "ridge": {
+            "n": 70,
+            "mae": 0.013389959340669834,
+            "rmse": 0.019615526242456036,
+            "directional_accuracy": 0.4142857142857143,
+            "mean_error": 0.0031405838093328336
+          }
+        }
+      },
+      "range": {
+        "n": 26,
+        "metrics": {
+          "zero": {
+            "n": 26,
+            "mae": 0.02066779913140287,
+            "rmse": 0.027712130464797865,
+            "directional_accuracy": null,
+            "mean_error": -0.0005559709922816
+          },
+          "drift": {
+            "n": 26,
+            "mae": 0.02066779913140286,
+            "rmse": 0.027709555422982125,
+            "directional_accuracy": 0.5,
+            "mean_error": 0.0004079100214490536
+          },
+          "momentum": {
+            "n": 26,
+            "mae": 0.028575490957874112,
+            "rmse": 0.03223486499997245,
+            "directional_accuracy": 0.5384615384615384,
+            "mean_error": 0.003090647552179254
+          },
+          "ridge": {
+            "n": 26,
+            "mae": 0.020450788456830557,
+            "rmse": 0.02729841529915335,
+            "directional_accuracy": 0.5,
+            "mean_error": 0.0005151237731818661
+          }
+        }
+      }
+    },
+    "3": {
+      "bear": {
+        "n": 266,
+        "metrics": {
+          "zero": {
+            "n": 266,
+            "mae": 0.02960931605881151,
+            "rmse": 0.04141123819025668,
+            "directional_accuracy": null,
+            "mean_error": 0.002015885440531646
+          },
+          "drift": {
+            "n": 266,
+            "mae": 0.029721052426114936,
+            "rmse": 0.04165277509432936,
+            "directional_accuracy": 0.5037593984962406,
+            "mean_error": 0.004911905813221432
+          },
+          "momentum": {
+            "n": 266,
+            "mae": 0.05022715706350866,
+            "rmse": 0.058992903323620616,
+            "directional_accuracy": 0.4548872180451128,
+            "mean_error": -0.004465563710573759
+          },
+          "ridge": {
+            "n": 266,
+            "mae": 0.029877247232927395,
+            "rmse": 0.04160552642538394,
+            "directional_accuracy": 0.42857142857142855,
+            "mean_error": 0.0030142252002469927
+          }
+        }
+      },
+      "bull": {
+        "n": 69,
+        "metrics": {
+          "zero": {
+            "n": 69,
+            "mae": 0.023993719858409514,
+            "rmse": 0.03383619408788561,
+            "directional_accuracy": null,
+            "mean_error": 0.007094376465488797
+          },
+          "drift": {
+            "n": 69,
+            "mae": 0.024938829076625205,
+            "rmse": 0.03455959898354251,
+            "directional_accuracy": 0.37681159420289856,
+            "mean_error": 0.009990396838178584
+          },
+          "momentum": {
+            "n": 69,
+            "mae": 0.04583329717757425,
+            "rmse": 0.052747435979282026,
+            "directional_accuracy": 0.5507246376811594,
+            "mean_error": 0.0027217466396343556
+          },
+          "ridge": {
+            "n": 69,
+            "mae": 0.024824878236232712,
+            "rmse": 0.034326884896789804,
+            "directional_accuracy": 0.4057971014492754,
+            "mean_error": 0.010001781846120886
+          }
+        }
+      },
+      "range": {
+        "n": 25,
+        "metrics": {
+          "zero": {
+            "n": 25,
+            "mae": 0.02870290747570964,
+            "rmse": 0.036701924199223024,
+            "directional_accuracy": null,
+            "mean_error": -0.00427889912706167
+          },
+          "drift": {
+            "n": 25,
+            "mae": 0.027945889905927834,
+            "rmse": 0.036477864737882296,
+            "directional_accuracy": 0.64,
+            "mean_error": -0.0013828787543718845
+          },
+          "momentum": {
+            "n": 25,
+            "mae": 0.04501762582049368,
+            "rmse": 0.05057159917743341,
+            "directional_accuracy": 0.48,
+            "mean_error": 0.004341428243908518
+          },
+          "ridge": {
+            "n": 25,
+            "mae": 0.027611085739084967,
+            "rmse": 0.03603559692808161,
+            "directional_accuracy": 0.56,
+            "mean_error": -0.0009811475574465522
+          }
+        }
+      }
+    },
+    "7": {
+      "bear": {
+        "n": 266,
+        "metrics": {
+          "zero": {
+            "n": 266,
+            "mae": 0.04485397571360136,
+            "rmse": 0.06373271614762703,
+            "directional_accuracy": null,
+            "mean_error": 0.0041083491963802895
+          },
+          "drift": {
+            "n": 266,
+            "mae": 0.04529748465721958,
+            "rmse": 0.06453103085700922,
+            "directional_accuracy": 0.4924812030075188,
+            "mean_error": 0.010921234776053232
+          },
+          "momentum": {
+            "n": 266,
+            "mae": 0.07873327467776361,
+            "rmse": 0.0916166262400086,
+            "directional_accuracy": 0.47368421052631576,
+            "mean_error": -0.006081963593049361
+          },
+          "ridge": {
+            "n": 266,
+            "mae": 0.04520589231516482,
+            "rmse": 0.06439647763231902,
+            "directional_accuracy": 0.4398496240601504,
+            "mean_error": 0.006896059521866511
+          }
+        }
+      },
+      "bull": {
+        "n": 65,
+        "metrics": {
+          "zero": {
+            "n": 65,
+            "mae": 0.03587499028455028,
+            "rmse": 0.04784151652027069,
+            "directional_accuracy": null,
+            "mean_error": 0.01043478542275638
+          },
+          "drift": {
+            "n": 65,
+            "mae": 0.039095577206289533,
+            "rmse": 0.04977356839878376,
+            "directional_accuracy": 0.2923076923076923,
+            "mean_error": 0.01724767100242932
+          },
+          "momentum": {
+            "n": 65,
+            "mae": 0.07133659659315998,
+            "rmse": 0.082016114323633,
+            "directional_accuracy": 0.5384615384615384,
+            "mean_error": 0.007307143266616051
+          },
+          "ridge": {
+            "n": 65,
+            "mae": 0.038831693265181086,
+            "rmse": 0.04908901524230104,
+            "directional_accuracy": 0.2923076923076923,
+            "mean_error": 0.017835449767132406
+          }
+        }
+      },
+      "range": {
+        "n": 25,
+        "metrics": {
+          "zero": {
+            "n": 25,
+            "mae": 0.031268255139289915,
+            "rmse": 0.039386418719008186,
+            "directional_accuracy": null,
+            "mean_error": -0.011453884936364279
+          },
+          "drift": {
+            "n": 25,
+            "mae": 0.029912243883774198,
+            "rmse": 0.037968900094714035,
+            "directional_accuracy": 0.6,
+            "mean_error": -0.004640999356691336
+          },
+          "momentum": {
+            "n": 25,
+            "mae": 0.07145741644472338,
+            "rmse": 0.07972447407948073,
+            "directional_accuracy": 0.52,
+            "mean_error": 0.0020992310735771535
+          },
+          "ridge": {
+            "n": 25,
+            "mae": 0.030497891163004626,
+            "rmse": 0.039550355627521946,
+            "directional_accuracy": 0.44,
+            "mean_error": -0.004105834953820897
+          }
+        }
+      }
+    },
+    "30": {
+      "bear": {
+        "n": 266,
+        "metrics": {
+          "zero": {
+            "n": 266,
+            "mae": 0.10949755452339001,
+            "rmse": 0.14642824271186577,
+            "directional_accuracy": null,
+            "mean_error": 0.015246625840647865
+          },
+          "drift": {
+            "n": 266,
+            "mae": 0.11086352990374367,
+            "rmse": 0.15218126054282216,
+            "directional_accuracy": 0.556390977443609,
+            "mean_error": 0.044162941435574164
+          },
+          "momentum": {
+            "n": 266,
+            "mae": 0.1933446104684352,
+            "rmse": 0.2288201791962731,
+            "directional_accuracy": 0.41729323308270677,
+            "mean_error": -0.008327067175045874
+          },
+          "ridge": {
+            "n": 266,
+            "mae": 0.11268005811512626,
+            "rmse": 0.15361848481769466,
+            "directional_accuracy": 0.4924812030075188,
+            "mean_error": 0.03151754456227455
+          }
+        }
+      },
+      "bull": {
+        "n": 42,
+        "metrics": {
+          "zero": {
+            "n": 42,
+            "mae": 0.07571574309708151,
+            "rmse": 0.0873348753771618,
+            "directional_accuracy": null,
+            "mean_error": 0.029577889740146582
+          },
+          "drift": {
+            "n": 42,
+            "mae": 0.08315971985597345,
+            "rmse": 0.10086674850239688,
+            "directional_accuracy": 0.40476190476190477,
+            "mean_error": 0.05849420533507289
+          },
+          "momentum": {
+            "n": 42,
+            "mae": 0.18015153027896455,
+            "rmse": 0.1945194218995511,
+            "directional_accuracy": 0.3333333333333333,
+            "mean_error": 0.10422791762317676
+          },
+          "ridge": {
+            "n": 42,
+            "mae": 0.08617149529527278,
+            "rmse": 0.10886931193349966,
+            "directional_accuracy": 0.40476190476190477,
+            "mean_error": 0.07338524520403925
+          }
+        }
+      },
+      "range": {
+        "n": 25,
+        "metrics": {
+          "zero": {
+            "n": 25,
+            "mae": 0.05858276072601819,
+            "rmse": 0.06622893937933753,
+            "directional_accuracy": null,
+            "mean_error": -0.039997089084122125
+          },
+          "drift": {
+            "n": 25,
+            "mae": 0.04599474644110426,
+            "rmse": 0.053937823623387234,
+            "directional_accuracy": 0.76,
+            "mean_error": -0.011080773489195825
+          },
+          "momentum": {
+            "n": 25,
+            "mae": 0.10719284508768695,
+            "rmse": 0.11584115892600129,
+            "directional_accuracy": 0.84,
+            "mean_error": -0.008644077373249459
+          },
+          "ridge": {
+            "n": 25,
+            "mae": 0.03294405796387182,
+            "rmse": 0.041331607672528366,
+            "directional_accuracy": 0.72,
+            "mean_error": -0.012405967580886643
+          }
+        }
+      }
+    }
+  },
+  "promotion": "No promotion. Require consistent OOS lift over zero and drift, HAC-aware paired-loss evidence, regime stability, calibration and cost-adjusted tests.",
   "validation_tuning": {
     "1": {
       "selected_alpha": 100.0,
       "validation_mae_by_alpha": {
-        "0.1": 0.016516467023531895,
-        "1.0": 0.016516445863975198,
-        "10.0": 0.01651623838840185,
-        "100.0": 0.01651447300055254
+        "0.1": 0.017428730821270257,
+        "1.0": 0.017428696399990413,
+        "10.0": 0.017428361422306644,
+        "100.0": 0.017425916498272426
       },
-      "validation_rows": 449,
+      "validation_folds": [
+        {
+          "fold": 1,
+          "train_rows": 2346,
+          "validation_rows": 200,
+          "validation_start": "2024-03-23T00:00:00+00:00",
+          "validation_end": "2024-10-08T00:00:00+00:00"
+        },
+        {
+          "fold": 2,
+          "train_rows": 2546,
+          "validation_rows": 200,
+          "validation_start": "2024-10-09T00:00:00+00:00",
+          "validation_end": "2025-04-26T00:00:00+00:00"
+        },
+        {
+          "fold": 3,
+          "train_rows": 2746,
+          "validation_rows": 200,
+          "validation_start": "2025-04-27T00:00:00+00:00",
+          "validation_end": "2025-11-12T00:00:00+00:00"
+        }
+      ],
       "final_train_rows": 2949,
       "final_holdout_rows": 362
     },
     "3": {
       "selected_alpha": 100.0,
       "validation_mae_by_alpha": {
-        "0.1": 0.029486363574605906,
-        "1.0": 0.02948617335876386,
-        "10.0": 0.029484305350003404,
-        "100.0": 0.029469392508424515
+        "0.1": 0.030919824801603192,
+        "1.0": 0.030919610271080467,
+        "10.0": 0.030917517625398874,
+        "100.0": 0.03090060159404811
       },
-      "validation_rows": 447,
+      "validation_folds": [
+        {
+          "fold": 1,
+          "train_rows": 2344,
+          "validation_rows": 199,
+          "validation_start": "2024-03-23T00:00:00+00:00",
+          "validation_end": "2024-10-07T00:00:00+00:00"
+        },
+        {
+          "fold": 2,
+          "train_rows": 2543,
+          "validation_rows": 199,
+          "validation_start": "2024-10-08T00:00:00+00:00",
+          "validation_end": "2025-04-24T00:00:00+00:00"
+        },
+        {
+          "fold": 3,
+          "train_rows": 2742,
+          "validation_rows": 200,
+          "validation_start": "2025-04-25T00:00:00+00:00",
+          "validation_end": "2025-11-10T00:00:00+00:00"
+        }
+      ],
       "final_train_rows": 2947,
       "final_holdout_rows": 360
     },
     "7": {
       "selected_alpha": 100.0,
       "validation_mae_by_alpha": {
-        "0.1": 0.04338360401988733,
-        "1.0": 0.04338257819662776,
-        "10.0": 0.04337256701877216,
-        "100.0": 0.04329349562337209
+        "0.1": 0.04567909773800752,
+        "1.0": 0.04567834757973164,
+        "10.0": 0.04567101282248557,
+        "100.0": 0.04561291070399062
       },
-      "validation_rows": 443,
+      "validation_folds": [
+        {
+          "fold": 1,
+          "train_rows": 2340,
+          "validation_rows": 198,
+          "validation_start": "2024-03-23T00:00:00+00:00",
+          "validation_end": "2024-10-06T00:00:00+00:00"
+        },
+        {
+          "fold": 2,
+          "train_rows": 2538,
+          "validation_rows": 198,
+          "validation_start": "2024-10-07T00:00:00+00:00",
+          "validation_end": "2025-04-22T00:00:00+00:00"
+        },
+        {
+          "fold": 3,
+          "train_rows": 2736,
+          "validation_rows": 198,
+          "validation_start": "2025-04-23T00:00:00+00:00",
+          "validation_end": "2025-11-06T00:00:00+00:00"
+        }
+      ],
       "final_train_rows": 2943,
       "final_holdout_rows": 356
     },
     "30": {
       "selected_alpha": 100.0,
       "validation_mae_by_alpha": {
-        "0.1": 0.09341330480170826,
-        "1.0": 0.09341254324772653,
-        "10.0": 0.09340519678691087,
-        "100.0": 0.09333735233213286
+        "0.1": 0.09330550643439288,
+        "1.0": 0.09330414336756485,
+        "10.0": 0.09329096416398777,
+        "100.0": 0.09317651784671617
       },
-      "validation_rows": 420,
+      "validation_folds": [
+        {
+          "fold": 1,
+          "train_rows": 2317,
+          "validation_rows": 190,
+          "validation_start": "2024-03-23T00:00:00+00:00",
+          "validation_end": "2024-09-28T00:00:00+00:00"
+        },
+        {
+          "fold": 2,
+          "train_rows": 2507,
+          "validation_rows": 190,
+          "validation_start": "2024-09-29T00:00:00+00:00",
+          "validation_end": "2025-04-06T00:00:00+00:00"
+        },
+        {
+          "fold": 3,
+          "train_rows": 2697,
+          "validation_rows": 191,
+          "validation_start": "2025-04-07T00:00:00+00:00",
+          "validation_end": "2025-10-14T00:00:00+00:00"
+        }
+      ],
       "final_train_rows": 2920,
       "final_holdout_rows": 333
     }
   },
+  "validation_method": "three purged expanding chronological folds; alpha chosen by weighted mean MAE",
   "holdout_start_utc": "2025-11-16T00:00:00+00:00",
   "holdout_end_utc": "2026-11-15T00:00:00+00:00",
   "holdout_is_untouched": true,
   "training_uses_holdout": false,
   "features": "price-only BTC close returns, rolling volatility and trend",
+  "regime_definition": "bull/bear/range from close versus SMA200 and SMA200 20-session slope; ex ante",
   "target": "log(Open[t+h+2]/Open[t+2]); signal after close t; one daily bar latency; entry future open"
 }
