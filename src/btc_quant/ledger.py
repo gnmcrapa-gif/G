@@ -205,6 +205,85 @@ def score_matured_events(existing_events: list[dict], frame: pd.DataFrame) -> li
     return output
 
 
+
+def summarize_scored_events(events: list[dict], minimum_per_horizon: int = 200) -> dict:
+    """Summarize only genuinely matured, non-invalidated prospective ledger forecasts."""
+    scored_ids = {
+        row.get("forecast_id") for row in events
+        if row.get("event_type") == "SCORE"
+    }
+    invalidated_ids = {
+        row.get("forecast_id") for row in events
+        if row.get("event_type") == "INVALIDATION"
+    }
+    forecasts = {
+        row.get("forecast_id"): row for row in events
+        if row.get("event_type") == "FORECAST"
+    }
+    rows_by_horizon: dict[str, list[dict]] = {}
+    for score in events:
+        if score.get("event_type") != "SCORE":
+            continue
+        forecast_id = score.get("forecast_id")
+        if forecast_id not in scored_ids or forecast_id in invalidated_ids:
+            continue
+        forecast = forecasts.get(forecast_id)
+        if forecast is None:
+            continue
+        try:
+            actual = float(score["realized_outcome"])
+            ridge = float(forecast["forecast"])
+            benchmarks = json.loads(forecast.get("benchmark_forecasts") or "{}")
+            if not np.isfinite([actual, ridge]).all():
+                continue
+            row = {"actual": actual, "ridge": ridge}
+            for key, value in benchmarks.items():
+                number = float(value)
+                if np.isfinite(number):
+                    row[key] = number
+            rows_by_horizon.setdefault(str(int(score["horizon"])), []).append(row)
+        except (KeyError, TypeError, ValueError, json.JSONDecodeError):
+            continue
+
+    result = {}
+    for horizon, rows in rows_by_horizon.items():
+        actual = np.asarray([row["actual"] for row in rows], dtype=float)
+        block = {"n": len(rows), "minimum_for_probabilistic_claims": minimum_per_horizon,
+                 "sample_gate": "MET" if len(rows) >= minimum_per_horizon else "NOT_MET",
+                 "models": {}}
+        for model, key in (("ridge", "ridge"), ("zero", "zero_return"),
+                           ("drift", "training_drift"), ("momentum", "fixed_momentum")):
+            if not all(key in row for row in rows):
+                continue
+            prediction = np.asarray([row[key] for row in rows], dtype=float)
+            error = prediction - actual
+            block["models"][model] = {
+                "mae": float(np.mean(np.abs(error))),
+                "rmse": float(np.sqrt(np.mean(error ** 2))),
+                "mean_error": float(np.mean(error)),
+                "directional_accuracy": (
+                    None if model == "zero"
+                    else float(np.mean(np.sign(prediction) == np.sign(actual)))
+                ),
+            }
+        if "ridge" in block["models"] and "zero" in block["models"]:
+            ridge_mae = block["models"]["ridge"]["mae"]
+            zero_mae = block["models"]["zero"]["mae"]
+            block["ridge_mae_difference_vs_zero"] = ridge_mae - zero_mae
+            block["ridge_relative_mae_lift_vs_zero"] = (
+                1.0 - ridge_mae / zero_mae if zero_mae > 0 else None
+            )
+        result[horizon] = block
+    return {
+        "source": "append-only prospective forecast ledger; matured SCORE events only",
+        "probability_calibration_claim_allowed": False,
+        "minimum_per_horizon": minimum_per_horizon,
+        "by_horizon": result,
+        "decision": "INSUFFICIENT_PROSPECTIVE_EVIDENCE" if not result or any(
+            block["sample_gate"] != "MET" for block in result.values()
+        ) else "SAMPLE_GATE_MET_REQUIRES_SEPARATE_CALIBRATION_AND_COST_TESTS",
+    }
+
 def read_events(path: Path) -> list[dict]:
     if not path.exists():
         return []

@@ -1,6 +1,6 @@
 # Automatic improvement and critical self-audit
 
-This process is mandatory on every research run. V5.4 adds three purged expanding validation folds, HAC-aware paired-loss diagnostics, ex-ante regime slices, explicit UTC timestamp enforcement, and a one-calendar-day maximum age for daily data. It is not permission for uncontrolled model mutation.
+This process is mandatory on every research run. V5.5 adds prospective-only ledger scorecards, explicit historical holdout reuse disclosure, tail-error diagnostics, and an append-only challenger register; V5.4 added three purged expanding validation folds, HAC-aware paired-loss diagnostics, ex-ante regime slices, explicit UTC timestamp enforcement, and a one-calendar-day maximum age for daily data. It is not permission for uncontrolled model mutation.
 
 ## Every run
 
@@ -31,3 +31,12 @@ This process is mandatory on every research run. V5.4 adds three purged expandin
 ## Required report conclusion
 
 Reliability status; component audit; weakest component; three vulnerabilities; one next experiment; what must not change; champion/challenger/rollback/abstain decision.
+
+
+## V5.5 additions
+
+- Treat the 2025-11-16 to 2026-11-15 period as historical continuity diagnostics only because it was previously examined in V5.3.1.
+- Score only matured SCORE events linked to valid FORECAST events in the append-only ledger; exclude pending and invalidated records.
+- Report p90/p99, worst-decile and maximum absolute forecast errors; mark regime slices with fewer than 30 observations LOW_N.
+- Include a machine-readable component audit, weakest component, vulnerabilities, falsifying evidence, risk abstention, and next experiment in every run report.
+- Register the OHLCV volume-surprise/candle-geometry hypothesis as PROPOSED_NOT_RUN. Do not claim it improves the model before prospective validation.

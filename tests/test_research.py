@@ -73,7 +73,10 @@ def test_walk_forward_runs_purged_holdout_without_leakage():
     })
     predictions, summary = walk_forward(frame, min_train_rows=100, holdout_rows=365)
     assert summary["status"] == "SCORED_NOT_PROMOTED"
-    assert summary["holdout_is_untouched"] is True
+    assert summary["holdout_is_untouched"] is False
+    assert summary["holdout_training_and_tuning_excluded_in_this_run"] is True
+    assert summary["holdout_globally_unseen"] is False
+    assert summary["holdout_role"] == "historical_continuity_diagnostic_only"
     assert summary["training_uses_holdout"] is False
     assert set(predictions["horizon"].unique()) == {1, 3, 7, 30}
     assert (predictions["split"] == "final_holdout").all()
@@ -139,3 +142,35 @@ def test_holm_adjustment_controls_familywise_error():
     assert adjusted[0] == 0.04
     assert adjusted[2] == 0.09
     assert adjusted[1] == 0.09
+
+
+def test_metric_block_reports_tail_error_risk():
+    from btc_quant.research import _metric_block
+
+    frame = pd.DataFrame({
+        "actual": [0.0] * 10,
+        "zero": [0.0] * 10,
+        "drift": [0.0] * 10,
+        "momentum": [0.0] * 10,
+        "ridge": [0.0] * 9 + [1.0],
+    })
+    result = _metric_block(frame)["ridge"]
+    assert result["worst_decile_mean_absolute_error"] == 1.0
+    assert result["max_absolute_error"] == 1.0
+    assert result["p99_absolute_error"] > 0
+
+
+def test_hac_rejects_mismatched_or_nonfinite_inputs():
+    import pytest
+
+    with pytest.raises(ValueError, match="equal length"):
+        _hac_loss_difference(np.zeros(3), np.zeros(2), np.zeros(3), max_lag=1)
+    with pytest.raises(ValueError, match="finite"):
+        _hac_loss_difference(np.array([0.0, np.nan]), np.zeros(2), np.zeros(2), max_lag=1)
+
+
+def test_ridge_rejects_inconsistent_dimensions():
+    import pytest
+
+    with pytest.raises(ValueError, match="dimensions"):
+        _ridge_predict(np.ones((10, 3)), np.ones(9), np.ones((2, 3)))

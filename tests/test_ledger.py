@@ -1,7 +1,11 @@
 import numpy as np
 import pandas as pd
 
-from btc_quant.ledger import generate_forecast_events, invalidate_late_forecasts
+from btc_quant.ledger import (
+    generate_forecast_events,
+    invalidate_late_forecasts,
+    summarize_scored_events,
+)
 
 
 def test_forecast_ledger_uses_validation_selected_alpha_by_horizon():
@@ -57,3 +61,28 @@ def test_late_forecast_is_invalidated_not_deleted():
     assert len(invalidations) == 1
     assert invalidations[0]["event_type"] == "INVALIDATION"
     assert invalidations[0]["forecast_id"] == event["forecast_id"]
+
+
+def test_prospective_ledger_summary_uses_only_matured_scored_events():
+    import json
+
+    forecast = {
+        "event_type": "FORECAST", "forecast_id": "f1", "horizon": 1,
+        "forecast": 0.02,
+        "benchmark_forecasts": json.dumps({
+            "zero_return": 0.0, "training_drift": 0.01, "fixed_momentum": -0.01,
+        }),
+    }
+    score = {
+        "event_type": "SCORE", "forecast_id": "f1", "horizon": "1",
+        "realized_outcome": "0.01",
+    }
+    pending = {"event_type": "FORECAST", "forecast_id": "f2", "horizon": 1}
+    invalidation = {"event_type": "INVALIDATION", "forecast_id": "f3"}
+    result = summarize_scored_events([forecast, score, pending, invalidation])
+    block = result["by_horizon"]["1"]
+    assert block["n"] == 1
+    assert block["models"]["ridge"]["mae"] == 0.01
+    assert block["models"]["zero"]["mae"] == 0.01
+    assert block["sample_gate"] == "NOT_MET"
+    assert result["probability_calibration_claim_allowed"] is False

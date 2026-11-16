@@ -4,7 +4,7 @@ Research-only BTC quantitative research project. This repository is not an execu
 
 ## Current verified status — 2026-11-16
 
-- Protocol: **V5.4** (research upgrade; previous holdout preserved).
+- Protocol: **V5.5** (prospective ledger scorecards and audit controls; historical holdout downgraded to continuity diagnostics).
 - Latest complete GitHub Actions run: **daily-research #54 — SUCCESS**. The V5.4 merge passed **25 tests** and Ruff; the post-merge live-data run completed successfully.
 - Research state: **COMPLETE_NOT_PROMOTED**. The data pipeline, QA, cross-checks, holdout evaluation, forecast ledger, and repository persistence all completed.
 - Champion: zero-return baseline. Ridge remains a challenger and is **not promoted**.
@@ -111,3 +111,8 @@ The repository is public. Do not commit credentials, personal data, exchange acc
 - All four horizons used three expanding, purged validation folds; selected Ridge alpha was 100 for each.
 - Holm-adjusted paired-loss p-values for Ridge vs zero: 1.000, 0.980, 0.980, 1.000 for 1d/3d/7d/30d. No family-wise significant lift.
 - Ledger is append-only. Run #54 added no new forecast or score event and suppressed four duplicate candidates because four forecasts for the same signal bar were already pending. The pending ledger records are from Ridge challenger 0.3; V5.4's challenger 0.4 will issue only on a new signal bar. No prior record was overwritten.
+
+
+## V5.5 verified scope
+
+V5.5 adds prospective matured-ledger scoring against the zero, drift and momentum forecasts saved at issuance; p90/p99 and worst-decile error diagnostics; low-sample regime warnings; explicit 0% theoretical exposure/abstention; a structured audit; and an append-only experiment proposal register. The historical 2025-11-16–2026-11-15 holdout is explicitly **not globally unseen** because it was previously inspected under V5.3.1. It is continuity diagnostics only. The next OHLCV feature experiment is registered as PROPOSED_NOT_RUN and is not represented as an achieved improvement.

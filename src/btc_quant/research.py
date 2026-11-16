@@ -30,6 +30,12 @@ def make_features(frame: pd.DataFrame) -> pd.DataFrame:
 
 def _ridge_predict(x_train: np.ndarray, y_train: np.ndarray, x_test: np.ndarray,
                    alpha: float = 10.0) -> np.ndarray:
+    if x_train.ndim != 2 or x_test.ndim != 2 or y_train.ndim != 1:
+        raise ValueError("Ridge expects 2D feature matrices and a 1D target")
+    if x_train.shape[0] != y_train.shape[0] or x_train.shape[1] != x_test.shape[1]:
+        raise ValueError("Ridge train/test dimensions are inconsistent")
+    if x_train.shape[0] < 2 or x_train.shape[1] < 1 or x_test.shape[0] < 1:
+        raise ValueError("Ridge requires at least two training rows and one test row")
     if not np.isfinite(x_train).all() or not np.isfinite(y_train).all() \
             or not np.isfinite(x_test).all():
         raise ValueError("Ridge inputs must be finite")
@@ -66,6 +72,18 @@ def _regime_labels(close: pd.Series) -> pd.Series:
 def _hac_loss_difference(challenger: np.ndarray, benchmark: np.ndarray,
                          actual: np.ndarray, max_lag: int) -> dict:
     """Newey-West paired absolute-loss comparison; positive mean means challenger is worse."""
+    challenger = np.asarray(challenger, dtype=float)
+    benchmark = np.asarray(benchmark, dtype=float)
+    actual = np.asarray(actual, dtype=float)
+    if challenger.ndim != 1 or benchmark.ndim != 1 or actual.ndim != 1:
+        raise ValueError("paired loss inputs must be one-dimensional")
+    if not (len(challenger) == len(benchmark) == len(actual)) or len(actual) < 2:
+        raise ValueError("paired loss inputs must have equal length of at least two")
+    if not np.isfinite(challenger).all() or not np.isfinite(benchmark).all() \
+            or not np.isfinite(actual).all():
+        raise ValueError("paired loss inputs must be finite")
+    if not isinstance(max_lag, int) or max_lag < 0:
+        raise ValueError("max_lag must be a non-negative integer")
     difference = np.abs(challenger - actual) - np.abs(benchmark - actual)
     n = len(difference)
     mean = float(difference.mean())
@@ -85,7 +103,11 @@ def _hac_loss_difference(challenger: np.ndarray, benchmark: np.ndarray,
         p_value = math.erfc(abs(z_score) / math.sqrt(2.0))
     return {
         "n": n, "mean_absolute_loss_difference": mean,
-        "hac_standard_error": standard_error, "z_score": z_score,
+        "hac_standard_error": standard_error,
+        "normal_approx_95pct_ci": [
+            mean - 1.96 * standard_error, mean + 1.96 * standard_error
+        ],
+        "z_score": z_score,
         "two_sided_p_value_normal_approx": p_value,
         "hac_lags": lag,
         "interpretation": "challenger_worse" if mean > 0 else (
@@ -101,10 +123,17 @@ def _metric_block(group: pd.DataFrame) -> dict:
     for model in MODELS:
         prediction = group[model].to_numpy(dtype=float)
         error = prediction - y
+        absolute_error = np.abs(error)
+        tail_count = max(1, math.ceil(0.10 * len(absolute_error)))
+        worst_tail = np.sort(absolute_error)[-tail_count:]
         scores[model] = {
             "n": len(y),
-            "mae": float(np.mean(np.abs(error))),
+            "mae": float(np.mean(absolute_error)),
             "rmse": float(np.sqrt(np.mean(error ** 2))),
+            "p90_absolute_error": float(np.quantile(absolute_error, 0.90)),
+            "p99_absolute_error": float(np.quantile(absolute_error, 0.99)),
+            "worst_decile_mean_absolute_error": float(np.mean(worst_tail)),
+            "max_absolute_error": float(np.max(absolute_error)),
             "directional_accuracy": (
                 None if model == "zero" else float(np.mean(np.sign(prediction) == np.sign(y)))
             ),
@@ -115,7 +144,7 @@ def _metric_block(group: pd.DataFrame) -> dict:
 
 def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
                  holdout_rows: int = 365) -> tuple[pd.DataFrame, dict]:
-    """Tune on three purged expanding validation folds; evaluate once on untouched holdout."""
+    """Tune on purged folds; score the historical holdout as a continuity diagnostic."""
     validate_ohlcv(frame)
     data = frame.sort_values("timestamp").reset_index(drop=True).copy()
     features = make_features(data)
@@ -215,7 +244,15 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
         "validation_method": "three purged expanding chronological folds; alpha chosen by weighted mean MAE",
         "holdout_start_utc": data.timestamp.iloc[holdout_start].isoformat(),
         "holdout_end_utc": data.timestamp.iloc[-1].isoformat(),
-        "holdout_is_untouched": True, "training_uses_holdout": False,
+        "holdout_is_untouched": False,
+        "holdout_training_and_tuning_excluded_in_this_run": True,
+        "holdout_globally_unseen": False,
+        "holdout_role": "historical_continuity_diagnostic_only",
+        "holdout_reuse_disclosure": (
+            "This date range was previously evaluated under V5.3.1; it is not a fresh "
+            "independent holdout and cannot establish prospective model edge."
+        ),
+        "training_uses_holdout": False,
         "features": "price-only BTC close returns, rolling volatility and trend",
         "regime_definition": "bull/bear/range from close versus SMA200 and SMA200 20-session slope; ex ante",
         "target": "log(Open[t+h+2]/Open[t+2]); signal after close t; one daily bar latency; entry future open",
@@ -254,7 +291,11 @@ def score_predictions(predictions: pd.DataFrame) -> dict:
         }
         if "regime" in group.columns:
             regime_results[str(int(horizon))] = {
-                str(regime): {"n": len(regime_group), "metrics": _metric_block(regime_group)}
+                str(regime): {
+                    "n": len(regime_group),
+                    "sample_reliability": "LOW_N" if len(regime_group) < 30 else "DESCRIPTIVE_ONLY",
+                    "metrics": _metric_block(regime_group),
+                }
                 for regime, regime_group in group.groupby("regime")
             }
     test_refs = [
