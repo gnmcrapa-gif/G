@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from btc_quant.research import _ridge_predict, _valid_indices, make_features, score_predictions
+from btc_quant.research import (\n    _hac_loss_difference, _ridge_predict, _valid_indices, make_features, score_predictions,\n)
 
 
 def test_features_use_only_current_and_past_closes():
@@ -10,7 +10,7 @@ def test_features_use_only_current_and_past_closes():
     changed = frame.copy()
     changed.loc[99, "close"] = 99999.0
     second = make_features(changed)
-    pd.testing.assert_series_equal(first.loc[:98, "ret_1"], second.loc[:98, "ret_1"])
+    pd.testing.assert_frame_equal(first.loc[:98], second.loc[:98])
 
 
 def test_score_predictions_counts_oos_forecasts():
@@ -71,3 +71,53 @@ def test_walk_forward_runs_purged_holdout_without_leakage():
     assert summary["training_uses_holdout"] is False
     assert set(predictions["horizon"].unique()) == {1, 3, 7, 30}
     assert (predictions["split"] == "final_holdout").all()
+
+
+
+def test_hac_loss_difference_detects_persistent_worse_challenger():
+    actual = np.zeros(120)
+    benchmark = np.zeros(120)
+    challenger = np.full(120, 0.02)
+    result = _hac_loss_difference(challenger, benchmark, actual, max_lag=6)
+    assert result["mean_absolute_loss_difference"] > 0
+    assert result["interpretation"] == "challenger_worse"
+    assert result["hac_lags"] == 6
+    assert result["two_sided_p_value_normal_approx"] < 0.05
+
+
+def test_score_predictions_reports_regime_metrics_and_paired_tests():
+    frame = pd.DataFrame({
+        "horizon": [1] * 6,
+        "actual": [0.01, -0.01, 0.02, -0.02, 0.01, -0.01],
+        "zero": [0.0] * 6,
+        "drift": [0.001] * 6,
+        "momentum": [0.005, -0.005, 0.005, -0.005, 0.005, -0.005],
+        "ridge": [0.02, -0.02, 0.03, -0.03, 0.02, -0.02],
+        "regime": ["bull", "bull", "bear", "bear", "range", "range"],
+    })
+    result = score_predictions(frame)
+    assert result["paired_loss_tests"]["1"]["ridge_vs_zero"]["n"] == 6
+    assert set(result["regime_metrics"]["1"]) == {"bull", "bear", "range"}
+    assert result["regime_metrics"]["1"]["bull"]["n"] == 2
+
+
+def test_walk_forward_uses_three_purged_validation_folds():
+    from btc_quant.research import walk_forward
+
+    n = 1600
+    end = pd.Timestamp.now(tz="UTC").floor("D") - pd.Timedelta(days=1)
+    timestamps = pd.date_range(end=end, periods=n, freq="D")
+    t = np.arange(n, dtype=float)
+    close = 20000.0 * np.exp(np.cumsum(0.0002 + 0.008 * np.sin(t / 17.0)))
+    open_price = close * (1.0 + 0.001 * np.sin(t / 7.0))
+    frame = pd.DataFrame({
+        "timestamp": timestamps, "open": open_price,
+        "high": np.maximum(open_price, close) * 1.01,
+        "low": np.minimum(open_price, close) * 0.99,
+        "close": close, "volume": np.full(n, 100.0),
+    })
+    predictions, summary = walk_forward(frame, min_train_rows=100, holdout_rows=365)
+    assert summary["status"] == "SCORED_NOT_PROMOTED"
+    for horizon in ("1", "3", "7", "30"):
+        assert len(summary["validation_tuning"][horizon]["validation_folds"]) == 3
+    assert "regime" in predictions
