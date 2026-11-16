@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from btc_quant.research import _ridge_predict, make_features, score_predictions
+from btc_quant.research import _ridge_predict, _valid_indices, make_features, score_predictions
 
 
 def test_features_use_only_current_and_past_closes():
@@ -37,3 +37,11 @@ def test_ridge_accepts_read_only_numpy_inputs():
     prediction = _ridge_predict(x_train, y_train, x_test)
     assert prediction.shape == (1,)
     assert np.isfinite(prediction).all()
+
+
+def test_valid_indices_uses_writable_mask_copies():
+    target = pd.Series([0.1, np.nan, 0.2, 0.3])
+    features = pd.DataFrame({"x": [1.0, 2.0, np.nan, 4.0]})
+    indices = np.arange(4)
+    selected = _valid_indices(target, features, indices)
+    np.testing.assert_array_equal(selected, np.array([0, 3]))
