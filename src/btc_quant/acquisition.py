@@ -55,7 +55,17 @@ def _parse_binance_zip(payload: bytes) -> pd.DataFrame:
         raise ValueError(f"expected at least 6 columns, got {frame.shape[1]}")
     frame = frame.iloc[:, :6].copy()
     frame.columns = ["timestamp", "open", "high", "low", "close", "volume"]
-    frame["timestamp"] = pd.to_datetime(pd.to_numeric(frame["timestamp"]), unit="ms", utc=True)
+    # Binance changed spot kline archive timestamps from milliseconds to microseconds
+    # for newer data. Detect the epoch unit per archive; never parse microseconds as ms.
+    epoch = pd.to_numeric(frame["timestamp"], errors="raise").astype("int64")
+    median_epoch = int(epoch.median())
+    if median_epoch >= 100_000_000_000_000:
+        epoch_unit = "us"
+    elif median_epoch >= 100_000_000_000:
+        epoch_unit = "ms"
+    else:
+        raise ValueError(f"unsupported Binance epoch timestamp magnitude: {median_epoch}")
+    frame["timestamp"] = pd.to_datetime(epoch, unit=epoch_unit, utc=True)
     for col in ["open", "high", "low", "close", "volume"]:
         frame[col] = pd.to_numeric(frame[col], errors="coerce")
     return frame
