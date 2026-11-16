@@ -66,13 +66,13 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
         target = forward_open_log_return(data["open"], horizon)
         # Keep the validation slice strictly before the final holdout.
         validation_start = int(holdout_start * 0.85)
-        validation_train_end = validation_start - horizon - 2
+        validation_train_end = validation_start - horizon - 3
         validation_train_idx = _valid_indices(
             target, features, np.arange(61, max(61, validation_train_end + 1))
         )
         validation_idx = _valid_indices(
             target, features,
-            np.arange(validation_start, max(validation_start, holdout_start - horizon - 1)),
+            np.arange(validation_start, max(validation_start, holdout_start - horizon - 2)),
         )
         if len(validation_train_idx) < min_train_rows or len(validation_idx) < 30:
             return pd.DataFrame(), {
@@ -89,10 +89,10 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
             alpha_scores[str(alpha)] = float(np.mean(np.abs(val_prediction - y_val)))
         selected_alpha = min(RIDGE_ALPHAS, key=lambda a: alpha_scores[str(a)])
         # All final-training labels must have exited by the first holdout signal close.
-        final_train_end = holdout_start - horizon - 2
+        final_train_end = holdout_start - horizon - 3
         final_train_idx = _valid_indices(target, features, np.arange(61, final_train_end + 1))
         holdout_idx = _valid_indices(
-            target, features, np.arange(holdout_start, max(holdout_start, n - horizon - 1))
+            target, features, np.arange(holdout_start, max(holdout_start, n - horizon - 2))
         )
         if len(final_train_idx) < min_train_rows or len(holdout_idx) < 200:
             return pd.DataFrame(), {
@@ -132,7 +132,7 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
         "holdout_is_untouched": True,
         "training_uses_holdout": False,
         "features": "price-only BTC close returns, rolling volatility and trend",
-        "target": "log(Open[t+h+1]/Open[t+1]); signal after close t; entry next open",
+        "target": "log(Open[t+h+2]/Open[t+2]); signal after close t; one daily bar latency; entry future open",
     })
     return predictions, summary
 
