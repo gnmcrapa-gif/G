@@ -15,7 +15,8 @@ def sample_frame():
 
 
 def test_valid_ohlcv_passes():
-    assert validate_ohlcv(sample_frame())["rows"] == 3
+    now = pd.Timestamp("2024-01-04T12:00:00Z")
+    assert validate_ohlcv(sample_frame(), now=now)["rows"] == 3
 
 
 def test_duplicate_timestamps_fail():
