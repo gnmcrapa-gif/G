@@ -1,6 +1,6 @@
 # Automatic improvement and critical self-audit
 
-This process is mandatory on every research run. It is not permission for uncontrolled model mutation.
+This process is mandatory on every research run. V5.4 adds three purged expanding validation folds, HAC-aware paired-loss diagnostics, ex-ante regime slices, explicit UTC timestamp enforcement, and a one-calendar-day maximum age for daily data. It is not permission for uncontrolled model mutation.
 
 ## Every run
 

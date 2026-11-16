@@ -82,7 +82,7 @@ def generate_forecast_events(
             "training_drift": drift,
             "fixed_momentum": float(momentum_sign * momentum_scale),
         }
-        model_version = f"ridge-challenger-0.3-alpha-{selected_alpha:g}"
+        model_version = f"ridge-challenger-0.4-multifold-alpha-{selected_alpha:g}"
         forecast_id = hashlib.sha256(
             f"{signal_ts.isoformat()}|{horizon}|{model_version}|{manifest_sha256}".encode()
         ).hexdigest()[:24]
