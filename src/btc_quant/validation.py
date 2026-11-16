@@ -48,6 +48,9 @@ def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
         raise DataValidationError("high violates OHLC invariant")
     if (l > np.minimum.reduce([o, h, c])).any():
         raise DataValidationError("low violates OHLC invariant")
+    latest_age = current.floor("D") - ts.max().floor("D")
+    if latest_age > pd.Timedelta(days=2):
+        raise DataValidationError(f"stale daily data; latest candle age={latest_age}")
     return {"rows": len(frame), "duplicates": 0, "missing_volume": 0,
             "first_timestamp_utc": ts.min().isoformat(), "last_timestamp_utc": ts.max().isoformat(),
             "gap_count": 0, "closed_candles_only": "PASS"}
