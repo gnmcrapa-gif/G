@@ -101,10 +101,31 @@ def main() -> int:
             )
             if scores.get("status") == "SCORED_NOT_PROMOTED" else []
         )
+        scored_ids = {
+            row.get("forecast_id") for row in previous_events + score_events
+            if row.get("event_type") == "SCORE"
+        }
+        invalidated_ids = {
+            row.get("forecast_id") for row in previous_events + invalidation_events
+            if row.get("event_type") == "INVALIDATION"
+        }
+        pending_keys = {
+            (row.get("signal_timestamp_utc"), int(row.get("horizon")))
+            for row in previous_events
+            if row.get("event_type") == "FORECAST"
+            and row.get("forecast_id") not in scored_ids | invalidated_ids
+        }
+        before_dedupe = len(forecast_events)
+        forecast_events = [
+            row for row in forecast_events
+            if (row["signal_timestamp_utc"], int(row["horizon"])) not in pending_keys
+        ]
+        duplicates_suppressed = before_dedupe - len(forecast_events)
         appended = append_events(ledger_path, invalidation_events + score_events + forecast_events)
         run["ledger"] = {"invalidations_created": len(invalidation_events),
                          "score_events_created": len(score_events),
                          "forecast_events_created": len(forecast_events),
+                         "duplicate_forecasts_suppressed": duplicates_suppressed,
                          "events_appended": appended, "existing_events_before_run": len(previous_events),
                          "append_only": True}
         run["steps"].append({"step": "walk_forward", "status": scores["status"],
