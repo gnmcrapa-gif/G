@@ -83,9 +83,17 @@ def main() -> int:
         (output_dir / "scores.json").write_text(json.dumps(scores, indent=2), encoding="utf-8")
         previous_events = read_events(ledger_path)
         score_events = score_matured_events(previous_events, binance)
-        forecast_events = generate_forecast_events(
-            binance, manifest_sha256, os.environ.get("GITHUB_SHA", "local-uncommitted"),
-            min_train_rows=args.min_train_rows,
+        ridge_alpha_by_horizon = {
+            int(horizon): float(details["selected_alpha"])
+            for horizon, details in scores.get("validation_tuning", {}).items()
+        }
+        forecast_events = (
+            generate_forecast_events(
+                binance, manifest_sha256, os.environ.get("GITHUB_SHA", "local-uncommitted"),
+                min_train_rows=args.min_train_rows,
+                ridge_alpha_by_horizon=ridge_alpha_by_horizon,
+            )
+            if scores.get("status") == "SCORED_NOT_PROMOTED" else []
         )
         appended = append_events(ledger_path, score_events + forecast_events)
         run["ledger"] = {"score_events_created": len(score_events),
