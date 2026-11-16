@@ -2,6 +2,13 @@ name: daily-research
 
 on:
   workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "tests/**"
+      - ".github/workflows/research.yml"
   pull_request:
     branches: [main]
     paths:
