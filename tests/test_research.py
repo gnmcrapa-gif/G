@@ -23,5 +23,5 @@ def test_score_predictions_counts_oos_forecasts():
         "ridge": [0.08, -0.08, 0.02],
     })
     result = score_predictions(frame)
-    assert result["horizons"]["1"]["zero"]["n"] == 3
+    assert result["holdout_metrics"]["1"]["zero"]["n"] == 3
     assert result["status"] == "SCORED_NOT_PROMOTED"
