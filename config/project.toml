@@ -44,7 +44,7 @@ method = "chronological_walk_forward"
 purge_embargo_min_sessions = 30
 validation_folds = 3
 validation_method = "expanding_chronological_purged"
-paired_loss_test = "newey_west_hac"
+paired_loss_test = "newey_west_hac"\npaired_loss_multiple_testing = "holm_step_down"
 paired_loss_hac_lags = "horizon_minus_1"
 regime_diagnostics = ["bull", "bear", "range"]
 max_data_age_days = 1
