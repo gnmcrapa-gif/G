@@ -55,10 +55,10 @@ def test_incomplete_current_day_fails():
 
 
 def test_target_alignment_matches_next_open_to_future_open():
-    opens = pd.Series([100.0, 110.0, 121.0, 133.1])
+    opens = pd.Series([100.0, 110.0, 121.0, 133.1, 146.41])
     target = forward_open_log_return(opens, horizon=1)
-    assert target.iloc[0] == pytest.approx(np.log(121.0 / 110.0))
-    assert target.iloc[-2:].isna().all()
+    assert target.iloc[0] == pytest.approx(np.log(133.1 / 121.0))
+    assert target.iloc[-3:].isna().all()
 
 
 def test_non_positive_open_fails():
