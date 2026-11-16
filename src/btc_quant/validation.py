@@ -57,10 +57,10 @@ def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
 
 
 def forward_open_log_return(open_prices: pd.Series, horizon: int) -> pd.Series:
-    """Target y[t,h]=log(Open[t+h+1]/Open[t+1]); signal after close t."""
+    """Target after one full daily execution-latency bar: log(Open[t+h+2]/Open[t+2])."""
     if horizon not in (1, 3, 7, 30):
         raise ValueError("horizon must be one of 1, 3, 7, 30")
     values = pd.to_numeric(open_prices, errors="coerce").astype(float)
     if (values.dropna() <= 0).any():
         raise DataValidationError("open prices must be positive")
-    return np.log(values.shift(-(horizon + 1)) / values.shift(-1)).rename(f"target_h{horizon}")
+    return np.log(values.shift(-(horizon + 2)) / values.shift(-2)).rename(f"target_h{horizon}")
