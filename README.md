@@ -4,7 +4,7 @@ Research-only BTC quantitative research project. This repository is not an execu
 
 ## Current verified status — 2026-11-17
 
-- Protocol: **V5.6.0 audit revision under review**. Mandatory pre-report checks and a six-lens rotating critical review are being added before report serialization.
+- Protocol: **V5.6.0 audit revision under review**. Mandatory pre-report checks and a six-lens rotating critical review, observed 1/7/30-session drivers and an economic-evidence gate run before report serialization.
 - Latest completed production run: [daily-research run 44155330178 — SUCCESS](https://github.com/gnmcrapa-gif/G/actions/runs/44155330178). Acquisition, QA, cross-checks, evaluation, persistence and artifact upload completed.
 - Research state: **COMPLETE_NOT_PROMOTED**. Historical holdout is continuity-only; prospective ledger evidence remains insufficient.
 - Champion: zero-return baseline. Drift and momentum remain benchmarks. Ridge remains challenger-only and is **not promoted**.
@@ -137,7 +137,7 @@ The daily research workflow is scheduled for 16:00 UTC. Since the next daily ope
 ## V5.6.0 — permanent pre-report audit and ledger scoring correction
 
 - Every daily run performs a mandatory audit **before** writing `run_report.json`: raw-object SHA-256/size, expected Binance monthly/daily archive completeness, Bitstamp page reconciliation, target timing, holdout governance, ledger integrity, benchmark status and risk fail-safe.
-- A six-lens deep review rotates by UTC date (data provenance; execution timing; ledger; statistics; risk/economics; efficiency/operations). The full baseline suite still runs every day.
+- A six-lens deep review rotates by UTC run-start second (data provenance; execution timing; ledger; statistics; risk/economics; efficiency/operations), so same-day reruns can inspect a different domain. The full baseline suite still runs every time. Reports also separate FACT/INTERPRETATION/HYPOTHESIS/FORECAST and include a dated 1/7/30-session price snapshot, pending point forecasts, the principal evidence limit and one next experiment.
 - Critical audit failure changes report status to BLOCKED and enforces paper-only risk with 0% theoretical exposure.
 - Full audit findings and historical outlier analysis: [permanent pre-report audit](docs/permanent-pre-report-audit-2026-11-17.md).
 - Critical ledger defect fixed: Ridge forecasts are now serialized as scalar floats. The scorer also reads legacy one-element array strings already in the append-only ledger, so the first matured legacy forecast will not crash scoring. Historical records are not rewritten.
