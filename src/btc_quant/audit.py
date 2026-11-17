@@ -7,7 +7,6 @@ from __future__ import annotations
 
 import calendar
 import hashlib
-import json
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
