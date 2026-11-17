@@ -73,6 +73,64 @@ def _timestamp_ms(value) -> str | None:
         return None
 
 
+def _spot_live_snapshot(directory: Path) -> tuple[dict, list[dict]]:
+    session = requests.Session()
+    session.headers.update({"User-Agent": USER_AGENT})
+    objects, summary, errors = [], {}, {}
+    sources = (
+        ("Binance", "https://api.binance.com/api/v3/ticker/24hr",
+         {"symbol": "BTCUSDT"}, "binance_btcusdt_ticker_24h.json"),
+        ("Bitstamp", "https://www.bitstamp.net/api/v2/ticker/btcusd/",
+         None, "bitstamp_btcusd_ticker_24h.json"),
+    )
+    for venue, url, params, filename in sources:
+        try:
+            payload, obj = _request_json(
+                session, "GET", url, directory, filename, params=params,
+                source=f"{venue} public spot ticker", venue=venue,
+                symbol="BTCUSDT" if venue == "Binance" else "BTC/USD",
+                quote="USDT" if venue == "Binance" else "USD",
+            )
+            objects.append(obj)
+            if venue == "Binance":
+                summary["Binance_BTCUSDT_USDT"] = {
+                    "last_trade_price": _float_or_none(payload.get("lastPrice")),
+                    "price_change_24h_pct": _float_or_none(payload.get("priceChangePercent")),
+                    "base_volume_24h_btc": _float_or_none(payload.get("volume")),
+                    "quote_volume_24h_usdt": _float_or_none(payload.get("quoteVolume")),
+                    "last_trade_timestamp_utc": _timestamp_ms(payload.get("closeTime")),
+                    "snapshot_type": "24h ticker last-trade snapshot",
+                }
+            else:
+                summary["Bitstamp_BTCUSD_USD"] = {
+                    "last_trade_price": _float_or_none(payload.get("last")),
+                    "price_change_24h_pct": _pct_change(
+                        _float_or_none(payload.get("open")), _float_or_none(payload.get("last"))
+                    ),
+                    "base_volume_24h_btc": _float_or_none(payload.get("volume")),
+                    "last_trade_timestamp_utc": (
+                        pd.to_datetime(int(payload["timestamp"]), unit="s", utc=True).isoformat()
+                        if payload.get("timestamp") else None
+                    ),
+                    "snapshot_type": "24h ticker last-trade snapshot",
+                }
+        except Exception as exc:  # noqa: BLE001
+            errors[venue] = f"{type(exc).__name__}: {exc}"
+    status = "PASS" if len(summary) == 2 else "PARTIAL" if summary else "FAIL"
+    manifest = {
+        "source": "Binance and Bitstamp public spot ticker endpoints",
+        "venue": "Binance;Bitstamp", "symbol": "BTCUSDT;BTC/USD",
+        "quote_currency": "USDT;USD", "interval": "24h rolling ticker snapshot",
+        "timezone": "UTC", "schema_version": "1.0", "source_grade": "A",
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "parser": "BTC Quant Desk spot ticker parser", "parser_version": "0.3",
+        "schema": ["venue-specific ticker JSON"],
+        "objects": objects, "status": status, "errors": errors,
+    }
+    return {"status": status, "retrieved_at_utc": datetime.now(UTC).isoformat(),
+            "venues": summary, "errors": errors}, [manifest]
+
+
 def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
@@ -659,6 +717,7 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "coverage": {
             "spot_ohlcv": {"status": "PASS", "note": "Primary Binance/Bitstamp acquisition is reported separately."},
+            "spot_live_quotes": {"status": "UNAVAILABLE"},
             "per_exchange_derivatives": {"status": "UNAVAILABLE"},
             "options": {"status": "UNAVAILABLE"},
             "us_spot_etf_flows": {"status": "UNAVAILABLE"},
@@ -682,6 +741,14 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
             },
         },
     }
+    try:
+        live_spot, live_spot_manifests = _spot_live_snapshot(output_dir / "spot_live")
+        summary["spot_live"] = live_spot
+        manifests.extend(live_spot_manifests)
+        summary["coverage"]["spot_live_quotes"]["status"] = live_spot["status"]
+    except Exception as exc:  # noqa: BLE001
+        summary["spot_live"] = {"status": "FAIL", "error": f"{type(exc).__name__}: {exc}"}
+        summary["coverage"]["spot_live_quotes"]["status"] = "FAIL"
     for name, function, directory in (
         ("binance_futures", _binance_derivatives, output_dir / "binance_futures"),
         ("bybit_futures", _bybit_derivatives, output_dir / "bybit_futures"),
