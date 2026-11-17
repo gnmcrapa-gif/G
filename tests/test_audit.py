@@ -21,9 +21,23 @@ def _review_inputs(tmp_path):
         "close": close,
         "volume": np.full(2000, 100.0),
     })
+    binance_objects = []
+    for period in pd.period_range("2020-01", "2025-05", freq="M"):
+        binance_objects.append({
+            "file": str(raw), "sha256": sha, "size_bytes": raw.stat().st_size,
+            "url": f"https://example.test/monthly/BTCUSDT-1d-{period.strftime('%Y-%m')}.zip",
+            "retrieved_at_utc": "2025-06-23T12:00:00+00:00",
+        })
+    for day in pd.date_range("2025-06-01", "2025-06-22", freq="D"):
+        binance_objects.append({
+            "file": str(raw), "sha256": sha, "size_bytes": raw.stat().st_size,
+            "url": f"https://example.test/daily/BTCUSDT-1d-{day.strftime('%Y-%m-%d')}.zip",
+            "retrieved_at_utc": "2025-06-23T12:00:00+00:00",
+        })
     manifests = [
         {
             "venue": "Binance", "symbol": "BTCUSDT", "quote_currency": "USDT",
+            "rows": 2000, "objects": binance_objects,
             "parser_version": "test-1", "schema": ["timestamp", "open", "high", "low", "close", "volume"],
             "objects": [{
                 "file": str(raw), "sha256": sha, "size_bytes": raw.stat().st_size,
@@ -33,9 +47,11 @@ def _review_inputs(tmp_path):
         {
             "venue": "Bitstamp", "symbol": "BTC/USD", "quote_currency": "USD",
             "parser_version": "test-1", "schema": ["timestamp", "open", "high", "low", "close", "volume"],
+            "rows": 2000, "duplicates_removed_at_page_boundaries": 0,
             "objects": [{
                 "file": str(raw), "sha256": sha, "size_bytes": raw.stat().st_size,
-                "url": "https://example.test/bitstamp", "retrieved_at_utc": "2025-06-23T12:00:00+00:00",
+                "rows": 2000, "url": "https://example.test/bitstamp",
+                "retrieved_at_utc": "2025-06-23T12:00:00+00:00",
             }],
         },
     ]
