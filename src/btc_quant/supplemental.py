@@ -586,6 +586,7 @@ def _okx_derivatives(directory: Path) -> tuple[dict, dict]:
         "funding_settlement_state": funding.get("settState"),
         "funding_rate_unit": "fraction per provider funding interval",
         "funding_timestamp_utc": _timestamp_ms(funding.get("fundingTime")),
+        "last_settled_funding_time_utc": _timestamp_ms(funding.get("prevFundingTime")),
         "next_funding_time_utc": _timestamp_ms(funding.get("nextFundingTime")),
         "funding_history": history_rows,
         "daily_taker_volume": taker_delta,
