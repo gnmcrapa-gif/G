@@ -14,6 +14,7 @@ import pandas as pd
 from .research import HORIZONS, _ridge_predict, make_features
 from .validation import EXECUTION_ENTRY_LAG_SESSIONS, forward_open_log_return
 
+
 def _scalar_float(value, field_name: str) -> float:
     """Parse a scalar or legacy one-element NumPy-array CSV representation."""
     parsed = value
