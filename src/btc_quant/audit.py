@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+import re
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -115,6 +116,45 @@ def run_pre_report_review(
         and bitstamp_meta.get("quote_currency") == "USD",
         "Binance BTCUSDT/USDT and Bitstamp BTC/USD/USD remain separate series.",
     )
+
+    # Verify expected Binance monthly archives and current-month daily files, not only parsed row cadence.
+    binance_objects = binance_meta.get("objects", [])
+    monthly_seen, daily_seen = set(), set()
+    for obj in binance_objects:
+        url = obj.get("url", "")
+        month_match = re.search(r"BTCUSDT-1d-(\\d{4}-\\d{2})\\.zip$", url)
+        day_match = re.search(r"BTCUSDT-1d-(\\d{4}-\\d{2}-\\d{2})\\.zip$", url)
+        if "/monthly/" in url and month_match:
+            monthly_seen.add(month_match.group(1))
+        if "/daily/" in url and day_match:
+            daily_seen.add(day_match.group(1))
+    archive_coverage_ok = False
+    if binance is not None and not binance.empty:
+        first_day = pd.Timestamp(binance["timestamp"].min())
+        last_day = pd.Timestamp(binance["timestamp"].max())
+        expected_months = {
+            period.strftime("%Y-%m")
+            for period in pd.period_range(first_day.strftime("%Y-%m"),
+                                          (last_day - pd.offsets.MonthBegin(1)).strftime("%Y-%m"),
+                                          freq="M")
+        }
+        expected_days = {
+            day.strftime("%Y-%m-%d")
+            for day in pd.date_range(last_day.replace(day=1), last_day, freq="D")
+        }
+        archive_coverage_ok = expected_months.issubset(monthly_seen) and expected_days.issubset(daily_seen)
+    add("binance_archive_month_day_completeness", "lineage", archive_coverage_ok,
+        f"monthly_archives={len(monthly_seen)}; daily_current_month_objects={len(daily_seen)}; "
+        "expected month/day archive keys derived from parsed first/last UTC timestamps.")
+
+    bitstamp_raw_rows = sum(int(obj.get("rows", 0)) for obj in bitstamp_meta.get("objects", []))
+    bitstamp_duplicates = int(bitstamp_meta.get("duplicates_removed_at_page_boundaries", -1))
+    bitstamp_expected_removed = bitstamp_raw_rows - bitstamp_duplicates - int(bitstamp_meta.get("rows", 0))
+    add("bitstamp_pagination_accounting", "lineage",
+        bool(bitstamp_meta.get("objects")) and bitstamp_duplicates >= 0
+        and 0 <= bitstamp_expected_removed <= 1,
+        f"raw_rows={bitstamp_raw_rows}; page_overlap_duplicates={bitstamp_duplicates}; "
+        f"parsed_rows={bitstamp_meta.get('rows')}; excluded_current_day_rows={bitstamp_expected_removed}.")
 
     objects = [
         obj for source in manifests for obj in source.get("objects", [])
@@ -242,6 +282,12 @@ def run_pre_report_review(
                                                   steps.get("bitstamp_acquisition_and_qa", {}).get("qa", {}))
                                         if q.get("intraday_range_pct_max_timestamp_utc")), None),
     }
+    anomaly_event_reviews = {}
+    for event_lens, event_date in anomaly_map.items():
+        if event_date and binance is not None and bitstamp is not None:
+            anomaly_event_reviews[event_lens] = _event_context(event_date, binance, bitstamp)
+    run["anomaly_event_cross_venue_checks"] = anomaly_event_reviews
+
     if lens == "ledger_replay":
         add("rotating_red_team_ledger_replay", "red_team", ledger_ok,
             "Adversarial replay lens: duplicate ids, orphan scores and backdated entries.")
