@@ -147,22 +147,23 @@ def run_pre_report_review(
         "Each raw object must have URL, retrieval timestamp, SHA-256, size and source parser/schema metadata.",
     )
 
-    enough_history = False
-    fresh = False
+    history_checks, freshness_checks = [], []
     for frame in (binance, bitstamp):
         if frame is None or frame.empty:
+            history_checks.append(False)
+            freshness_checks.append(False)
             continue
         stamps = pd.to_datetime(frame["timestamp"], utc=True)
-        enough_history = enough_history or (
-            (stamps.max() - stamps.min()).days >= 1825
-        )
+        history_checks.append((stamps.max() - stamps.min()).days >= 1825)
         age_days = (pd.Timestamp(current).tz_convert("UTC").floor("D")
                     - stamps.max().floor("D")).days
-        fresh = fresh or age_days <= 1
+        freshness_checks.append(age_days <= 1)
+    enough_history = len(history_checks) == 2 and all(history_checks)
+    fresh = len(freshness_checks) == 2 and all(freshness_checks)
     add("five_year_history_available", "data", enough_history,
-        "At least one primary venue must contain at least five years of daily observations.")
+        "Both primary venues must contain at least five years of daily observations.")
     add("primary_data_freshness", "data", fresh,
-        "At least one primary venue must end no earlier than the previous UTC daily session.")
+        "Both primary venues must end no earlier than the previous UTC daily session.")
 
     cross_checks = run.get("cross_checks", [])
     corroborated = any(item.get("status") == "PASS" for item in cross_checks)
