@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 from datetime import UTC, date, datetime, timedelta
 from email.utils import parsedate_to_datetime
 from html import unescape
+from html.parser import HTMLParser
 from pathlib import Path
 
 import pandas as pd
@@ -1200,6 +1201,105 @@ def _global_etp_weekly(directory: Path) -> tuple[dict, list[dict]]:
         "errors": errors,
     }
     return summary, manifests
+
+
+class _ExchangeTableParser(HTMLParser):
+    def __init__(self):
+        super().__init__(convert_charrefs=True)
+        self.rows = []
+        self._in_row = False
+        self._in_cell = False
+        self._row = []
+        self._cell = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag.lower() == "tr":
+            self._in_row = True
+            self._row = []
+        elif tag.lower() in {"td", "th"} and self._in_row:
+            self._in_cell = True
+            self._cell = []
+
+    def handle_data(self, data):
+        if self._in_cell:
+            self._cell.append(data)
+
+    def handle_endtag(self, tag):
+        tag = tag.lower()
+        if tag in {"td", "th"} and self._in_cell:
+            self._row.append(" ".join("".join(self._cell).split()))
+            self._in_cell = False
+            self._cell = []
+        elif tag == "tr" and self._in_row:
+            if self._row:
+                self.rows.append(self._row)
+            self._in_row = False
+            self._row = []
+
+
+def _parse_provider_money(text: str) -> float | None:
+    cleaned = str(text).replace("−", "-").replace("–", "-").replace(",", "")
+    match = re.search(r"([-+]?)[ $]*([0-9]+(?:\\.[0-9]+)?)\\s*([KMB])?", cleaned, re.I)
+    if not match:
+        return None
+    multiplier = {"K": 1e3, "M": 1e6, "B": 1e9}.get((match.group(3) or "").upper(), 1.0)
+    value = float(match.group(2)) * multiplier
+    return -value if match.group(1) == "-" else value
+
+
+def _parse_ckh_exchange_ranking(html_payload: bytes) -> dict:
+    html_text = html_payload.decode("utf-8", errors="replace")
+    parser = _ExchangeTableParser()
+    parser.feed(html_text)
+    known_exchanges = {
+        "Binance", "OKX", "Bybit", "HTX", "KuCoin", "Bitfinex", "Crypto.com",
+    }
+    rows = []
+    for row in parser.rows:
+        if len(row) >= 4 and row[0] in known_exchanges:
+            rows.append({
+                "exchange": row[0],
+                "daily_netflow_usd": _parse_provider_money(row[1]),
+                "netflow_7d_usd": _parse_provider_money(row[2]),
+                "coins_covered": row[3],
+            })
+    clean = re.sub(r"<script\\b.*?</script>|<style\\b.*?</style>", " ", html_text, flags=re.I | re.S)
+    clean = re.sub(r"</(?:p|div|li|tr|h[1-6])>", "\\n", clean, flags=re.I)
+    plain = unescape(re.sub(r"<[^>]+>", " ", clean))
+    plain = re.sub(r"\\s+", " ", plain)
+    asof = re.search(r"Daily ranking, UTC day\\s+([0-9]{1,2}\\s+[A-Za-z]+\\s+[0-9]{4})", plain, re.I)
+    updated = re.search(r"updated\\s+([0-9]{2}:[0-9]{2} UTC on [0-9]{1,2} [A-Za-z]+ [0-9]{4})", plain, re.I)
+    asof_utc = None
+    updated_utc = None
+    if asof:
+        try:
+            asof_utc = pd.to_datetime(asof.group(1), format="%d %b %Y", utc=True).isoformat()
+        except (TypeError, ValueError):
+            asof_utc = None
+    if updated:
+        try:
+            updated_utc = pd.to_datetime(updated.group(1), format="%H:%M UTC on %d %b %Y", utc=True).isoformat()
+        except (TypeError, ValueError):
+            updated_utc = None
+    events_block = re.search(r"Events, last 30 days(.*?)Exchanges covered", plain, re.I)
+    events = []
+    if events_block:
+        events = re.findall(
+            r"(?:Binance|OKX|Bybit|HTX|KuCoin|Bitfinex|Crypto\\.com):\\s*[^*]+",
+            events_block.group(1), re.I,
+        )
+    return {
+        "status": "PASS" if len(rows) >= 4 and asof_utc else "PARTIAL" if rows else "FAIL",
+        "latest_complete_day_utc": asof_utc,
+        "page_updated_at_utc": updated_utc,
+        "exchanges": rows,
+        "events_last_30d": [item.strip() for item in events[:20]],
+        "exchanges_covered": sorted({row["exchange"] for row in rows}),
+        "flow_scope": "Daily and 7d aggregate netflow in USD across the coins listed for each exchange; not BTC-only.",
+        "provider_method": "Net flow is value reaching the exchange's published addresses minus value leaving those addresses, from provider-operated nodes.",
+        "provider_limit": "Every figure is a lower bound; only published/identified wallet clusters are counted.",
+        "free_plan_limit": "Free daily ranking and events only; hourly readings, reserves and each coin's flows require Plus; per-exchange detail and reshuffling/reliance ratios require Pro.",
+    }
 
 
 def _ckh_point(point) -> dict | None:
