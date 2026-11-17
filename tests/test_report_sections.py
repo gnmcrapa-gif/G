@@ -1,3 +1,4 @@
+import pandas as pd
 import pytest
 
 from btc_quant.reporting import (
@@ -6,7 +7,6 @@ from btc_quant.reporting import (
     _market_snapshot,
     render_markdown_report,
 )
-import pandas as pd
 
 
 def _scores(start="2025-11-17", end="2026-11-16", mae=0.01):
