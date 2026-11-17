@@ -56,6 +56,8 @@ def _review_inputs(tmp_path):
         "volume_robust_z_max_timestamp_utc": timestamps[-20].isoformat(),
         "absolute_close_return_max_timestamp_utc": timestamps[-10].isoformat(),
         "intraday_range_pct_max_timestamp_utc": timestamps[-5].isoformat(),
+        "volume_robust_z_window_sessions": 90,
+        "volume_robust_z_min_history_sessions": 60,
     }
     run = {
         "started_at_utc": "2025-06-23T12:00:00+00:00",
