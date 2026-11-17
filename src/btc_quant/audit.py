@@ -106,6 +106,14 @@ def run_pre_report_review(
         )),
         "Binance BTCUSDT and Bitstamp BTC/USD must both have successful acquisition and OHLCV QA.",
     )
+
+    rolling_volume_qa = all(
+        steps.get(name, {}).get("qa", {}).get("volume_robust_z_window_sessions") == 90
+        and steps.get(name, {}).get("qa", {}).get("volume_robust_z_min_history_sessions") == 60
+        for name in ("binance_acquisition_and_qa", "bitstamp_acquisition_and_qa")
+    )
+    add("rolling_volume_outlier_method", "data", rolling_volume_qa,
+        "Volume outliers must use the prior 90 completed sessions, current excluded, with at least 60 observations; no full-history z-score.")
     by_venue = {item.get("venue"): item for item in manifests}
     binance_meta, bitstamp_meta = by_venue.get("Binance", {}), by_venue.get("Bitstamp", {})
     add(
