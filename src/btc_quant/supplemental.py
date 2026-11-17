@@ -163,6 +163,11 @@ def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
 
     summary = {
         "venue": "Binance USD-M Futures",
+        "historical_limits": {
+            "open_interest_statistics_max_lookback_days": 30,
+            "taker_buy_sell_ratio_max_lookback_days": 30,
+            "funding_history_limit_records": 1000,
+        },
         "symbol": "BTCUSDT perpetual",
         "quote_currency": "USDT",
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
@@ -733,7 +738,7 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
             "macro_and_indices": {"status": "UNAVAILABLE"},
             "spot_futures_cvd": {
                 "status": "PROXY_ONLY",
-                "reason": "Taker buy/sell volume ratio is not a complete cumulative volume delta.",
+                "reason": "Binance futures taker buy/sell ratio is a proxy only; spot CVD and full cumulative trade delta are not acquired.",
             },
             "geopolitical_regulatory_news": {
                 "status": "NOT_IMPLEMENTED",
