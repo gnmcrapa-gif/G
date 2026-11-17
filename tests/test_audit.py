@@ -54,6 +54,7 @@ def _review_inputs(tmp_path):
     ]
     qa = {
         "volume_robust_z_max_timestamp_utc": timestamps[-20].isoformat(),
+        "volume_max_timestamp_utc": timestamps[-30].isoformat(),
         "absolute_close_return_max_timestamp_utc": timestamps[-10].isoformat(),
         "intraday_range_pct_max_timestamp_utc": timestamps[-5].isoformat(),
         "volume_robust_z_window_sessions": 90,
