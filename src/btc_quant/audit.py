@@ -391,6 +391,8 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
         "risk_fail_safe": risk_check,
         "benchmark_and_promotion_governance": benchmark,
         "optional_cross_venue_sources": optional,
+        "venue_quote_separation": {"status": "PASS" if binance_manifest and bitstamp_manifest and binance_manifest.get("quote_currency") == "USDT" and bitstamp_manifest.get("quote_currency") == "USD" else "BLOCKED", "binance_quote": None if binance_manifest is None else binance_manifest.get("quote_currency"), "bitstamp_quote": None if bitstamp_manifest is None else bitstamp_manifest.get("quote_currency"), "evidence": "USDT and USD series remain separate; no implicit FX conversion or volume pooling."},
+        "run_status_consistency": {"status": "PASS" if run.get("status") == "BLOCKED" or (run.get("status") == "COMPLETE_NOT_PROMOTED" and all(next((step.get("status") for step in run.get("steps", []) if step.get("step") == key), None) == expected for key, expected in (("binance_acquisition_and_qa", "PASS"), ("bitstamp_acquisition_and_qa", "PASS"), ("walk_forward", "SCORED_NOT_PROMOTED")))) else "BLOCKED", "run_status": run.get("status"), "evidence": "A completed report requires both primary QA passes and a scored-but-not-promoted research result."},
         "historical_volume_outlier_review": outlier,
     }
     lens_index = now.date().toordinal() % len(AUDIT_LENSES)
