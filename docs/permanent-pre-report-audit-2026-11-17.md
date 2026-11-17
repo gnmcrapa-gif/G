@@ -61,7 +61,7 @@ Binance-vs-Bitstamp price differences were approximately -0.0016% open, +0.1542%
 - The production target is `log(Open[t+h+2]/Open[t+2])` because the scheduled job runs at 16:00 UTC; h+1 would backdate entry.
 - Zero-return remains the frozen champion. Drift and momentum remain benchmarks. Ridge remains challenger-only.
 - No calibrated probabilities are permitted until at least 200 genuinely matured prospective SCORE events per horizon plus a separate calibration study.
-- The prospective ledger is not backfilled. A forecast only becomes a score after its actual entry and expiry opens exist.
+- The prospective ledgers are not backfilled. Price-only Ridge and OHLCV forecasts use separate append-only ledgers. The OHLCV challenger uses fixed alpha 100 and only pre-2025-11-16 training labels; it does not tune or train on the historical continuity holdout. A forecast only becomes a score after its actual entry and expiry opens exist.
 - No strategy PnL, funding, fee-tier, spread or slippage backtest is claimed. An executable economic backtest remains blocked until a trading rule, execution venue, fee tier and realistic fill assumptions are explicitly specified and prospective predictive value exists.
 - Risk Overlay v1.1 remains paper-only; theoretical exposure 0%; no orders or auto-trading.
 
@@ -78,3 +78,13 @@ Binance-vs-Bitstamp price differences were approximately -0.0016% open, +0.1542%
 ## Release rule
 
 Do not promote a challenger or change the champion based on this audit. Merge only after CI tests and lint pass and the daily-research workflow completes with the mandatory pre-report audit. If the pre-report gate is BLOCKED, the report must say so and theoretical exposure must remain 0%.
+
+
+## V5.5-OHLCV-001 prospective implementation
+
+The registered OHLCV hypothesis is no longer merely a proposal. A separate feature pipeline and ledger now emit prospective point forecasts using:
+- price-only lagged return and volatility features;
+- log-volume surprise relative to the preceding 30 completed sessions and a robust z-score;
+- candle range, body, upper/lower wick and close-location features.
+
+Ridge alpha is fixed at 100 and is not tuned on the historical holdout. Training labels are purged so their exit opens occur before 2025-11-16 UTC. The latest signal uses current point-in-time features, but no outcome from the historical continuity holdout is used for fitting or tuning. Forecasts are stored in `ledger/ohlcv_challenger_ledger.csv`, separate from the price-only ledger. Old forecasts are never backfilled. The challenger remains NOT_PROMOTED until at least 200 matured prospective observations per horizon, positive lift under HAC/Holm comparisons, stable regime diagnostics, separate calibration evidence and positive cost-adjusted economic value.
