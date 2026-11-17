@@ -2,10 +2,10 @@
 
 - Protocollo: **V5.6**
 - Stato: **COMPLETE_NOT_PROMOTED**
-- Avvio UTC: 2026-11-17T23:28:55.149744+00:00
-- Fine UTC: 2026-11-17T23:33:52.741216+00:00
-- Commit: `aff58335a8a19facf28a1604698bebbbf93d2f9c`
-- Workflow run: 44199662757
+- Avvio UTC: 2026-11-17T23:49:55.403243+00:00
+- Fine UTC: 2026-11-17T23:55:03.554699+00:00
+- Commit: `626668fa7a51ee751d97068f5e484f44e3dbb7c5`
+- Workflow run: 44202712151
 
 > I valori di mercato sono distinti tra osservazioni live, snapshot e candele chiuse. USD e USDT non sono convertiti né uniti.
 
@@ -31,7 +31,7 @@
 
 | Venue | Stato | Prezzo | Variazione 24h | Volume base 24h | Timestamp ultimo scambio UTC | Età sec |
 |---|---|---:|---:|---:|---|---:|
-| Bitstamp_BTCUSD_USD | PASS | 64,930.87 | 0.148% | 1,094.33 BTC | 2026-11-17T23:29:37+00:00 | 1.6 |
+| Bitstamp_BTCUSD_USD | PASS | 64,905.68 | 0.109% | 1,127.72 BTC | 2026-11-17T23:50:41+00:00 | 2.5 |
 
 ### Livelli tecnici descrittivi — non segnali
 
@@ -46,7 +46,7 @@
 |---|---|---|
 | spot_ohlcv | PASS | Primary Binance/Bitstamp acquisition is reported separately. |
 | spot_live_quotes | PARTIAL |  |
-| per_exchange_derivatives | FAIL |  |
+| per_exchange_derivatives | PARTIAL |  |
 | options | PARTIAL |  |
 | us_spot_etf_flows | STALE |  |
 | global_etp_flows | UNAVAILABLE | This dataset covers US spot ETFs only; global ETPs require a separate source. |
@@ -84,6 +84,24 @@
 - Volume futures 24h (Bybit): n/d BTC
 - Errori feed: {'ticker': 'HTTPError: 403 Client Error: Forbidden for url: https://api.bybit.com/v5/market/tickers?category=linear&symbol=BTCUSDT', 'open_interest_daily_200d': 'HTTPError: 403 Client Error: Forbidden for url: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=1d&limit=200', 'global_account_ratio_daily_30d': 'HTTPError: 403 Client Error: Forbidden for url: https://api.bybit.com/v5/market/account-ratio?category=linear&symbol=BTCUSDT&period=1d&limit=30', 'funding_history': 'HTTPError: 403 Client Error: Forbidden for url: https://api.bybit.com/v5/market/funding/history?category=linear&symbol=BTCUSDT&limit=200'}
 
+### OKX BTC-USDT Perpetual
+
+- Stato: PASS; strumento BTC-USDT-SWAP.
+- Snapshot acquisito UTC: 2026-11-17T23:50:59.629487+00:00.
+- Ultimo prezzo: 64,920.30 USDT (ticker 2026-11-17T23:50:58.228000+00:00).
+- Volume 24h: 116,176.06 BTC (11,617,606.42 contratti).
+- Open interest snapshot: 31,186.07 BTC (2,025,045,839 USD; snapshot 2026-11-17T23:50:58.756000+00:00).
+- OI storico giornaliero UTC: 1D 1.97%; 7D -13.04%; 30D 3.53% (ultimo punto 2026-11-17T00:00:00+00:00).
+- Funding previsto per il prossimo settlement (2026-11-18T00:00:00+00:00): -0.00001102 (frazione per intervallo).
+- Ultimo funding effettivamente settled: -0.00000698 al 2026-11-17T16:00:00+00:00 (stato settled).
+- Settlement successivo dopo il periodo corrente: 2026-11-18T08:00:00+00:00.
+- Storico funding: 100 settlement acquisiti.
+- Delta taker futures BTC (buy − sell, barre UTC chiuse): 1D -313.20 BTC; 7D -22,127.85 BTC; 30D n/d BTC.
+- Copertura delta taker: 29 barre UTC complete su 30 scaricate.
+- Nota CVD: OKX BTC-USDT perpetual contract taker volume in BTC; buy minus sell. Completed UTC daily bars only; exchange-specific derivatives delta proxy, not spot CVD or total-market CVD.
+- Liquidazioni: NOT_ACQUIRED; nessuna stima ricavata da endpoint non pertinenti.
+- Copertura per venue: Binance FAIL; Bybit FAIL; OKX PASS.
+
 ### CVD orario Binance — delta taker aggregato
 
 - Stato: PARTIAL. Hourly Binance kline taker-buy base volume minus inferred taker-sell base volume for rolling 24h/7d/30d windows; not tick-level order-book delta.
@@ -99,23 +117,23 @@
 ### Opzioni Deribit
 
 - Stato: PARTIAL; open interest con ritardo provider di 8 ore.
-- OI call/put: 220,202.7000 / 169,590.3000 BTC.
-- Put/call OI: 0.7702.
-- Put/call volume USD 24h: 1.6055.
+- OI call/put: 220,601.2000 / 170,117.6000 BTC.
+- Put/call OI: 0.7712.
+- Put/call volume USD 24h: 1.6057.
 
 | Scadenza | DTE | ATM IV % | OI call BTC | OI put BTC |
 |---|---:|---:|---:|---:|
-| 2026-11-18 | 1 | 38.88 | 1,258.70 | 1,664.10 |
-| 2026-11-19 | 2 | 45.63 | 783.90 | 794.80 |
-| 2026-11-20 | 3 | 46.37 | 20,450.40 | 13,117.60 |
-| 2026-11-21 | 4 | 45.59 | 41.50 | 52.40 |
-| 2026-11-27 | 10 | 42.44 | 51,282.70 | 50,657.70 |
-| 2026-12-04 | 17 | 41.62 | 4,580.60 | 3,312.10 |
-| 2026-12-25 | 38 | 40.88 | 88,468.10 | 60,037.50 |
-| 2027-01-29 | 73 | 40.50 | 6,348.10 | 6,823.10 |
-| 2027-03-26 | 129 | 40.84 | 28,733.40 | 18,650.20 |
-| 2027-06-25 | 220 | 40.82 | 11,483.10 | 10,075.60 |
-| 2027-09-24 | 311 | 41.10 | 6,772.20 | 4,405.20 |
+| 2026-11-18 | 1 | 37.74 | 1,459.00 | 1,770.00 |
+| 2026-11-19 | 2 | 44.37 | 810.70 | 867.70 |
+| 2026-11-20 | 3 | 45.55 | 20,488.20 | 13,134.70 |
+| 2026-11-21 | 4 | 44.69 | 78.40 | 183.00 |
+| 2026-11-27 | 10 | 41.69 | 51,293.50 | 50,833.90 |
+| 2026-12-04 | 17 | 41.13 | 4,634.10 | 3,324.40 |
+| 2026-12-25 | 38 | 40.67 | 88,489.50 | 59,997.30 |
+| 2027-01-29 | 73 | 40.38 | 6,347.80 | 6,873.70 |
+| 2027-03-26 | 129 | 40.77 | 28,733.60 | 18,651.10 |
+| 2027-06-25 | 220 | 40.77 | 11,478.60 | 10,075.60 |
+| 2027-09-24 | 311 | 41.05 | 6,787.80 | 4,406.20 |
 
 | Scadenza | 25Δ put IV % | 25Δ call IV % | Put-call skew vol points |
 |---|---:|---:|---:|
@@ -137,11 +155,11 @@
 
 ## 4. Macro e mercati USA
 
-| Serie | Osservazione | Valore | Unità | Stato |
-|---|---|---:|---|---|
-| DGS2 — US Treasury 2Y yield | 2026-11-17 | 4.8000 | percent | PASS |
-| DGS10 — US Treasury 10Y yield | 2026-11-17 | 5.1000 | percent | PASS |
-| VIXCLS — CBOE VIX | 2026-11-16 | 22.9100 | index points | PASS |
+| Serie | Periodo osservato | Freschezza fino | Valore | Unità | Stato | Recuperato UTC | Fonte / metodo |
+|---|---|---|---:|---|---|---|---|
+| DGS2 — US Treasury 2Y yield | 2026-11-17 | 2026-11-17 | 4.8000 | percent | PASS | 2026-11-17T23:52:02.797602+00:00 | official Treasury daily par yield curve; independent of FRED transport |
+| DGS10 — US Treasury 10Y yield | 2026-11-17 | 2026-11-17 | 5.1000 | percent | PASS | 2026-11-17T23:52:02.688661+00:00 | official Treasury daily par yield curve; independent of FRED transport |
+| VIXCLS — CBOE VIX | 2026-11-16 | 2026-11-16 | 22.9100 | index points | PASS | 2026-11-17T23:55:03.217085+00:00 | Cboe official historical daily VIX close; independent of FRED transport |
 
 Feed macro non acquisiti: {'DFII10': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DFII10&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'FEDFUNDS': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=FEDFUNDS&cosd=2021-11-18&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'CPIAUCSL': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=CPIAUCSL&cosd=2021-11-18&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'PCEPILFE': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=PCEPILFE&cosd=2021-11-18&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'UNRATE': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=UNRATE&cosd=2021-11-18&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'PAYEMS': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=PAYEMS&cosd=2021-11-18&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'DTWEXBGS': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DTWEXBGS&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'WALCL': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=WALCL&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'RRPONTSYD': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=RRPONTSYD&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'NFCI': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=NFCI&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'SP500': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=SP500&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'NASDAQCOM': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=NASDAQCOM&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'M2SL': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=M2SL&cosd=2021-11-18&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))'}
 
@@ -194,7 +212,7 @@ Feed macro non acquisiti: {'DFII10': 'ConnectionError: HTTPSConnectionPool(host=
 - Il ledger prospettico conteggia esclusivamente eventi SCORE maturati.
 - Supplemental feed spot_ohlcv: PASS.
 - Supplemental feed spot_live_quotes: PARTIAL.
-- Supplemental feed per_exchange_derivatives: FAIL.
+- Supplemental feed per_exchange_derivatives: PARTIAL.
 - Supplemental feed options: PARTIAL.
 - Supplemental feed us_spot_etf_flows: STALE.
 - Supplemental feed global_etp_flows: UNAVAILABLE.

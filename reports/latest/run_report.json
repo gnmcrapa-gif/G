@@ -1,5 +1,5 @@
 {
-  "started_at_utc": "2026-11-17T23:28:55.149744+00:00",
+  "started_at_utc": "2026-11-17T23:49:55.403243+00:00",
   "status": "COMPLETE_NOT_PROMOTED",
   "protocol": "V5.6",
   "steps": [
@@ -15,7 +15,7 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 23.493,
+        "latest_candle_age_hours": 23.845,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 36285.648526,
@@ -51,7 +51,7 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 23.494,
+        "latest_candle_age_hours": 23.845,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 3154.24801664,
@@ -86,7 +86,7 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-17T23:29:38.482626+00:00",
+      "retrieved_at_utc": "2026-11-17T23:50:43.112077+00:00",
       "parser": "Coinbase candle array parser",
       "parser_version": "0.2",
       "schema": [
@@ -101,10 +101,10 @@
         {
           "source": "Coinbase Exchange candles API",
           "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=2026-01-21T00%3A00%3A00%2B00%3A00&end=2026-11-17T00%3A00%3A00%2B00%3A00",
-          "retrieved_at_utc": "2026-11-17T23:29:38.482546+00:00",
+          "retrieved_at_utc": "2026-11-17T23:50:43.112046+00:00",
           "file": "data/raw/coinbase/coinbase_btcusd_1d_recent.json",
           "size_bytes": 18463,
-          "sha256": "ce2cd8fba69865594a5ae4a7497e0d5e74aa0c8a8db3289e8178a899fc246fc3",
+          "sha256": "591692a2318f4115cf63568c4fbf03f7ff54cb51faaf5ec2dcf1ece00962b846",
           "venue": "Coinbase",
           "symbol": "BTC-USD",
           "quote_currency": "USD",
@@ -126,7 +126,7 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 23.494,
+        "latest_candle_age_hours": 23.845,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 7277.57349707,
@@ -162,7 +162,7 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-17T23:29:38.524221+00:00",
+      "retrieved_at_utc": "2026-11-17T23:50:43.297465+00:00",
       "parser": "Kraken OHLC parser",
       "parser_version": "0.2",
       "schema": [
@@ -177,10 +177,10 @@
         {
           "source": "Kraken public OHLC API",
           "url": "https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1440",
-          "retrieved_at_utc": "2026-11-17T23:29:38.523948+00:00",
+          "retrieved_at_utc": "2026-11-17T23:50:43.297139+00:00",
           "file": "data/raw/kraken/kraken_btcusd_1d_recent.json",
           "size_bytes": 62328,
-          "sha256": "fa235ec70115c646cebf92eb6fee0d953dbece9f9018f998eeecccde072578c6",
+          "sha256": "3a9d23c61bba67c5c5ea8572da8b5f4172bbb60aae97cf8da0002433cecefb70",
           "venue": "Kraken",
           "symbol": "XBT/USD",
           "quote_currency": "USD",
@@ -202,7 +202,7 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 23.494,
+        "latest_candle_age_hours": 23.845,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 1673.7672171250001,
@@ -239,10 +239,11 @@
           "status": "PARTIAL"
         },
         "per_exchange_derivatives": {
-          "status": "FAIL",
+          "status": "PARTIAL",
           "by_exchange": {
             "binance_futures": "FAIL",
-            "bybit_futures": "FAIL"
+            "bybit_futures": "FAIL",
+            "okx_swap": "PASS"
           }
         },
         "options": {
@@ -321,12 +322,12 @@
               "n": 362,
               "mae": 0.015988707718483056,
               "rmse": 0.023315945044104835,
-              "p90_absolute_error": 0.03724547034018103,
+              "p90_absolute_error": 0.037245470340181025,
               "p99_absolute_error": 0.06650144601837092,
               "worst_decile_mean_absolute_error": 0.05428870293333251,
               "max_absolute_error": 0.1502408393122263,
               "directional_accuracy": 0.47513812154696133,
-              "mean_error": 0.0014179409180495855
+              "mean_error": 0.0014179409180495837
             }
           },
           "3": {
@@ -361,18 +362,18 @@
               "worst_decile_mean_absolute_error": 0.10772282120800517,
               "max_absolute_error": 0.18132257897430817,
               "directional_accuracy": 0.475,
-              "mean_error": -0.0024022097955500045
+              "mean_error": -0.002402209795550005
             },
             "ridge": {
               "n": 360,
               "mae": 0.028830529072977246,
               "rmse": 0.04009130016355867,
-              "p90_absolute_error": 0.06115109778913021,
+              "p90_absolute_error": 0.0611510977891302,
               "p99_absolute_error": 0.1328451594643468,
-              "worst_decile_mean_absolute_error": 0.0923433622002725,
+              "worst_decile_mean_absolute_error": 0.09234336220027249,
               "max_absolute_error": 0.22189358455507327,
               "directional_accuracy": 0.4305555555555556,
-              "mean_error": 0.004118921001345158
+              "mean_error": 0.004118921001345155
             }
           },
           "7": {
@@ -396,7 +397,7 @@
               "worst_decile_mean_absolute_error": 0.14635395213727997,
               "max_absolute_error": 0.3036114381643894,
               "directional_accuracy": 0.46348314606741575,
-              "mean_error": 0.011217513757442177
+              "mean_error": 0.011217513757442179
             },
             "momentum": {
               "n": 356,
@@ -414,11 +415,11 @@
               "mae": 0.04327340641139929,
               "rmse": 0.06080066215534072,
               "p90_absolute_error": 0.08806326248899547,
-              "p99_absolute_error": 0.20002165989816428,
+              "p99_absolute_error": 0.20002165989816426,
               "worst_decile_mean_absolute_error": 0.14499143956941815,
-              "max_absolute_error": 0.29952651290301113,
+              "max_absolute_error": 0.2995265129030112,
               "directional_accuracy": 0.41292134831460675,
-              "mean_error": 0.00835139913296919
+              "mean_error": 0.008351399132969187
             }
           },
           "30": {
@@ -459,12 +460,12 @@
               "n": 333,
               "mae": 0.10392556259328492,
               "rmse": 0.14374657477525996,
-              "p90_absolute_error": 0.26837179544154577,
+              "p90_absolute_error": 0.2683717954415458,
               "p99_absolute_error": 0.3574853639145562,
               "worst_decile_mean_absolute_error": 0.3164037295279625,
               "max_absolute_error": 0.42530448389226894,
               "directional_accuracy": 0.4984984984984985,
-              "mean_error": 0.03400177278085957
+              "mean_error": 0.03400177278085959
             }
           }
         },
@@ -472,14 +473,14 @@
           "1": {
             "ridge_vs_zero": {
               "n": 362,
-              "mean_absolute_loss_difference": 6.603551524045717e-05,
-              "hac_standard_error": 7.092491231498888e-05,
+              "mean_absolute_loss_difference": 6.603551524045691e-05,
+              "hac_standard_error": 7.092491231498884e-05,
               "normal_approx_95pct_ci": [
-                -7.297731289692105e-05,
-                0.00020504834337783538
+                -7.297731289692123e-05,
+                0.00020504834337783506
               ],
-              "z_score": 0.931062345867738,
-              "two_sided_p_value_normal_approx": 0.3518213148617099,
+              "z_score": 0.9310623458677348,
+              "two_sided_p_value_normal_approx": 0.3518213148617115,
               "hac_lags": 0,
               "interpretation": "challenger_worse",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
@@ -488,14 +489,14 @@
             },
             "ridge_vs_drift": {
               "n": 362,
-              "mean_absolute_loss_difference": 8.740763988493519e-07,
+              "mean_absolute_loss_difference": 8.740763988491099e-07,
               "hac_standard_error": 7.250902191593886e-05,
               "normal_approx_95pct_ci": [
-                -0.00014124360655639082,
-                0.0001429917593540895
+                -0.00014124360655639107,
+                0.00014299175935408927
               ],
-              "z_score": 0.012054726098259687,
-              "two_sided_p_value_normal_approx": 0.9903819531054145,
+              "z_score": 0.012054726098256351,
+              "two_sided_p_value_normal_approx": 0.9903819531054171,
               "hac_lags": 0,
               "interpretation": "challenger_worse",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
@@ -506,30 +507,30 @@
           "3": {
             "ridge_vs_zero": {
               "n": 360,
-              "mean_absolute_loss_difference": 0.0002855652836761022,
-              "hac_standard_error": 0.00018914150233582304,
+              "mean_absolute_loss_difference": 0.0002855652836761021,
+              "hac_standard_error": 0.00018914150233582285,
               "normal_approx_95pct_ci": [
-                -8.515206090211095e-05,
-                0.0006562826282543153
+                -8.515206090211068e-05,
+                0.0006562826282543149
               ],
-              "z_score": 1.5097970574912616,
-              "two_sided_p_value_normal_approx": 0.13109521612083908,
+              "z_score": 1.5097970574912625,
+              "two_sided_p_value_normal_approx": 0.13109521612083883,
               "hac_lags": 2,
               "interpretation": "challenger_worse",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
-              "holm_adjusted_p_value": 0.9499965309195203,
+              "holm_adjusted_p_value": 0.9499965309195233,
               "familywise_alpha_0_05_reject": false
             },
             "ridge_vs_drift": {
               "n": 360,
-              "mean_absolute_loss_difference": 7.685429464718344e-05,
-              "hac_standard_error": 0.00017717451789657306,
+              "mean_absolute_loss_difference": 7.685429464718327e-05,
+              "hac_standard_error": 0.00017717451789657317,
               "normal_approx_95pct_ci": [
-                -0.00027040776043009976,
-                0.00042411634972446666
+                -0.00027040776043010014,
+                0.0004241163497244667
               ],
-              "z_score": 0.4337773600831678,
-              "two_sided_p_value_normal_approx": 0.6644501235785674,
+              "z_score": 0.43377736008316664,
+              "two_sided_p_value_normal_approx": 0.6644501235785681,
               "hac_lags": 2,
               "interpretation": "challenger_worse",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
@@ -540,30 +541,30 @@
           "7": {
             "ridge_vs_zero": {
               "n": 356,
-              "mean_absolute_loss_difference": 0.0007535018489892085,
-              "hac_standard_error": 0.0004830004909794083,
+              "mean_absolute_loss_difference": 0.0007535018489892077,
+              "hac_standard_error": 0.00048300049097940826,
               "normal_approx_95pct_ci": [
-                -0.00019317911333043176,
-                0.0017001828113088488
+                -0.00019317911333043252,
+                0.001700182811308848
               ],
-              "z_score": 1.5600436501861288,
-              "two_sided_p_value_normal_approx": 0.11874956636494004,
+              "z_score": 1.5600436501861272,
+              "two_sided_p_value_normal_approx": 0.11874956636494041,
               "hac_lags": 6,
               "interpretation": "challenger_worse",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
-              "holm_adjusted_p_value": 0.9499965309195203,
+              "holm_adjusted_p_value": 0.9499965309195233,
               "familywise_alpha_0_05_reject": false
             },
             "ridge_vs_drift": {
               "n": 356,
-              "mean_absolute_loss_difference": -6.626711160871186e-05,
-              "hac_standard_error": 0.00042524730639620926,
+              "mean_absolute_loss_difference": -6.626711160871284e-05,
+              "hac_standard_error": 0.0004252473063962094,
               "normal_approx_95pct_ci": [
-                -0.000899751832145282,
-                0.0007672176089278582
+                -0.0008997518321452833,
+                0.0007672176089278575
               ],
-              "z_score": -0.15583193735028578,
-              "two_sided_p_value_normal_approx": 0.8761654957745882,
+              "z_score": -0.15583193735028802,
+              "two_sided_p_value_normal_approx": 0.8761654957745865,
               "hac_lags": 6,
               "interpretation": "challenger_better",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
@@ -575,13 +576,13 @@
             "ridge_vs_zero": {
               "n": 333,
               "mean_absolute_loss_difference": 0.0020448488473809095,
-              "hac_standard_error": 0.005996078151427366,
+              "hac_standard_error": 0.005996078151427369,
               "normal_approx_95pct_ci": [
-                -0.009707464329416726,
-                0.013797162024178546
+                -0.009707464329416732,
+                0.013797162024178553
               ],
-              "z_score": 0.341031053255057,
-              "two_sided_p_value_normal_approx": 0.7330802044139885,
+              "z_score": 0.3410310532550568,
+              "two_sided_p_value_normal_approx": 0.7330802044139887,
               "hac_lags": 29,
               "interpretation": "challenger_worse",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
@@ -590,14 +591,14 @@
             },
             "ridge_vs_drift": {
               "n": 333,
-              "mean_absolute_loss_difference": 0.0009691384315992861,
-              "hac_standard_error": 0.002054666229630177,
+              "mean_absolute_loss_difference": 0.0009691384315992877,
+              "hac_standard_error": 0.0020546662296301774,
               "normal_approx_95pct_ci": [
-                -0.0030580073784758606,
-                0.004996284241674433
+                -0.00305800737847586,
+                0.004996284241674436
               ],
-              "z_score": 0.47167681914630144,
-              "two_sided_p_value_normal_approx": 0.6371574855491126,
+              "z_score": 0.47167681914630216,
+              "two_sided_p_value_normal_approx": 0.6371574855491121,
               "hac_lags": 29,
               "interpretation": "challenger_worse",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
@@ -638,7 +639,7 @@
                 "momentum": {
                   "n": 266,
                   "mae": 0.027388602374260485,
-                  "rmse": 0.03320263072000987,
+                  "rmse": 0.033202630720009875,
                   "p90_absolute_error": 0.04840872758303044,
                   "p99_absolute_error": 0.08389623521542244,
                   "worst_decile_mean_absolute_error": 0.06557992237792572,
@@ -648,14 +649,14 @@
                 },
                 "ridge": {
                   "n": 266,
-                  "mae": 0.016192607465689207,
+                  "mae": 0.01619260746568921,
                   "rmse": 0.023757641421325776,
                   "p90_absolute_error": 0.037201607191263336,
                   "p99_absolute_error": 0.06730518335412702,
                   "worst_decile_mean_absolute_error": 0.05459556792176909,
                   "max_absolute_error": 0.1502408393122263,
                   "directional_accuracy": 0.48872180451127817,
-                  "mean_error": 0.0010942437603588956
+                  "mean_error": 0.0010942437603588943
                 }
               }
             },
@@ -688,7 +689,7 @@
                 "momentum": {
                   "n": 70,
                   "mae": 0.026430280553908468,
-                  "rmse": 0.029594480085170904,
+                  "rmse": 0.029594480085170908,
                   "p90_absolute_error": 0.041337959053587815,
                   "p99_absolute_error": 0.06796040106786494,
                   "worst_decile_mean_absolute_error": 0.05337127023385065,
@@ -698,9 +699,9 @@
                 },
                 "ridge": {
                   "n": 70,
-                  "mae": 0.013389970016658639,
+                  "mae": 0.013389970016658636,
                   "rmse": 0.01961687623187123,
-                  "p90_absolute_error": 0.03402889418945757,
+                  "p90_absolute_error": 0.03402889418945758,
                   "p99_absolute_error": 0.05910078733613778,
                   "worst_decile_mean_absolute_error": 0.04836882679772796,
                   "max_absolute_error": 0.06296883952643277,
@@ -755,7 +756,7 @@
                   "worst_decile_mean_absolute_error": 0.06091193315918294,
                   "max_absolute_error": 0.06590224110630481,
                   "directional_accuracy": 0.5,
-                  "mean_error": 7.269268321155824e-05
+                  "mean_error": 7.269268321155744e-05
                 }
               }
             }
@@ -807,7 +808,7 @@
                   "worst_decile_mean_absolute_error": 0.09596900869499138,
                   "max_absolute_error": 0.22189358455507327,
                   "directional_accuracy": 0.42857142857142855,
-                  "mean_error": 0.002972553935744292
+                  "mean_error": 0.0029725539357442874
                 }
               }
             },
@@ -817,7 +818,7 @@
               "metrics": {
                 "zero": {
                   "n": 70,
-                  "mae": 0.02492758593649435,
+                  "mae": 0.024927585936494353,
                   "rmse": 0.03525078728798851,
                   "p90_absolute_error": 0.059429698436606185,
                   "p99_absolute_error": 0.10600572975065363,
@@ -850,14 +851,14 @@
                 },
                 "ridge": {
                   "n": 70,
-                  "mae": 0.025751041435522502,
+                  "mae": 0.025751041435522495,
                   "rmse": 0.03576415920481865,
                   "p90_absolute_error": 0.057431185601802666,
                   "p99_absolute_error": 0.10757210767360678,
                   "worst_decile_mean_absolute_error": 0.08094335556350131,
                   "max_absolute_error": 0.14394970192086146,
                   "directional_accuracy": 0.4,
-                  "mean_error": 0.011126827423818347
+                  "mean_error": 0.011126827423818346
                 }
               }
             },
@@ -900,14 +901,14 @@
                 },
                 "ridge": {
                   "n": 24,
-                  "mae": 0.02621791230769202,
+                  "mae": 0.02621791230769203,
                   "rmse": 0.03458076931095112,
-                  "p90_absolute_error": 0.05120726158286205,
-                  "p99_absolute_error": 0.08541005125712864,
+                  "p90_absolute_error": 0.051207261582862054,
+                  "p99_absolute_error": 0.08541005125712865,
                   "worst_decile_mean_absolute_error": 0.07319534127775917,
-                  "max_absolute_error": 0.08769297854427936,
+                  "max_absolute_error": 0.08769297854427938,
                   "directional_accuracy": 0.5416666666666666,
-                  "mean_error": -0.0036152377537920443
+                  "mean_error": -0.003615237753792046
                 }
               }
             }
@@ -953,13 +954,13 @@
                 "ridge": {
                   "n": 266,
                   "mae": 0.04520252227867062,
-                  "rmse": 0.06439206815372261,
-                  "p90_absolute_error": 0.08925875696506788,
-                  "p99_absolute_error": 0.2035026078764903,
+                  "rmse": 0.06439206815372263,
+                  "p90_absolute_error": 0.08925875696506787,
+                  "p99_absolute_error": 0.20350260787649027,
                   "worst_decile_mean_absolute_error": 0.15637097140618086,
-                  "max_absolute_error": 0.29952651290301113,
+                  "max_absolute_error": 0.2995265129030112,
                   "directional_accuracy": 0.44360902255639095,
-                  "mean_error": 0.006853336841749788
+                  "mean_error": 0.0068533368417497825
                 }
               }
             },
@@ -1002,11 +1003,11 @@
                 },
                 "ridge": {
                   "n": 66,
-                  "mae": 0.04031639525495364,
-                  "rmse": 0.05160185428574134,
+                  "mae": 0.04031639525495363,
+                  "rmse": 0.051601854285741336,
                   "p90_absolute_error": 0.08895139227788215,
-                  "p99_absolute_error": 0.15082901448605382,
-                  "worst_decile_mean_absolute_error": 0.11716863095252686,
+                  "p99_absolute_error": 0.1508290144860538,
+                  "worst_decile_mean_absolute_error": 0.11716863095252684,
                   "max_absolute_error": 0.17278961871134893,
                   "directional_accuracy": 0.2878787878787879,
                   "mean_error": 0.01963440000654553
@@ -1052,14 +1053,14 @@
                 },
                 "ridge": {
                   "n": 24,
-                  "mae": 0.03002415289603425,
-                  "rmse": 0.03945719680960103,
-                  "p90_absolute_error": 0.06887760193882148,
+                  "mae": 0.030024152896034245,
+                  "rmse": 0.039457196809601025,
+                  "p90_absolute_error": 0.06887760193882146,
                   "p99_absolute_error": 0.08122832987978888,
                   "worst_decile_mean_absolute_error": 0.07534055997742185,
                   "max_absolute_error": 0.08393076853872111,
                   "directional_accuracy": 0.4166666666666667,
-                  "mean_error": -0.006073329541684027
+                  "mean_error": -0.006073329541684033
                 }
               }
             }
@@ -1106,12 +1107,12 @@
                   "n": 266,
                   "mae": 0.1126775725962313,
                   "rmse": 0.15359722107079898,
-                  "p90_absolute_error": 0.2772925403895193,
+                  "p90_absolute_error": 0.27729254038951934,
                   "p99_absolute_error": 0.3639169895501814,
-                  "worst_decile_mean_absolute_error": 0.32746747393721276,
+                  "worst_decile_mean_absolute_error": 0.3274674739372128,
                   "max_absolute_error": 0.42530448389226894,
                   "directional_accuracy": 0.4924812030075188,
-                  "mean_error": 0.031436169328957604
+                  "mean_error": 0.03143616932895762
                 }
               }
             },
@@ -1154,14 +1155,14 @@
                 },
                 "ridge": {
                   "n": 43,
-                  "mae": 0.09031607645433269,
-                  "rmse": 0.11491468412205284,
-                  "p90_absolute_error": 0.16786964236917162,
+                  "mae": 0.0903160764543327,
+                  "rmse": 0.11491468412205287,
+                  "p90_absolute_error": 0.16786964236917165,
                   "p99_absolute_error": 0.2777049403598139,
-                  "worst_decile_mean_absolute_error": 0.2275372471979312,
+                  "worst_decile_mean_absolute_error": 0.22753724719793125,
                   "max_absolute_error": 0.28667527913876517,
                   "directional_accuracy": 0.3953488372093023,
-                  "mean_error": 0.07779189095116408
+                  "mean_error": 0.07779189095116411
                 }
               }
             },
@@ -1204,14 +1205,14 @@
                 },
                 "ridge": {
                   "n": 24,
-                  "mae": 0.031307781059585184,
+                  "mae": 0.03130778105958519,
                   "rmse": 0.03951427679706176,
-                  "p90_absolute_error": 0.06931025249254062,
-                  "p99_absolute_error": 0.08574667041865035,
+                  "p90_absolute_error": 0.0693102524925406,
+                  "p99_absolute_error": 0.08574667041865036,
                   "worst_decile_mean_absolute_error": 0.077563121635212,
-                  "max_absolute_error": 0.08976791040598354,
+                  "max_absolute_error": 0.08976791040598356,
                   "directional_accuracy": 0.75,
-                  "mean_error": -0.01602008401568918
+                  "mean_error": -0.016020084015689173
                 }
               }
             }
@@ -1325,8 +1326,8 @@
             "selected_alpha": 100.0,
             "validation_mae_by_alpha": {
               "0.1": 0.09343327861837586,
-              "1.0": 0.09343193664841903,
-              "10.0": 0.09341871738705229,
+              "1.0": 0.09343193664841905,
+              "10.0": 0.0934187173870523,
               "100.0": 0.09330620019256215
             },
             "validation_folds": [
@@ -1396,7 +1397,7 @@
     "No calibrated probability or live trading claim is permitted."
   ],
   "supplemental_data": {
-    "retrieved_at_utc": "2026-11-17T23:29:38.545565+00:00",
+    "retrieved_at_utc": "2026-11-17T23:50:43.334047+00:00",
     "coverage": {
       "spot_ohlcv": {
         "status": "PASS",
@@ -1406,10 +1407,11 @@
         "status": "PARTIAL"
       },
       "per_exchange_derivatives": {
-        "status": "FAIL",
+        "status": "PARTIAL",
         "by_exchange": {
           "binance_futures": "FAIL",
-          "bybit_futures": "FAIL"
+          "bybit_futures": "FAIL",
+          "okx_swap": "PASS"
         }
       },
       "options": {
@@ -1444,15 +1446,15 @@
     },
     "spot_live": {
       "status": "PARTIAL",
-      "retrieved_at_utc": "2026-11-17T23:29:38.577352+00:00",
+      "retrieved_at_utc": "2026-11-17T23:50:43.498713+00:00",
       "venues": {
         "Bitstamp_BTCUSD_USD": {
-          "last_trade_price": 64930.87,
-          "price_change_24h_pct": 0.14766685900067245,
-          "base_volume_24h_btc": 1094.32804663,
-          "last_trade_timestamp_utc": "2026-11-17T23:29:37+00:00",
+          "last_trade_price": 64905.68,
+          "price_change_24h_pct": 0.10881446524437788,
+          "base_volume_24h_btc": 1127.71501674,
+          "last_trade_timestamp_utc": "2026-11-17T23:50:41+00:00",
           "snapshot_type": "24h ticker last-trade snapshot",
-          "last_trade_age_seconds": 1.577352,
+          "last_trade_age_seconds": 2.498713,
           "status": "PASS"
         }
       },
@@ -1462,7 +1464,7 @@
     },
     "cvd": {
       "status": "PARTIAL",
-      "retrieved_at_utc": "2026-11-17T23:29:39.526389+00:00",
+      "retrieved_at_utc": "2026-11-17T23:50:44.750640+00:00",
       "markets": {
         "spot": {
           "status": "PASS",
@@ -1516,7 +1518,7 @@
     },
     "news": {
       "status": "PARTIAL",
-      "retrieved_at_utc": "2026-11-17T23:29:49.444462+00:00",
+      "retrieved_at_utc": "2026-11-17T23:50:56.021529+00:00",
       "window": "7d for GDELT; latest items for official RSS",
       "articles": [
         {
@@ -1898,7 +1900,7 @@
       },
       "symbol": "BTCUSDT perpetual",
       "quote_currency": "USDT",
-      "retrieved_at_utc": "2026-11-17T23:29:49.480812+00:00",
+      "retrieved_at_utc": "2026-11-17T23:50:56.141678+00:00",
       "status": "FAIL",
       "errors": {
         "premium_index": "HTTPError: 451 Client Error:  for url: https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT",
@@ -1918,7 +1920,7 @@
       "venue": "Bybit Linear",
       "symbol": "BTCUSDT perpetual",
       "quote_currency": "USDT",
-      "retrieved_at_utc": "2026-11-17T23:29:49.503355+00:00",
+      "retrieved_at_utc": "2026-11-17T23:50:58.448413+00:00",
       "status": "FAIL",
       "errors": {
         "ticker": "HTTPError: 403 Client Error: Forbidden for url: https://api.bybit.com/v5/market/tickers?category=linear&symbol=BTCUSDT",
@@ -1927,140 +1929,875 @@
         "funding_history": "HTTPError: 403 Client Error: Forbidden for url: https://api.bybit.com/v5/market/funding/history?category=linear&symbol=BTCUSDT&limit=200"
       }
     },
+    "okx_swap": {
+      "venue": "OKX",
+      "instrument": "BTC-USDT-SWAP",
+      "quote_currency": "USDT",
+      "retrieved_at_utc": "2026-11-17T23:50:59.629487+00:00",
+      "status": "PASS",
+      "last_price_usdt": 64920.3,
+      "ticker_timestamp_utc": "2026-11-17T23:50:58.228000+00:00",
+      "volume_24h_contracts": 11617606.42,
+      "volume_24h_base_currency": 116176.0642,
+      "open_interest_contracts": 3118607.3300000136,
+      "open_interest_btc": 31186.073300000135,
+      "open_interest_usd": 2025045839.4841988,
+      "open_interest_timestamp_utc": "2026-11-17T23:50:58.756000+00:00",
+      "open_interest_history": {
+        "timestamp_utc": "2026-11-17T00:00:00+00:00",
+        "contracts": 3117695.2600000133,
+        "btc": 31176.95260000013,
+        "usd": 2023006982.6135485,
+        "history_rows": 100,
+        "change_1d_pct": 1.9668812361372412,
+        "change_7d_pct": -13.035633578492178,
+        "change_30d_pct": 3.527720835470882
+      },
+      "funding_rate_predicted_current": -1.10188786402e-05,
+      "settled_funding_rate": -6.9841257051e-06,
+      "funding_settlement_state": "settled",
+      "funding_rate_unit": "fraction per provider funding interval",
+      "funding_timestamp_utc": "2026-11-18T00:00:00+00:00",
+      "last_settled_funding_time_utc": "2026-11-17T16:00:00+00:00",
+      "next_funding_time_utc": "2026-11-18T08:00:00+00:00",
+      "funding_history": [
+        {
+          "funding_time_utc": "2026-10-15T16:00:00+00:00",
+          "funding_rate": 2.57859748836e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-16T00:00:00+00:00",
+          "funding_rate": 4.30997818461e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-16T08:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-16T16:00:00+00:00",
+          "funding_rate": 5.08434874148e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-17T00:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-17T08:00:00+00:00",
+          "funding_rate": 5.24801759437e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-17T16:00:00+00:00",
+          "funding_rate": 9.47764778726e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-18T00:00:00+00:00",
+          "funding_rate": 5.84448463998e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-18T08:00:00+00:00",
+          "funding_rate": 2.57666375942e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-18T16:00:00+00:00",
+          "funding_rate": 6.38064180054e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-19T00:00:00+00:00",
+          "funding_rate": 6.8770570714e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-19T08:00:00+00:00",
+          "funding_rate": 5.83726878681e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-19T16:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-20T00:00:00+00:00",
+          "funding_rate": 8.21037876006e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-20T08:00:00+00:00",
+          "funding_rate": 5.19278180174e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-20T16:00:00+00:00",
+          "funding_rate": 5.23593657805e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-21T00:00:00+00:00",
+          "funding_rate": 5.49513036005e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-21T08:00:00+00:00",
+          "funding_rate": 7.23695801769e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-21T16:00:00+00:00",
+          "funding_rate": 3.44191736841e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-22T00:00:00+00:00",
+          "funding_rate": -4.71724574553e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-22T08:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-22T16:00:00+00:00",
+          "funding_rate": 7.81879787428e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-23T00:00:00+00:00",
+          "funding_rate": 6.68879046611e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-23T08:00:00+00:00",
+          "funding_rate": 7.53334163283e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-23T16:00:00+00:00",
+          "funding_rate": 6.85721961385e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-24T00:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-24T08:00:00+00:00",
+          "funding_rate": 4.90001913587e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-24T16:00:00+00:00",
+          "funding_rate": 4.79111865734e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-25T00:00:00+00:00",
+          "funding_rate": 2.18947520699e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-25T08:00:00+00:00",
+          "funding_rate": 9.43946190624e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-25T16:00:00+00:00",
+          "funding_rate": 5.55677039453e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-26T00:00:00+00:00",
+          "funding_rate": 6.97571957395e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-26T08:00:00+00:00",
+          "funding_rate": 9.78145651344e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-26T16:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-27T00:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-27T08:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-27T16:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-28T00:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-28T08:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-28T16:00:00+00:00",
+          "funding_rate": 6.56055512239e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-29T00:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-29T08:00:00+00:00",
+          "funding_rate": 3.38041564747e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-29T16:00:00+00:00",
+          "funding_rate": 9.57877441903e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-30T00:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-30T08:00:00+00:00",
+          "funding_rate": 5.49252859255e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-30T16:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-31T00:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-31T08:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-10-31T16:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-01T00:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-01T08:00:00+00:00",
+          "funding_rate": 6.78976815887e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-01T16:00:00+00:00",
+          "funding_rate": 9.54849645099e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-02T00:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-02T08:00:00+00:00",
+          "funding_rate": 8.59268179859e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-02T16:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-03T00:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-03T08:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-03T16:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-04T00:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-04T08:00:00+00:00",
+          "funding_rate": 8.75528996391e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-04T16:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-05T00:00:00+00:00",
+          "funding_rate": 7.48307148042e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-05T08:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-05T16:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-06T00:00:00+00:00",
+          "funding_rate": 2.77913953074e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-06T08:00:00+00:00",
+          "funding_rate": 2.65658804118e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-06T16:00:00+00:00",
+          "funding_rate": 4.10739588384e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-07T00:00:00+00:00",
+          "funding_rate": 6.413995237e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-07T08:00:00+00:00",
+          "funding_rate": -3.773099891e-06,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-07T16:00:00+00:00",
+          "funding_rate": 6.50816220143e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-08T00:00:00+00:00",
+          "funding_rate": 9.14028725214e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-08T08:00:00+00:00",
+          "funding_rate": 3.35788804851e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-08T16:00:00+00:00",
+          "funding_rate": 1.27984564658e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-09T00:00:00+00:00",
+          "funding_rate": 2.10027568242e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-09T08:00:00+00:00",
+          "funding_rate": 9.61500967922e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-09T16:00:00+00:00",
+          "funding_rate": 5.64907336766e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-10T00:00:00+00:00",
+          "funding_rate": 4.63168996037e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-10T08:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-10T16:00:00+00:00",
+          "funding_rate": 4.84085643949e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-11T00:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-11T08:00:00+00:00",
+          "funding_rate": 9.37768718932e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-11T16:00:00+00:00",
+          "funding_rate": 4.63066109924e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-12T00:00:00+00:00",
+          "funding_rate": 6.10331387262e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-12T08:00:00+00:00",
+          "funding_rate": 9.24114251855e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-12T16:00:00+00:00",
+          "funding_rate": 7.36920850367e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-13T00:00:00+00:00",
+          "funding_rate": 0.0001,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-13T08:00:00+00:00",
+          "funding_rate": -6.41996236096e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-13T16:00:00+00:00",
+          "funding_rate": 3.81700234244e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-14T00:00:00+00:00",
+          "funding_rate": 3.93916238255e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-14T08:00:00+00:00",
+          "funding_rate": -9.4661161405e-06,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-14T16:00:00+00:00",
+          "funding_rate": 4.65375388426e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-15T00:00:00+00:00",
+          "funding_rate": -3.78743771102e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-15T08:00:00+00:00",
+          "funding_rate": -4.970281698e-07,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-15T16:00:00+00:00",
+          "funding_rate": 1.17815109256e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-16T00:00:00+00:00",
+          "funding_rate": -1.30413806534e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-16T08:00:00+00:00",
+          "funding_rate": -4.8533057407e-06,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-16T16:00:00+00:00",
+          "funding_rate": 6.14882963635e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-17T00:00:00+00:00",
+          "funding_rate": 4.48915321898e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-17T08:00:00+00:00",
+          "funding_rate": 1.42512298338e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-17T16:00:00+00:00",
+          "funding_rate": -6.9841257051e-06,
+          "funding_rate_field": "realizedRate"
+        }
+      ],
+      "daily_taker_volume": [
+        {
+          "timestamp_utc": "2026-10-19T00:00:00+00:00",
+          "sell_volume_btc": 31354.6673,
+          "buy_volume_btc": 32339.9052,
+          "delta_btc": 985.2379000000001
+        },
+        {
+          "timestamp_utc": "2026-10-20T00:00:00+00:00",
+          "sell_volume_btc": 38483.3635,
+          "buy_volume_btc": 38089.2853,
+          "delta_btc": -394.0781999999963
+        },
+        {
+          "timestamp_utc": "2026-10-21T00:00:00+00:00",
+          "sell_volume_btc": 38973.8225,
+          "buy_volume_btc": 40835.0272,
+          "delta_btc": 1861.2046999999948
+        },
+        {
+          "timestamp_utc": "2026-10-22T00:00:00+00:00",
+          "sell_volume_btc": 47217.9672,
+          "buy_volume_btc": 44609.1811,
+          "delta_btc": -2608.7860999999975
+        },
+        {
+          "timestamp_utc": "2026-10-23T00:00:00+00:00",
+          "sell_volume_btc": 29359.1684,
+          "buy_volume_btc": 27100.2372,
+          "delta_btc": -2258.931199999999
+        },
+        {
+          "timestamp_utc": "2026-10-24T00:00:00+00:00",
+          "sell_volume_btc": 31765.3477,
+          "buy_volume_btc": 28677.3491,
+          "delta_btc": -3087.998599999999
+        },
+        {
+          "timestamp_utc": "2026-10-25T00:00:00+00:00",
+          "sell_volume_btc": 19278.2632,
+          "buy_volume_btc": 17766.7774,
+          "delta_btc": -1511.4858000000022
+        },
+        {
+          "timestamp_utc": "2026-10-26T00:00:00+00:00",
+          "sell_volume_btc": 35159.9525,
+          "buy_volume_btc": 34873.8954,
+          "delta_btc": -286.0570999999982
+        },
+        {
+          "timestamp_utc": "2026-10-27T00:00:00+00:00",
+          "sell_volume_btc": 29164.7293,
+          "buy_volume_btc": 30152.7022,
+          "delta_btc": 987.9729000000007
+        },
+        {
+          "timestamp_utc": "2026-10-28T00:00:00+00:00",
+          "sell_volume_btc": 33294.648,
+          "buy_volume_btc": 33854.2899,
+          "delta_btc": 559.6419000000024
+        },
+        {
+          "timestamp_utc": "2026-10-29T00:00:00+00:00",
+          "sell_volume_btc": 66548.9983,
+          "buy_volume_btc": 62894.871,
+          "delta_btc": -3654.1273000000074
+        },
+        {
+          "timestamp_utc": "2026-10-30T00:00:00+00:00",
+          "sell_volume_btc": 65136.808,
+          "buy_volume_btc": 62822.8574,
+          "delta_btc": -2313.9505999999965
+        },
+        {
+          "timestamp_utc": "2026-10-31T00:00:00+00:00",
+          "sell_volume_btc": 12836.2254,
+          "buy_volume_btc": 11710.2296,
+          "delta_btc": -1125.9957999999988
+        },
+        {
+          "timestamp_utc": "2026-11-01T00:00:00+00:00",
+          "sell_volume_btc": 13619.1263,
+          "buy_volume_btc": 14445.7817,
+          "delta_btc": 826.6553999999996
+        },
+        {
+          "timestamp_utc": "2026-11-02T00:00:00+00:00",
+          "sell_volume_btc": 32406.0612,
+          "buy_volume_btc": 32634.0969,
+          "delta_btc": 228.03570000000036
+        },
+        {
+          "timestamp_utc": "2026-11-03T00:00:00+00:00",
+          "sell_volume_btc": 33467.044,
+          "buy_volume_btc": 31752.2461,
+          "delta_btc": -1714.7979000000014
+        },
+        {
+          "timestamp_utc": "2026-11-04T00:00:00+00:00",
+          "sell_volume_btc": 70557.9458,
+          "buy_volume_btc": 74220.7857,
+          "delta_btc": 3662.8398999999918
+        },
+        {
+          "timestamp_utc": "2026-11-05T00:00:00+00:00",
+          "sell_volume_btc": 83665.2072,
+          "buy_volume_btc": 72831.378,
+          "delta_btc": -10833.829200000007
+        },
+        {
+          "timestamp_utc": "2026-11-06T00:00:00+00:00",
+          "sell_volume_btc": 42942.747,
+          "buy_volume_btc": 41073.4953,
+          "delta_btc": -1869.2517000000007
+        },
+        {
+          "timestamp_utc": "2026-11-07T00:00:00+00:00",
+          "sell_volume_btc": 9740.6664,
+          "buy_volume_btc": 9244.8743,
+          "delta_btc": -495.7921000000006
+        },
+        {
+          "timestamp_utc": "2026-11-08T00:00:00+00:00",
+          "sell_volume_btc": 25523.6852,
+          "buy_volume_btc": 22727.7919,
+          "delta_btc": -2795.8932999999997
+        },
+        {
+          "timestamp_utc": "2026-11-09T00:00:00+00:00",
+          "sell_volume_btc": 40583.711,
+          "buy_volume_btc": 41703.5511,
+          "delta_btc": 1119.840099999994
+        },
+        {
+          "timestamp_utc": "2026-11-10T00:00:00+00:00",
+          "sell_volume_btc": 47748.1282,
+          "buy_volume_btc": 45199.871699999996,
+          "delta_btc": -2548.256500000003
+        },
+        {
+          "timestamp_utc": "2026-11-11T00:00:00+00:00",
+          "sell_volume_btc": 36180.369,
+          "buy_volume_btc": 36645.4185,
+          "delta_btc": 465.049500000001
+        },
+        {
+          "timestamp_utc": "2026-11-12T00:00:00+00:00",
+          "sell_volume_btc": 50059.2384,
+          "buy_volume_btc": 45705.1082,
+          "delta_btc": -4354.1302
+        },
+        {
+          "timestamp_utc": "2026-11-13T00:00:00+00:00",
+          "sell_volume_btc": 81720.9111,
+          "buy_volume_btc": 72529.3745,
+          "delta_btc": -9191.536599999992
+        },
+        {
+          "timestamp_utc": "2026-11-14T00:00:00+00:00",
+          "sell_volume_btc": 81996.6592,
+          "buy_volume_btc": 74127.2204,
+          "delta_btc": -7869.438799999989
+        },
+        {
+          "timestamp_utc": "2026-11-15T00:00:00+00:00",
+          "sell_volume_btc": 66585.9708,
+          "buy_volume_btc": 68269.6334,
+          "delta_btc": 1683.6626000000106
+        },
+        {
+          "timestamp_utc": "2026-11-16T00:00:00+00:00",
+          "sell_volume_btc": 52666.400200000004,
+          "buy_volume_btc": 52353.2018,
+          "delta_btc": -313.19840000000113
+        },
+        {
+          "timestamp_utc": "2026-11-17T00:00:00+00:00",
+          "sell_volume_btc": 57824.0903,
+          "buy_volume_btc": 58026.6258,
+          "delta_btc": 202.53549999999814
+        }
+      ],
+      "daily_taker_volume_history_rows": 30,
+      "daily_taker_volume_summary": {
+        "closed_daily_rows": 29,
+        "cumulative_delta_btc": {
+          "1d": -313.19840000000113,
+          "7d": -22127.848399999973,
+          "30d": null
+        },
+        "measurement_note": "OKX BTC-USDT perpetual contract taker volume in BTC; buy minus sell. Completed UTC daily bars only; exchange-specific derivatives delta proxy, not spot CVD or total-market CVD."
+      },
+      "funding_history_rows": 100,
+      "funding_history_scope": "latest 100 returned settlements; OKX documents up to three months, pagination and retention limits apply",
+      "open_interest_history_scope": "daily UTC series; latest 100 points returned by OKX",
+      "daily_taker_volume_scope": "daily UTC contract taker buy/sell volumes; latest 30 points returned by OKX",
+      "liquidations": {
+        "status": "NOT_ACQUIRED",
+        "reason": "No complete public liquidation history is inferred from OKX market data endpoints."
+      },
+      "errors": {}
+    },
     "deribit_options": {
       "status": "PARTIAL",
       "venue": "Deribit",
       "instrument_scope": "active BTC options",
-      "retrieved_at_utc": "2026-11-17T23:29:51.728863+00:00",
+      "retrieved_at_utc": "2026-11-17T23:51:01.973360+00:00",
       "open_interest_unit": "BTC underlying base currency; provider reports an 8-hour delay",
       "implied_volatility_unit": "percent",
-      "total_call_open_interest_btc": 220202.70000000004,
-      "total_put_open_interest_btc": 169590.30000000002,
-      "put_call_open_interest_ratio": 0.7701554068138129,
-      "total_call_volume_usd_24h": 10728422.87,
-      "total_put_volume_usd_24h": 17224118.9,
-      "put_call_volume_ratio": 1.6054660697765728,
+      "total_call_open_interest_btc": 220601.2,
+      "total_put_open_interest_btc": 170117.60000000003,
+      "put_call_open_interest_ratio": 0.7711544633483409,
+      "total_call_volume_usd_24h": 10717834.970000003,
+      "total_put_volume_usd_24h": 17209146.55,
+      "put_call_volume_ratio": 1.6056551158111363,
       "expiry_term_structure": [
         {
           "expiry_date": "2026-11-18",
-          "call_open_interest_btc": 1258.7,
-          "put_open_interest_btc": 1664.1,
-          "call_volume_usd_24h": 273827.69,
-          "put_volume_usd_24h": 169075.15999999997,
+          "call_open_interest_btc": 1459.0,
+          "put_open_interest_btc": 1770.0,
+          "call_volume_usd_24h": 271573.63999999996,
+          "put_volume_usd_24h": 169065.66999999998,
           "days_to_expiry": 1,
-          "underlying_price_usd": 64923.37,
+          "underlying_price_usd": 64874.09,
           "nearest_atm_instrument": "BTC-18NOV26-65000-C",
-          "nearest_atm_mark_iv_pct": 38.88
+          "nearest_atm_mark_iv_pct": 37.74
         },
         {
           "expiry_date": "2026-11-19",
-          "call_open_interest_btc": 783.8999999999999,
-          "put_open_interest_btc": 794.8000000000001,
-          "call_volume_usd_24h": 209573.47000000003,
-          "put_volume_usd_24h": 283921.54000000004,
+          "call_open_interest_btc": 810.6999999999999,
+          "put_open_interest_btc": 867.6999999999999,
+          "call_volume_usd_24h": 209600.74000000005,
+          "put_volume_usd_24h": 284064.68000000005,
           "days_to_expiry": 2,
-          "underlying_price_usd": 64942.83,
+          "underlying_price_usd": 64893.64,
           "nearest_atm_instrument": "BTC-19NOV26-65000-C",
-          "nearest_atm_mark_iv_pct": 45.63
+          "nearest_atm_mark_iv_pct": 44.37
         },
         {
           "expiry_date": "2026-11-20",
-          "call_open_interest_btc": 20450.4,
-          "put_open_interest_btc": 13117.6,
-          "call_volume_usd_24h": 173695.18000000002,
-          "put_volume_usd_24h": 764456.9699999997,
+          "call_open_interest_btc": 20488.2,
+          "put_open_interest_btc": 13134.7,
+          "call_volume_usd_24h": 173371.19000000003,
+          "put_volume_usd_24h": 762303.25,
           "days_to_expiry": 3,
-          "underlying_price_usd": 64953.08,
+          "underlying_price_usd": 64898.14,
           "nearest_atm_instrument": "BTC-20NOV26-65000-P",
-          "nearest_atm_mark_iv_pct": 46.37
+          "nearest_atm_mark_iv_pct": 45.55
         },
         {
           "expiry_date": "2026-11-21",
-          "call_open_interest_btc": 41.5,
-          "put_open_interest_btc": 52.4,
-          "call_volume_usd_24h": 175871.13999999998,
-          "put_volume_usd_24h": 308797.44999999995,
+          "call_open_interest_btc": 78.4,
+          "put_open_interest_btc": 183.00000000000003,
+          "call_volume_usd_24h": 175894.50999999998,
+          "put_volume_usd_24h": 309958.3,
           "days_to_expiry": 4,
-          "underlying_price_usd": 64963.97,
+          "underlying_price_usd": 64908.13,
           "nearest_atm_instrument": "BTC-21NOV26-65000-C",
-          "nearest_atm_mark_iv_pct": 45.59
+          "nearest_atm_mark_iv_pct": 44.69
         },
         {
           "expiry_date": "2026-11-27",
-          "call_open_interest_btc": 51282.70000000001,
-          "put_open_interest_btc": 50657.70000000001,
-          "call_volume_usd_24h": 1414932.86,
-          "put_volume_usd_24h": 6733994.569999999,
+          "call_open_interest_btc": 51293.50000000001,
+          "put_open_interest_btc": 50833.900000000016,
+          "call_volume_usd_24h": 1414919.8800000001,
+          "put_volume_usd_24h": 6749672.159999999,
           "days_to_expiry": 10,
-          "underlying_price_usd": 65027.79,
+          "underlying_price_usd": 64971.64,
           "nearest_atm_instrument": "BTC-27NOV26-65000-C",
-          "nearest_atm_mark_iv_pct": 42.44
+          "nearest_atm_mark_iv_pct": 41.69
         },
         {
           "expiry_date": "2026-12-04",
-          "call_open_interest_btc": 4580.6,
-          "put_open_interest_btc": 3312.1,
+          "call_open_interest_btc": 4634.1,
+          "put_open_interest_btc": 3324.4,
           "call_volume_usd_24h": 1095875.03,
-          "put_volume_usd_24h": 4185913.03,
+          "put_volume_usd_24h": 4182495.5,
           "days_to_expiry": 17,
-          "underlying_price_usd": 65083.51,
+          "underlying_price_usd": 65035.09,
           "nearest_atm_instrument": "BTC-4DEC26-65000-C",
-          "nearest_atm_mark_iv_pct": 41.62
+          "nearest_atm_mark_iv_pct": 41.13
         },
         {
           "expiry_date": "2026-12-25",
-          "call_open_interest_btc": 88468.1,
-          "put_open_interest_btc": 60037.49999999998,
-          "call_volume_usd_24h": 3167554.8200000003,
-          "put_volume_usd_24h": 2230030.95,
+          "call_open_interest_btc": 88489.50000000001,
+          "put_open_interest_btc": 59997.29999999998,
+          "call_volume_usd_24h": 3167882.1400000006,
+          "put_volume_usd_24h": 2230155.7499999995,
           "days_to_expiry": 38,
-          "underlying_price_usd": 65277.16,
+          "underlying_price_usd": 65222.83,
           "nearest_atm_instrument": "BTC-25DEC26-65000-P",
-          "nearest_atm_mark_iv_pct": 40.88
+          "nearest_atm_mark_iv_pct": 40.67
         },
         {
           "expiry_date": "2027-01-29",
-          "call_open_interest_btc": 6348.100000000001,
-          "put_open_interest_btc": 6823.099999999998,
-          "call_volume_usd_24h": 1744170.9700000004,
-          "put_volume_usd_24h": 1016450.8099999998,
+          "call_open_interest_btc": 6347.800000000001,
+          "put_open_interest_btc": 6873.699999999997,
+          "call_volume_usd_24h": 1738654.3000000005,
+          "put_volume_usd_24h": 1020024.6699999998,
           "days_to_expiry": 73,
-          "underlying_price_usd": 65626.34,
+          "underlying_price_usd": 65565.66,
           "nearest_atm_instrument": "BTC-29JAN27-66000-P",
-          "nearest_atm_mark_iv_pct": 40.5
+          "nearest_atm_mark_iv_pct": 40.38
         },
         {
           "expiry_date": "2027-03-26",
-          "call_open_interest_btc": 28733.400000000005,
-          "put_open_interest_btc": 18650.200000000004,
-          "call_volume_usd_24h": 1495622.5700000003,
-          "put_volume_usd_24h": 809512.23,
+          "call_open_interest_btc": 28733.600000000002,
+          "put_open_interest_btc": 18651.100000000006,
+          "call_volume_usd_24h": 1496121.9000000001,
+          "put_volume_usd_24h": 782591.8300000001,
           "days_to_expiry": 129,
-          "underlying_price_usd": 66190.26,
+          "underlying_price_usd": 66137.58,
           "nearest_atm_instrument": "BTC-26MAR27-66000-P",
-          "nearest_atm_mark_iv_pct": 40.84
+          "nearest_atm_mark_iv_pct": 40.77
         },
         {
           "expiry_date": "2027-06-25",
-          "call_open_interest_btc": 11483.100000000004,
+          "call_open_interest_btc": 11478.600000000004,
           "put_open_interest_btc": 10075.600000000002,
-          "call_volume_usd_24h": 285556.77,
-          "put_volume_usd_24h": 498022.4799999999,
+          "call_volume_usd_24h": 283895.89,
+          "put_volume_usd_24h": 494958.56999999995,
           "days_to_expiry": 220,
-          "underlying_price_usd": 67134.47,
+          "underlying_price_usd": 67080.61,
           "nearest_atm_instrument": "BTC-25JUN27-68000-P",
-          "nearest_atm_mark_iv_pct": 40.82
+          "nearest_atm_mark_iv_pct": 40.77
         },
         {
           "expiry_date": "2027-09-24",
-          "call_open_interest_btc": 6772.2,
-          "put_open_interest_btc": 4405.200000000001,
-          "call_volume_usd_24h": 691742.3699999999,
-          "put_volume_usd_24h": 223943.71,
+          "call_open_interest_btc": 6787.8,
+          "put_open_interest_btc": 4406.200000000001,
+          "call_volume_usd_24h": 690045.7499999999,
+          "put_volume_usd_24h": 223856.17,
           "days_to_expiry": 311,
-          "underlying_price_usd": 68110.8,
+          "underlying_price_usd": 68046.5,
           "nearest_atm_instrument": "BTC-24SEP27-68000-C",
-          "nearest_atm_mark_iv_pct": 41.1
+          "nearest_atm_mark_iv_pct": 41.05
         }
       ],
       "top_strikes_by_open_interest": [
@@ -2074,7 +2811,7 @@
           "expiry_date": "2026-12-25",
           "strike_usd": 60000.0,
           "call_open_interest_btc": 784.2,
-          "put_open_interest_btc": 6560.1
+          "put_open_interest_btc": 6507.5
         },
         {
           "expiry_date": "2026-12-25",
@@ -2085,7 +2822,7 @@
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 70000.0,
-          "call_open_interest_btc": 3368.9,
+          "call_open_interest_btc": 3368.8,
           "put_open_interest_btc": 3329.3
         },
         {
@@ -2128,7 +2865,7 @@
           "expiry_date": "2026-11-27",
           "strike_usd": 63000.0,
           "call_open_interest_btc": 86.4,
-          "put_open_interest_btc": 4265.5
+          "put_open_interest_btc": 4255.5
         },
         {
           "expiry_date": "2026-11-27",
@@ -2151,7 +2888,7 @@
         {
           "expiry_date": "2026-11-27",
           "strike_usd": 65000.0,
-          "call_open_interest_btc": 587.3,
+          "call_open_interest_btc": 587.4,
           "put_open_interest_btc": 3360.8
         },
         {
@@ -2180,12 +2917,6 @@
         },
         {
           "expiry_date": "2026-11-27",
-          "strike_usd": 50000.0,
-          "call_open_interest_btc": 0.0,
-          "put_open_interest_btc": 3621.9
-        },
-        {
-          "expiry_date": "2026-11-27",
           "strike_usd": 78000.0,
           "call_open_interest_btc": 2226.2,
           "put_open_interest_btc": 1353.6
@@ -2195,6 +2926,12 @@
           "strike_usd": 78000.0,
           "call_open_interest_btc": 1971.1,
           "put_open_interest_btc": 1583.5
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 50000.0,
+          "call_open_interest_btc": 0.0,
+          "put_open_interest_btc": 3554.0
         },
         {
           "expiry_date": "2026-11-20",
@@ -2224,12 +2961,12 @@
           "expiry_date": "2026-12-25",
           "strike_usd": 55000.0,
           "call_open_interest_btc": 80.6,
-          "put_open_interest_btc": 3296.8
+          "put_open_interest_btc": 3276.8
         },
         {
           "expiry_date": "2026-11-27",
           "strike_usd": 69000.0,
-          "call_open_interest_btc": 560.8,
+          "call_open_interest_btc": 560.6,
           "put_open_interest_btc": 2769.7
         },
         {
@@ -2276,15 +3013,15 @@
         },
         {
           "expiry_date": "2026-11-27",
-          "strike_usd": 85000.0,
-          "call_open_interest_btc": 2619.3,
-          "put_open_interest_btc": 322.3
+          "strike_usd": 64000.0,
+          "call_open_interest_btc": 217.6,
+          "put_open_interest_btc": 2736.4
         },
         {
           "expiry_date": "2026-11-27",
-          "strike_usd": 64000.0,
-          "call_open_interest_btc": 204.8,
-          "put_open_interest_btc": 2718.3
+          "strike_usd": 85000.0,
+          "call_open_interest_btc": 2619.3,
+          "put_open_interest_btc": 322.3
         },
         {
           "expiry_date": "2026-12-25",
@@ -2321,43 +3058,43 @@
               "delta": 0.0,
               "gamma": 0.0,
               "mark_iv_pct": 102.54,
-              "ticker_timestamp_utc": "2026-11-17T23:29:48.675000+00:00"
+              "ticker_timestamp_utc": "2026-11-17T23:50:58.682000+00:00"
             },
             {
               "instrument_name": "BTC-18NOV26-58000-P",
               "expiry_date": "2026-11-18",
               "option_type": "put",
-              "delta": -0.00012,
+              "delta": -0.0001,
               "gamma": 0.0,
               "mark_iv_pct": 98.92,
-              "ticker_timestamp_utc": "2026-11-17T23:29:48.675000+00:00"
+              "ticker_timestamp_utc": "2026-11-17T23:50:58.682000+00:00"
             },
             {
               "instrument_name": "BTC-18NOV26-61500-P",
               "expiry_date": "2026-11-18",
               "option_type": "put",
-              "delta": -0.01518,
+              "delta": -0.01299,
               "gamma": 2e-05,
-              "mark_iv_pct": 80.92,
-              "ticker_timestamp_utc": "2026-11-17T23:29:48.675000+00:00"
+              "mark_iv_pct": 79.1,
+              "ticker_timestamp_utc": "2026-11-17T23:50:58.682000+00:00"
             },
             {
               "instrument_name": "BTC-18NOV26-68000-C",
               "expiry_date": "2026-11-18",
               "option_type": "call",
-              "delta": 0.01392,
-              "gamma": 3e-05,
-              "mark_iv_pct": 67.11,
-              "ticker_timestamp_utc": "2026-11-17T23:29:48.675000+00:00"
+              "delta": 0.01067,
+              "gamma": 2e-05,
+              "mark_iv_pct": 66.7,
+              "ticker_timestamp_utc": "2026-11-17T23:50:58.682000+00:00"
             },
             {
               "instrument_name": "BTC-18NOV26-71000-C",
               "expiry_date": "2026-11-18",
               "option_type": "call",
-              "delta": 3e-05,
+              "delta": 2e-05,
               "gamma": 0.0,
               "mark_iv_pct": 71.66,
-              "ticker_timestamp_utc": "2026-11-17T23:29:49.682000+00:00"
+              "ticker_timestamp_utc": "2026-11-17T23:50:58.682000+00:00"
             },
             {
               "instrument_name": "BTC-18NOV26-75000-C",
@@ -2366,7 +3103,7 @@
               "delta": 0.0,
               "gamma": 0.0,
               "mark_iv_pct": 77.01,
-              "ticker_timestamp_utc": "2026-11-17T23:29:49.682000+00:00"
+              "ticker_timestamp_utc": "2026-11-17T23:50:58.682000+00:00"
             }
           ]
         },
@@ -2382,55 +3119,55 @@
               "instrument_name": "BTC-19NOV26-57000-P",
               "expiry_date": "2026-11-19",
               "option_type": "put",
-              "delta": -0.00467,
+              "delta": -0.00472,
               "gamma": 0.0,
               "mark_iv_pct": 83.21,
-              "ticker_timestamp_utc": "2026-11-17T23:29:48.675000+00:00"
+              "ticker_timestamp_utc": "2026-11-17T23:50:58.682000+00:00"
             },
             {
               "instrument_name": "BTC-19NOV26-58000-P",
               "expiry_date": "2026-11-19",
               "option_type": "put",
-              "delta": -0.00905,
+              "delta": -0.00918,
               "gamma": 1e-05,
               "mark_iv_pct": 79.34,
-              "ticker_timestamp_utc": "2026-11-17T23:29:48.675000+00:00"
+              "ticker_timestamp_utc": "2026-11-17T23:50:58.682000+00:00"
             },
             {
               "instrument_name": "BTC-19NOV26-61500-P",
               "expiry_date": "2026-11-19",
               "option_type": "put",
-              "delta": -0.0647,
+              "delta": -0.05989,
               "gamma": 5e-05,
-              "mark_iv_pct": 59.56,
-              "ticker_timestamp_utc": "2026-11-17T23:29:49.682000+00:00"
+              "mark_iv_pct": 57.53,
+              "ticker_timestamp_utc": "2026-11-17T23:50:59.826000+00:00"
             },
             {
               "instrument_name": "BTC-19NOV26-68000-C",
               "expiry_date": "2026-11-19",
               "option_type": "call",
-              "delta": 0.05863,
+              "delta": 0.05005,
               "gamma": 6e-05,
-              "mark_iv_pct": 47.88,
-              "ticker_timestamp_utc": "2026-11-17T23:29:49.682000+00:00"
+              "mark_iv_pct": 46.64,
+              "ticker_timestamp_utc": "2026-11-17T23:50:58.682000+00:00"
             },
             {
               "instrument_name": "BTC-19NOV26-71000-C",
               "expiry_date": "2026-11-19",
               "option_type": "call",
-              "delta": 0.01225,
+              "delta": 0.01003,
               "gamma": 1e-05,
-              "mark_iv_pct": 64.6,
-              "ticker_timestamp_utc": "2026-11-17T23:29:49.682000+00:00"
+              "mark_iv_pct": 63.4,
+              "ticker_timestamp_utc": "2026-11-17T23:50:59.689000+00:00"
             },
             {
               "instrument_name": "BTC-19NOV26-73000-C",
               "expiry_date": "2026-11-19",
               "option_type": "call",
-              "delta": 0.00286,
+              "delta": 0.00258,
               "gamma": 0.0,
               "mark_iv_pct": 69.03,
-              "ticker_timestamp_utc": "2026-11-17T23:29:49.682000+00:00"
+              "ticker_timestamp_utc": "2026-11-17T23:50:59.689000+00:00"
             }
           ]
         },
@@ -2446,55 +3183,55 @@
               "instrument_name": "BTC-20NOV26-55000-P",
               "expiry_date": "2026-11-20",
               "option_type": "put",
-              "delta": -0.00674,
+              "delta": -0.00647,
               "gamma": 0.0,
-              "mark_iv_pct": 84.94,
-              "ticker_timestamp_utc": "2026-11-17T23:29:49.682000+00:00"
+              "mark_iv_pct": 84.3,
+              "ticker_timestamp_utc": "2026-11-17T23:50:59.689000+00:00"
             },
             {
               "instrument_name": "BTC-20NOV26-58000-P",
               "expiry_date": "2026-11-20",
               "option_type": "put",
-              "delta": -0.02157,
+              "delta": -0.01768,
               "gamma": 1e-05,
-              "mark_iv_pct": 70.58,
-              "ticker_timestamp_utc": "2026-11-17T23:29:49.682000+00:00"
+              "mark_iv_pct": 67.56,
+              "ticker_timestamp_utc": "2026-11-17T23:50:59.689000+00:00"
             },
             {
               "instrument_name": "BTC-20NOV26-62000-P",
               "expiry_date": "2026-11-20",
               "option_type": "put",
-              "delta": -0.14099,
+              "delta": -0.13681,
               "gamma": 8e-05,
-              "mark_iv_pct": 54.74,
-              "ticker_timestamp_utc": "2026-11-17T23:29:50.275000+00:00"
+              "mark_iv_pct": 53.13,
+              "ticker_timestamp_utc": "2026-11-17T23:51:00.676000+00:00"
             },
             {
               "instrument_name": "BTC-20NOV26-68000-C",
               "expiry_date": "2026-11-20",
               "option_type": "call",
-              "delta": 0.11213,
+              "delta": 0.10298,
               "gamma": 8e-05,
-              "mark_iv_pct": 46.46,
-              "ticker_timestamp_utc": "2026-11-17T23:29:49.932000+00:00"
+              "mark_iv_pct": 45.47,
+              "ticker_timestamp_utc": "2026-11-17T23:51:00.676000+00:00"
             },
             {
               "instrument_name": "BTC-20NOV26-71000-C",
               "expiry_date": "2026-11-20",
               "option_type": "call",
-              "delta": 0.02702,
+              "delta": 0.0229,
               "gamma": 2e-05,
-              "mark_iv_pct": 56.93,
-              "ticker_timestamp_utc": "2026-11-17T23:29:49.682000+00:00"
+              "mark_iv_pct": 55.59,
+              "ticker_timestamp_utc": "2026-11-17T23:50:59.689000+00:00"
             },
             {
               "instrument_name": "BTC-20NOV26-75000-C",
               "expiry_date": "2026-11-20",
               "option_type": "call",
-              "delta": 0.00829,
+              "delta": 0.00745,
               "gamma": 1e-05,
-              "mark_iv_pct": 73.94,
-              "ticker_timestamp_utc": "2026-11-17T23:29:50.690000+00:00"
+              "mark_iv_pct": 73.35,
+              "ticker_timestamp_utc": "2026-11-17T23:50:59.689000+00:00"
             }
           ]
         },
@@ -2510,55 +3247,55 @@
               "instrument_name": "BTC-21NOV26-57000-P",
               "expiry_date": "2026-11-21",
               "option_type": "put",
-              "delta": -0.02244,
+              "delta": -0.02057,
               "gamma": 1e-05,
-              "mark_iv_pct": 69.1,
-              "ticker_timestamp_utc": "2026-11-17T23:29:49.682000+00:00"
+              "mark_iv_pct": 67.57,
+              "ticker_timestamp_utc": "2026-11-17T23:51:00.696000+00:00"
             },
             {
               "instrument_name": "BTC-21NOV26-58000-P",
               "expiry_date": "2026-11-21",
               "option_type": "put",
-              "delta": -0.03273,
+              "delta": -0.02995,
               "gamma": 2e-05,
-              "mark_iv_pct": 65.25,
-              "ticker_timestamp_utc": "2026-11-17T23:29:49.682000+00:00"
+              "mark_iv_pct": 63.54,
+              "ticker_timestamp_utc": "2026-11-17T23:51:00.696000+00:00"
             },
             {
               "instrument_name": "BTC-21NOV26-61500-P",
               "expiry_date": "2026-11-21",
               "option_type": "put",
-              "delta": -0.13715,
+              "delta": -0.13498,
               "gamma": 7e-05,
-              "mark_iv_pct": 53.35,
-              "ticker_timestamp_utc": "2026-11-17T23:29:50.729000+00:00"
+              "mark_iv_pct": 52.28,
+              "ticker_timestamp_utc": "2026-11-17T23:51:00.696000+00:00"
             },
             {
               "instrument_name": "BTC-21NOV26-68000-C",
               "expiry_date": "2026-11-21",
               "option_type": "call",
-              "delta": 0.14892,
+              "delta": 0.1388,
               "gamma": 8e-05,
-              "mark_iv_pct": 45.03,
-              "ticker_timestamp_utc": "2026-11-17T23:29:49.879000+00:00"
+              "mark_iv_pct": 43.98,
+              "ticker_timestamp_utc": "2026-11-17T23:51:00.696000+00:00"
             },
             {
               "instrument_name": "BTC-21NOV26-71000-C",
               "expiry_date": "2026-11-21",
               "option_type": "call",
-              "delta": 0.0347,
+              "delta": 0.03076,
               "gamma": 2e-05,
-              "mark_iv_pct": 50.48,
-              "ticker_timestamp_utc": "2026-11-17T23:29:50.690000+00:00"
+              "mark_iv_pct": 49.54,
+              "ticker_timestamp_utc": "2026-11-17T23:51:00.696000+00:00"
             },
             {
               "instrument_name": "BTC-21NOV26-72000-C",
               "expiry_date": "2026-11-21",
               "option_type": "call",
-              "delta": 0.02291,
+              "delta": 0.021,
               "gamma": 2e-05,
-              "mark_iv_pct": 53.14,
-              "ticker_timestamp_utc": "2026-11-17T23:29:50.690000+00:00"
+              "mark_iv_pct": 52.69,
+              "ticker_timestamp_utc": "2026-11-17T23:51:01.705000+00:00"
             }
           ]
         }
@@ -2578,7 +3315,7 @@
       "source_url": "https://www.tftc.io/bitcoin-etf-flows/latest.json",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "status": "STALE",
-      "retrieved_at_utc": "2026-11-17T23:29:51.873804+00:00",
+      "retrieved_at_utc": "2026-11-17T23:51:02.228437+00:00",
       "updated_through": "2026-11-13",
       "business_sessions_behind_approx": 2,
       "latest_session": {
@@ -2615,14 +3352,14 @@
     },
     "macro": {
       "status": "PARTIAL",
-      "retrieved_at_utc": "2026-11-17T23:33:52.548132+00:00",
+      "retrieved_at_utc": "2026-11-17T23:55:03.218711+00:00",
       "series": {
         "DGS2": {
           "label": "US Treasury 2Y yield",
           "value": 4.8,
           "unit": "percent",
           "observation_date": "2026-11-17",
-          "retrieved_at_utc": "2026-11-17T23:30:52.181896+00:00",
+          "retrieved_at_utc": "2026-11-17T23:52:02.797602+00:00",
           "age_calendar_days": 0,
           "status": "PASS",
           "previous_value": null,
@@ -2634,7 +3371,7 @@
           "value": 5.1,
           "unit": "percent",
           "observation_date": "2026-11-17",
-          "retrieved_at_utc": "2026-11-17T23:30:52.248533+00:00",
+          "retrieved_at_utc": "2026-11-17T23:52:02.688661+00:00",
           "age_calendar_days": 0,
           "status": "PASS",
           "previous_value": null,
@@ -2646,7 +3383,7 @@
           "value": 22.91,
           "unit": "index points",
           "observation_date": "2026-11-16",
-          "retrieved_at_utc": "2026-11-17T23:33:52.546492+00:00",
+          "retrieved_at_utc": "2026-11-17T23:55:03.217085+00:00",
           "age_calendar_days": 1,
           "status": "PASS",
           "previous_value": null,
@@ -2673,7 +3410,7 @@
       "source_note": "FRED observation dates are not release timestamps; monthly/weekly series naturally lag the run date."
     }
   },
-  "supplemental_acquisition_seconds": 254.003,
+  "supplemental_acquisition_seconds": 259.885,
   "cross_checks": [
     {
       "venue": "Coinbase",
@@ -2730,13 +3467,13 @@
     "robust_volume_z": "dimensionless rolling score versus prior 90 completed sessions; minimum 60 sessions"
   },
   "performance": {
-    "acquisition_and_qa_seconds": 297.398,
-    "walk_forward_seconds": 0.153,
-    "pre_report_review_seconds": 0.01,
-    "total_seconds_before_report": 297.591
+    "acquisition_and_qa_seconds": 307.816,
+    "walk_forward_seconds": 0.275,
+    "pre_report_review_seconds": 0.017,
+    "total_seconds_before_report": 308.151
   },
   "market_snapshot": {
-    "as_of_utc": "2026-11-17T23:33:52.548171+00:00",
+    "as_of_utc": "2026-11-17T23:55:03.218762+00:00",
     "warning": "These are last closed daily candles, not live spot quotes; USD and USDT are not converted or combined.",
     "venues": [
       {
@@ -2746,7 +3483,7 @@
         "snapshot_type": "latest_closed_daily_candle_not_realtime_spot",
         "candle_open_timestamp_utc": "2026-11-16T00:00:00+00:00",
         "candle_close_timestamp_utc": "2026-11-17T00:00:00+00:00",
-        "retrieved_at_utc": "2026-11-17T23:29:36.344076+00:00",
+        "retrieved_at_utc": "2026-11-17T23:50:40.343603+00:00",
         "open_quote_per_btc": 65351.05,
         "high_quote_per_btc": 65696.16,
         "low_quote_per_btc": 63905.01,
@@ -2778,7 +3515,7 @@
         "snapshot_type": "latest_closed_daily_candle_not_realtime_spot",
         "candle_open_timestamp_utc": "2026-11-16T00:00:00+00:00",
         "candle_close_timestamp_utc": "2026-11-17T00:00:00+00:00",
-        "retrieved_at_utc": "2026-11-17T23:29:38.311254+00:00",
+        "retrieved_at_utc": "2026-11-17T23:50:42.908055+00:00",
         "open_quote_per_btc": 65310.48,
         "high_quote_per_btc": 65609.6,
         "low_quote_per_btc": 63815.27,
@@ -2940,7 +3677,7 @@
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 23.493,
+          "latest_candle_age_hours": 23.845,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
           "volume_median_btc": 36285.648526,
@@ -2975,7 +3712,7 @@
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 23.494,
+          "latest_candle_age_hours": 23.845,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
           "volume_median_btc": 3154.24801664,
@@ -3011,7 +3748,7 @@
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 23.494,
+          "latest_candle_age_hours": 23.845,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
           "volume_median_btc": 7277.57349707,
@@ -3047,7 +3784,7 @@
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 23.494,
+          "latest_candle_age_hours": 23.845,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
           "volume_median_btc": 1673.7672171250001,
@@ -3118,12 +3855,13 @@
         }
       },
       {
-        "statement": "Supplemental feed per_exchange_derivatives: FAIL.",
+        "statement": "Supplemental feed per_exchange_derivatives: PARTIAL.",
         "evidence": {
-          "status": "FAIL",
+          "status": "PARTIAL",
           "by_exchange": {
             "binance_futures": "FAIL",
-            "bybit_futures": "FAIL"
+            "bybit_futures": "FAIL",
+            "okx_swap": "PASS"
           }
         }
       },
@@ -3330,8 +4068,8 @@
   "longitudinal_comparison": {
     "status": "COMPARISON_AVAILABLE",
     "comparison_performed": true,
-    "previous_run_started_at_utc": "2026-11-17T23:13:43.906691+00:00",
-    "previous_run_finished_at_utc": "2026-11-17T23:18:46.792080+00:00",
+    "previous_run_started_at_utc": "2026-11-17T23:28:55.149744+00:00",
+    "previous_run_finished_at_utc": "2026-11-17T23:33:52.741216+00:00",
     "previous_run_status": "COMPLETE_NOT_PROMOTED",
     "current_run_status": "COMPLETE_NOT_PROMOTED",
     "same_venue_price_snapshots": [
@@ -3405,9 +4143,9 @@
     "interpretation_policy": "Compare price snapshots only within identical venue/symbol/quote. Compare MAE only on identical holdout windows; all such historical results remain continuity diagnostics."
   },
   "code_provenance": {
-    "commit_sha": "aff58335a8a19facf28a1604698bebbbf93d2f9c",
+    "commit_sha": "626668fa7a51ee751d97068f5e484f44e3dbb7c5",
     "ref": "refs/heads/main",
-    "workflow_run_id": "44199662757",
+    "workflow_run_id": "44202712151",
     "event_name": "push"
   },
   "anomaly_event_cross_venue_checks": {
@@ -3553,46 +4291,46 @@
     }
   },
   "rotating_event_review": {
-    "timestamp_utc": "2020-03-13T00:00:00+00:00",
+    "timestamp_utc": "2020-03-12T00:00:00+00:00",
     "venues": {
       "Binance_BTCUSDT": {
         "status": "PASS",
-        "open": 4800.01,
-        "high": 5955.0,
-        "low": 3782.13,
-        "close": 5578.6,
-        "volume_btc": 402201.673764,
-        "intraday_range_pct": 45.268030691602725,
-        "close_log_return": 0.15032193094234547,
-        "volume_vs_prior_90d_median": 7.639212539174264,
+        "open": 7934.58,
+        "high": 7966.17,
+        "low": 4410.0,
+        "close": 4800.0,
+        "volume_btc": 261505.608653,
+        "intraday_range_pct": 44.818629341439625,
+        "close_log_return": -0.5026069427414592,
+        "volume_vs_prior_90d_median": 5.083543066164295,
         "quote_currency": "USDT"
       },
       "Bitstamp_BTCUSD": {
         "status": "PASS",
-        "open": 4841.67,
-        "high": 5990.35,
-        "low": 3850.0,
-        "close": 5622.74,
-        "volume_btc": 54419.64133553,
-        "intraday_range_pct": 44.20685424657195,
-        "close_log_return": 0.14955938704060256,
-        "volume_vs_prior_90d_median": 9.231324833310927,
+        "open": 7956.29,
+        "high": 7969.9,
+        "low": 4776.59,
+        "close": 4841.67,
+        "volume_btc": 58513.38918903,
+        "intraday_range_pct": 40.13566624645406,
+        "close_log_return": -0.4939694596760823,
+        "volume_vs_prior_90d_median": 10.054439449782079,
         "quote_currency": "USD"
       }
     },
-    "absolute_close_return_difference": 0.000762543901742907,
+    "absolute_close_return_difference": 0.008637483065376927,
     "volume_comparison_policy": "Venue volumes are not expected to match; compare each venue with its own trailing median.",
-    "binance_usdt_to_bitstamp_usd_close_price_ratio": 0.9921497348267927,
-    "implied_usd_per_usdt_if_btc_prices_were_at_parity": 1.007912379450041,
-    "binance_usdt_to_bitstamp_usd_open_price_ratio": 0.9913955308808737,
+    "binance_usdt_to_bitstamp_usd_close_price_ratio": 0.9913934654778207,
+    "implied_usd_per_usdt_if_btc_prices_were_at_parity": 1.00868125,
+    "binance_usdt_to_bitstamp_usd_open_price_ratio": 0.9972713412909786,
     "quote_basis_caveat": "The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged."
   },
   "pre_report_review": {
     "version": "pre-report-review-1.0",
     "executed_before_report_serialization": true,
-    "reviewed_at_utc": "2026-11-17T23:33:52.730959+00:00",
-    "run_id": "44199662757",
-    "rotating_adversarial_lens": "outlier_intraday_range",
+    "reviewed_at_utc": "2026-11-17T23:55:03.537432+00:00",
+    "run_id": "44202712151",
+    "rotating_adversarial_lens": "outlier_close_return",
     "checks": [
       {
         "check_id": "primary_sources_acquired_and_qa",
@@ -3606,7 +4344,7 @@
         "category": "data",
         "status": "PASS",
         "blocking": true,
-        "evidence": "required_domains=['exchange_flows_and_reserves', 'geopolitical_regulatory_news', 'global_etp_flows', 'liquidations', 'macro_and_indices', 'options', 'per_exchange_derivatives', 'spot_futures_cvd', 'spot_live_quotes', 'spot_ohlcv', 'us_spot_etf_flows']; reported=['exchange_flows_and_reserves', 'geopolitical_regulatory_news', 'global_etp_flows', 'liquidations', 'macro_and_indices', 'options', 'per_exchange_derivatives', 'spot_futures_cvd', 'spot_live_quotes', 'spot_ohlcv', 'us_spot_etf_flows']; statuses={'spot_ohlcv': 'PASS', 'spot_live_quotes': 'PARTIAL', 'per_exchange_derivatives': 'FAIL', 'options': 'PARTIAL', 'us_spot_etf_flows': 'STALE', 'global_etp_flows': 'UNAVAILABLE', 'exchange_flows_and_reserves': 'UNAVAILABLE', 'liquidations': 'UNAVAILABLE', 'macro_and_indices': 'PARTIAL', 'spot_futures_cvd': 'PARTIAL', 'geopolitical_regulatory_news': 'PARTIAL'}"
+        "evidence": "required_domains=['exchange_flows_and_reserves', 'geopolitical_regulatory_news', 'global_etp_flows', 'liquidations', 'macro_and_indices', 'options', 'per_exchange_derivatives', 'spot_futures_cvd', 'spot_live_quotes', 'spot_ohlcv', 'us_spot_etf_flows']; reported=['exchange_flows_and_reserves', 'geopolitical_regulatory_news', 'global_etp_flows', 'liquidations', 'macro_and_indices', 'options', 'per_exchange_derivatives', 'spot_futures_cvd', 'spot_live_quotes', 'spot_ohlcv', 'us_spot_etf_flows']; statuses={'spot_ohlcv': 'PASS', 'spot_live_quotes': 'PARTIAL', 'per_exchange_derivatives': 'PARTIAL', 'options': 'PARTIAL', 'us_spot_etf_flows': 'STALE', 'global_etp_flows': 'UNAVAILABLE', 'exchange_flows_and_reserves': 'UNAVAILABLE', 'liquidations': 'UNAVAILABLE', 'macro_and_indices': 'PARTIAL', 'spot_futures_cvd': 'PARTIAL', 'geopolitical_regulatory_news': 'PARTIAL'}"
       },
       {
         "check_id": "rolling_volume_outlier_method",
@@ -3641,7 +4379,7 @@
         "category": "lineage",
         "status": "PASS",
         "blocking": true,
-        "evidence": "verified_objects=169; errors=[]"
+        "evidence": "verified_objects=175; errors=[]"
       },
       {
         "check_id": "raw_manifest_provenance",
@@ -3767,19 +4505,27 @@
         "category": "operations",
         "status": "PASS",
         "blocking": true,
-        "evidence": "acquisition_and_qa_seconds=297.398; walk_forward_seconds=0.153; measured stages must be non-negative and remain within the 120-minute workflow budget."
+        "evidence": "acquisition_and_qa_seconds=307.816; walk_forward_seconds=0.275; measured stages must be non-negative and remain within the 120-minute workflow budget."
       },
       {
-        "check_id": "rotating_red_team_outlier_intraday_range",
+        "check_id": "rotating_red_team_outlier_close_return",
         "category": "red_team",
         "status": "PASS",
         "blocking": false,
-        "evidence": "event=2020-03-13T00:00:00+00:00; screening_thresholds=2% absolute log-return difference and 2% raw quote-price ratio gap; thresholds are WARN-only, not calibrated FX or data rejection rules; context={'timestamp_utc': '2020-03-13T00:00:00+00:00', 'venues': {'Binance_BTCUSDT': {'status': 'PASS', 'open': 4800.01, 'high': 5955.0, 'low': 3782.13, 'close': 5578.6, 'volume_btc': 402201.673764, 'intraday_range_pct': 45.268030691602725, 'close_log_return': 0.15032193094234547, 'volume_vs_prior_90d_median': 7.639212539174264, 'quote_currency': 'USDT'}, 'Bitstamp_BTCUSD': {'status': 'PASS', 'open': 4841.67, 'high': 5990.35, 'low': 3850.0, 'close': 5622.74, 'volume_btc': 54419.64133553, 'intraday_range_pct': 44.20685424657195, 'close_log_return': 0.14955938704060256, 'volume_vs_prior_90d_median': 9.231324833310927, 'quote_currency': 'USD'}}, 'absolute_close_return_difference': 0.000762543901742907, 'volume_comparison_policy': 'Venue volumes are not expected to match; compare each venue with its own trailing median.', 'binance_usdt_to_bitstamp_usd_close_price_ratio': 0.9921497348267927, 'implied_usd_per_usdt_if_btc_prices_were_at_parity': 1.007912379450041, 'binance_usdt_to_bitstamp_usd_open_price_ratio': 0.9913955308808737, 'quote_basis_caveat': 'The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged.'}"
+        "evidence": "event=2020-03-12T00:00:00+00:00; screening_thresholds=2% absolute log-return difference and 2% raw quote-price ratio gap; thresholds are WARN-only, not calibrated FX or data rejection rules; context={'timestamp_utc': '2020-03-12T00:00:00+00:00', 'venues': {'Binance_BTCUSDT': {'status': 'PASS', 'open': 7934.58, 'high': 7966.17, 'low': 4410.0, 'close': 4800.0, 'volume_btc': 261505.608653, 'intraday_range_pct': 44.818629341439625, 'close_log_return': -0.5026069427414592, 'volume_vs_prior_90d_median': 5.083543066164295, 'quote_currency': 'USDT'}, 'Bitstamp_BTCUSD': {'status': 'PASS', 'open': 7956.29, 'high': 7969.9, 'low': 4776.59, 'close': 4841.67, 'volume_btc': 58513.38918903, 'intraday_range_pct': 40.13566624645406, 'close_log_return': -0.4939694596760823, 'volume_vs_prior_90d_median': 10.054439449782079, 'quote_currency': 'USD'}}, 'absolute_close_return_difference': 0.008637483065376927, 'volume_comparison_policy': 'Venue volumes are not expected to match; compare each venue with its own trailing median.', 'binance_usdt_to_bitstamp_usd_close_price_ratio': 0.9913934654778207, 'implied_usd_per_usdt_if_btc_prices_were_at_parity': 1.00868125, 'binance_usdt_to_bitstamp_usd_open_price_ratio': 0.9972713412909786, 'quote_basis_caveat': 'The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged.'}"
       }
     ],
     "review_cycles": [
       {
         "cycle": 1,
+        "review_lens": "data",
+        "status": "PASS",
+        "checks_reviewed": 7,
+        "failures": [],
+        "warnings": []
+      },
+      {
+        "cycle": 2,
         "review_lens": "quant",
         "status": "PASS",
         "checks_reviewed": 5,
@@ -3787,7 +4533,7 @@
         "warnings": []
       },
       {
-        "cycle": 2,
+        "cycle": 3,
         "review_lens": "ledger",
         "status": "PASS",
         "checks_reviewed": 1,
@@ -3795,7 +4541,7 @@
         "warnings": []
       },
       {
-        "cycle": 3,
+        "cycle": 4,
         "review_lens": "risk",
         "status": "PASS",
         "checks_reviewed": 1,
@@ -3803,7 +4549,7 @@
         "warnings": []
       },
       {
-        "cycle": 4,
+        "cycle": 5,
         "review_lens": "operations",
         "status": "PASS",
         "checks_reviewed": 1,
@@ -3811,7 +4557,7 @@
         "warnings": []
       },
       {
-        "cycle": 5,
+        "cycle": 6,
         "review_lens": "red_team",
         "status": "PASS",
         "checks_reviewed": 1,
@@ -3819,18 +4565,10 @@
         "warnings": []
       },
       {
-        "cycle": 6,
+        "cycle": 7,
         "review_lens": "protocol",
         "status": "PASS",
         "checks_reviewed": 5,
-        "failures": [],
-        "warnings": []
-      },
-      {
-        "cycle": 7,
-        "review_lens": "data",
-        "status": "PASS",
-        "checks_reviewed": 7,
         "failures": [],
         "warnings": []
       }
@@ -3852,5 +4590,5 @@
     "event_ids_unique": true,
     "ledger_sha256": "c99e834515c687a6caa48a0c946a1b6d6917ed3fa7139a58006fabe397c2c346"
   },
-  "finished_at_utc": "2026-11-17T23:33:52.741216+00:00"
+  "finished_at_utc": "2026-11-17T23:55:03.554699+00:00"
 }
