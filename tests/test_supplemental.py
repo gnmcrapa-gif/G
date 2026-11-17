@@ -301,7 +301,7 @@ def test_fed_h6_m2_fallback_uses_release_date_for_freshness(monkeypatch, tmp_pat
 
     html = b"""<html><body><p>Release Date: October 27, 2026</p>
     <table><thead>
-    <tr><th rowspan="3">Date</th><th colspan="2">Seasonally adjusted</th><th>Other</th></tr>
+    <tr><th rowspan="3">Date</th><th colspan="2">Seasonally adjusted</th><th>Not seasonally adjusted</th></tr>
     <tr><th>M1</th><th>M2</th><th>Other</th></tr>
     <tr><th>Currency</th><th>Reserve balances</th><th>Other</th></tr>
     </thead><tbody>
