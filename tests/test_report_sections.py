@@ -150,3 +150,30 @@ def test_halving_cycle_comparison_uses_same_elapsed_horizon_and_marks_missing_hi
     assert cycles["2020 cycle"]["elapsed_sessions"] == result["current_cycle_elapsed_sessions"]
     assert cycles["2024 cycle (current)"]["elapsed_sessions"] == result["current_cycle_elapsed_sessions"]
     assert "not a timing forecast" in result["interpretation_limit"]
+
+
+
+def test_markdown_renderer_handles_integer_forecast_count():
+    run = {
+        "started_at_utc": "2026-11-17T22:00:00+00:00",
+        "status": "COMPLETE_NOT_PROMOTED",
+        "market_snapshot": {"venues": []},
+        "supplemental_data": {"coverage": {}},
+        "report_taxonomy": {
+            "FACT": [],
+            "INTERPRETATION": [],
+            "HYPOTHESIS": [],
+            "FORECAST": {
+                "new_point_forecasts_issued_this_run": 3,
+                "new_forecasts_scored_this_run": 0,
+                "calibrated_probabilities_published": False,
+                "qualification": "Point forecasts are not calibrated probabilities.",
+            },
+        },
+        "cycle_comparison": {},
+        "closing_assessment": {},
+        "risk": {},
+    }
+    markdown = render_markdown_report(run, {})
+    assert "Point forecast emessi in questo run: 3." in markdown
+    assert "Probabilità calibrate pubblicate: False." in markdown
