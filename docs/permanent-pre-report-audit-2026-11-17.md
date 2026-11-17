@@ -57,7 +57,7 @@ Binance-vs-Bitstamp price differences were approximately -0.0016% open, +0.1542%
 
 ## Statistical and prospective status
 
-- The historical 2025-11-17–2026-11-15 holdout remains a continuity diagnostic, not globally unseen evidence.
+- The fixed-start expanding historical continuity window beginning 2025-11-17 UTC remains diagnostic-only and is not globally unseen evidence.
 - The production target is `log(Open[t+h+2]/Open[t+2])` because the scheduled job runs at 16:00 UTC; h+1 would backdate entry.
 - Zero-return remains the frozen champion. Drift and momentum remain benchmarks. Ridge remains challenger-only.
 - No calibrated probabilities are permitted until at least 200 genuinely matured prospective SCORE events per horizon plus a separate calibration study.
