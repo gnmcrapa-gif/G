@@ -108,4 +108,6 @@ def test_qa_reports_zero_volume_tail_and_exact_freshness_diagnostics():
     assert result["volume_median_btc"] == pytest.approx(10.0)
     assert result["latest_candle_age_hours"] == pytest.approx(12.0)
     assert result["absolute_close_return_max"] > 0
+    assert result["volume_robust_z_max_timestamp_utc"] is not None
+    assert result["volume_max_timestamp_utc"] == "2024-01-03T00:00:00+00:00"
     assert "not automatic rejection" in result["diagnostic_note"]
