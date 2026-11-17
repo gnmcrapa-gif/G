@@ -273,6 +273,9 @@ def run_pre_report_review(
         and metric_metadata.get("quote_currency") == "USDT"
         and metric_metadata.get("target_unit") == "natural-log return units"
         and metric_metadata.get("horizon_unit") == "daily sessions"
+        and metric_metadata.get("historical_window_start_utc")
+        and metric_metadata.get("historical_window_end_utc")
+        and metric_metadata.get("sample_role")
         and metric_metadata.get("data_qa_status") == "PASS"
         and all(key in conventions for key in (
             "price", "volume", "percentage", "log_return", "horizon", "timestamp"
