@@ -335,8 +335,8 @@ def render_markdown_report(run: dict, scores: dict) -> str:
         )
         lines.append(f"| {step.get('step')} | {step.get('status')} | {detail} |")
     lines += ["", "## 2. Prezzi spot — ultime candele giornaliere chiuse", "",
-              "| Venue | Strumento | Candela UTC | Close | 1D | 7D | 30D | Range intraday | Volume BTC |",
-              "|---|---|---|---:|---:|---:|---:|---:|---:|"]
+              "| Venue | Strumento | Candela UTC | Close | 1D | 7D | 30D | Range intraday | Vol 1D BTC | Vol 7D BTC | Vol 30D BTC |",
+              "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
     for item in run.get("market_snapshot", {}).get("venues", []):
         lines.append(
             f"| {item.get('venue')} | {item.get('symbol')} ({item.get('quote_currency')}) | "
