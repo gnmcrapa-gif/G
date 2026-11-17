@@ -1498,19 +1498,65 @@ def _cryptokeyhole_context(directory: Path) -> tuple[dict, list[dict]]:
                 "status": "FAIL", "error": errors[metric_key],
             })
 
+    exchange_page_obj = None
+    try:
+        exchange_url = "https://cryptokeyhole.com/exchanges/"
+        exchange_response = session.get(exchange_url, timeout=30)
+        exchange_response.raise_for_status()
+        exchange_raw = exchange_response.content
+        exchange_page_obj = _save_object(
+            directory, "exchange_daily_ranking.html", exchange_raw,
+            source="CryptoKeyhole exchange reserves and stress page",
+            url=exchange_response.url, venue="Seven labeled exchanges",
+            symbol="multi-asset daily netflow ranking", quote="USD", source_grade="B",
+        )
+        objects.append(exchange_page_obj)
+        exchange_ranking = _parse_ckh_exchange_ranking(exchange_raw)
+        exchange_ranking["source_url"] = exchange_response.url
+        exchange_ranking["retrieved_at_utc"] = exchange_page_obj["retrieved_at_utc"]
+        summary["exchange_daily_ranking"] = exchange_ranking
+        manifests.append({
+            "source": "CryptoKeyhole exchange reserves and stress page",
+            "venue": "Seven labeled exchanges", "symbol": "multi-asset daily netflow ranking",
+            "quote_currency": "USD", "interval": "daily plus rolling 7d",
+            "timezone": "UTC", "schema_version": "1.0", "source_grade": "B",
+            "retrieved_at_utc": exchange_page_obj["retrieved_at_utc"],
+            "parser": "CryptoKeyhole exchange HTML table parser", "parser_version": "0.3",
+            "schema": ["exchange", "daily_netflow_usd", "netflow_7d_usd", "coins_covered", "events_last_30d"],
+            "objects": [exchange_page_obj], "status": exchange_ranking.get("status", "FAIL"),
+        })
+    except (requests.RequestException, ValueError) as exc:
+        summary["exchange_daily_ranking"] = {
+            "status": "FAIL", "error": f"{type(exc).__name__}: {exc}",
+        }
+        manifests.append({
+            "source": "CryptoKeyhole exchange reserves and stress page",
+            "venue": "Seven labeled exchanges", "symbol": "multi-asset daily netflow ranking",
+            "quote_currency": "USD", "interval": "daily plus rolling 7d",
+            "timezone": "UTC", "schema_version": "1.0", "source_grade": "B",
+            "retrieved_at_utc": datetime.now(UTC).isoformat(),
+            "parser": "CryptoKeyhole exchange HTML table parser", "parser_version": "0.3",
+            "schema": ["raw HTML retained; parser failed"] if exchange_page_obj else [],
+            "objects": [exchange_page_obj] if exchange_page_obj else [],
+            "status": "FAIL", "error": summary["exchange_daily_ranking"]["error"],
+        })
+
     netflow = summary["series"].get("exchange_netflow_btc", {})
     balance = summary["series"].get("exchange_balance_btc", {})
     exchange_statuses = [netflow.get("status"), balance.get("status")]
+    ranking_status = summary.get("exchange_daily_ranking", {}).get("status")
     if all(status == "PASS" for status in exchange_statuses):
         summary["exchange_flows_and_reserves_status"] = "PASS"
-    elif any(status in {"PASS", "STALE"} for status in exchange_statuses):
+    elif ranking_status in {"PASS", "PARTIAL"} or any(status in {"PASS", "STALE"} for status in exchange_statuses):
         summary["exchange_flows_and_reserves_status"] = "PARTIAL"
     else:
         summary["exchange_flows_and_reserves_status"] = "UNAVAILABLE"
     summary["exchange_labeling_limits"] = (
-        "CryptoKeyhole wallet labels are a lower-bound view: only disclosed/identified exchange wallet clusters are counted; "
-        "coverage varies by exchange and snapshot age, customer deposit addresses may be incomplete, and transfers between "
-        "covered exchanges are not equivalent to external netflows. Do not infer total exchange reserves or solvency."
+        "CryptoKeyhole free daily ranking is aggregate across the listed coins, not BTC-only; covered venues are Binance, "
+        "OKX, Bybit, HTX, KuCoin, Bitfinex and Crypto.com. Coinbase and Kraken are not in this ranking. Figures are lower "
+        "bounds based on published/identified addresses. BTC-specific flows and reserves require Plus; hourly readings "
+        "and per-exchange detail require higher plans. Customer deposit addresses and unlabeled wallets remain incomplete. "
+        "Do not infer total exchange reserves or solvency."
     )
     summary["liquidations_snapshot_status"] = (
         "PARTIAL" if _contains_liquidation_data(move) else "UNAVAILABLE"
