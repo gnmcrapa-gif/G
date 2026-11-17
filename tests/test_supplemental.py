@@ -57,6 +57,14 @@ def test_numeric_helpers_reject_nonfinite_and_zero_denominator():
     assert _pct_change(None, 110.0) is None
 
 
+def test_derivative_coverage_is_partial_when_any_venue_has_partial_data():
+    from btc_quant.supplemental import _derivative_coverage_status
+
+    assert _derivative_coverage_status({"binance_futures": "FAIL", "bybit_futures": "FAIL", "okx_swap": "PARTIAL"}) == "PARTIAL"
+    assert _derivative_coverage_status({"binance_futures": "PASS", "bybit_futures": "PASS", "okx_swap": "PASS"}) == "PASS"
+    assert _derivative_coverage_status({"binance_futures": "FAIL", "bybit_futures": "FAIL", "okx_swap": "FAIL"}) == "FAIL"
+
+
 def test_macro_series_have_units_frequencies_and_freshness_limits():
     assert FRED_SERIES["DGS10"]["unit"] == "percent"
     assert FRED_SERIES["DFII10"]["max_age_days"] == 5
