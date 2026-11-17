@@ -59,6 +59,7 @@ def _review_inputs(tmp_path):
     }
     run = {
         "started_at_utc": "2025-06-23T12:00:00+00:00",
+        "performance": {"acquisition_and_qa_seconds": 10.0, "walk_forward_seconds": 2.0},
         "steps": [
             {"step": "binance_acquisition_and_qa", "status": "PASS", "qa": qa},
             {"step": "bitstamp_acquisition_and_qa", "status": "PASS", "qa": qa},
