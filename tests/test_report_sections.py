@@ -228,6 +228,7 @@ def test_markdown_report_includes_okx_perpetual_context_and_cvd_limits():
                 "daily_taker_volume_history_rows": 30,
                 "funding_history_rows": 100,
                 "daily_taker_volume_summary": {
+                    "closed_daily_rows": 29,
                     "cumulative_delta_btc": {"1d": -313.2, "7d": -22127.8, "30d": None},
                     "measurement_note": "Exchange-specific derivatives delta proxy; not spot CVD.",
                 },
