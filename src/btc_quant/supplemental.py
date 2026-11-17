@@ -1123,6 +1123,7 @@ def _global_etp_weekly(directory: Path) -> tuple[dict, list[dict]]:
             "https://bitwiseinvestments.eu/blog/regular-updates/"
             f"Bitwise_Crypto_Market_Compass_{year}_{week:02d}/"
         )
+        obj = None
         try:
             response = session.get(url, timeout=30)
             if response.status_code == 404:
@@ -1161,7 +1162,7 @@ def _global_etp_weekly(directory: Path) -> tuple[dict, list[dict]]:
                 break
         except (requests.RequestException, ValueError) as exc:
             errors[f"{year}-W{week:02d}"] = f"{type(exc).__name__}: {exc}"
-            if "obj" in locals() and obj:
+            if obj:
                 manifests.append({
                     "source": "Bitwise Europe Weekly Crypto Market Compass",
                     "venue": "Global crypto ETPs", "symbol": f"{year}-W{week:02d}",
@@ -1395,6 +1396,28 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
                 "schema": [], "objects": [], "status": "FAIL",
                 "error": summary[name]["error"],
             })
+    try:
+        global_etp_data, global_etp_manifests = _global_etp_weekly(
+            output_dir / "global_etp"
+        )
+        summary["global_etp_flows"] = global_etp_data
+        manifests.extend(global_etp_manifests)
+        summary["coverage"]["global_etp_flows"] = {
+            "status": (
+                "PARTIAL" if global_etp_data.get("status") in {"PASS", "PARTIAL"}
+                else "FAIL"
+            ),
+            "reason": (
+                "Global ETP data are weekly only; daily flows, global AUM and turnover are not supplied by this source."
+            ),
+        }
+    except Exception as exc:  # noqa: BLE001
+        summary["global_etp_flows"] = {
+            "status": "FAIL", "error": f"{type(exc).__name__}: {exc}",
+        }
+        summary["coverage"]["global_etp_flows"] = {
+            "status": "FAIL", "reason": summary["global_etp_flows"]["error"],
+        }
     derivative_passes = sum(status == "PASS" for status in derivative_statuses.values())
     summary["coverage"]["per_exchange_derivatives"] = {
         "status": (
