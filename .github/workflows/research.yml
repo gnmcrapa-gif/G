@@ -54,7 +54,7 @@ jobs:
           CRYPTOKEYHOLE_API_KEY: ${{ secrets.CRYPTOKEYHOLE_API_KEY }}
         run: python scripts/run_research.py
       - name: Persist raw data, manifests, reports and append-only ledger
-        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && steps.research.outcome == 'success'
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
