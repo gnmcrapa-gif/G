@@ -86,7 +86,8 @@ python scripts/run_research.py
 - `reports/latest/run_report.json`: source QA, cross-checks, holdout status, ledger activity, and limitations.
 - `reports/latest/scores.json`: benchmark and challenger metrics.
 - `reports/latest/oos_predictions.csv`: final-holdout predictions and outcomes.
-- `ledger/forecast_ledger.csv`: append-only forecast, invalidation, and scoring events.
+- `ledger/forecast_ledger.csv`: append-only price-only Ridge challenger forecasts, invalidations and scores.
+- `ledger/ohlcv_challenger_ledger.csv`: separate append-only OHLCV challenger forecasts, invalidations and scores; trained only before the frozen 2025-11-16 holdout, fixed alpha 100, no tuning on the holdout.
 
 ## Security and limitations
 
@@ -144,3 +145,12 @@ The daily research workflow is scheduled for 16:00 UTC. Since the next daily ope
 - Raw review of 2022-11-08 found close/open price corroboration between Binance and Bitstamp, but a 63.20x base-volume ratio. Venue-specific volume is not interchangeable; Coinbase/Kraken run windows do not cover the event date, so historical independent volume verification remains open.
 - New tests cover the scalar serialization/scoring defect, archive completeness, raw hash integrity, Bitstamp overlap reconciliation and the outlier cross-check.
 - Zero-return champion unchanged; Ridge unpromoted; probabilities disabled; Risk Overlay v1.1 paper-only; exposure 0%.
+
+
+### V5.5-OHLCV-001 — prospective challenger implementation
+
+- Separate feature pipeline adds lagged-median volume surprise, robust volume surprise z-score, candle range/body/wicks and close-location features to the price-only feature set.
+- Fixed Ridge alpha = 100; no tuning on the historical holdout.
+- Training labels end before the frozen 2025-11-16 UTC holdout start. The historical continuity holdout is not used for training or tuning.
+- Point forecasts are appended to `ledger/ohlcv_challenger_ledger.csv` and scored only when entry and expiry opens are available.
+- This starts prospective evidence collection; it does not establish predictive lift, calibration, economic value or promotion. At least 200 matured forecasts per horizon plus independent statistical and cost gates remain required.
