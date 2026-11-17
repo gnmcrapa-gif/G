@@ -5,6 +5,8 @@ from btc_quant.supplemental import (
     _find_etf_sessions,
     _float_or_none,
     _parse_deribit_instrument,
+    _parse_rss_articles,
+    _news_keyword_tags,
     _pct_change,
     _summarize_hourly_taker_delta,
     empty_supplemental_coverage,
@@ -84,3 +86,26 @@ def test_hourly_taker_delta_calculates_exact_24h_7d_and_30d_windows():
     assert result["7d"]["cumulative_delta_btc"] == pytest.approx(336.0)
     assert result["30d"]["cumulative_delta_btc"] == pytest.approx(1440.0)
     assert result["30d"]["delta_pct_of_total_volume"] == pytest.approx(20.0)
+
+
+
+def test_official_rss_parser_keeps_publication_time_source_and_url():
+    xml = b"""<?xml version="1.0"?>
+    <rss><channel><item>
+      <title>SEC publishes digital asset rule proposal</title>
+      <link>https://www.sec.gov/example</link>
+      <pubDate>Tue, 17 Nov 2026 16:00:00 GMT</pubDate>
+      <description>Commission notice and comment period.</description>
+    </item></channel></rss>"""
+    articles = _parse_rss_articles(xml, "SEC")
+    assert len(articles) == 1
+    assert articles[0]["source"] == "SEC"
+    assert articles[0]["url"] == "https://www.sec.gov/example"
+    assert articles[0]["published_at_utc"] == "2026-11-17T16:00:00+00:00"
+    assert "regulatory" in _news_keyword_tags(articles[0]["title"], articles[0]["snippet"])
+    assert "crypto" not in _news_keyword_tags("Treasury announces new sanctions")
+
+
+def test_news_keyword_tags_are_explicitly_rule_based():
+    tags = _news_keyword_tags("Federal Reserve signals rates amid Bitcoin ETF flows")
+    assert tags == ["macro_monetary", "crypto"]
