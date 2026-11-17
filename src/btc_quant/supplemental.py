@@ -1165,7 +1165,7 @@ def _parse_cboe_vix_csv(payload: bytes) -> tuple[date, float]:
     )
     if header_index is None:
         raise ValueError("Cboe VIX CSV has no DATE header row")
-    frame = pd.read_csv(io.StringIO("\\n".join(lines[header_index:])))
+    frame = pd.read_csv(io.StringIO("\n".join(lines[header_index:])))
     frame.columns = [str(column).strip().upper() for column in frame.columns]
     required = {"DATE", "CLOSE"}
     if not required.issubset(frame.columns):
