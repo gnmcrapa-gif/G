@@ -338,6 +338,8 @@ def cross_check_venues(primary: pd.DataFrame, secondary: pd.DataFrame) -> dict:
     aligned = left.join(right, how="inner", lsuffix="_primary", rsuffix="_secondary")
     if len(aligned) < 30:
         return {"status": "WARN", "overlap_rows": len(aligned),
+                "overlap_start_utc": aligned.index.min().isoformat() if len(aligned) else None,
+                "overlap_end_utc": aligned.index.max().isoformat() if len(aligned) else None,
                 "reason": "fewer than 30 overlapping daily closes; no correlation claim"}
     ret_left = np.log(aligned["close_primary"]).diff()
     ret_right = np.log(aligned["close_secondary"]).diff()
@@ -345,6 +347,8 @@ def cross_check_venues(primary: pd.DataFrame, secondary: pd.DataFrame) -> dict:
     basis = np.log(aligned["close_primary"] / aligned["close_secondary"])
     return {
         "status": "PASS" if np.isfinite(corr) else "WARN", "overlap_rows": len(aligned),
+        "overlap_start_utc": aligned.index.min().isoformat(),
+        "overlap_end_utc": aligned.index.max().isoformat(),
         "return_correlation": corr,
         "median_absolute_log_basis": float(basis.abs().median()),
         "p99_absolute_log_basis": float(basis.abs().quantile(0.99)),
