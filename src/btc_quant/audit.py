@@ -206,7 +206,7 @@ def audit_outlier_date(binance: pd.DataFrame | None, bitstamp: pd.DataFrame | No
     }
 
 
-def build_market_snapshot(binance: pd.DataFrame | None, bitstamp: pd.DataFrame | None) -> dict:
+def build_market_snapshot(binance: pd.DataFrame | None, bitstamp: pd.DataFrame | None, manifests: list[dict] | None = None) -> dict:
     output = {}
     for venue, frame, symbol, quote in (
         ("Binance", binance, "BTCUSDT", "USDT"),
@@ -216,8 +216,11 @@ def build_market_snapshot(binance: pd.DataFrame | None, bitstamp: pd.DataFrame |
             output[venue] = {"status": "BLOCKED"}
             continue
         row = frame.sort_values("timestamp").iloc[-1]
+        source_manifest = _source(manifests or [], venue)
         output[venue] = {
             "status": "PASS", "symbol": symbol, "quote_currency": quote,
+            "retrieved_at_utc": None if source_manifest is None else source_manifest.get("retrieved_at_utc"),
+            "qa_status": None if source_manifest is None else source_manifest.get("qa", {}).get("status", source_manifest.get("status")),
             "candle_open_timestamp_utc": pd.Timestamp(row["timestamp"]).isoformat(),
             "open": float(row["open"]), "high": float(row["high"]),
             "low": float(row["low"]), "close": float(row["close"]),
@@ -285,6 +288,9 @@ def build_forecast_snapshot(events: list[dict]) -> list[dict]:
                 "issued_at_utc": row.get("issued_at_utc"),
                 "entry_timestamp_utc": row.get("entry_timestamp_utc"),
                 "expiry_timestamp_utc": row.get("expiry_timestamp_utc"),
+                "data_manifest_sha256": row.get("data_manifest_sha256"),
+                "code_commit": row.get("code_commit"),
+                "target": row.get("target"),
                 "status": "PENDING_POINT_FORECAST_NOT_PROBABILITY",
                 "units": "log return; implied simple return in percent",
                 "source": "Binance BTCUSDT spot daily OHLCV",
@@ -550,14 +556,14 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
         "blocked_checks": blocked,
         "warning_checks": warnings,
         "rotating_review": checks["rotating_deep_review"],
-        "market_snapshot": build_market_snapshot(binance, bitstamp),
+        "market_snapshot": build_market_snapshot(binance, bitstamp, manifests),
         "forecast_snapshot": build_forecast_snapshot(events),
         "analysis_layers": {
             "FACT": {
                 "source_row_counts": {
                     item.get("venue", "unknown"): item.get("rows") for item in manifests
                 },
-                "latest_candles": build_market_snapshot(binance, bitstamp),
+                "latest_candles": build_market_snapshot(binance, bitstamp, manifests),
                 "observed_price_drivers": observed_drivers,
                 "prospective_matured_forecasts_price_only": run.get("prospective_ledger_validation", {}).get("by_horizon", {}),
                 "prospective_matured_forecasts_ohlcv": run.get("ohlcv_challenger", {}).get("prospective_validation", {}).get("by_horizon", {}),
