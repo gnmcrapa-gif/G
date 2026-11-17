@@ -39,3 +39,12 @@ The challenger experiment register is append-only. V5.5 registers OHLCV-001 as a
 - No auto-trading, order placement, or automatic exposure increase.
 - The historical holdout cannot be recycled for future promotion.
 - Statistical changes require a new prospective evidence window and realistic 1x/2x/3x cost tests.
+
+
+## V5.5.1 — target/execution timing audit (2026-11-17)
+
+The requested next-open target `log(Open[t+h+1]/Open[t+1])` is mathematically valid as a theoretical label, but it is not executable by the current daily workflow: the research job runs at 16:00 UTC, while `Open[t+1]` is the 00:00 UTC boundary immediately after candle `t` closes. At issuance, that entry is already 16 hours in the past. Do not backdate the entry or score it as executable.
+
+The production target remains `log(Open[t+h+2]/Open[t+2])`: the daily job has one complete UTC daily bar of operational latency and enters at the first daily open still in the future. The target helper now accepts an explicit `entry_lag_sessions`; the default is 2, while lag 1 is retained only for theoretical diagnostics. Research and ledger share the same helper to prevent formula drift. The ledger still enforces `entry_timestamp_utc > issued_at_utc`.
+
+This is a timing correction, not a statistical model change. Champion remains zero-return; Ridge remains an unpromoted challenger. No historical holdout is reopened or promoted. A separate intraday execution study would be required to support a true next-open (h+1) executable strategy, using a point-in-time close/decision timestamp and the first tradable post-issuance price rather than a daily open already passed.
