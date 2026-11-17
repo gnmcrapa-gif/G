@@ -275,6 +275,7 @@ def main() -> int:
             run["status"] = "BLOCKED"
             run["risk"]["theoretical_exposure_pct"] = 0.0
             run["risk"]["reason"] = "Mandatory pre-report audit blocked; abstain."
+        run["audit"]["reliability_status"] = run["status"]
         run["audit"]["pre_report_gate"] = review["gate"]
         run["audit"]["rotating_review_lens"] = review["rotating_review"]["lens"]
         run["audit"]["decision"] = (
@@ -289,6 +290,7 @@ def main() -> int:
             "live_trading_enabled": False, "theoretical_exposure_pct": 0.0,
             "reason": "Audit execution failed; fail-closed.",
         }
+        run["audit"] = {"reliability_status": "BLOCKED", "decision": "ABSTAIN_FROM_LIVE_RISK"}
         run["pre_report_review"] = {
             "execution_order": "BEFORE_REPORT_SERIALIZATION",
             "gate": "BLOCKED",
