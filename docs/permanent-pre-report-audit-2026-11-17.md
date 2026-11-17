@@ -20,8 +20,11 @@ Every run performs all core checks:
 4. UTC target/execution semantics, including an independent synthetic check of the production h+2 open-to-open target.
 5. Historical holdout governance: no training on the reused historical continuity window and no claim that it is globally unseen.
 6. Append-only forecast-ledger integrity: unique event IDs, finite scalar forecasts, legacy singleton-array compatibility, future entry, expiry ordering and score-to-forecast linkage.
-7. Benchmark governance: zero-return champion retained, Ridge challenger not promoted.
-8. Risk fail-safe: paper-only, no live trading, theoretical exposure exactly 0%.
+7. Venue quote separation: Binance USDT and Bitstamp USD remain distinct, with no implicit FX conversion or volume pooling.
+8. Report-status consistency: a COMPLETE report requires both primary QA passes and a scored-but-not-promoted research result.
+9. Benchmark governance: zero-return champion retained, Ridge challenger not promoted.
+10. Risk fail-safe: paper-only, no live trading, theoretical exposure exactly 0%.
+11. Any forecast whose expiry is already present in the latest validated daily series must have a SCORE event; otherwise the pre-report gate blocks. Invalidated late-entry records remain preserved and are explicitly exempt from the valid-forecast chronology rule.
 9. Optional Coinbase/Kraken source availability and explicit warning when unavailable.
 10. Historical outlier cross-check and limitations.
 
