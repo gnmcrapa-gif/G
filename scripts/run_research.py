@@ -10,7 +10,6 @@ import traceback
 from datetime import UTC, datetime
 from pathlib import Path
 
-
 from btc_quant.acquisition import (
     download_binance_daily,
     download_bitstamp_recent,
@@ -19,7 +18,6 @@ from btc_quant.acquisition import (
     write_manifest,
 )
 from btc_quant.audit import run_pre_report_review
-from btc_quant.reporting import _build_longitudinal_comparison, _build_report_sections, _market_snapshot
 from btc_quant.ledger import (
     append_events,
     generate_forecast_events,
@@ -27,6 +25,11 @@ from btc_quant.ledger import (
     read_events,
     score_matured_events,
     summarize_scored_events,
+)
+from btc_quant.reporting import (
+    _build_longitudinal_comparison,
+    _build_report_sections,
+    _market_snapshot,
 )
 from btc_quant.research import cross_check_venues, walk_forward
 from btc_quant.validation import validate_ohlcv
