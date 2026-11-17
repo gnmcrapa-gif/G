@@ -188,7 +188,7 @@ def test_ohlcv_challenger_audit_requires_training_cutoff_before_holdout():
         "notes": (
             "V5.5-OHLCV-001; fixed alpha=100; "
             "training_cutoff_utc=2025-10-15T00:00:00+00:00; "
-            "holdout_start_utc=2025-11-16T00:00:00+00:00; "
+            "holdout_start_utc=2025-11-17T00:00:00+00:00; "
             "historical holdout excluded from training and tuning"
         ),
     }
