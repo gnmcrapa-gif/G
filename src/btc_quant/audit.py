@@ -351,14 +351,30 @@ def _check_ledger(events: list[dict], now: datetime, latest_data_timestamp=None)
                     raise ValueError("timestamps must be timezone-aware")
                 if issued > pd.Timestamp(now):
                     raise ValueError("forecast issue timestamp is in the future")
-                if row.get("forecast_id") not in invalidated_ids and not issued < entry < expiry:
-                    raise ValueError("valid forecast chronology must satisfy issued < entry < expiry")
-                if (row.get("forecast_id") not in invalidated_ids
-                        and row.get("forecast_id") not in scored_ids
-                        and latest_data is not None and expiry <= latest_data):
-                    raise ValueError("matured pending forecast has no SCORE event")
                 if not entry < expiry:
                     raise ValueError("expiry must follow entry even for invalidated forecasts")
+                if row.get("forecast_id") not in invalidated_ids:
+                    horizon = int(row["horizon"])
+                    signal = pd.Timestamp(row["signal_timestamp_utc"])
+                    feature_cutoff = pd.Timestamp(row["feature_cutoff_utc"])
+                    expected_target = (
+                        f"log(Open[t+h+{EXECUTION_ENTRY_LAG_SESSIONS}]/"
+                        f"Open[t+{EXECUTION_ENTRY_LAG_SESSIONS}])"
+                    )
+                    expected_entry = signal + pd.Timedelta(days=EXECUTION_ENTRY_LAG_SESSIONS)
+                    expected_expiry = signal + pd.Timedelta(days=horizon + EXECUTION_ENTRY_LAG_SESSIONS)
+                    expected_feature_cutoff = signal + pd.Timedelta(days=1)
+                    if row.get("target") != expected_target:
+                        raise ValueError("forecast target does not match the executable h+2 protocol")
+                    if entry != expected_entry or expiry != expected_expiry:
+                        raise ValueError("forecast entry/expiry timestamps do not match target horizon")
+                    if feature_cutoff != expected_feature_cutoff or issued < feature_cutoff:
+                        raise ValueError("feature cutoff or issue time precedes signal candle close")
+                    if not issued < entry:
+                        raise ValueError("valid forecast chronology must satisfy issued < entry")
+                    if (row.get("forecast_id") not in scored_ids
+                            and latest_data is not None and expiry <= latest_data):
+                        raise ValueError("matured pending forecast has no SCORE event")
             except (KeyError, TypeError, ValueError) as exc:
                 issues.append({"forecast_id": row.get("forecast_id"), "reason": str(exc)})
         elif kind == "INVALIDATION":
