@@ -1172,6 +1172,107 @@ def _treasury_yield_fallback(series_id: str, meta: dict, directory: Path,
     return observation, manifest
 
 
+BLS_SERIES = {
+    "CPIAUCSL": "CUSR0000SA0",
+    "UNRATE": "LNS14000000",
+    "PAYEMS": "CES0000000001",
+}
+
+
+def _parse_bls_monthly_series(payload: dict, bls_series_id: str) -> tuple[date, float, float | None, list[dict]]:
+    """Parse a BLS v1 monthly series, preserving footnotes and latest prior observation."""
+    if not isinstance(payload, dict):
+        raise TypeError("BLS response is not a JSON object")
+    if payload.get("status") != "REQUEST_SUCCEEDED":
+        raise RuntimeError(f"BLS API status={payload.get('status')}: {payload.get('message')}")
+    series_rows = payload.get("Results", {}).get("series", [])
+    match = next(
+        (item for item in series_rows if item.get("seriesID") == bls_series_id),
+        None,
+    )
+    if match is None:
+        raise ValueError(f"BLS response missing series {bls_series_id}")
+    valid = []
+    for row in match.get("data", []):
+        period = str(row.get("period", ""))
+        if not re.fullmatch(r"M(?:0[1-9]|1[0-2])", period):
+            continue
+        value = _float_or_none(row.get("value"))
+        if value is None:
+            continue
+        year = int(row["year"])
+        month = int(period[1:])
+        footnotes = [
+            item for item in row.get("footnotes", [])
+            if item.get("code") or item.get("text")
+        ]
+        valid.append((date(year, month, 1), value, footnotes))
+    valid.sort(key=lambda item: item[0])
+    if not valid:
+        raise ValueError(f"BLS series {bls_series_id} has no valid monthly observations")
+    latest = valid[-1]
+    previous = valid[-2][1] if len(valid) > 1 else None
+    return latest[0], latest[1], previous, latest[2]
+
+
+def _bls_macro_fallback(series_id: str, meta: dict, directory: Path,
+                        today: date) -> tuple[dict, dict]:
+    """Fetch CPI, unemployment and payroll series from the official BLS API v1."""
+    if series_id not in BLS_SERIES:
+        raise ValueError(f"No BLS fallback configured for {series_id}")
+    bls_series_id = BLS_SERIES[series_id]
+    years = max(1, math.ceil(meta["lookback_days"] / 365))
+    start_year = max(2010, today.year - years)
+    url = "https://api.bls.gov/publicAPI/v1/timeseries/data/"
+    payload = {
+        "seriesid": [bls_series_id],
+        "startyear": str(start_year),
+        "endyear": str(today.year),
+    }
+    response = requests.post(
+        url, json=payload, headers={"User-Agent": USER_AGENT},
+        timeout=(8, 20),
+    )
+    response.raise_for_status()
+    raw = response.content
+    parsed = response.json()
+    observation_date, value, previous_value, footnotes = _parse_bls_monthly_series(
+        parsed, bls_series_id,
+    )
+    age_days = (today - observation_date).days
+    obj = _save_object(
+        directory, f"bls_{series_id.lower()}.json", raw,
+        source="US Bureau of Labor Statistics Public Data API v1",
+        url=response.url, venue="United States Bureau of Labor Statistics",
+        symbol=bls_series_id, quote=meta["unit"], source_grade="A",
+    )
+    observation = {
+        "label": meta["label"], "value": value, "unit": meta["unit"],
+        "observation_date": observation_date.isoformat(),
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "age_calendar_days": age_days,
+        "status": "PASS" if 0 <= age_days <= meta["max_age_days"] else "STALE",
+        "previous_value": previous_value,
+        "source_url": "https://www.bls.gov/developers/",
+        "source_method": "official BLS monthly series API v1; independent of FRED transport",
+        "bls_series_id": bls_series_id,
+        "footnotes": footnotes,
+    }
+    manifest = {
+        "source": "US Bureau of Labor Statistics Public Data API v1",
+        "venue": "United States Bureau of Labor Statistics",
+        "symbol": bls_series_id, "quote_currency": meta["unit"],
+        "interval": "monthly", "timezone": "BLS observation month",
+        "schema_version": "1.0", "source_grade": "A",
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "parser": "BLS v1 monthly series parser", "parser_version": "1.0",
+        "schema": ["year", "period", "periodName", "value", "footnotes"],
+        "objects": [obj], "status": observation["status"],
+        "fallback_for": "FRED transport failure",
+    }
+    return observation, manifest
+
+
 def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
     """Acquire independent FRED series concurrently with bounded per-request timeouts."""
     from concurrent.futures import ThreadPoolExecutor
@@ -1242,6 +1343,18 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
                 except Exception as fallback_exc:  # noqa: BLE001
                     error = (
                         f"FRED failed ({fred_error}); Treasury fallback failed "
+                        f"({type(fallback_exc).__name__}: {fallback_exc})"
+                    )
+            elif series_id in BLS_SERIES:
+                try:
+                    fallback_observation, fallback_manifest = _bls_macro_fallback(
+                        series_id, meta, directory, today,
+                    )
+                    fallback_manifest["fred_primary_error"] = fred_error
+                    return series_id, fallback_observation, fallback_manifest, None
+                except Exception as fallback_exc:  # noqa: BLE001
+                    error = (
+                        f"FRED failed ({fred_error}); BLS fallback failed "
                         f"({type(fallback_exc).__name__}: {fallback_exc})"
                     )
             else:
