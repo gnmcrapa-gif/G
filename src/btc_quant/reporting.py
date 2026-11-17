@@ -72,6 +72,15 @@ def _build_report_sections(run: dict, scores: dict) -> tuple[dict, dict, dict]:
                     "timestamp_utc": stamp, "source": source, "qa_status": "PASS",
                     "interpretation": "Osservazione descrittiva; non attribuzione causale.",
                 })
+    supplemental = run.get("supplemental_data", {})
+    coverage = supplemental.get("coverage", {})
+    supplemental_facts = [
+        {
+            "statement": f"Supplemental feed {name}: {details.get('status', 'UNSPECIFIED')}.",
+            "evidence": details,
+        }
+        for name, details in coverage.items()
+    ]
     taxonomy = {
         "FACT": [
             {
@@ -92,7 +101,7 @@ def _build_report_sections(run: dict, scores: dict) -> tuple[dict, dict, dict]:
                 "statement": "Il ledger prospettico conteggia esclusivamente eventi SCORE maturati.",
                 "evidence": {"matured_by_horizon": matured, "new_score_events": scored_now},
             },
-        ],
+        ] + supplemental_facts,
         "INTERPRETATION": [
             {
                 "statement": "Zero-return ha la MAE più bassa in tutti gli orizzonti storici confrontati."
