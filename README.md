@@ -127,3 +127,8 @@ The repository is public. Do not commit credentials, personal data, exchange acc
 ## V5.5 verified scope
 
 V5.5 adds prospective matured-ledger scoring against the zero, drift and momentum forecasts saved at issuance; p90/p99 and worst-decile error diagnostics; low-sample regime warnings; explicit 0% theoretical exposure/abstention; a structured audit; and an append-only experiment proposal register. The historical 2025-11-16–2026-11-15 holdout is explicitly **not globally unseen** because it was previously inspected under V5.3.1. It is continuity diagnostics only. The next OHLCV feature experiment is registered as PROPOSED_NOT_RUN and is not represented as an achieved improvement.
+
+
+## V5.5.1 — target timing correction
+
+The daily research workflow is scheduled for 16:00 UTC. Since the next daily open `Open[t+1]` occurs at 00:00 UTC immediately after candle `t` closes, it has already passed by issuance. The production/executable research target therefore remains `log(Open[t+h+2]/Open[t+2])`, with one complete daily bar reserved for operational latency. The theoretical h+1 target is supported only as an explicitly non-executable diagnostic. Research and prospective ledger use the same target helper. Historical holdout rows are reported separately from matured prospective ledger SCORE events.
