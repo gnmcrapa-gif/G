@@ -8,11 +8,10 @@ from datetime import UTC, datetime
 import numpy as np
 import pandas as pd
 
-from .research import HORIZONS, _ridge_predict, make_features
+from .research import HISTORICAL_HOLDOUT_START_UTC, HORIZONS, _ridge_predict, make_features
 from .validation import EXECUTION_ENTRY_LAG_SESSIONS, forward_open_log_return
 
 OHLCV_EXPERIMENT_ID = "V5.5-OHLCV-001"
-HISTORICAL_HOLDOUT_START_UTC = pd.Timestamp("2025-11-16T00:00:00Z")
 FIXED_ALPHA = 100.0
 
 
