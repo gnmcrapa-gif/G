@@ -75,8 +75,8 @@ def _append_challenger_proposal(
         "change_family": "OHLCV feature engineering; isolated challenger only",
         "data_manifest_sha256": manifest_sha256,
         "split_definition": (
-            "Train strictly before 2025-11-16 UTC; fixed alpha=100; historical "
-            "2025-11-16 to 2026-11-15 continuity holdout excluded from training "
+            "Train strictly before 2025-11-17 UTC; fixed alpha=100; historical "
+            "2025-11-17 to 2026-11-16 continuity holdout excluded from training "
             "and tuning; evaluate only new append-only prospective SCORE events."
         ),
         "acceptance_criteria": (
@@ -131,7 +131,7 @@ def _build_audit(run: dict, prospective: dict) -> dict:
         ],
         "weakest_component": weakest,
         "three_vulnerabilities": [
-            "The historical 2025-11-16 to 2026-11-15 holdout was previously inspected under V5.3.1; it is not independent prospective evidence.",
+            "The historical 2025-11-17 to 2026-11-16 holdout was previously inspected under V5.3.1; it is not independent prospective evidence.",
             "The zero-return champion and price-only Ridge challenger remain unchanged; the OHLCV challenger is prospective-only with no matured lift evidence. Derivatives, ETF flows, order flow, macro and on-chain data are not integrated.",
             "No executable strategy backtest with fees, spread, slippage, funding, turnover and drawdown stress has been completed.",
         ],
@@ -301,7 +301,7 @@ def main() -> int:
                 "candle range, body, upper wick, lower wick and close location",
             ],
             "training_policy": {
-                "holdout_start_utc": "2025-11-16T00:00:00+00:00",
+                "holdout_start_utc": "2025-11-17T00:00:00+00:00",
                 "training_labels_end_before_holdout": True,
                 "holdout_used_for_training_or_tuning": False,
                 "alpha": 100.0,
