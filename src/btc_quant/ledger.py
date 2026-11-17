@@ -27,6 +27,32 @@ def _iso(value: pd.Timestamp) -> str:
     return value.to_pydatetime().isoformat()
 
 
+def _forecast_to_float(value) -> float:
+    """Parse a finite scalar forecast, including legacy one-element array encodings."""
+    if isinstance(value, np.ndarray):
+        if value.size != 1:
+            raise ValueError("forecast array must contain exactly one value")
+        number = float(value.reshape(-1)[0])
+    elif isinstance(value, (list, tuple)):
+        if len(value) != 1:
+            raise ValueError("forecast sequence must contain exactly one value")
+        number = float(value[0])
+    elif isinstance(value, str):
+        text = value.strip()
+        if text.startswith("["):
+            parsed = json.loads(text)
+            if not isinstance(parsed, list) or len(parsed) != 1:
+                raise ValueError("legacy forecast JSON must be a one-element list")
+            number = float(parsed[0])
+        else:
+            number = float(text)
+    else:
+        number = float(value)
+    if not np.isfinite(number):
+        raise ValueError("forecast must be finite")
+    return number
+
+
 def generate_forecast_events(
     frame: pd.DataFrame,
     manifest_sha256: str,
@@ -74,7 +100,7 @@ def generate_forecast_events(
             continue
         y_train = target.iloc[train_idx].to_numpy(dtype=float)
         x_train = features.iloc[train_idx].to_numpy(dtype=float)
-        ridge = _ridge_predict(x_train, y_train, x_now.reshape(1, -1), selected_alpha)
+        ridge = float(_ridge_predict(x_train, y_train, x_now.reshape(1, -1), selected_alpha)[0])
         drift = float(y_train.mean())
         momentum_scale = float(np.mean(np.abs(y_train)))
         momentum_sign = np.sign(np.log(close.iloc[t] / close.iloc[t - 20]))
@@ -178,7 +204,7 @@ def score_matured_events(existing_events: list[dict], frame: pd.DataFrame) -> li
         if expiry > latest or entry not in open_by_ts or expiry not in open_by_ts:
             continue
         actual = float(np.log(open_by_ts[expiry] / open_by_ts[entry]))
-        predicted = float(forecast["forecast"])
+        predicted = _forecast_to_float(forecast["forecast"])
         output.append({
             "event_id": f"score-{forecast['forecast_id']}",
             "event_type": "SCORE",
@@ -193,7 +219,7 @@ def score_matured_events(existing_events: list[dict], frame: pd.DataFrame) -> li
             "signal_timestamp_utc": forecast["signal_timestamp_utc"],
             "feature_cutoff_utc": forecast["feature_cutoff_utc"],
             "regime_ex_ante": forecast["regime_ex_ante"],
-            "forecast": forecast["forecast"],
+            "forecast": predicted,
             "benchmark_forecasts": forecast["benchmark_forecasts"],
             "entry_timestamp_utc": forecast["entry_timestamp_utc"],
             "expiry_timestamp_utc": forecast["expiry_timestamp_utc"],
@@ -233,7 +259,7 @@ def summarize_scored_events(events: list[dict], minimum_per_horizon: int = 200) 
             continue
         try:
             actual = float(score["realized_outcome"])
-            ridge = float(forecast["forecast"])
+            ridge = _forecast_to_float(forecast["forecast"])
             benchmarks = json.loads(forecast.get("benchmark_forecasts") or "{}")
             if not np.isfinite([actual, ridge]).all():
                 continue
