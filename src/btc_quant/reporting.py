@@ -600,7 +600,7 @@ def render_markdown_report(run: dict, scores: dict) -> str:
         )
     forecast_taxonomy = taxonomy.get("FORECAST", {})
     lines += ["### FORECAST",
-              f"- Point forecast emessi in questo run: {len(forecast_taxonomy.get('new_point_forecasts_issued_this_run', []))}.",
+              f"- Point forecast emessi in questo run: {forecast_taxonomy.get('new_point_forecasts_issued_this_run', 0)}.",
               f"- Forecast maturati/scorati in questo run: {forecast_taxonomy.get('new_forecasts_scored_this_run', 0)}.",
               f"- Probabilità calibrate pubblicate: {forecast_taxonomy.get('calibrated_probabilities_published', False)}.",
               f"- {forecast_taxonomy.get('qualification', 'Nessuna previsione qualificata disponibile.')}"]
