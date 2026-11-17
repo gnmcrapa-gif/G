@@ -292,6 +292,103 @@ def _build_report_sections(run: dict, scores: dict) -> tuple[dict, dict, dict]:
     return taxonomy, economic, closing
 
 
+
+def _walk_forward_scores(report: dict | None) -> dict:
+    if not report:
+        return {}
+    step = next((item for item in report.get("steps", [])
+                 if item.get("step") == "walk_forward"), {})
+    return step.get("scores", {})
+
+
+def _build_longitudinal_comparison(previous: dict | None, current: dict,
+                                   current_scores: dict) -> dict:
+    if not previous:
+        return {
+            "status": "NO_PRIOR_REPORT",
+            "comparison_performed": False,
+            "reason": "No prior persisted run_report.json was available at run start.",
+        }
+    previous_snapshots = {
+        (item.get("venue"), item.get("symbol"), item.get("quote_currency")): item
+        for item in previous.get("market_snapshot", {}).get("venues", [])
+    }
+    venue_comparison = []
+    for item in current.get("market_snapshot", {}).get("venues", []):
+        key = (item.get("venue"), item.get("symbol"), item.get("quote_currency"))
+        old = previous_snapshots.get(key)
+        if old and old.get("close_quote_per_btc") and item.get("close_quote_per_btc"):
+            change = (
+                float(item["close_quote_per_btc"]) / float(old["close_quote_per_btc"]) - 1.0
+            ) * 100.0
+            venue_comparison.append({
+                "venue": item["venue"], "symbol": item["symbol"],
+                "quote_currency": item["quote_currency"],
+                "previous_candle_open_timestamp_utc": old.get("candle_open_timestamp_utc"),
+                "current_candle_open_timestamp_utc": item.get("candle_open_timestamp_utc"),
+                "close_change_since_previous_report_pct": change,
+                "unit": "%", "comparison_type": "same_venue_same_quote_only",
+            })
+        else:
+            venue_comparison.append({
+                "venue": item.get("venue"), "symbol": item.get("symbol"),
+                "status": "NOT_COMPARABLE_NO_MATCHING_PRIOR_SNAPSHOT",
+            })
+    previous_scores = _walk_forward_scores(previous)
+    previous_window = (
+        previous_scores.get("holdout_start_utc"), previous_scores.get("holdout_end_utc")
+    )
+    current_window = (
+        current_scores.get("holdout_start_utc"), current_scores.get("holdout_end_utc")
+    )
+    metric_comparison = {"status": "NOT_COMPARABLE_DIFFERENT_OR_MISSING_HOLDOUT_WINDOW"}
+    if previous_window == current_window and all(current_window):
+        prior_metrics = previous_scores.get("holdout_metrics", {})
+        current_metrics = current_scores.get("holdout_metrics", {})
+        rows = {}
+        for horizon in ("1", "3", "7", "30"):
+            old = prior_metrics.get(horizon, {}).get("zero", {}).get("mae")
+            new = current_metrics.get(horizon, {}).get("zero", {}).get("mae")
+            rows[horizon] = {
+                "previous_zero_mae_log_return_units": old,
+                "current_zero_mae_log_return_units": new,
+                "difference_log_return_units": (
+                    float(new) - float(old) if old is not None and new is not None else None
+                ),
+            }
+        metric_comparison = {
+            "status": "COMPARABLE_SAME_HISTORICAL_CONTINUITY_WINDOW",
+            "holdout_start_utc": current_window[0],
+            "holdout_end_utc": current_window[1],
+            "zero_return_mae": rows,
+            "warning": "Same previously inspected historical window; not independent prospective evidence.",
+        }
+    previous_ledger = previous.get("prospective_ledger_validation", {}).get("by_horizon", {})
+    current_ledger = current.get("prospective_ledger_validation", {}).get("by_horizon", {})
+    matured_counts = {
+        str(h): {
+            "previous_matured": int(previous_ledger.get(str(h), {}).get("n", 0)),
+            "current_matured": int(current_ledger.get(str(h), {}).get("n", 0)),
+        }
+        for h in (1, 3, 7, 30)
+    }
+    return {
+        "status": "COMPARISON_AVAILABLE",
+        "comparison_performed": True,
+        "previous_run_started_at_utc": previous.get("started_at_utc"),
+        "previous_run_finished_at_utc": previous.get("finished_at_utc"),
+        "previous_run_status": previous.get("status"),
+        "current_run_status": current.get("status"),
+        "same_venue_price_snapshots": venue_comparison,
+        "historical_benchmark_comparison": metric_comparison,
+        "prospective_matured_counts": matured_counts,
+        "interpretation_policy": (
+            "Compare price snapshots only within identical venue/symbol/quote. Compare MAE only on identical "
+            "holdout windows; all such historical results remain continuity diagnostics."
+        ),
+    }
+
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-dir", default="data/raw")
@@ -302,6 +399,14 @@ def main() -> int:
     args = parser.parse_args()
     data_dir, output_dir, ledger_path = Path(args.data_dir), Path(args.output_dir), Path(args.ledger)
     output_dir.mkdir(parents=True, exist_ok=True)
+    previous_report = None
+    previous_report_error = None
+    previous_report_path = output_dir / "run_report.json"
+    if previous_report_path.is_file():
+        try:
+            previous_report = json.loads(previous_report_path.read_text(encoding="utf-8"))
+        except Exception as exc:  # noqa: BLE001 - preserve and disclose prior-report read failures
+            previous_report_error = f"{type(exc).__name__}: {exc}"
     process_started = time.perf_counter()
     stage_started = process_started
     run = {"started_at_utc": datetime.now(UTC).isoformat(), "status": "BLOCKED",
@@ -445,6 +550,17 @@ def main() -> int:
         run["report_taxonomy"], run["economic_validation"], run["closing_assessment"] = (
             _build_report_sections(run, scores)
         )
+        run["longitudinal_comparison"] = _build_longitudinal_comparison(
+            previous_report, run, scores
+        )
+        if previous_report_error:
+            run["previous_report_read_warning"] = previous_report_error
+        run["code_provenance"] = {
+            "commit_sha": os.environ.get("GITHUB_SHA", "local-uncommitted"),
+            "ref": os.environ.get("GITHUB_REF", "local"),
+            "workflow_run_id": os.environ.get("GITHUB_RUN_ID", "local"),
+            "event_name": os.environ.get("GITHUB_EVENT_NAME", "local"),
+        }
         review_started = time.perf_counter()
         run["pre_report_review"] = run_pre_report_review(
             run, manifests, binance, bitstamp, all_ledger_events, scores,
