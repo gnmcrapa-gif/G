@@ -1035,6 +1035,172 @@ def _news_context(directory: Path) -> tuple[dict, list[dict]]:
     return summary, manifests
 
 
+def _flow_millions(value_text: str, direction: str) -> float:
+    value = float(re.sub(r"[,\\s]", "", value_text))
+    return -abs(value) if direction.lower() == "outflows" else abs(value)
+
+
+def _parse_bitwise_weekly_flows(
+    html_payload: bytes, report_year: int, report_week: int
+) -> dict:
+    html_text = html_payload.decode("utf-8", errors="replace")
+    clean = re.sub(r"<script\\b.*?</script>|<style\\b.*?</style>", " ", html_text, flags=re.I | re.S)
+    text_content = unescape(re.sub(r"<[^>]+>", " ", clean))
+    text_content = re.sub(r"\\s+", " ", text_content)
+
+    global_crypto = re.search(
+        r"Global crypto ETPs experienced around\\s*([+-]?\\s*[\\d,.]+)\\s*mn USD in net\\s*(inflows|outflows)",
+        text_content, re.I,
+    )
+    global_btc = re.search(
+        r"Global Bitcoin ETPs experienced net\\s*(inflows|outflows)\\s*of\\s*([+-]?\\s*[\\d,.]+)\\s*mn USD",
+        text_content, re.I,
+    )
+    us_spot_btc = re.search(
+        r"of which\\s*([+-]?\\s*[\\d,.]+)\\s*mn USD in net\\s*(inflows|outflows)\\s*were related to US spot Bitcoin ETFs",
+        text_content, re.I,
+    )
+    if not global_crypto and not global_btc:
+        raise ValueError("Bitwise weekly page did not expose parseable global ETP flow statements")
+
+    published = re.search(
+        r'<meta[^>]+(?:property|name)=["\\'](?:article:published_time|datePublished)["\\'][^>]+content=["\\']([^"\\']+)',
+        html_text, re.I,
+    )
+    published_at = None
+    if published:
+        try:
+            published_at = pd.to_datetime(published.group(1), utc=True).isoformat()
+        except (TypeError, ValueError):
+            published_at = None
+    title_match = re.search(r"<h1[^>]*>(.*?)</h1>", html_text, re.I | re.S)
+    title = unescape(re.sub(r"<[^>]+>", " ", title_match.group(1))).strip() if title_match else None
+
+    global_crypto_value = (
+        _flow_millions(global_crypto.group(1), global_crypto.group(2))
+        if global_crypto else None
+    )
+    global_btc_value = (
+        _flow_millions(global_btc.group(2), global_btc.group(1))
+        if global_btc else None
+    )
+    us_spot_value = (
+        _flow_millions(us_spot_btc.group(1), us_spot_btc.group(2))
+        if us_spot_btc else None
+    )
+    return {
+        "report_week": f"{report_year}-W{report_week:02d}",
+        "report_year": report_year,
+        "report_week_number": report_week,
+        "published_at_utc": published_at,
+        "title": title,
+        "global_crypto_etp_weekly_flow_usd_mn": global_crypto_value,
+        "global_bitcoin_etp_weekly_flow_usd_mn": global_btc_value,
+        "us_spot_bitcoin_etf_component_usd_mn": us_spot_value,
+        "non_us_bitcoin_etp_residual_usd_mn": (
+            global_btc_value - us_spot_value
+            if global_btc_value is not None and us_spot_value is not None else None
+        ),
+        "flow_period_label": "last week, as stated by publisher; exact session dates not independently reconstructed",
+        "status": "PASS" if global_crypto_value is not None and global_btc_value is not None else "PARTIAL",
+    }
+
+
+def _global_etp_weekly(directory: Path) -> tuple[dict, list[dict]]:
+    session = requests.Session()
+    session.headers.update({"User-Agent": USER_AGENT})
+    objects, manifests, errors, history = [], [], {}, []
+    today = datetime.now(UTC).date()
+    attempted = []
+    for offset in range(6):
+        week_date = today - timedelta(weeks=offset)
+        iso = week_date.isocalendar()
+        year, week = iso.year, iso.week
+        if (year, week) in attempted:
+            continue
+        attempted.append((year, week))
+        url = (
+            "https://bitwiseinvestments.eu/blog/regular-updates/"
+            f"Bitwise_Crypto_Market_Compass_{year}_{week:02d}/"
+        )
+        try:
+            response = session.get(url, timeout=30)
+            if response.status_code == 404:
+                errors[f"{year}-W{week:02d}"] = "HTTP 404: weekly report not published at expected URL"
+                continue
+            response.raise_for_status()
+            raw = response.content
+            obj = _save_object(
+                directory, f"bitwise_crypto_market_compass_{year}_w{week:02d}.html", raw,
+                source="Bitwise Europe Weekly Crypto Market Compass",
+                url=response.url, venue="Global crypto ETPs", symbol=f"{year}-W{week:02d}",
+                quote="USD millions", source_grade="B",
+            )
+            objects.append(obj)
+            parsed = _parse_bitwise_weekly_flows(raw, year, week)
+            parsed["source_url"] = response.url
+            parsed["retrieved_at_utc"] = obj["retrieved_at_utc"]
+            history.append(parsed)
+            manifests.append({
+                "source": "Bitwise Europe Weekly Crypto Market Compass",
+                "venue": "Global crypto ETPs", "symbol": f"{year}-W{week:02d}",
+                "quote_currency": "USD millions", "interval": "weekly",
+                "timezone": "publisher report date", "schema_version": "1.0",
+                "source_grade": "B", "retrieved_at_utc": obj["retrieved_at_utc"],
+                "parser": "Bitwise weekly ETP flow statement parser", "parser_version": "0.3",
+                "schema": [
+                    "global_crypto_etp_weekly_flow_usd_mn",
+                    "global_bitcoin_etp_weekly_flow_usd_mn",
+                    "us_spot_bitcoin_etf_component_usd_mn",
+                    "non_us_bitcoin_etp_residual_usd_mn",
+                    "published_at_utc",
+                ],
+                "objects": [obj], "status": parsed["status"],
+            })
+            if len(history) >= 4:
+                break
+        except (requests.RequestException, ValueError) as exc:
+            errors[f"{year}-W{week:02d}"] = f"{type(exc).__name__}: {exc}"
+            if "obj" in locals() and obj:
+                manifests.append({
+                    "source": "Bitwise Europe Weekly Crypto Market Compass",
+                    "venue": "Global crypto ETPs", "symbol": f"{year}-W{week:02d}",
+                    "quote_currency": "USD millions", "interval": "weekly",
+                    "timezone": "publisher report date", "schema_version": "1.0",
+                    "source_grade": "B", "retrieved_at_utc": obj["retrieved_at_utc"],
+                    "parser": "Bitwise weekly ETP flow statement parser", "parser_version": "0.3",
+                    "schema": ["raw HTML retained; flow parsing failed"], "objects": [obj],
+                    "status": "FAIL", "error": errors[f"{year}-W{week:02d}"],
+                })
+    history.sort(key=lambda row: row["report_week"], reverse=True)
+    four_weeks = history[:4]
+    complete_four = len(four_weeks) == 4 and all(
+        row.get("global_bitcoin_etp_weekly_flow_usd_mn") is not None for row in four_weeks
+    )
+    summary = {
+        "status": "PASS" if history and all(row["status"] == "PASS" for row in history) else (
+            "PARTIAL" if history else "FAIL"
+        ),
+        "source": "Bitwise Europe Weekly Crypto Market Compass; data subject to publisher revision",
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "weekly_history": history,
+        "last_four_weeks_global_crypto_etp_flow_usd_mn": (
+            sum(row["global_crypto_etp_weekly_flow_usd_mn"] for row in four_weeks)
+            if complete_four and all(row.get("global_crypto_etp_weekly_flow_usd_mn") is not None for row in four_weeks)
+            else None
+        ),
+        "last_four_weeks_global_bitcoin_etp_flow_usd_mn": (
+            sum(row["global_bitcoin_etp_weekly_flow_usd_mn"] for row in four_weeks)
+            if complete_four else None
+        ),
+        "daily_flows": {"status": "UNAVAILABLE", "reason": "Source publishes weekly totals, not daily flow series."},
+        "aum_and_turnover": {"status": "UNAVAILABLE", "reason": "The parsed weekly flow statements do not expose global ETP AUM or turnover."},
+        "coverage_note": "Global ETP weekly aggregate; the US spot ETF component is a subset, not the full global market.",
+        "errors": errors,
+    }
+    return summary, manifests
+
+
 def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
