@@ -762,6 +762,7 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "coverage": empty_supplemental_coverage(),
     }
+    summary["coverage"]["spot_ohlcv"]["status"] = "PASS"
     try:
         live_spot, live_spot_manifests = _spot_live_snapshot(output_dir / "spot_live")
         summary["spot_live"] = live_spot
@@ -793,6 +794,14 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
         except Exception as exc:  # noqa: BLE001
             if name.endswith("futures"):
                 derivative_statuses[name] = "FAIL"
+            elif name == "deribit_options":
+                summary["coverage"]["options"]["status"] = "FAIL"
+            elif name == "us_spot_etf_flows":
+                summary["coverage"]["us_spot_etf_flows"]["status"] = "FAIL"
+                summary["coverage"]["global_etp_flows"] = {
+                    "status": "UNAVAILABLE",
+                    "reason": "US spot ETF feed failed; global ETP feed is not configured.",
+                }
             summary[name] = {
                 "status": "FAIL",
                 "retrieved_at_utc": datetime.now(UTC).isoformat(),
