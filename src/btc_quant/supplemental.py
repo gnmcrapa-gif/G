@@ -780,7 +780,8 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
                 "timezone": "observation date", "schema_version": "1.0",
                 "source_grade": "A", "retrieved_at_utc": datetime.now(UTC).isoformat(),
                 "parser": "pandas CSV parser", "parser_version": "0.3",
-                "schema": [], "objects": [obj] if obj else [], "status": "FAIL",
+                "schema": ["raw CSV retained; parsing failed"] if obj else [],
+                "objects": [obj] if obj else [], "status": "FAIL",
                 "error": errors[series_id],
             })
     passed = sum(item["status"] == "PASS" for item in observations.values())
