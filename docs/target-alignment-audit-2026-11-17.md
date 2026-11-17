@@ -28,7 +28,7 @@ Keep zero-return frozen champion. Keep Ridge as unpromoted challenger. Keep Risk
 ## Full-system critical review
 
 ### Data acquisition and provenance — PASS WITH LIMITATIONS
-Binance Vision monthly/daily archives and Bitstamp API raw objects are preserved with hashes. Venue and quote currencies are kept separate. Coinbase/Kraken are recent cross-checks, not five-year histories. Remaining improvements: explicitly audit zero-volume bars, robust outliers/scale shifts, source-specific candle close semantics, and completeness of every expected monthly archive. A successful parser is not proof of provider completeness.
+Binance Vision monthly/daily archives and Bitstamp API raw objects are preserved with hashes. Venue and quote currencies are kept separate. Coinbase/Kraken are recent cross-checks, not five-year histories. The QA validator now reports zero-volume frequency, volume median/p99/max and robust-z diagnostic, absolute close-return tails, intraday-range tails, and exact candle-age hours. These are descriptive diagnostics, not automatic rejection thresholds; source-specific candle close semantics and completeness of every expected monthly archive remain open checks. A successful parser is not proof of provider completeness.
 
 ### Timestamp, execution, and target alignment — CORRECTED ON THIS BRANCH
 The h+1 target is not executable at the scheduled 16:00 UTC issue time. Production target remains h+2 until an intraday execution dataset and point-in-time decision/first-tradable-price methodology are implemented. Do not silently relabel h+2 as h+1.
@@ -50,7 +50,7 @@ Daily workflow runs at 16:00 UTC and persists evidence. Workflow uses `continue-
 
 ## Remaining priority actions (not silently claimed complete)
 
-- Add source QA metrics for zero-volume frequency, robust OHLC/volume outliers, and explicit expected archive/month coverage.
+- Add source-specific candle close semantics and explicit expected archive/month coverage; the generic zero-volume and tail diagnostics are now implemented, but venue-specific thresholds still require calibration.
 - Add an explicit intraday execution study only if the user requires h+1-style execution; do not approximate intraday execution from daily bars.
 - Add transaction-cost and turnover modeling only after a forecast challenger shows prospective predictive lift.
 - Add point-in-time data availability and revision checks for every optional external series before any feature use.
