@@ -274,6 +274,8 @@ def build_forecast_snapshot(events: list[dict]) -> list[dict]:
                 "entry_timestamp_utc": row.get("entry_timestamp_utc"),
                 "expiry_timestamp_utc": row.get("expiry_timestamp_utc"),
                 "status": "PENDING_POINT_FORECAST_NOT_PROBABILITY",
+                "units": "log return; implied simple return in percent",
+                "source": "Binance BTCUSDT spot daily OHLCV",
             })
         except (TypeError, ValueError, OverflowError):
             continue
@@ -416,7 +418,7 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
     prospective_counts = {str(key): int(value.get("n", 0)) for key, value in prospective.items()}
     prospective_ready = len(prospective_counts) == 4 and all(value >= 200 for value in prospective_counts.values())
     economic_gate = {
-        "status": "PASS" if prospective_ready else "WARN",
+        "status": "WARN",
         "matured_forecasts_by_horizon": prospective_counts,
         "minimum_per_horizon": 200,
         "strategy_cost_backtest": "NOT_RUN",
