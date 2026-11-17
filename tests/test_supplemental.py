@@ -20,6 +20,16 @@ def test_deribit_option_instrument_parser_extracts_expiry_strike_and_side():
     assert _parse_deribit_instrument("BTC-27NOV26-invalid-C") is None
 
 
+def test_okx_response_parser_accepts_success_and_rejects_api_errors():
+    from btc_quant.supplemental import _parse_okx_response
+
+    assert _parse_okx_response({"code": "0", "data": [{"oi": "12"}]}, "open_interest") == [{"oi": "12"}]
+    with pytest.raises(RuntimeError, match="code=50011"):
+        _parse_okx_response({"code": "50011", "msg": "Rate limit", "data": []}, "funding")
+    with pytest.raises(ValueError, match="no data array"):
+        _parse_okx_response({"code": "0", "data": None}, "ticker")
+
+
 def test_etf_session_extractor_selects_full_history_not_recent_preview():
     preview = [
         {"date": f"2026-11-{day:02d}", "netFlowUsd": float(day)}
