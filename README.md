@@ -83,7 +83,8 @@ python scripts/run_research.py
 
 - `data/raw/`: source-native raw archives/responses.
 - `reports/latest/data_manifest.json`: URLs, retrieval times, sizes, hashes, schemas, source grades, and terms notes.
-- `reports/latest/run_report.json`: source QA, cross-checks, holdout status, ledger activity, and limitations.
+- `reports/latest/run_report.json`: source QA, cross-checks, holdout status, ledger activity, red-team findings, longitudinal comparison and limitations.
+- `reports/archive/`: immutable prior run reports and their source manifests for longitudinal comparison.
 - `reports/latest/scores.json`: benchmark and challenger metrics.
 - `reports/latest/oos_predictions.csv`: final-holdout predictions and outcomes.
 - `ledger/forecast_ledger.csv`: append-only price-only Ridge challenger forecasts, invalidations and scores.
