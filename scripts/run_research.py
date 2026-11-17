@@ -27,6 +27,7 @@ from btc_quant.ledger import (
     score_matured_events,
     summarize_scored_events,
 )
+from btc_quant.research import cross_check_venues, walk_forward
 from btc_quant.reporting import (
     _build_longitudinal_comparison,
     _build_report_sections,
@@ -34,7 +35,6 @@ from btc_quant.reporting import (
     render_markdown_report,
 )
 from btc_quant.supplemental import acquire_supplemental, empty_supplemental_coverage
-from btc_quant.research import cross_check_venues, walk_forward
 from btc_quant.validation import validate_ohlcv
 
 
