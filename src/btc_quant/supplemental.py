@@ -1082,6 +1082,79 @@ def _configure_fred_session(session: requests.Session) -> requests.Session:
     return session
 
 
+def _parse_treasury_yield_xml(payload: bytes, series_id: str) -> tuple[date, float]:
+    """Parse the official Treasury OData feed for nominal 2Y/10Y par yields."""
+    field_by_series = {"DGS2": "BC_2YEAR", "DGS10": "BC_10YEAR"}
+    if series_id not in field_by_series:
+        raise ValueError(f"No Treasury fallback configured for {series_id}")
+    root = ET.fromstring(payload)
+    rows = []
+    for entry in root.iter():
+        if _local_name(entry.tag) != "entry":
+            continue
+        values = {_local_name(node.tag): (node.text or "").strip() for node in entry.iter()}
+        raw_date = values.get("NEW_DATE")
+        raw_value = values.get(field_by_series[series_id])
+        if not raw_date or not raw_value or raw_value.lower() in {"null", "n/a", "."}:
+            continue
+        parsed_date = pd.to_datetime(raw_date, utc=True, errors="coerce")
+        value_text = re.sub(r"[mMfFdD]$", "", raw_value)
+        value = _float_or_none(value_text)
+        if pd.isna(parsed_date) or value is None:
+            continue
+        rows.append((parsed_date.date(), value))
+    if not rows:
+        raise ValueError(f"Treasury feed has no valid {series_id} observations")
+    return max(rows, key=lambda row: row[0])
+
+
+def _treasury_yield_fallback(series_id: str, meta: dict, directory: Path,
+                             today: date) -> tuple[dict, dict]:
+    """Fetch nominal 2Y/10Y yields directly from the US Treasury official XML feed."""
+    if series_id not in {"DGS2", "DGS10"}:
+        raise ValueError(f"No independent public fallback configured for {series_id}")
+    url = "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml"
+    response = requests.get(
+        url,
+        params={"data": "daily_treasury_yield_curve", "field_tdr_date_value": str(today.year)},
+        headers={"User-Agent": USER_AGENT},
+        timeout=(8, 20),
+    )
+    response.raise_for_status()
+    raw = response.content
+    observation_date, value = _parse_treasury_yield_xml(raw, series_id)
+    age_days = (today - observation_date).days
+    obj = _save_object(
+        directory, f"treasury_{series_id.lower()}_yield_curve.xml", raw,
+        source="US Department of the Treasury official daily par yield curve",
+        url=response.url, venue="United States Treasury", symbol=series_id,
+        quote="percent", source_grade="A",
+    )
+    observation = {
+        "label": meta["label"], "value": value, "unit": "percent",
+        "observation_date": observation_date.isoformat(),
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "age_calendar_days": age_days,
+        "status": "PASS" if 0 <= age_days <= meta["max_age_days"] else "STALE",
+        "previous_value": None,
+        "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
+        "source_method": "official Treasury daily par yield curve; independent of FRED transport",
+    }
+    manifest = {
+        "source": "US Department of the Treasury official daily par yield curve",
+        "venue": "United States Treasury", "symbol": series_id,
+        "quote_currency": "percent", "interval": "daily",
+        "timezone": "Treasury observation date",
+        "schema_version": "1.0", "source_grade": "A",
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "parser": "Treasury OData XML parser", "parser_version": "1.0",
+        "schema": ["NEW_DATE", "BC_2YEAR", "BC_10YEAR"],
+        "objects": [obj], "status": observation["status"],
+        "fallback_for": "FRED transport failure",
+    }
+    return observation, manifest
+
+
 def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
     """Acquire independent FRED series concurrently with bounded per-request timeouts."""
     from concurrent.futures import ThreadPoolExecutor
@@ -1141,7 +1214,21 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
             }
             return series_id, observation, manifest, None
         except Exception as exc:  # noqa: BLE001 - preserve independent series failures
-            error = f"{type(exc).__name__}: {exc}"
+            fred_error = f"{type(exc).__name__}: {exc}"
+            if series_id in {"DGS2", "DGS10"}:
+                try:
+                    fallback_observation, fallback_manifest = _treasury_yield_fallback(
+                        series_id, meta, directory, today,
+                    )
+                    fallback_manifest["fred_primary_error"] = fred_error
+                    return series_id, fallback_observation, fallback_manifest, None
+                except Exception as fallback_exc:  # noqa: BLE001
+                    error = (
+                        f"FRED failed ({fred_error}); Treasury fallback failed "
+                        f"({type(fallback_exc).__name__}: {fallback_exc})"
+                    )
+            else:
+                error = fred_error
             manifest = {
                 "source": "FRED / original statistical release provider",
                 "venue": "United States macro", "symbol": series_id,
