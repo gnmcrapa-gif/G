@@ -239,6 +239,7 @@ def download_coinbase_recent(output_dir: Path, limit_days: int = 300) -> tuple[p
                    "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
                    "retrieved_at_utc": datetime.now(UTC).isoformat(),
                    "parser": "Coinbase candle array parser", "parser_version": "0.2",
+                   "schema": ["timestamp_utc", "open", "high", "low", "close", "volume"],
                    "objects": [obj], "rows": len(frame),
                    "first_timestamp": frame.timestamp.min().isoformat(),
                    "last_timestamp": frame.timestamp.max().isoformat()}
@@ -272,7 +273,9 @@ def download_kraken_recent(output_dir: Path) -> tuple[pd.DataFrame, dict]:
         "schema_version": "1.0", "source_grade": "B",
         "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
         "retrieved_at_utc": datetime.now(UTC).isoformat(), "parser": "Kraken OHLC parser",
-        "parser_version": "0.2", "objects": [obj], "rows": len(frame),
+        "parser_version": "0.2",
+        "schema": ["timestamp_utc", "open", "high", "low", "close", "volume"],
+        "objects": [obj], "rows": len(frame),
         "first_timestamp": frame.timestamp.min().isoformat(),
         "last_timestamp": frame.timestamp.max().isoformat()}
 
