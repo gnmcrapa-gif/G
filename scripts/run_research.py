@@ -334,17 +334,40 @@ def main() -> int:
                     if "ledger" in run:
                         run["ledger"]["persistence_status"] = "SKIPPED_PULL_REQUEST"
                     run["pre_report_review"]["post_gate_persistence_status"] = "SKIPPED_PULL_REQUEST"
+                    run["post_persistence_verification"] = {
+                        "status": "SKIPPED_PULL_REQUEST",
+                        "reason": "PR research is read-only; no persistent ledger mutation is attempted.",
+                    }
                 else:
                     _append_challenger_proposal(Path(args.challenger_log))
                     appended = append_events(ledger_path, pending_events)
+                    persisted_events = read_events(ledger_path)
+                    previous_ids = {event.get("event_id") for event in previous_events}
+                    proposed_ids = {event.get("event_id") for event in pending_events}
+                    persisted_ids = [event.get("event_id") for event in persisted_events]
+                    persisted_id_set = set(persisted_ids)
+                    verification_ok = (
+                        len(persisted_ids) == len(persisted_id_set)
+                        and previous_ids.issubset(persisted_id_set)
+                        and proposed_ids.issubset(persisted_id_set)
+                    )
+                    if not verification_ok:
+                        raise RuntimeError("post-append ledger verification failed: missing or duplicate event IDs")
+                    ledger_sha256 = hashlib.sha256(ledger_path.read_bytes()).hexdigest()
+                    run["post_persistence_verification"] = {
+                        "status": "PASS", "events_before": len(previous_events),
+                        "events_after": len(persisted_events), "new_events_proposed": len(pending_events),
+                        "all_prior_event_ids_preserved": True,
+                        "all_proposed_event_ids_present": True,
+                        "event_ids_unique": True, "ledger_sha256": ledger_sha256,
+                    }
                     if "ledger" in run:
                         run["ledger"]["events_appended"] = appended
-                        run["ledger"]["total_events_after_run"] = (
-                            run["ledger"]["existing_events_before_run"] + appended
-                        )
-                        run["ledger"]["persistence_status"] = "APPENDED_TO_WORKSPACE_PENDING_WORKFLOW_COMMIT"
+                        run["ledger"]["total_events_after_run"] = len(persisted_events)
+                        run["ledger"]["ledger_sha256_after_append"] = ledger_sha256
+                        run["ledger"]["persistence_status"] = "VERIFIED_IN_WORKSPACE_PENDING_WORKFLOW_COMMIT"
                     run["pre_report_review"]["post_gate_persistence_status"] = (
-                        "APPENDED_TO_WORKSPACE_PENDING_WORKFLOW_COMMIT"
+                        "VERIFIED_IN_WORKSPACE_PENDING_WORKFLOW_COMMIT"
                     )
             except Exception as persistence_exc:  # noqa: BLE001 - persistence failure blocks the run
                 run["status"] = "BLOCKED"
