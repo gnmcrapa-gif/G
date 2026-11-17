@@ -386,6 +386,23 @@ def _parse_okx_response(payload: dict, endpoint: str) -> list[dict]:
     return rows
 
 
+def _parse_okx_array_response(payload: dict, endpoint: str, min_columns: int) -> list[list]:
+    """Validate OKX Rubik endpoints whose data rows are positional arrays."""
+    if not isinstance(payload, dict):
+        raise TypeError(f"OKX {endpoint} response is not a JSON object")
+    code = str(payload.get("code", ""))
+    if code != "0":
+        raise RuntimeError(
+            f"OKX {endpoint} code={code or 'missing'} msg={payload.get('msg', '')}"
+        )
+    rows = payload.get("data")
+    if not isinstance(rows, list) or any(
+        not isinstance(row, list) or len(row) < min_columns for row in rows
+    ):
+        raise ValueError(f"OKX {endpoint} response has invalid positional data rows")
+    return rows
+
+
 def _okx_derivatives(directory: Path) -> tuple[dict, dict]:
     """Acquire OKX public BTC-USDT perpetual snapshots and funding history."""
     session = requests.Session()
@@ -406,6 +423,14 @@ def _okx_derivatives(directory: Path) -> tuple[dict, dict]:
             "/api/v5/public/funding-rate-history",
             {"instId": instrument, "limit": "100"},
         ),
+        "open_interest_history": (
+            "/api/v5/rubik/stat/contracts/open-interest-history",
+            {"instId": instrument, "period": "1Dutc", "limit": "100"},
+        ),
+        "taker_volume_daily": (
+            "/api/v5/rubik/stat/taker-volume-contract",
+            {"instId": instrument, "period": "1Dutc", "unit": "0", "limit": "30"},
+        ),
     }
     raw, objects, errors = {}, [], {}
     try:
@@ -415,7 +440,12 @@ def _okx_derivatives(directory: Path) -> tuple[dict, dict]:
                 response = session.get(url, params=params, timeout=(8, 20))
                 response.raise_for_status()
                 payload = response.json()
-                rows = _parse_okx_response(payload, key)
+                if key == "open_interest_history":
+                    rows = _parse_okx_array_response(payload, key, 4)
+                elif key == "taker_volume_daily":
+                    rows = _parse_okx_array_response(payload, key, 3)
+                else:
+                    rows = _parse_okx_response(payload, key)
                 raw[key] = rows
                 objects.append(_save_object(
                     directory, f"okx_{key}.json", response.content,
@@ -447,6 +477,45 @@ def _okx_derivatives(directory: Path) -> tuple[dict, dict]:
             "funding_rate": _float_or_none(row.get(rate_field)),
             "funding_rate_field": rate_field,
         })
+    oi_history = sorted(
+        raw.get("open_interest_history", []), key=lambda row: int(row[0])
+    )
+    oi_history_summary = {}
+    if oi_history:
+        latest_oi = oi_history[-1]
+        oi_history_summary = {
+            "timestamp_utc": _timestamp_ms(latest_oi[0]),
+            "contracts": _float_or_none(latest_oi[1]),
+            "btc": _float_or_none(latest_oi[2]),
+            "usd": _float_or_none(latest_oi[3]),
+            "history_rows": len(oi_history),
+        }
+        latest_ts = int(latest_oi[0])
+        for days in (1, 7, 30):
+            target = latest_ts - days * 86400_000
+            prior = min(oi_history, key=lambda row: abs(int(row[0]) - target))
+            actual_days = (latest_ts - int(prior[0])) / 86400_000
+            oi_history_summary[f"change_{days}d_pct"] = (
+                _pct_change(_float_or_none(prior[2]), _float_or_none(latest_oi[2]))
+                if actual_days >= max(1, days - 2) else None
+            )
+    taker_rows = sorted(
+        raw.get("taker_volume_daily", []), key=lambda row: int(row[0])
+    )
+    taker_delta = [
+        {
+            "timestamp_utc": _timestamp_ms(row[0]),
+            "sell_volume_btc": _float_or_none(row[1]),
+            "buy_volume_btc": _float_or_none(row[2]),
+            "delta_btc": (
+                (_float_or_none(row[2]) or 0.0) - (_float_or_none(row[1]) or 0.0)
+                if _float_or_none(row[1]) is not None and _float_or_none(row[2]) is not None
+                else None
+            ),
+        }
+        for row in taker_rows
+    ]
+    valid_taker = [row for row in taker_delta if row["delta_btc"] is not None]
     valid_current = bool(ticker or oi or funding)
     summary = {
         "venue": "OKX",
@@ -464,14 +533,27 @@ def _okx_derivatives(directory: Path) -> tuple[dict, dict]:
         "open_interest_btc": _float_or_none(oi.get("oiCcy")),
         "open_interest_usd": _float_or_none(oi.get("oiUsd")),
         "open_interest_timestamp_utc": _timestamp_ms(oi.get("ts")),
-        "funding_rate_current": _float_or_none(funding.get("fundingRate")),
+        "open_interest_history": oi_history_summary,
+        "funding_rate_predicted_current": _float_or_none(funding.get("fundingRate")),
+        "settled_funding_rate": _float_or_none(funding.get("settFundingRate")),
+        "funding_settlement_state": funding.get("settState"),
         "funding_rate_unit": "fraction per provider funding interval",
         "funding_timestamp_utc": _timestamp_ms(funding.get("fundingTime")),
-        "next_funding_rate": _float_or_none(funding.get("nextFundingRate")),
         "next_funding_time_utc": _timestamp_ms(funding.get("nextFundingTime")),
         "funding_history": history_rows,
+        "daily_taker_volume": taker_delta,
+        "daily_taker_volume_history_rows": len(taker_delta),
+        "daily_taker_cumulative_delta_btc": (
+            sum(row["delta_btc"] for row in valid_taker) if valid_taker else None
+        ),
+        "daily_taker_measurement_note": (
+            "OKX BTC-USDT perpetual contract taker volume, unit=BTC; buy minus sell. "
+            "Exchange-specific derivatives delta, not spot CVD or total-market CVD."
+        ),
         "funding_history_rows": len(history_rows),
-        "funding_history_scope": "latest 100 returned settlements; endpoint retention and pagination limits apply",
+        "funding_history_scope": "latest 100 returned settlements; OKX documents up to three months, pagination and retention limits apply",
+        "open_interest_history_scope": "daily UTC series; latest 100 points returned by OKX",
+        "daily_taker_volume_scope": "daily UTC contract taker buy/sell volumes; latest 30 points returned by OKX",
         "liquidations": {
             "status": "NOT_ACQUIRED",
             "reason": "No complete public liquidation history is inferred from OKX market data endpoints.",
@@ -481,12 +563,13 @@ def _okx_derivatives(directory: Path) -> tuple[dict, dict]:
     manifest = {
         "source": "OKX V5 public market data",
         "venue": "OKX", "symbol": instrument, "quote_currency": "USDT",
-        "interval": "current ticker/open-interest/funding plus recent funding settlements",
+        "interval": "current ticker/open-interest/funding; daily UTC OI and taker-volume history; recent funding settlements",
         "timezone": "UTC", "schema_version": "1.0", "source_grade": "A",
         "retrieved_at_utc": summary["retrieved_at_utc"],
         "parser": "OKX V5 REST envelope and BTC perpetual parser",
         "parser_version": "1.0",
-        "schema": ["ticker", "open-interest", "current funding", "funding history"],
+        "schema": ["ticker", "open-interest", "current funding", "funding history",
+                   "daily UTC open-interest history", "daily UTC contract taker volume"],
         "objects": objects, "status": summary["status"], "errors": errors,
     }
     return summary, manifest
