@@ -14,6 +14,7 @@ import numpy as np
 import pandas as pd
 
 from .ledger import _forecast_to_float
+from .research import HISTORICAL_HOLDOUT_START_UTC
 from .validation import EXECUTION_ENTRY_LAG_SESSIONS, forward_open_log_return
 
 AUDIT_LENSES = (
@@ -394,6 +395,8 @@ def _check_ohlcv_challenger(events: list[dict], run: dict) -> dict:
             holdout = pd.Timestamp(holdout_text)
             if cutoff.tzinfo is None or holdout.tzinfo is None or cutoff >= holdout:
                 raise ValueError("training cutoff is not strictly before holdout")
+            if holdout != HISTORICAL_HOLDOUT_START_UTC:
+                raise ValueError("challenger holdout start differs from frozen protocol cutoff")
             if "fixed alpha=100" not in notes or "historical holdout excluded from training and tuning" not in notes:
                 raise ValueError("fixed-alpha or holdout-exclusion provenance missing")
             _forecast_to_float(row.get("forecast"))
@@ -435,10 +438,14 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
     holdout_ok = (
         scores.get("holdout_globally_unseen") is False
         and scores.get("training_uses_holdout") is False
+        and scores.get("holdout_start_utc") == HISTORICAL_HOLDOUT_START_UTC.isoformat()
+        and scores.get("holdout_definition") == "fixed_start_expanding_diagnostic_never_used_for_training_or_tuning"
     )
     holdout = {
         "status": "PASS" if holdout_ok else "BLOCKED",
         "holdout_role": scores.get("holdout_role"),
+        "frozen_holdout_start_utc": HISTORICAL_HOLDOUT_START_UTC.isoformat(),
+        "holdout_definition": scores.get("holdout_definition"),
         "holdout_globally_unseen": scores.get("holdout_globally_unseen"),
         "training_uses_holdout": scores.get("training_uses_holdout"),
         "evidence": "Previously inspected historical holdout is disclosed as continuity-only and excluded from model training.",
