@@ -18,7 +18,6 @@ from btc_quant.audit import (
 def _binance_manifest():
     now = datetime(2026, 11, 17, 16, tzinfo=UTC)
     objects = []
-    start = datetime(2017, 8, 17, tzinfo=UTC).date()
     year, month = 2017, 8
     while (year, month) <= (2026, 10):
         import calendar
