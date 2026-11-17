@@ -173,6 +173,46 @@ def test_dfii10_fallback_requests_official_real_yield_curve(monkeypatch, tmp_pat
     assert "real yield curve" in manifest["source"]
 
 
+def test_bls_monthly_parser_orders_rows_and_preserves_footnotes():
+    from datetime import date
+
+    from btc_quant.supplemental import _parse_bls_monthly_series
+
+    payload = {
+        "status": "REQUEST_SUCCEEDED",
+        "Results": {
+            "series": [{
+                "seriesID": "LNS14000000",
+                "data": [
+                    {"year": "2026", "period": "M10", "value": "4.2", "footnotes": [{"code": "P", "text": "Preliminary."}]},
+                    {"year": "2026", "period": "M08", "value": "4.1", "footnotes": []},
+                    {"year": "2026", "period": "M09", "value": "-", "footnotes": []},
+                    {"year": "2026", "period": "M13", "value": "4.0", "footnotes": []},
+                ],
+            }],
+        },
+    }
+    observation_date, value, previous, footnotes = _parse_bls_monthly_series(
+        payload, "LNS14000000",
+    )
+    assert observation_date == date(2026, 10, 1)
+    assert value == pytest.approx(4.2)
+    assert previous == pytest.approx(4.1)
+    assert footnotes == [{"code": "P", "text": "Preliminary."}]
+
+
+def test_bls_monthly_parser_rejects_failed_or_empty_series():
+    from btc_quant.supplemental import _parse_bls_monthly_series
+
+    with pytest.raises(RuntimeError, match="REQUEST_FAILED"):
+        _parse_bls_monthly_series({"status": "REQUEST_FAILED"}, "LNS14000000")
+    with pytest.raises(ValueError, match="no valid monthly observations"):
+        _parse_bls_monthly_series({
+            "status": "REQUEST_SUCCEEDED",
+            "Results": {"series": [{"seriesID": "LNS14000000", "data": []}]},
+        }, "LNS14000000")
+
+
 def test_treasury_xml_parser_rejects_unsupported_series():
     from btc_quant.supplemental import _parse_treasury_yield_xml
 
