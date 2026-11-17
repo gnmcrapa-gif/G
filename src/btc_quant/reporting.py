@@ -329,14 +329,39 @@ def render_markdown_report(run: dict, scores: dict) -> str:
         )
         lines.append(f"| {step.get('step')} | {step.get('status')} | {detail} |")
     lines += ["", "## 2. Prezzi spot — ultime candele giornaliere chiuse", "",
-              "| Venue | Strumento | Candela UTC | Close | Variazione 1D | Range intraday | Volume BTC |",
-              "|---|---|---|---:|---:|---:|---:|"]
+              "| Venue | Strumento | Candela UTC | Close | 1D | 7D | 30D | Range intraday | Volume BTC |",
+              "|---|---|---|---:|---:|---:|---:|---:|---:|"]
     for item in run.get("market_snapshot", {}).get("venues", []):
         lines.append(
             f"| {item.get('venue')} | {item.get('symbol')} ({item.get('quote_currency')}) | "
             f"{item.get('candle_open_timestamp_utc')} | {_display(item.get('close_quote_per_btc'), 2)} | "
             f"{_display(item.get('close_change_1d_pct'), 3)}% | "
+            f"{_display(item.get('close_change_7d_pct'), 3)}% | "
+            f"{_display(item.get('close_change_30d_pct'), 3)}% | "
             f"{_display(item.get('intraday_range_pct'), 3)}% | {_display(item.get('volume_btc'), 2)} |"
+        )
+    lines += ["", "### Quotazioni spot — ultimo scambio osservato", "",
+              "| Venue | Prezzo | Variazione 24h | Volume base 24h | Timestamp ultimo scambio UTC |",
+              "|---|---:|---:|---:|---|"]
+    live_spot = run.get("supplemental_data", {}).get("spot_live", {})
+    for venue, item in live_spot.get("venues", {}).items():
+        lines.append(
+            f"| {venue} | {_display(item.get('last_trade_price'), 2)} | "
+            f"{_display(item.get('price_change_24h_pct'), 3)}% | "
+            f"{_display(item.get('base_volume_24h_btc'), 2)} BTC | "
+            f"{item.get('last_trade_timestamp_utc')} |"
+        )
+    lines += ["", "### Livelli tecnici descrittivi — non segnali", "",
+              "| Venue | SMA20 | SMA50 | SMA200 | Massimo 20D | Minimo 20D | ATR14 |",
+              "|---|---:|---:|---:|---:|---:|---:|"]
+    for item in run.get("market_snapshot", {}).get("venues", []):
+        lines.append(
+            f"| {item.get('venue')} | {_display(item.get('sma_20_quote_per_btc'), 2)} | "
+            f"{_display(item.get('sma_50_quote_per_btc'), 2)} | "
+            f"{_display(item.get('sma_200_quote_per_btc'), 2)} | "
+            f"{_display(item.get('high_20d_quote_per_btc'), 2)} | "
+            f"{_display(item.get('low_20d_quote_per_btc'), 2)} | "
+            f"{_display(item.get('atr_14_quote_per_btc'), 2)} |"
         )
     lines += ["", "## 3. Copertura dei dati supplementari", "",
               "| Categoria | Stato | Nota / limite |", "|---|---|---|"]
