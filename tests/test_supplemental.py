@@ -62,7 +62,7 @@ def test_every_market_domain_has_an_explicit_default_not_run_or_unavailable_stat
     assert set(coverage) == expected
     assert all(item.get("status") for item in coverage.values())
     assert coverage["exchange_flows_and_reserves"]["status"] == "UNAVAILABLE"
-    assert coverage["spot_futures_cvd"]["status"] == "PROXY_ONLY"
+    assert coverage["spot_futures_cvd"]["status"] == "NOT_RUN"
 
 
 
