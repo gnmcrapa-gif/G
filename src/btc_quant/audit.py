@@ -376,10 +376,13 @@ def run_pre_report_review(
         both_venues = all(context.get("venues", {}).get(v, {}).get("status") == "PASS"
                           for v in ("Binance_BTCUSDT", "Bitstamp_BTCUSD"))
         return_diff = context.get("absolute_close_return_difference")
+        close_ratio = context.get("binance_usdt_to_bitstamp_usd_close_price_ratio")
         return_consistent = return_diff is None or return_diff <= 0.02
+        quote_basis_consistent = close_ratio is None or abs(close_ratio - 1.0) <= 0.02
         add(f"rotating_red_team_{lens}", "red_team",
-            bool(event_date and both_venues and return_consistent),
-            f"event={event_date}; context={context}",
+            bool(event_date and both_venues and return_consistent and quote_basis_consistent),
+            f"event={event_date}; screening_thresholds=2% absolute log-return difference and 2% raw quote-price ratio gap; "
+            f"thresholds are WARN-only, not calibrated FX or data rejection rules; context={context}",
             blocking=False,
         )
 
