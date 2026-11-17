@@ -27,7 +27,7 @@ from btc_quant.ledger import (
     score_matured_events,
     summarize_scored_events,
 )
-from btc_quant.reporting import (
+from btc_quant.supplemental import acquire_supplemental\nfrom btc_quant.reporting import (
     _build_longitudinal_comparison,
     _build_report_sections,
     _market_snapshot,
@@ -201,6 +201,23 @@ def main() -> int:
                 "absolute_log_basis_unit": "log price-ratio units; USDT/USD not FX-adjusted",
                 "qa_status": check.get("status"),
             }
+        supplemental_started = time.perf_counter()
+        supplemental_data, supplemental_manifests = acquire_supplemental(
+            data_dir / "supplemental"
+        )
+        run["supplemental_data"] = supplemental_data
+        manifests.extend(supplemental_manifests)
+        run["steps"].append({
+            "step": "supplemental_market_context",
+            "status": "PASS" if any(
+                supplemental_data.get(name, {}).get("status") == "PASS"
+                for name in ("binance_futures", "bybit_futures", "deribit_options", "us_spot_etf_flows")
+            ) else "PARTIAL",
+            "coverage": supplemental_data.get("coverage", {}),
+        })
+        run["supplemental_acquisition_seconds"] = round(
+            time.perf_counter() - supplemental_started, 3
+        )
         run["cross_checks"] = cross_checks
         run["numeric_conventions"] = {
             "price": "quote currency per BTC; USD and USDT kept separate",
