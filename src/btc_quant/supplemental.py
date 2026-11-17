@@ -146,6 +146,10 @@ def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
             "/futures/data/takerlongshortRatio",
             {"symbol": "BTCUSDT", "period": "1d", "limit": 30},
         ),
+        "global_long_short_account_ratio_daily_30d": (
+            "/futures/data/globalLongShortAccountRatio",
+            {"symbol": "BTCUSDT", "period": "1d", "limit": 30},
+        ),
         "funding_history": ("/fapi/v1/fundingRate", {"symbol": "BTCUSDT", "limit": 1000}),
         "daily_futures_klines": ("/fapi/v1/klines", {"symbol": "BTCUSDT", "interval": "1d", "limit": 31}),
     }
@@ -166,6 +170,7 @@ def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
         "historical_limits": {
             "open_interest_statistics_max_lookback_days": 30,
             "taker_buy_sell_ratio_max_lookback_days": 30,
+            "global_account_ratio_max_lookback_days": 30,
             "funding_history_limit_records": 1000,
         },
         "symbol": "BTCUSDT perpetual",
@@ -207,6 +212,17 @@ def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
         summary["order_flow_measurement"] = (
             "Daily taker buy/sell volume ratio proxy; not a reconstructed cumulative volume delta."
         )
+    account_ratio = raw.get("global_long_short_account_ratio_daily_30d", [])
+    if isinstance(account_ratio, list) and account_ratio:
+        latest = max(account_ratio, key=lambda row: int(row.get("timestamp", 0)))
+        summary["global_long_short_account_ratio"] = _float_or_none(latest.get("longShortRatio"))
+        summary["global_long_account_share_pct"] = (
+            (_float_or_none(latest.get("longAccount")) or 0.0) * 100.0
+        )
+        summary["global_short_account_share_pct"] = (
+            (_float_or_none(latest.get("shortAccount")) or 0.0) * 100.0
+        )
+        summary["global_long_short_ratio_timestamp_utc"] = _timestamp_ms(latest.get("timestamp"))
     funding = raw.get("funding_history", [])
     if isinstance(funding, list) and funding:
         points = sorted(funding, key=lambda row: int(row.get("fundingTime", 0)))
@@ -249,7 +265,11 @@ def _bybit_derivatives(directory: Path) -> tuple[dict, dict]:
         "ticker": ("/v5/market/tickers", {"category": "linear", "symbol": "BTCUSDT"}),
         "open_interest_daily_30d": (
             "/v5/market/open-interest",
-            {"category": "linear", "symbol": "BTCUSDT", "intervalTime": "1d", "limit": 30},
+            {"category": "linear", "symbol": "BTCUSDT", "intervalTime": "1d", "limit": 200},
+        ),
+        "global_account_ratio_daily_30d": (
+            "/v5/market/account-ratio",
+            {"category": "linear", "symbol": "BTCUSDT", "period": "1d", "limit": 30},
         ),
         "funding_history": (
             "/v5/market/funding/history",
@@ -296,12 +316,32 @@ def _bybit_derivatives(directory: Path) -> tuple[dict, dict]:
         latest = _float_or_none(points[-1].get("openInterest"))
         summary["open_interest_history_latest_timestamp_utc"] = _timestamp_ms(points[-1].get("timestamp"))
         summary["open_interest_history_latest_btc"] = latest
-        for days in (1, 7, 30):
+        for days in (1, 7, 30, 90, 180):
             target = int(points[-1].get("timestamp", 0)) - days * 86400_000
             prior = min(points, key=lambda row: abs(int(row.get("timestamp", 0)) - target))
-            summary[f"open_interest_history_change_{days}d_pct"] = _pct_change(
-                _float_or_none(prior.get("openInterest")), latest
+            actual_days = (
+                int(points[-1].get("timestamp", 0)) - int(prior.get("timestamp", 0))
+            ) / 86400_000
+            summary[f"open_interest_history_change_{days}d_pct"] = (
+                _pct_change(_float_or_none(prior.get("openInterest")), latest)
+                if actual_days >= days - 2 else None
             )
+        summary["open_interest_history_max_days"] = (
+            int(points[-1].get("timestamp", 0)) - int(points[0].get("timestamp", 0))
+        ) / 86400_000
+    account_rows = raw.get("global_account_ratio_daily_30d", {}).get("list", [])
+    if account_rows:
+        latest = max(account_rows, key=lambda row: int(row.get("timestamp", 0)))
+        summary["global_long_short_account_ratio"] = _float_or_none(latest.get("buyRatio")) / (
+            _float_or_none(latest.get("sellRatio")) or 1.0
+        )
+        summary["global_long_account_share_pct"] = (
+            (_float_or_none(latest.get("buyRatio")) or 0.0) * 100.0
+        )
+        summary["global_short_account_share_pct"] = (
+            (_float_or_none(latest.get("sellRatio")) or 0.0) * 100.0
+        )
+        summary["global_long_short_ratio_timestamp_utc"] = _timestamp_ms(latest.get("timestamp"))
     funding_rows = raw.get("funding_history", {}).get("list", [])
     if funding_rows:
         points = sorted(funding_rows, key=lambda row: int(row.get("fundingRateTimestamp", 0)))
