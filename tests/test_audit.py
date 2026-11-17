@@ -3,6 +3,7 @@ from datetime import UTC, datetime
 
 import numpy as np
 import pandas as pd
+import pytest
 
 from btc_quant.audit import run_pre_report_review
 
