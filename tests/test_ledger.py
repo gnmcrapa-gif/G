@@ -3,6 +3,7 @@ import pandas as pd
 import pytest
 
 from btc_quant.ledger import (
+    forecast_dedupe_key,
     generate_forecast_events,
     invalidate_late_forecasts,
     score_matured_events,
@@ -126,3 +127,54 @@ def test_legacy_singleton_array_forecast_is_scored_and_summarized():
     block = summary["by_horizon"]["1"]
     assert block["n"] == 1
     assert block["models"]["ridge"]["mae"] == pytest.approx(abs(-0.01 - np.log(1.1)))
+
+
+
+def test_forecast_dedupe_key_keeps_versions_separate_and_same_version_idempotent():
+    base = {
+        "signal_timestamp_utc": "2026-11-17T00:00:00+00:00",
+        "horizon": 7,
+        "model_version": "ridge-challenger-0.4",
+    }
+    newer = {**base, "model_version": "ridge-challenger-0.5"}
+    assert forecast_dedupe_key(base) == forecast_dedupe_key(dict(base))
+    assert forecast_dedupe_key(base) != forecast_dedupe_key(newer)
+
+
+def test_prospective_metrics_are_not_pooled_across_model_versions():
+    import json
+
+    events = []
+    for version, forecast_value, issued in (
+        ("ridge-challenger-0.4", 0.10, "2026-11-17T16:00:00+00:00"),
+        ("ridge-challenger-0.5", 0.00, "2026-11-18T16:00:00+00:00"),
+    ):
+        forecast_id = version
+        events.append({
+            "event_type": "FORECAST",
+            "forecast_id": forecast_id,
+            "model_version": version,
+            "issued_at_utc": issued,
+            "horizon": 1,
+            "forecast": forecast_value,
+            "benchmark_forecasts": json.dumps({
+                "zero_return": 0.0,
+                "training_drift": 0.0,
+                "fixed_momentum": 0.0,
+            }),
+        })
+        events.append({
+            "event_type": "SCORE",
+            "forecast_id": forecast_id,
+            "horizon": 1,
+            "realized_outcome": 0.01,
+        })
+
+    result = summarize_scored_events(events)
+    block = result["by_horizon"]["1"]
+    assert block["active_model_version"] == "ridge-challenger-0.5"
+    assert block["n"] == 1
+    assert block["models"]["ridge"]["mae"] == pytest.approx(0.01)
+    assert block["by_model_version"]["ridge-challenger-0.4"]["n"] == 1
+    assert block["by_model_version"]["ridge-challenger-0.4"]["models"]["ridge"]["mae"] == pytest.approx(0.09)
+    assert block["by_model_version"]["ridge-challenger-0.5"]["models"]["ridge"]["mae"] == pytest.approx(0.01)

@@ -20,6 +20,7 @@ from btc_quant.acquisition import (
 from btc_quant.audit import run_pre_report_review
 from btc_quant.ledger import (
     append_events,
+    forecast_dedupe_key,
     generate_forecast_events,
     invalidate_late_forecasts,
     read_events,
@@ -274,7 +275,7 @@ def main() -> int:
             if row.get("event_type") == "INVALIDATION"
         }
         pending_keys = {
-            (row.get("signal_timestamp_utc"), int(row.get("horizon")))
+            forecast_dedupe_key(row)
             for row in previous_events
             if row.get("event_type") == "FORECAST"
             and row.get("forecast_id") not in scored_ids | invalidated_ids
@@ -282,7 +283,7 @@ def main() -> int:
         before_dedupe = len(forecast_events)
         forecast_events = [
             row for row in forecast_events
-            if (row["signal_timestamp_utc"], int(row["horizon"])) not in pending_keys
+            if forecast_dedupe_key(row) not in pending_keys
         ]
         duplicates_suppressed = before_dedupe - len(forecast_events)
         pending_events = invalidation_events + score_events + forecast_events

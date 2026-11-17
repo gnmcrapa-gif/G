@@ -64,3 +64,10 @@ The report closes with three observed drivers, the principal limitation, evidenc
 ## 8. Change control and repeated critical review
 
 Only deterministic technical corrections with tests may modify production plumbing. Statistical features/models are isolated challengers. The report must retain a component-by-component audit, falsification conditions, experiment register, changelog and red-team findings. Champion settings and final holdout are immutable unless a separately reviewed governance change explicitly authorizes otherwise.
+
+## 9. Model-version isolation and remote persistence proof
+
+- Pending forecast idempotency is scoped to signal timestamp, horizon and explicit model version. A new model version may issue its own forecast for the same signal; repeated runs of the same version may not duplicate it.
+- Matured prospective errors are grouped by model version. The active version is identified by its latest issuance time; observations from different versions are never pooled into one MAE or sample gate.
+- The model version must be incremented whenever forecast features, fitting logic, hyperparameter policy or prediction semantics change. Code commit remains separately recorded for exact provenance.
+- After the main-branch persistence push, CI fetches `origin/main` and verifies that the remote ref contains the run's report, manifest, scores, predictions and ledgers byte-for-byte. It rechecks every raw object against manifest size and SHA-256, verifies remote raw-object bytes, and rejects duplicate ledger event IDs. A successful local append/readback alone is not sufficient for the workflow's remote-persistence gate.
