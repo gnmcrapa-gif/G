@@ -4,6 +4,10 @@ from __future__ import annotations
 import hashlib
 import io
 import math
+import re
+import xml.etree.ElementTree as ET
+from email.utils import parsedate_to_datetime
+from html import unescape
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
@@ -820,6 +824,211 @@ FRED_SERIES = {
     "VIXCLS": {"label": "CBOE VIX", "unit": "index points", "max_age_days": 5, "lookback_days": 365},
     "M2SL": {"label": "US M2 money stock", "unit": "billions of USD", "max_age_days": 45, "lookback_days": 1825},
 }
+
+
+def _local_name(tag: str) -> str:
+    return tag.rsplit("}", 1)[-1]
+
+
+def _parse_rss_articles(payload: bytes, source: str) -> list[dict]:
+    root = ET.fromstring(payload)
+    articles = []
+    for element in root.iter():
+        if _local_name(element.tag) not in {"item", "entry"}:
+            continue
+        values = {_local_name(child.tag): (child.text or "").strip() for child in element}
+        links = [
+            child.attrib.get("href")
+            for child in element
+            if _local_name(child.tag) == "link" and child.attrib.get("href")
+        ]
+        link = values.get("link") or (links[0] if links else None)
+        title = values.get("title")
+        date_text = values.get("pubDate") or values.get("published") or values.get("updated")
+        published = None
+        if date_text:
+            try:
+                parsed = parsedate_to_datetime(date_text)
+                published = parsed.astimezone(UTC).isoformat()
+            except (TypeError, ValueError, OverflowError):
+                try:
+                    published = pd.to_datetime(date_text, utc=True).isoformat()
+                except (TypeError, ValueError):
+                    published = None
+        description = values.get("description") or values.get("summary") or ""
+        description = unescape(re.sub(r"<[^>]+>", " ", description))
+        description = " ".join(description.split())[:500]
+        if title and link:
+            articles.append({
+                "title": unescape(title),
+                "url": link,
+                "published_at_utc": published,
+                "source": source,
+                "snippet": description,
+                "date_semantics": "publisher RSS publication/update date",
+            })
+    return articles
+
+
+def _news_keyword_tags(title: str, snippet: str = "") -> list[str]:
+    text = f"{title} {snippet}".lower()
+    groups = {
+        "regulatory": ("sec", "cftc", "regulation", "regulatory", "legislation", "court", "mica", "law"),
+        "macro_monetary": ("federal reserve", "fomc", "inflation", "cpi", "treasury", "yield", "interest rate", "payroll"),
+        "geopolitical": ("war", "sanctions", "election", "tariff", "conflict", "ceasefire", "ukraine", "iran", "israel", "russia"),
+        "crypto": ("bitcoin", "crypto", "digital asset", "etf", "exchange"),
+    }
+    return [tag for tag, words in groups.items() if any(word in text for word in words)]
+
+
+def _news_context(directory: Path) -> tuple[dict, list[dict]]:
+    session = requests.Session()
+    session.headers.update({"User-Agent": USER_AGENT})
+    directory.mkdir(parents=True, exist_ok=True)
+    objects, manifests, errors, articles, source_status = [], [], {}, [], {}
+    feeds = {
+        "Federal Reserve": "https://www.federalreserve.gov/feeds/press_all.xml",
+        "SEC": "https://www.sec.gov/news/pressreleases.rss",
+        "White House": "https://www.whitehouse.gov/news/feed/",
+        "ECB": "https://www.ecb.europa.eu/rss/press.html",
+    }
+    for name, url in feeds.items():
+        obj = None
+        try:
+            response = session.get(url, timeout=30)
+            response.raise_for_status()
+            raw = response.content
+            obj = _save_object(
+                directory, f"rss_{name.lower().replace(' ', '_')}.xml", raw,
+                source=f"{name} official RSS feed", url=response.url,
+                venue=name, symbol="official releases", quote="not_applicable",
+                source_grade="A",
+            )
+            objects.append(obj)
+            feed_articles = _parse_rss_articles(raw, name)
+            articles.extend(feed_articles[:15])
+            source_status[name] = {"status": "PASS", "article_count": len(feed_articles)}
+            manifests.append({
+                "source": f"{name} official RSS feed", "venue": name,
+                "symbol": "official releases", "quote_currency": "not_applicable",
+                "interval": "latest publisher RSS items", "timezone": "publisher date normalized to UTC",
+                "schema_version": "1.0", "source_grade": "A",
+                "retrieved_at_utc": datetime.now(UTC).isoformat(),
+                "parser": "ElementTree RSS/Atom parser", "parser_version": "0.3",
+                "schema": ["title", "link", "pubDate/published/updated", "description/summary"],
+                "objects": [obj], "status": "PASS",
+            })
+        except (requests.RequestException, ET.ParseError, ValueError) as exc:
+            errors[name] = f"{type(exc).__name__}: {exc}"
+            source_status[name] = {"status": "FAIL", "error": errors[name]}
+            manifests.append({
+                "source": f"{name} official RSS feed", "venue": name,
+                "symbol": "official releases", "quote_currency": "not_applicable",
+                "interval": "latest publisher RSS items", "timezone": "publisher date normalized to UTC",
+                "schema_version": "1.0", "source_grade": "A",
+                "retrieved_at_utc": datetime.now(UTC).isoformat(),
+                "parser": "ElementTree RSS/Atom parser", "parser_version": "0.3",
+                "schema": ["raw XML retained; parsing failed"] if obj else [],
+                "objects": [obj] if obj else [], "status": "FAIL",
+                "error": errors[name],
+            })
+    source_status["CFTC"] = {
+        "status": "UNAVAILABLE",
+        "reason": "CFTC reports its RSS feeds temporarily disabled as of October 2026.",
+    }
+
+    gdelt_url = "https://api.gdeltproject.org/api/v2/doc/doc"
+    gdelt_obj = None
+    try:
+        response = session.get(
+            gdelt_url,
+            params={
+                "query": '(Bitcoin OR cryptocurrency OR "digital assets" OR ETF OR SEC OR CFTC OR '
+                         'Federal Reserve OR FOMC OR sanctions OR election OR tariff OR war OR conflict)',
+                "mode": "ArtList", "format": "json", "maxrecords": 50,
+                "timespan": "7d", "sort": "DateDesc",
+            },
+            timeout=45,
+        )
+        response.raise_for_status()
+        raw = response.content
+        gdelt_obj = _save_object(
+            directory, "gdelt_doc_articles_7d.json", raw,
+            source="GDELT DOC 2.0 article search", url=response.url,
+            venue="Global news aggregator", symbol="BTC/macro/regulation/geopolitics",
+            quote="not_applicable", source_grade="C",
+        )
+        objects.append(gdelt_obj)
+        payload = response.json()
+        gdelt_rows = payload.get("articles", [])
+        for row in gdelt_rows:
+            articles.append({
+                "title": row.get("title"),
+                "url": row.get("url"),
+                "seen_at_utc": (
+                    pd.to_datetime(row.get("seendate"), format="%Y%m%dT%H%M%SZ", utc=True).isoformat()
+                    if row.get("seendate") else None
+                ),
+                "source": row.get("domain", "GDELT"),
+                "source_country": row.get("sourcecountry"),
+                "language": row.get("language"),
+                "date_semantics": "GDELT first-seen timestamp, not publisher publication time",
+            })
+        source_status["GDELT"] = {"status": "PASS", "article_count": len(gdelt_rows)}
+        manifests.append({
+            "source": "GDELT DOC 2.0 article search", "venue": "Global news aggregator",
+            "symbol": "BTC/macro/regulation/geopolitics", "quote_currency": "not_applicable",
+            "interval": "rolling 7d", "timezone": "GDELT seendate UTC",
+            "schema_version": "1.0", "source_grade": "C",
+            "retrieved_at_utc": datetime.now(UTC).isoformat(),
+            "parser": "GDELT DOC JSON parser", "parser_version": "0.3",
+            "schema": ["title", "url", "seendate", "domain", "sourcecountry", "language"],
+            "objects": [gdelt_obj], "status": "PASS",
+        })
+    except (requests.RequestException, ValueError, TypeError) as exc:
+        errors["GDELT"] = f"{type(exc).__name__}: {exc}"
+        source_status["GDELT"] = {"status": "FAIL", "error": errors["GDELT"]}
+        manifests.append({
+            "source": "GDELT DOC 2.0 article search", "venue": "Global news aggregator",
+            "symbol": "BTC/macro/regulation/geopolitics", "quote_currency": "not_applicable",
+            "interval": "rolling 7d", "timezone": "GDELT seendate UTC",
+            "schema_version": "1.0", "source_grade": "C",
+            "retrieved_at_utc": datetime.now(UTC).isoformat(),
+            "parser": "GDELT DOC JSON parser", "parser_version": "0.3",
+            "schema": ["raw JSON retained; parsing failed"] if gdelt_obj else [],
+            "objects": [gdelt_obj] if gdelt_obj else [], "status": "FAIL",
+            "error": errors["GDELT"],
+        })
+
+    deduped = {}
+    for article in articles:
+        key = article.get("url") or article.get("title")
+        if key and article.get("title"):
+            article["keyword_tags"] = _news_keyword_tags(article["title"], article.get("snippet", ""))
+            deduped[key] = article
+    final_articles = sorted(
+        deduped.values(),
+        key=lambda row: row.get("published_at_utc") or row.get("seen_at_utc") or "",
+        reverse=True,
+    )[:30]
+    official_passes = sum(
+        source_status.get(name, {}).get("status") == "PASS"
+        for name in feeds
+    )
+    gdelt_pass = source_status.get("GDELT", {}).get("status") == "PASS"
+    status = "PASS" if gdelt_pass and official_passes >= 1 else (
+        "PARTIAL" if gdelt_pass or official_passes else "FAIL"
+    )
+    summary = {
+        "status": status,
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "window": "7d for GDELT; latest items for official RSS",
+        "articles": final_articles,
+        "source_status": source_status,
+        "errors": errors,
+        "interpretation_limit": "Headlines and keyword tags are descriptive only; no sentiment, event-impact score or trading signal is inferred.",
+    }
+    return summary, manifests
 
 
 def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
