@@ -85,7 +85,7 @@ def _review_inputs(tmp_path):
         for h in (1, 3, 7, 30)
     }
     scores = {
-        "target": "log(Open[t+h+2]/Open[t+2])",
+        "target": "log(Open[t+h+2]/Open[t+2]); signal after close t",
         "requested_next_open_target_executable_at_scheduled_run": False,
         "training_uses_holdout": False,
         "holdout_globally_unseen": False,
@@ -136,3 +136,22 @@ def test_rotating_red_team_lens_changes_across_run_ids(tmp_path):
         for index in range(20)
     }
     assert len(lenses) == 4
+
+
+def test_invalidated_backdated_forecasts_remain_auditable_not_blocking(tmp_path):
+    run, manifests, binance, bitstamp, _, scores = _review_inputs(tmp_path)
+    forecast = {
+        "event_id": "f-event", "event_type": "FORECAST", "forecast_id": "f1",
+        "issued_at_utc": "2025-06-23T12:00:00+00:00",
+        "entry_timestamp_utc": "2025-06-23T00:00:00+00:00",
+    }
+    invalidation = {
+        "event_id": "i-event", "event_type": "INVALIDATION", "forecast_id": "f1",
+    }
+    result = run_pre_report_review(
+        run, manifests, binance, bitstamp, [forecast, invalidation], scores,
+        now=datetime(2025, 6, 23, 12, tzinfo=UTC), run_id="workflow-invalidated",
+    )
+    ledger_check = next(item for item in result["checks"]
+                        if item["check_id"] == "append_only_ledger_consistency")
+    assert ledger_check["status"] == "PASS"
