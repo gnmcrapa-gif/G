@@ -234,8 +234,10 @@ def test_bls_cpi_fallback_uses_official_v1_api_and_month_end_freshness(monkeypat
         },
     }
 
+    encoded_payload = json.dumps(payload).encode("utf-8")
+
     class FakeResponse:
-        content = json.dumps(payload).encode("utf-8")
+        content = encoded_payload
         url = "https://api.bls.gov/publicAPI/v1/timeseries/data/"
 
         def raise_for_status(self):
