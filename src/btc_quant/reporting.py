@@ -532,6 +532,31 @@ def render_markdown_report(run: dict, scores: dict) -> str:
                   f"- Flusso ultime 21 sessioni: {_display(etf.get('last_21_sessions_net_flow_usd'), 2)} USD.",
                   f"- Flusso ultime 30 sessioni: {_display(etf.get('last_30_sessions_net_flow_usd'), 2)} USD.",
                   f"- Fonte/licenza: {etf.get('source')} / {etf.get('license')}."]
+    global_etp = supplemental.get("global_etp_flows", {})
+    if global_etp:
+        lines += ["", "### ETP globali — flussi settimanali", "",
+                  f"- Stato acquisizione: {global_etp.get('status')}; fonte: {global_etp.get('source')}.",
+                  "- I valori sono in milioni USD e si riferiscono alla settimana precedente indicata dal publisher, non a flussi giornalieri.",
+                  "| Report week | Pubblicazione UTC | Global crypto ETP | Global Bitcoin ETP | Sottoinsieme US spot BTC ETF | Residuo BTC non-US (derivato) |",
+                  "|---|---|---:|---:|---:|---:|"]
+        for item in global_etp.get("weekly_history", []):
+            lines.append(
+                f"| {item.get('report_week')} | {item.get('published_at_utc')} | "
+                f"{_display(item.get('global_crypto_etp_weekly_flow_usd_mn'), 1)} | "
+                f"{_display(item.get('global_bitcoin_etp_weekly_flow_usd_mn'), 1)} | "
+                f"{_display(item.get('us_spot_bitcoin_etf_component_usd_mn'), 1)} | "
+                f"{_display(item.get('non_us_bitcoin_etp_residual_usd_mn'), 1)} |"
+            )
+        lines.append(
+            f"- Totale ultimi 4 report settimanali: global crypto "
+            f"{_display(global_etp.get('last_four_weeks_global_crypto_etp_flow_usd_mn'), 1)} mln USD; "
+            f"Bitcoin {_display(global_etp.get('last_four_weeks_global_bitcoin_etp_flow_usd_mn'), 1)} mln USD."
+        )
+        lines.append(
+            f"- Copertura: {global_etp.get('coverage_note', '')} "
+            "AUM e turnover globali non acquisiti; non trasformare i totali settimanali in flussi giornalieri."
+        )
+
     macro = supplemental.get("macro", {})
     if macro:
         lines += ["", "## 4. Macro e mercati USA", "",
