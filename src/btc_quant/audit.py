@@ -215,6 +215,44 @@ def build_market_snapshot(binance: pd.DataFrame | None, bitstamp: pd.DataFrame |
     return output
 
 
+def build_observed_drivers(frame: pd.DataFrame | None) -> dict:
+    """Describe fixed 1/7/30-session price windows without directional alert language."""
+    if frame is None or len(frame) < 31:
+        return {"status": "WARN", "reason": "At least 31 validated daily rows are required."}
+    data = frame.sort_values("timestamp").reset_index(drop=True)
+    close = pd.to_numeric(data["close"], errors="raise").astype(float)
+    latest = pd.Timestamp(data.loc[len(data) - 1, "timestamp"])
+    drivers = []
+    for sessions in (1, 7, 30):
+        start = pd.Timestamp(data.loc[len(data) - 1 - sessions, "timestamp"])
+        value = float((close.iloc[-1] / close.iloc[-1 - sessions] - 1.0) * 100.0)
+        drivers.append({
+            "window_sessions": sessions,
+            "start_candle_utc": start.isoformat(),
+            "end_candle_utc": latest.isoformat(),
+            "close_to_close_return_pct": value,
+            "source": "Binance BTCUSDT spot daily OHLCV",
+            "quote_currency": "USDT",
+            "qa": "PASS",
+        })
+    previous_volume = pd.to_numeric(data["volume"].iloc[-31:-1], errors="raise").astype(float)
+    volume_median = float(previous_volume.median())
+    latest_volume = float(data["volume"].iloc[-1])
+    return {
+        "status": "PASS",
+        "three_observed_price_drivers": drivers,
+        "latest_volume_btc": latest_volume,
+        "previous_30_session_median_volume_btc": volume_median,
+        "latest_volume_vs_previous_30_session_median": (
+            latest_volume / volume_median if volume_median > 0 else None
+        ),
+        "latest_candle_timestamp_utc": latest.isoformat(),
+        "volume_window": "30 completed sessions immediately preceding the latest candle",
+        "source": "Binance BTCUSDT spot daily OHLCV",
+        "note": "Descriptive facts only; no directional alert or probability is implied.",
+    }
+
+
 def build_forecast_snapshot(events: list[dict]) -> list[dict]:
     scored = {row.get("forecast_id") for row in events if row.get("event_type") == "SCORE"}
     invalidated = {row.get("forecast_id") for row in events if row.get("event_type") == "INVALIDATION"}
@@ -373,6 +411,21 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
         "evidence": "Zero-return remains the champion; Ridge is not promoted.",
     }
     outlier = audit_outlier_date(binance, bitstamp)
+    observed_drivers = build_observed_drivers(binance)
+    prospective = run.get("prospective_ledger_validation", {}).get("by_horizon", {})
+    prospective_counts = {str(key): int(value.get("n", 0)) for key, value in prospective.items()}
+    prospective_ready = len(prospective_counts) == 4 and all(value >= 200 for value in prospective_counts.values())
+    economic_gate = {
+        "status": "PASS" if prospective_ready else "WARN",
+        "matured_forecasts_by_horizon": prospective_counts,
+        "minimum_per_horizon": 200,
+        "strategy_cost_backtest": "NOT_RUN",
+        "reason": (
+            "No cost-adjusted strategy test is admissible yet: prospective sample gate is not met, "
+            "and venue/account fee tier plus a pre-registered execution rule are not established."
+        ),
+        "evidence": "Do not infer a strategy edge or use arbitrary transaction-cost assumptions.",
+    }
     optional_failures = [
         step.get("step") for step in run.get("steps", [])
         if step.get("step") in {"coinbase_recent_cross_check", "kraken_recent_cross_check"}
@@ -394,6 +447,7 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
         "venue_quote_separation": {"status": "PASS" if binance_manifest and bitstamp_manifest and binance_manifest.get("quote_currency") == "USDT" and bitstamp_manifest.get("quote_currency") == "USD" else "BLOCKED", "binance_quote": None if binance_manifest is None else binance_manifest.get("quote_currency"), "bitstamp_quote": None if bitstamp_manifest is None else bitstamp_manifest.get("quote_currency"), "evidence": "USDT and USD series remain separate; no implicit FX conversion or volume pooling."},
         "run_status_consistency": {"status": "PASS" if run.get("status") == "BLOCKED" or (run.get("status") == "COMPLETE_NOT_PROMOTED" and all(next((step.get("status") for step in run.get("steps", []) if step.get("step") == key), None) == expected for key, expected in (("binance_acquisition_and_qa", "PASS"), ("bitstamp_acquisition_and_qa", "PASS"), ("walk_forward", "SCORED_NOT_PROMOTED")))) else "BLOCKED", "run_status": run.get("status"), "evidence": "A completed report requires both primary QA passes and a scored-but-not-promoted research result."},
         "historical_volume_outlier_review": outlier,
+        "prospective_evidence_and_economic_validation": economic_gate,
     }
     lens_index = now.date().toordinal() % len(AUDIT_LENSES)
     lens = AUDIT_LENSES[lens_index]
@@ -437,6 +491,7 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
                     item.get("venue", "unknown"): item.get("rows") for item in manifests
                 },
                 "latest_candles": build_market_snapshot(binance, bitstamp),
+                "observed_price_drivers": observed_drivers,
                 "prospective_matured_forecasts": run.get("prospective_ledger_validation", {}).get("by_horizon", {}),
             },
             "INTERPRETATION": {
@@ -453,5 +508,11 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
                 "type": "prospective point forecasts only; no calibrated probabilities",
                 "pending": build_forecast_snapshot(events),
             },
+        },
+        "closing_assessment": {
+            "three_observed_drivers": observed_drivers.get("three_observed_price_drivers", []),
+            "principal_limit": "No horizon has 200 matured prospective SCORE events; the historical holdout is continuity-only and the 2022-11-08 Binance volume has no independent historical venue confirmation.",
+            "evidence_that_would_change_assessment": "At least 200 matured prospective forecasts per horizon, positive lift versus zero-return under HAC/Holm control, separate calibration evidence, stable regime diagnostics and positive net value using documented venue fees/spread/slippage.",
+            "single_next_experiment": "V5.5-OHLCV-001: pre-registered volume-surprise and candle-geometry challenger, prospective ledger only; do not use the historical continuity holdout for promotion.",
         },
     }
