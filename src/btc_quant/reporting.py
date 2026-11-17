@@ -630,6 +630,14 @@ def render_markdown_report(run: dict, scores: dict) -> str:
                     f"{_display(btc_largest.get('size_usd') / 1e6 if btc_largest.get('size_usd') is not None else None, 2)} mln USD "
                     f"su {btc_largest.get('venue')} alle {btc_largest.get('time_utc')} UTC."
                 )
+            if liquidation.get("largest_liquidation_days"):
+                lines.append("- Giorni con maggiori liquidazioni dalla copertura disponibile:")
+                for day in liquidation["largest_liquidation_days"][:3]:
+                    lines.append(
+                        f"  - {day.get('day_utc')}: totale {_display(day.get('all_coins_usd') / 1e6 if day.get('all_coins_usd') is not None else None, 1)} mln USD; "
+                        f"long {_display(day.get('longs_usd') / 1e6 if day.get('longs_usd') is not None else None, 1)} mln; "
+                        f"short {_display(day.get('shorts_usd') / 1e6 if day.get('shorts_usd') is not None else None, 1)} mln."
+                    )
             lines.append(f"- Limiti copertura liquidazioni: {liquidation.get('limitations')}")
             lines.append(f"- Fonte: {liquidation.get('source_url')}")
         lines.append(f"- Liquidazioni: {ckh.get('liquidations_snapshot_status', 'UNAVAILABLE')} — {ckh.get('liquidations_snapshot_note', 'serie completa non disponibile')}")
