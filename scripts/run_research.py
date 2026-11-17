@@ -249,80 +249,96 @@ def main() -> int:
                          "total_events_after_run": len(all_ledger_events),
                          "append_only": True}
 
-        # Isolated OHLCV challenger: separate append-only ledger, fixed alpha,
-        # and training labels ending strictly before the historical continuity holdout.
-        ohlcv_previous = read_events(ohlcv_ledger_path)
-        ohlcv_invalidations = invalidate_late_forecasts(ohlcv_previous)
-        ohlcv_scores = score_matured_events(ohlcv_previous + ohlcv_invalidations, binance)
-        ohlcv_candidates = generate_ohlcv_forecast_events(
-            binance, manifest_sha256, os.environ.get("GITHUB_SHA", "local-uncommitted"),
-            min_train_rows=args.min_train_rows,
-        ) if scores.get("status") == "SCORED_NOT_PROMOTED" else []
-        ohlcv_scored_ids = {
-            row.get("forecast_id") for row in ohlcv_previous + ohlcv_scores
-            if row.get("event_type") == "SCORE"
-        }
-        ohlcv_invalidated_ids = {
-            row.get("forecast_id") for row in ohlcv_previous + ohlcv_invalidations
-            if row.get("event_type") == "INVALIDATION"
-        }
-        ohlcv_pending_keys = {
-            (row.get("signal_timestamp_utc"), int(row.get("horizon")))
-            for row in ohlcv_previous
-            if row.get("event_type") == "FORECAST"
-            and row.get("forecast_id") not in ohlcv_scored_ids | ohlcv_invalidated_ids
-        }
-        ohlcv_before_dedupe = len(ohlcv_candidates)
-        ohlcv_forecasts = [
-            row for row in ohlcv_candidates
-            if (row["signal_timestamp_utc"], int(row["horizon"])) not in ohlcv_pending_keys
-        ]
-        ohlcv_duplicates = ohlcv_before_dedupe - len(ohlcv_forecasts)
-        ohlcv_appended = append_events(
-            ohlcv_ledger_path, ohlcv_invalidations + ohlcv_scores + ohlcv_forecasts
-        )
-        ohlcv_all_events = ohlcv_previous + ohlcv_invalidations + ohlcv_scores + ohlcv_forecasts
-        ohlcv_summary = summarize_scored_events(
-            ohlcv_previous + ohlcv_invalidations + ohlcv_scores
-        )
-        ohlcv_pending = sum(
-            row.get("event_type") == "FORECAST"
-            and row.get("forecast_id") not in ohlcv_scored_ids | ohlcv_invalidated_ids
-            for row in ohlcv_all_events
-        )
-        run["ohlcv_challenger"] = {
-            "experiment_id": "V5.5-OHLCV-001",
-            "status": "PROSPECTIVE_ONLY_ACTIVE" if ohlcv_pending or ohlcv_forecasts else "BLOCKED_INSUFFICIENT_PREHOLDOUT_HISTORY",
-            "model_version": "ohlcv-challenger-0.1-fixed-alpha-100",
-            "features": [
-                "price-only lagged returns and volatility",
-                "30-session lagged-median log-volume surprise",
-                "30-session robust volume surprise z-score",
-                "candle range, body, upper wick, lower wick and close location",
-            ],
-            "training_policy": {
-                "holdout_start_utc": HISTORICAL_HOLDOUT_START_UTC.isoformat(),
-                "training_labels_end_before_holdout": True,
-                "holdout_used_for_training_or_tuning": False,
-                "alpha": 100.0,
-                "alpha_tuning": "NONE_FIXED_PRE_REGISTERED",
-            },
-            "prospective_validation": ohlcv_summary,
-            "ledger": {
-                "existing_events_before_run": len(ohlcv_previous),
-                "invalidations_created": len(ohlcv_invalidations),
-                "score_events_created": len(ohlcv_scores),
-                "forecast_events_created": len(ohlcv_forecasts),
-                "duplicate_forecasts_suppressed": ohlcv_duplicates,
-                "events_appended": ohlcv_appended,
-                "total_events_after_run": len(ohlcv_all_events),
-                "pending_forecasts": ohlcv_pending,
-                "append_only": True,
-            },
-            "promotion": "NOT_PROMOTED; require at least 200 matured forecasts per horizon, HAC/Holm comparisons and documented cost-adjusted economic evidence.",
-        }
-        run["steps"].append({"step": "ohlcv_challenger", "status": run["ohlcv_challenger"]["status"],
-                             "forecast_events": len(ohlcv_forecasts), "score_events": len(ohlcv_scores)})
+        try:
+            # Isolated OHLCV challenger: separate append-only ledger, fixed alpha,
+            # and training labels ending strictly before the historical continuity holdout.
+            ohlcv_previous = read_events(ohlcv_ledger_path)
+            ohlcv_invalidations = invalidate_late_forecasts(ohlcv_previous)
+            ohlcv_scores = score_matured_events(ohlcv_previous + ohlcv_invalidations, binance)
+            ohlcv_candidates = generate_ohlcv_forecast_events(
+                binance, manifest_sha256, os.environ.get("GITHUB_SHA", "local-uncommitted"),
+                min_train_rows=args.min_train_rows,
+            ) if scores.get("status") == "SCORED_NOT_PROMOTED" else []
+            ohlcv_scored_ids = {
+                row.get("forecast_id") for row in ohlcv_previous + ohlcv_scores
+                if row.get("event_type") == "SCORE"
+            }
+            ohlcv_invalidated_ids = {
+                row.get("forecast_id") for row in ohlcv_previous + ohlcv_invalidations
+                if row.get("event_type") == "INVALIDATION"
+            }
+            ohlcv_pending_keys = {
+                (row.get("signal_timestamp_utc"), int(row.get("horizon")))
+                for row in ohlcv_previous
+                if row.get("event_type") == "FORECAST"
+                and row.get("forecast_id") not in ohlcv_scored_ids | ohlcv_invalidated_ids
+            }
+            ohlcv_before_dedupe = len(ohlcv_candidates)
+            ohlcv_forecasts = [
+                row for row in ohlcv_candidates
+                if (row["signal_timestamp_utc"], int(row["horizon"])) not in ohlcv_pending_keys
+            ]
+            ohlcv_duplicates = ohlcv_before_dedupe - len(ohlcv_forecasts)
+            ohlcv_appended = append_events(
+                ohlcv_ledger_path, ohlcv_invalidations + ohlcv_scores + ohlcv_forecasts
+            )
+            ohlcv_all_events = ohlcv_previous + ohlcv_invalidations + ohlcv_scores + ohlcv_forecasts
+            ohlcv_summary = summarize_scored_events(
+                ohlcv_previous + ohlcv_invalidations + ohlcv_scores
+            )
+            ohlcv_pending = sum(
+                row.get("event_type") == "FORECAST"
+                and row.get("forecast_id") not in ohlcv_scored_ids | ohlcv_invalidated_ids
+                for row in ohlcv_all_events
+            )
+            run["ohlcv_challenger"] = {
+                "experiment_id": "V5.5-OHLCV-001",
+                "status": "PROSPECTIVE_ONLY_ACTIVE" if ohlcv_pending or ohlcv_forecasts else "BLOCKED_INSUFFICIENT_PREHOLDOUT_HISTORY",
+                "model_version": "ohlcv-challenger-0.1-fixed-alpha-100",
+                "features": [
+                    "price-only lagged returns and volatility",
+                    "30-session lagged-median log-volume surprise",
+                    "30-session robust volume surprise z-score",
+                    "candle range, body, upper wick, lower wick and close location",
+                ],
+                "training_policy": {
+                    "holdout_start_utc": HISTORICAL_HOLDOUT_START_UTC.isoformat(),
+                    "training_labels_end_before_holdout": True,
+                    "holdout_used_for_training_or_tuning": False,
+                    "alpha": 100.0,
+                    "alpha_tuning": "NONE_FIXED_PRE_REGISTERED",
+                },
+                "prospective_validation": ohlcv_summary,
+                "ledger": {
+                    "existing_events_before_run": len(ohlcv_previous),
+                    "invalidations_created": len(ohlcv_invalidations),
+                    "score_events_created": len(ohlcv_scores),
+                    "forecast_events_created": len(ohlcv_forecasts),
+                    "duplicate_forecasts_suppressed": ohlcv_duplicates,
+                    "events_appended": ohlcv_appended,
+                    "total_events_after_run": len(ohlcv_all_events),
+                    "pending_forecasts": ohlcv_pending,
+                    "append_only": True,
+                },
+                "promotion": "NOT_PROMOTED; require at least 200 matured forecasts per horizon, HAC/Holm comparisons and documented cost-adjusted economic evidence.",
+            }
+
+        except Exception as challenger_exc:  # noqa: BLE001 - challenger is isolated from core report
+            run["ohlcv_challenger"] = {
+                "experiment_id": "V5.5-OHLCV-001",
+                "status": "BLOCKED_CHALLENGER_ONLY",
+                "error": f"{type(challenger_exc).__name__}: {challenger_exc}",
+                "promotion": "NOT_PROMOTED",
+            }
+            run["limitations"].append(
+                "OHLCV challenger failed independently; core price-only research remains separate and challenger exposure is zero."
+            )
+        run["steps"].append({
+            "step": "ohlcv_challenger",
+            "status": run.get("ohlcv_challenger", {}).get("status", "BLOCKED_CHALLENGER_ONLY"),
+            "forecast_events": run.get("ohlcv_challenger", {}).get("ledger", {}).get("forecast_events_created", 0),
+            "score_events": run.get("ohlcv_challenger", {}).get("ledger", {}).get("score_events_created", 0),
+        })
         run["steps"].append({"step": "walk_forward", "status": scores["status"],
                              "oos_rows": len(predictions), "scores": scores})
         required_pass = all(step["status"] == "PASS" for step in run["steps"]
