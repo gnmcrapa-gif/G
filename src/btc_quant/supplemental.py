@@ -1071,9 +1071,10 @@ def _configure_fred_session(session: requests.Session) -> requests.Session:
         read=1,
         status=2,
         backoff_factor=0.8,
+        backoff_max=4,
         status_forcelist=(429, 500, 502, 503, 504),
         allowed_methods=frozenset({"GET"}),
-        respect_retry_after_header=True,
+        respect_retry_after_header=False,
     )
     adapter = HTTPAdapter(max_retries=retry)
     session.mount("https://", adapter)
