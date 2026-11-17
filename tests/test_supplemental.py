@@ -116,6 +116,29 @@ def test_news_tags_use_whole_words_and_exclude_generic_policy_headlines():
     assert _news_keyword_tags("The second-quarter report is released") == []
 
 
+def test_treasury_xml_parser_reads_official_nominal_yield_fields():
+    from datetime import date
+
+    from btc_quant.supplemental import _parse_treasury_yield_xml
+
+    payload = b"""<?xml version="1.0"?>
+    <feed xmlns="http://www.w3.org/2005/Atom" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices">
+      <entry><content><m:properties>
+        <d:NEW_DATE>2026-11-17T00:00:00</d:NEW_DATE>
+        <d:BC_2YEAR>4.25</d:BC_2YEAR><d:BC_10YEAR>4.50</d:BC_10YEAR>
+      </m:properties></content></entry>
+    </feed>"""
+    assert _parse_treasury_yield_xml(payload, "DGS2") == (date(2026, 11, 17), 4.25)
+    assert _parse_treasury_yield_xml(payload, "DGS10") == (date(2026, 11, 17), 4.50)
+
+
+def test_treasury_xml_parser_rejects_unsupported_series():
+    from btc_quant.supplemental import _parse_treasury_yield_xml
+
+    with pytest.raises(ValueError, match="No Treasury fallback"):
+        _parse_treasury_yield_xml(b"<feed/>", "VIXCLS")
+
+
 def test_fred_session_retries_transient_http_failures_with_bounded_policy():
     import requests
 
