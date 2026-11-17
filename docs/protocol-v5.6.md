@@ -29,7 +29,7 @@ The review is fail-closed. Missing files, missing provenance, inconsistent times
 
 Each run records cross-venue context for the maximum rolling volume surprise, absolute maximum-volume candle, largest close-to-close return and largest intraday range. For each event it records the date, venue-specific OHLCV, return, range and volume relative to that venue's own trailing 90-session median. It also records the absolute close-return difference across primary venues when both observations exist.
 
-Volume is venue-specific. A volume spike on Binance is not expected to equal Bitstamp volume. The purpose is to test whether the event is also visible in independent price/range data, not to demand equal turnover. A discrepancy is surfaced for review rather than silently normalized.
+Volume is venue-specific. A volume spike on Binance is not expected to equal Bitstamp volume. The purpose is to test whether the event is also visible in independent price/range data, not to demand equal turnover. A discrepancy is surfaced for review rather than silently normalized. When Binance/Bitstamp close prices diverge, the report records their raw price ratio and an explicitly hypothetical implied USD-per-USDT ratio under a BTC-price-parity assumption; it is never presented as an observed FX quote.
 
 ## 4. Execution-time and statistical integrity
 
