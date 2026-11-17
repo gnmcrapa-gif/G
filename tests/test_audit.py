@@ -6,6 +6,7 @@ import pandas as pd
 
 from btc_quant.audit import (
     AUDIT_LENSES,
+    _check_ledger,
     audit_outlier_date,
     verify_binance_archive_coverage,
     verify_bitstamp_page_reconciliation,
@@ -99,3 +100,27 @@ def test_outlier_review_separates_price_corroboration_from_volume_claims():
 def test_rotating_audit_contains_distinct_lenses():
     assert len(AUDIT_LENSES) == 6
     assert len(set(AUDIT_LENSES)) == 6
+
+
+
+def test_ledger_audit_accepts_documented_legacy_late_entry_invalidation():
+    now = datetime(2026, 11, 17, 20, tzinfo=UTC)
+    forecast = {
+        "event_id": "f", "event_type": "FORECAST", "forecast_id": "f",
+        "issued_at_utc": "2026-11-16T19:18:40+00:00",
+        "entry_timestamp_utc": "2026-11-16T00:00:00+00:00",
+        "expiry_timestamp_utc": "2026-11-17T00:00:00+00:00",
+        "forecast": "[-0.01]",
+    }
+    invalidation = {"event_id": "i", "event_type": "INVALIDATION", "forecast_id": "f"}
+    result = _check_ledger([forecast, invalidation], now)
+    assert result["status"] == "PASS"
+    assert result["legacy_singleton_vector_forecasts_accepted"] == 1
+
+
+def test_ledger_audit_blocks_duplicate_event_ids():
+    now = datetime(2026, 11, 17, 20, tzinfo=UTC)
+    event = {"event_id": "same", "event_type": "UNKNOWN", "forecast_id": "f"}
+    result = _check_ledger([event, event], now)
+    assert result["status"] == "BLOCKED"
+    assert result["duplicate_event_ids"] == 1
