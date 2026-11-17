@@ -6,6 +6,7 @@ import hashlib
 import json
 import os
 import traceback
+import time
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -16,6 +17,7 @@ from btc_quant.acquisition import (
     download_kraken_recent,
     write_manifest,
 )
+from btc_quant.audit import run_pre_report_review
 from btc_quant.ledger import (
     append_events,
     generate_forecast_events,
@@ -39,6 +41,31 @@ def _safe_optional_acquisition(label, function, directory):
                       "attempted_at_utc": datetime.now(UTC).isoformat(),
                       "error": f"{type(exc).__name__}: {exc}"}
 
+
+
+
+def _market_snapshot(frame, venue: str, symbol: str, quote: str, retrieved_at: str) -> dict:
+    """Describe the latest closed daily candle; never label it a live spot quote."""
+    latest = frame.iloc[-1]
+    previous = frame.iloc[-2] if len(frame) > 1 else None
+    stamp = pd.Timestamp(latest["timestamp"]).tz_convert("UTC")
+    return {
+        "venue": venue, "symbol": symbol, "quote_currency": quote,
+        "snapshot_type": "latest_closed_daily_candle_not_realtime_spot",
+        "candle_open_timestamp_utc": stamp.isoformat(),
+        "candle_close_timestamp_utc": (stamp + pd.Timedelta(days=1)).isoformat(),
+        "retrieved_at_utc": retrieved_at,
+        "open_quote_per_btc": float(latest["open"]),
+        "high_quote_per_btc": float(latest["high"]),
+        "low_quote_per_btc": float(latest["low"]),
+        "close_quote_per_btc": float(latest["close"]),
+        "volume_btc": float(latest["volume"]),
+        "prior_close_quote_per_btc": float(previous["close"]) if previous is not None else None,
+        "close_change_1d_pct": (
+            (float(latest["close"]) / float(previous["close"]) - 1.0) * 100.0
+            if previous is not None else None
+        ),
+    }
 
 
 def _append_challenger_proposal(path: Path) -> None:
@@ -139,9 +166,14 @@ def main() -> int:
     args = parser.parse_args()
     data_dir, output_dir, ledger_path = Path(args.data_dir), Path(args.output_dir), Path(args.ledger)
     output_dir.mkdir(parents=True, exist_ok=True)
+    process_started = time.perf_counter()
+    stage_started = process_started
     run = {"started_at_utc": datetime.now(UTC).isoformat(), "status": "BLOCKED",
-           "protocol": "V5.5", "steps": [], "limitations": []}
+           "protocol": "V5.6", "steps": [], "limitations": []}
     manifests = []
+    binance = bitstamp = None
+    scores = {}
+    all_ledger_events = []
     try:
         binance, binance_manifest = download_binance_daily(data_dir / "binance")
         manifests.append(binance_manifest)
@@ -163,6 +195,15 @@ def main() -> int:
                 cross_checks.append({"venue": label, **cross_check_venues(binance.tail(len(frame)), frame)})
             run["steps"].append({"step": f"{label.lower()}_recent_cross_check", **record})
         run["cross_checks"] = cross_checks
+        run["performance"] = {"acquisition_and_qa_seconds": round(time.perf_counter() - stage_started, 3)}
+        run["market_snapshot"] = {
+            "as_of_utc": datetime.now(UTC).isoformat(),
+            "warning": "These are last closed daily candles, not live spot quotes; USD and USDT are not converted or combined.",
+            "venues": [
+                _market_snapshot(binance, "Binance", "BTCUSDT", "USDT", binance_manifest["retrieved_at_utc"]),
+                _market_snapshot(bitstamp, "Bitstamp", "BTC/USD", "USD", bitstamp_manifest["retrieved_at_utc"]),
+            ],
+        }
         manifest_path = output_dir / "data_manifest.json"
         write_manifest(manifests, manifest_path)
         # The model consumes Binance BTCUSDT only. Keep the forecast idempotency
@@ -172,7 +213,9 @@ def main() -> int:
             for item in source.get("objects", []) if item.get("sha256")
         )
         manifest_sha256 = hashlib.sha256(json.dumps(object_hashes).encode()).hexdigest()
+        research_started = time.perf_counter()
         predictions, scores = walk_forward(binance, min_train_rows=args.min_train_rows)
+        run["performance"]["walk_forward_seconds"] = round(time.perf_counter() - research_started, 3)
         counts = predictions.groupby("horizon").size().to_dict() if len(predictions) else {}
         run["historical_continuity_rows_by_horizon"] = {str(k): int(v) for k, v in counts.items()}
         run["historical_continuity_role"] = "diagnostic_only_not_prospective_ledger_maturity"
@@ -215,7 +258,7 @@ def main() -> int:
         ]
         duplicates_suppressed = before_dedupe - len(forecast_events)
         appended = append_events(ledger_path, invalidation_events + score_events + forecast_events)
-        all_ledger_events = previous_events + invalidation_events + score_events + forecast_events
+all_ledger_events = previous_events + invalidation_events + score_events + forecast_events
         prospective_summary = summarize_scored_events(
             previous_events + invalidation_events + score_events
         )
@@ -259,10 +302,38 @@ def main() -> int:
             "reason": "No predictive edge and cost-adjusted strategy value have been demonstrated; abstain.",
         }
         run["audit"] = _build_audit(run, prospective)
+        review_started = time.perf_counter()
+        run["pre_report_review"] = run_pre_report_review(
+            run, manifests, binance, bitstamp, all_ledger_events, scores,
+            now=datetime.now(UTC), run_id=os.environ.get("GITHUB_RUN_ID",
+            os.environ.get("GITHUB_RUN_ATTEMPT", run["started_at_utc"])),
+        )
+        run["performance"]["pre_report_review_seconds"] = round(time.perf_counter() - review_started, 3)
+        if run["pre_report_review"]["status"] != "PASS":
+            run["status"] = "BLOCKED"
+            run["risk"] = {
+                "overlay_version": "1.1", "mode": "paper_only",
+                "live_trading_enabled": False, "theoretical_exposure_pct": 0.0,
+                "reason": "Mandatory pre-report review failed; fail-closed abstention.",
+            }
+            run["audit"]["decision"] = "BLOCKED_BY_PRE_REPORT_REVIEW"
     except Exception as audit_exc:  # noqa: BLE001 - an audit failure must block confidence
         run["status"] = "BLOCKED"
         run["audit_error"] = f"{type(audit_exc).__name__}: {audit_exc}"
-        run["risk"] = {"live_trading_enabled": False, "theoretical_exposure_pct": 0.0}
+        run["risk"] = {
+            "overlay_version": "1.1", "mode": "paper_only",
+            "live_trading_enabled": False, "theoretical_exposure_pct": 0.0,
+            "reason": "Audit failure; fail-closed abstention.",
+        }
+        run["pre_report_review"] = {
+            "version": "pre-report-review-1.0",
+            "executed_before_report_serialization": False,
+            "status": "FAIL", "publication_gate": "BLOCKED",
+            "blocking_failures": ["pre_report_review_exception"],
+            "error": f"{type(audit_exc).__name__}: {audit_exc}",
+        }
+        run["status"] = "BLOCKED"
+    run.setdefault("performance", {})["total_seconds_before_report"] = round(time.perf_counter() - process_started, 3)
     run["finished_at_utc"] = datetime.now(UTC).isoformat()
     (output_dir / "run_report.json").write_text(json.dumps(run, indent=2), encoding="utf-8")
     print(json.dumps(run, indent=2))
