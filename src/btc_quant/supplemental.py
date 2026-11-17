@@ -483,7 +483,7 @@ def _deribit_options(directory: Path) -> tuple[dict, dict]:
         })
 
     summary = {
-        "status": "PASS",
+        "status": "PASS" if ticker_rows else "PARTIAL",
         "venue": "Deribit",
         "instrument_scope": "active BTC options",
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
@@ -582,18 +582,29 @@ def _etf_flows(directory: Path) -> tuple[dict, dict]:
             cursor += timedelta(days=1)
     recent_21 = sessions[-21:]
     recent_30 = sessions[-30:]
+    full_history_available = len(sessions) >= 30
     summary = {
         "source": latest.get("attribution", "The Commoner Bitcoin ETF Tracker by TFTC"),
         "source_url": latest_url,
         "license": latest.get("license"),
-        "status": "PASS" if business_days_old <= 1 else "STALE",
+        "status": (
+            "STALE" if business_days_old > 1
+            else "PASS" if full_history_available
+            else "PARTIAL"
+        ),
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "updated_through": updated_through,
         "business_sessions_behind_approx": business_days_old,
         "latest_session": latest_session,
         "cumulative_net_flow_usd": _float_or_none(latest.get("cumulativeNetFlowUsd")),
-        "last_21_sessions_net_flow_usd": sum(_float_or_none(row.get("netFlowUsd")) or 0.0 for row in recent_21),
-        "last_30_sessions_net_flow_usd": sum(_float_or_none(row.get("netFlowUsd")) or 0.0 for row in recent_30),
+        "last_21_sessions_net_flow_usd": (
+            sum(_float_or_none(row.get("netFlowUsd")) or 0.0 for row in recent_21)
+            if len(recent_21) >= 21 else None
+        ),
+        "last_30_sessions_net_flow_usd": (
+            sum(_float_or_none(row.get("netFlowUsd")) or 0.0 for row in recent_30)
+            if len(recent_30) >= 30 else None
+        ),
         "history_rows_available": len(sessions),
         "history_coverage_start": sessions[0].get("date") if sessions else None,
         "global_etp_flows": {
@@ -714,37 +725,42 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
     return summary, manifests
 
 
+def empty_supplemental_coverage() -> dict:
+    """Return explicit not-run states so even blocked reports disclose missing domains."""
+    return {
+        "spot_ohlcv": {"status": "NOT_RUN", "note": "Primary Binance/Bitstamp acquisition is reported separately."},
+        "spot_live_quotes": {"status": "NOT_RUN"},
+        "per_exchange_derivatives": {"status": "NOT_RUN"},
+        "options": {"status": "NOT_RUN"},
+        "us_spot_etf_flows": {"status": "NOT_RUN"},
+        "global_etp_flows": {"status": "NOT_RUN"},
+        "exchange_flows_and_reserves": {
+            "status": "UNAVAILABLE",
+            "reason": "No verifiable exchange-wallet-label dataset is configured; raw blockchain transfers are not exchange netflows.",
+        },
+        "liquidations": {
+            "status": "UNAVAILABLE",
+            "reason": "No public, complete cross-exchange liquidation history source is configured.",
+        },
+        "macro_and_indices": {"status": "NOT_RUN"},
+        "spot_futures_cvd": {
+            "status": "PROXY_ONLY",
+            "reason": "Binance futures taker buy/sell ratio is a proxy only; spot CVD and full cumulative trade delta are not acquired.",
+        },
+        "geopolitical_regulatory_news": {
+            "status": "NOT_IMPLEMENTED",
+            "reason": "No verified event feed is yet wired into this run.",
+        },
+    }
+
+
 def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
     """Acquire public context feeds independently; failures never fabricate values or block price QA."""
     output_dir.mkdir(parents=True, exist_ok=True)
     manifests = []
     summary = {
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
-        "coverage": {
-            "spot_ohlcv": {"status": "PASS", "note": "Primary Binance/Bitstamp acquisition is reported separately."},
-            "spot_live_quotes": {"status": "UNAVAILABLE"},
-            "per_exchange_derivatives": {"status": "UNAVAILABLE"},
-            "options": {"status": "UNAVAILABLE"},
-            "us_spot_etf_flows": {"status": "UNAVAILABLE"},
-            "global_etp_flows": {"status": "UNAVAILABLE"},
-            "exchange_flows_and_reserves": {
-                "status": "UNAVAILABLE",
-                "reason": "No verifiable exchange-wallet-label dataset is configured; raw blockchain transfers are not exchange netflows.",
-            },
-            "liquidations": {
-                "status": "UNAVAILABLE",
-                "reason": "No public, complete cross-exchange liquidation history source is configured.",
-            },
-            "macro_and_indices": {"status": "UNAVAILABLE"},
-            "spot_futures_cvd": {
-                "status": "PROXY_ONLY",
-                "reason": "Binance futures taker buy/sell ratio is a proxy only; spot CVD and full cumulative trade delta are not acquired.",
-            },
-            "geopolitical_regulatory_news": {
-                "status": "NOT_IMPLEMENTED",
-                "reason": "No verified event feed is yet wired into this run.",
-            },
-        },
+        "coverage": empty_supplemental_coverage(),
     }
     try:
         live_spot, live_spot_manifests = _spot_live_snapshot(output_dir / "spot_live")
@@ -754,6 +770,7 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
     except Exception as exc:  # noqa: BLE001
         summary["spot_live"] = {"status": "FAIL", "error": f"{type(exc).__name__}: {exc}"}
         summary["coverage"]["spot_live_quotes"]["status"] = "FAIL"
+    derivative_statuses = {}
     for name, function, directory in (
         ("binance_futures", _binance_derivatives, output_dir / "binance_futures"),
         ("bybit_futures", _bybit_derivatives, output_dir / "bybit_futures"),
@@ -765,9 +782,7 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
             summary[name] = result
             manifests.append(manifest)
             if name.endswith("futures"):
-                summary["coverage"]["per_exchange_derivatives"]["status"] = (
-                    "PASS" if result.get("status") == "PASS" else "PARTIAL"
-                )
+                derivative_statuses[name] = result.get("status", "FAIL")
             elif name == "deribit_options":
                 summary["coverage"]["options"]["status"] = result.get("status", "PARTIAL")
             elif name == "us_spot_etf_flows":
@@ -776,6 +791,8 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
                     "status": "UNAVAILABLE",
                 })
         except Exception as exc:  # noqa: BLE001
+            if name.endswith("futures"):
+                derivative_statuses[name] = "FAIL"
             summary[name] = {
                 "status": "FAIL",
                 "retrieved_at_utc": datetime.now(UTC).isoformat(),
@@ -790,6 +807,14 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
                 "schema": [], "objects": [], "status": "FAIL",
                 "error": summary[name]["error"],
             })
+    derivative_passes = sum(status == "PASS" for status in derivative_statuses.values())
+    summary["coverage"]["per_exchange_derivatives"] = {
+        "status": (
+            "PASS" if len(derivative_statuses) == 2 and derivative_passes == 2
+            else "PARTIAL" if derivative_passes else "FAIL"
+        ),
+        "by_exchange": derivative_statuses,
+    }
     try:
         macro, macro_manifests = _fred_macro(output_dir / "fred")
         summary["macro"] = macro
