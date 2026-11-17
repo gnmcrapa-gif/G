@@ -2,6 +2,8 @@ import pytest
 
 from btc_quant.supplemental import (
     FRED_SERIES,
+    _ckh_series_summary,
+    _contains_liquidation_data,
     _find_etf_sessions,
     _float_or_none,
     _news_keyword_tags,
@@ -136,3 +138,29 @@ def test_bitwise_weekly_parser_does_not_invent_missing_global_flows():
     html = b"<html><body><h1>Unrelated report</h1></body></html>"
     with pytest.raises(ValueError):
         _parse_bitwise_weekly_flows(html, 2026, 47)
+
+
+
+def test_cryptokeyhole_series_requires_finality_and_rejects_preview_data():
+    payload = {
+        "metric": "ckh.ExchangeNetflowVolumeBTC",
+        "unit": "BTC",
+        "source": "labeled exchange wallets",
+        "method": "net inflow minus outflow",
+        "points": [
+            {"t": "2026-11-15T00:00:00Z", "v": "-120.5", "finality": "final"},
+            {"t": "2026-11-16T00:00:00Z", "v": "30.0", "finality": "provisional"},
+        ],
+    }
+    result = _ckh_series_summary(payload, None)
+    assert result["status"] == "PASS"
+    assert result["latest_final"]["value"] == pytest.approx(-120.5)
+    assert result["unit"] == "BTC"
+    preview = _ckh_series_summary(payload, "true")
+    assert preview["status"] == "PREVIEW_ONLY"
+    assert "latest_final" not in preview
+
+
+def test_cryptokeyhole_liquidation_detection_is_nested_and_explicit():
+    assert _contains_liquidation_data({"move": {"liquidations": {"long_usd": 123}}})
+    assert not _contains_liquidation_data({"move": {"open_interest": 123}})
