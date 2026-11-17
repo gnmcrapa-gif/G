@@ -80,6 +80,24 @@ def test_okx_rubik_parser_validates_positional_oi_and_taker_rows():
         )
 
 
+def test_okx_daily_taker_summary_excludes_incomplete_utc_bar():
+    from datetime import UTC, date, datetime, timedelta
+
+    from btc_quant.supplemental import _summarize_okx_daily_taker_volume
+
+    today = date(2026, 11, 18)
+    start = datetime(2026, 11, 15, tzinfo=UTC)
+    rows = []
+    for offset in range(4):
+        timestamp = int((start + timedelta(days=offset)).timestamp() * 1000)
+        rows.append([str(timestamp), "10", "12"])
+    summary = _summarize_okx_daily_taker_volume(rows, today)
+    assert summary["closed_daily_rows"] == 3
+    assert summary["cumulative_delta_btc"]["1d"] == pytest.approx(2.0)
+    assert summary["cumulative_delta_btc"]["7d"] is None
+    assert summary["cumulative_delta_btc"]["30d"] is None
+
+
 def test_derivative_coverage_is_partial_when_any_venue_has_partial_data():
     from btc_quant.supplemental import _derivative_coverage_status
 
