@@ -83,6 +83,7 @@ jobs:
 
           required = [
               "reports/latest/run_report.json",
+              "reports/latest/daily_report.md",
               "reports/latest/data_manifest.json",
               "reports/latest/scores.json",
               "reports/latest/oos_predictions.csv",
