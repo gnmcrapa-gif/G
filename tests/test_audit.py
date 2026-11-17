@@ -1,8 +1,9 @@
-import pytest
+import calendar
 import hashlib
 from datetime import UTC, datetime
 
 import pandas as pd
+import pytest
 
 from btc_quant.audit import (
     AUDIT_LENSES,
@@ -23,7 +24,6 @@ def _binance_manifest():
     objects = []
     year, month = 2017, 8
     while (year, month) <= (2026, 10):
-        import calendar
         days = calendar.monthrange(year, month)[1]
         rows = days - 16 if (year, month) == (2017, 8) else days
         key = f"{year:04d}-{month:02d}"
