@@ -1721,9 +1721,7 @@ def _cryptokeyhole_context(directory: Path) -> tuple[dict, list[dict]]:
     balance = summary["series"].get("exchange_balance_btc", {})
     exchange_statuses = [netflow.get("status"), balance.get("status")]
     ranking_status = summary.get("exchange_daily_ranking", {}).get("status")
-    if all(status == "PASS" for status in exchange_statuses):
-        summary["exchange_flows_and_reserves_status"] = "PASS"
-    elif ranking_status in {"PASS", "PARTIAL"} or any(status in {"PASS", "STALE"} for status in exchange_statuses):
+    if ranking_status in {"PASS", "PARTIAL"} or any(status in {"PASS", "STALE"} for status in exchange_statuses):
         summary["exchange_flows_and_reserves_status"] = "PARTIAL"
     else:
         summary["exchange_flows_and_reserves_status"] = "UNAVAILABLE"
