@@ -291,6 +291,7 @@ def main() -> int:
         run["error_traceback"] = traceback.format_exc()
         run["limitations"].append("No model claim or positive exposure is permitted when acquisition, QA, or evaluation is blocked.")
         write_manifest(manifests, output_dir / "data_manifest.json")
+    run.setdefault("performance", {})
     try:
         _append_challenger_proposal(Path(args.challenger_log))
         prospective = run.get("prospective_ledger_validation", {
