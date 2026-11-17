@@ -1157,7 +1157,15 @@ def _treasury_yield_fallback(series_id: str, meta: dict, directory: Path,
 
 def _parse_cboe_vix_csv(payload: bytes) -> tuple[date, float]:
     """Parse Cboe's official daily VIX history CSV and return its latest close."""
-    frame = pd.read_csv(io.BytesIO(payload))
+    text = payload.decode("utf-8-sig")
+    lines = text.splitlines()
+    header_index = next(
+        (index for index, line in enumerate(lines) if line.strip().upper().startswith("DATE,")),
+        None,
+    )
+    if header_index is None:
+        raise ValueError("Cboe VIX CSV has no DATE header row")
+    frame = pd.read_csv(io.StringIO("\\n".join(lines[header_index:])))
     frame.columns = [str(column).strip().upper() for column in frame.columns]
     required = {"DATE", "CLOSE"}
     if not required.issubset(frame.columns):
