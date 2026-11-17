@@ -1,3 +1,4 @@
+import pytest
 import hashlib
 from datetime import UTC, datetime
 
@@ -223,6 +224,6 @@ def test_longitudinal_comparison_separates_continuity_from_prospective_evidence(
     result = build_longitudinal_comparison(current, previous, manifests, previous_manifest)
     assert result["status"] == "PASS"
     assert result["holdout_cutoff_unchanged"] is True
-    assert result["historical_metric_changes"]["1"]["ridge"]["delta_mae_log_return"] == -0.001
+    assert result["historical_metric_changes"]["1"]["ridge"]["delta_mae_log_return"] == pytest.approx(-0.001)
     assert result["holdout_comparison_role"] == "CONTINUITY_ONLY_NOT_INDEPENDENT_OOS"
     assert result["price_only_matured_forecasts_by_horizon"]["current"]["1"]["n"] == 1
