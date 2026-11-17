@@ -574,6 +574,7 @@ def _okx_derivatives(directory: Path) -> tuple[dict, dict]:
             else "PARTIAL" if valid_current or history_rows else "FAIL"
         ),
         "last_price_usdt": _float_or_none(ticker.get("last")),
+        "ticker_timestamp_utc": _timestamp_ms(ticker.get("ts")),
         "volume_24h_contracts": _float_or_none(ticker.get("vol24h")),
         "volume_24h_base_currency": _float_or_none(ticker.get("volCcy24h")),
         "open_interest_contracts": _float_or_none(oi.get("oi")),
