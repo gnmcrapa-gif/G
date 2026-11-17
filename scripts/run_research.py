@@ -161,7 +161,9 @@ def main() -> int:
     ohlcv_ledger_path = Path(args.ohlcv_ledger)
     output_dir.mkdir(parents=True, exist_ok=True)
     previous_report = None
+    previous_manifest = None
     previous_report_archive = None
+    previous_manifest_archive = None
     previous_report_archive_error = None
     prior_path = output_dir / "run_report.json"
     if prior_path.is_file():
@@ -171,6 +173,11 @@ def main() -> int:
             archive_name = f"run_{datetime.now(UTC).strftime('%Y%m%dT%H%M%S%fZ')}.json"
             previous_report_archive = archive_dir / archive_name
             shutil.copy2(prior_path, previous_report_archive)
+            previous_manifest_path = output_dir / "data_manifest.json"
+            if previous_manifest_path.is_file():
+                previous_manifest = json.loads(previous_manifest_path.read_text(encoding="utf-8"))
+                previous_manifest_archive = archive_dir / archive_name.replace("run_", "manifest_")
+                shutil.copy2(previous_manifest_path, previous_manifest_archive)
         except Exception as archive_exc:  # noqa: BLE001 - preserve run and disclose archive failure
             previous_report_archive = None
             previous_report_archive_error = f"{type(archive_exc).__name__}: {archive_exc}"
@@ -178,6 +185,7 @@ def main() -> int:
            "protocol": "V5.6.0", "steps": [], "limitations": []}
     manifests = []
     run["previous_report_archive"] = None if previous_report_archive is None else str(previous_report_archive)
+    run["previous_manifest_archive"] = None if previous_manifest_archive is None else str(previous_manifest_archive)
     if prior_path.is_file() and previous_report_archive is None:
         run["limitations"].append(f"Previous report archive failed; longitudinal comparison may be incomplete: {previous_report_archive_error}")
     binance = None
@@ -409,6 +417,7 @@ def main() -> int:
         review = build_pre_report_review(
             run, manifests, binance, bitstamp, ledger_events,
             root=Path.cwd(), now=datetime.now(UTC), previous_report=previous_report,
+            previous_manifest=previous_manifest,
         )
         run["pre_report_review"] = review
         if review["gate"] == "BLOCKED":
