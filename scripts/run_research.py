@@ -310,6 +310,7 @@ def main() -> int:
     binance = bitstamp = None
     scores = {}
     all_ledger_events = []
+    pending_events = []
     try:
         binance, binance_manifest = download_binance_daily(data_dir / "binance")
         manifests.append(binance_manifest)
@@ -393,8 +394,8 @@ def main() -> int:
             if (row["signal_timestamp_utc"], int(row["horizon"])) not in pending_keys
         ]
         duplicates_suppressed = before_dedupe - len(forecast_events)
-        appended = append_events(ledger_path, invalidation_events + score_events + forecast_events)
-        all_ledger_events = previous_events + invalidation_events + score_events + forecast_events
+        pending_events = invalidation_events + score_events + forecast_events
+        all_ledger_events = previous_events + pending_events
         prospective_summary = summarize_scored_events(
             previous_events + invalidation_events + score_events
         )
@@ -403,7 +404,9 @@ def main() -> int:
                          "score_events_created": len(score_events),
                          "forecast_events_created": len(forecast_events),
                          "duplicate_forecasts_suppressed": duplicates_suppressed,
-                         "events_appended": appended, "existing_events_before_run": len(previous_events),
+                         "events_proposed": len(pending_events), "events_appended": 0,
+                         "persistence_status": "PENDING_PRE_REPORT_REVIEW",
+                         "existing_events_before_run": len(previous_events),
                          "total_events_after_run": len(all_ledger_events),
                          "append_only": True}
         run["steps"].append({"step": "walk_forward", "status": scores["status"],
@@ -427,7 +430,6 @@ def main() -> int:
         write_manifest(manifests, output_dir / "data_manifest.json")
     run.setdefault("performance", {})
     try:
-        _append_challenger_proposal(Path(args.challenger_log))
         prospective = run.get("prospective_ledger_validation", {
             "decision": "INSUFFICIENT_PROSPECTIVE_EVIDENCE", "by_horizon": {}
         })
@@ -457,6 +459,25 @@ def main() -> int:
                 "reason": "Mandatory pre-report review failed; fail-closed abstention.",
             }
             run["audit"]["decision"] = "BLOCKED_BY_PRE_REPORT_REVIEW"
+            if "ledger" in run:
+                run["ledger"]["persistence_status"] = "SKIPPED_PRE_REPORT_REVIEW_FAILED"
+        else:
+            try:
+                _append_challenger_proposal(Path(args.challenger_log))
+                appended = append_events(ledger_path, pending_events)
+                if "ledger" in run:
+                    run["ledger"]["events_appended"] = appended
+                    run["ledger"]["persistence_status"] = "PASS"
+            except Exception as persistence_exc:  # noqa: BLE001 - persistence failure blocks the run
+                run["status"] = "BLOCKED"
+                run["persistence_error"] = f"{type(persistence_exc).__name__}: {persistence_exc}"
+                if "ledger" in run:
+                    run["ledger"]["persistence_status"] = "FAIL"
+                run["risk"] = {
+                    "overlay_version": "1.1", "mode": "paper_only",
+                    "live_trading_enabled": False, "theoretical_exposure_pct": 0.0,
+                    "reason": "Post-review ledger persistence failed; fail-closed abstention.",
+                }
     except Exception as audit_exc:  # noqa: BLE001 - an audit failure must block confidence
         run["status"] = "BLOCKED"
         run["audit_error"] = f"{type(audit_exc).__name__}: {audit_exc}"
@@ -473,6 +494,8 @@ def main() -> int:
             "error": f"{type(audit_exc).__name__}: {audit_exc}",
         }
         run["status"] = "BLOCKED"
+        if "ledger" in run:
+            run["ledger"]["persistence_status"] = "SKIPPED_PRE_REPORT_REVIEW_EXCEPTION"
     run.setdefault("performance", {})["total_seconds_before_report"] = round(time.perf_counter() - process_started, 3)
     run["finished_at_utc"] = datetime.now(UTC).isoformat()
     (output_dir / "run_report.json").write_text(json.dumps(run, indent=2), encoding="utf-8")
