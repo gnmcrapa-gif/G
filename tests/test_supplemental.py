@@ -26,8 +26,10 @@ def test_okx_response_parser_accepts_success_and_rejects_api_errors():
     assert _parse_okx_response({"code": "0", "data": [{"oi": "12"}]}, "open_interest") == [{"oi": "12"}]
     with pytest.raises(RuntimeError, match="code=50011"):
         _parse_okx_response({"code": "50011", "msg": "Rate limit", "data": []}, "funding")
-    with pytest.raises(ValueError, match="no data array"):
+    with pytest.raises(ValueError, match="valid data array"):
         _parse_okx_response({"code": "0", "data": None}, "ticker")
+    with pytest.raises(ValueError, match="valid data array"):
+        _parse_okx_response({"code": "0", "data": ["not-an-object"]}, "ticker")
 
 
 def test_etf_session_extractor_selects_full_history_not_recent_preview():
