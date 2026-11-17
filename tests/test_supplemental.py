@@ -10,6 +10,8 @@ from btc_quant.supplemental import (
     _float_or_none,
     _news_keyword_tags,
     _parse_bitwise_weekly_flows,
+    _parse_ckh_exchange_ranking,
+    _parse_provider_money,
     _parse_deribit_instrument,
     _parse_rss_articles,
     _pct_change,
@@ -168,3 +170,36 @@ def test_cryptokeyhole_series_requires_finality_and_rejects_preview_data():
 def test_cryptokeyhole_liquidation_detection_is_nested_and_explicit():
     assert _contains_liquidation_data({"move": {"liquidations": {"long_usd": 123}}})
     assert not _contains_liquidation_data({"move": {"open_interest": 123}})
+
+
+
+def test_cryptokeyhole_exchange_ranking_parses_daily_and_7d_aggregate_flows():
+    html = b"""<html><body>
+    <p>Daily ranking, UTC day 16 Nov 2026; updated 21:57 UTC on 17 Nov 2026.</p>
+    <table>
+      <tr><th>Exchange</th><th>Net flow</th><th>Net flow 7d</th><th>Coins covered</th></tr>
+      <tr><td>Binance</td><td>−$377.2M</td><td>−$881.0M</td><td>Bitcoin, Ether, Stablecoins</td></tr>
+      <tr><td>KuCoin</td><td>−$20.5M</td><td>+$36.7M</td><td>Bitcoin, Ether</td></tr>
+      <tr><td>HTX</td><td>+$415.2K</td><td>−$14.1M</td><td>Bitcoin, Ether</td></tr>
+      <tr><td>Bybit</td><td>+$27.0M</td><td>+$513.0M</td><td>Bitcoin, Ether</td></tr>
+    </table>
+    <h2>Events, last 30 days</h2>
+    <ul><li>KuCoin: unusual net outflow (open): opened 17 Nov 2026, 07:00 UTC.</li></ul>
+    <h2>Exchanges covered</h2>
+    </body></html>"""
+    result = _parse_ckh_exchange_ranking(html)
+    assert result["status"] == "PASS"
+    assert result["latest_complete_day_utc"] == "2026-11-16T00:00:00+00:00"
+    assert result["page_updated_at_utc"] == "2026-11-17T21:57:00+00:00"
+    flows = {row["exchange"]: row for row in result["exchanges"]}
+    assert flows["Binance"]["daily_netflow_usd"] == pytest.approx(-377_200_000)
+    assert flows["HTX"]["daily_netflow_usd"] == pytest.approx(415_200)
+    assert flows["Bybit"]["netflow_7d_usd"] == pytest.approx(513_000_000)
+    assert "Bitcoin" in flows["Binance"]["coins_covered"]
+    assert "not BTC-only" in result["flow_scope"]
+
+
+def test_cryptokeyhole_provider_money_parser_handles_sign_and_scale():
+    assert _parse_provider_money("−$1.25B") == pytest.approx(-1_250_000_000)
+    assert _parse_provider_money("+$77.7M") == pytest.approx(77_700_000)
+    assert _parse_provider_money("+415.2K") == pytest.approx(415_200)
