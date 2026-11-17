@@ -121,6 +121,31 @@ def run_pre_report_review(
         "Binance BTCUSDT and Bitstamp BTC/USD must both have successful acquisition and OHLCV QA.",
     )
 
+    expected_context_domains = {
+        "spot_ohlcv", "spot_live_quotes", "per_exchange_derivatives", "options",
+        "us_spot_etf_flows", "global_etp_flows", "exchange_flows_and_reserves",
+        "liquidations", "macro_and_indices", "spot_futures_cvd",
+        "geopolitical_regulatory_news",
+    }
+    context_coverage = run.get("supplemental_data", {}).get("coverage", {})
+    coverage_complete = expected_context_domains.issubset(context_coverage)
+    allowed_context_statuses = {
+        "PASS", "PARTIAL", "STALE", "FAIL", "UNAVAILABLE",
+        "PROXY_ONLY", "NOT_IMPLEMENTED", "NOT_RUN",
+    }
+    coverage_statuses_valid = all(
+        isinstance(context_coverage.get(name), dict)
+        and context_coverage[name].get("status") in allowed_context_statuses
+        for name in expected_context_domains if name in context_coverage
+    )
+    add(
+        "supplemental_coverage_explicit", "data",
+        coverage_complete and coverage_statuses_valid,
+        f"required_domains={sorted(expected_context_domains)}; "
+        f"reported={sorted(context_coverage)}; statuses="
+        f"{ {name: item.get('status') for name, item in context_coverage.items()} }",
+    )
+
     rolling_volume_qa = all(
         steps.get(name, {}).get("qa", {}).get("volume_robust_z_window_sessions") == 90
         and steps.get(name, {}).get("qa", {}).get("volume_robust_z_min_history_sessions") == 60

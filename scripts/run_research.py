@@ -28,11 +28,14 @@ from btc_quant.ledger import (
     summarize_scored_events,
 )
 from btc_quant.reporting import (
+    _build_halving_cycle_comparison,
     _build_longitudinal_comparison,
     _build_report_sections,
     _market_snapshot,
+    render_markdown_report,
 )
 from btc_quant.research import cross_check_venues, walk_forward
+from btc_quant.supplemental import acquire_supplemental, empty_supplemental_coverage
 from btc_quant.validation import validate_ohlcv
 
 
@@ -160,7 +163,8 @@ def main() -> int:
     process_started = time.perf_counter()
     stage_started = process_started
     run = {"started_at_utc": datetime.now(UTC).isoformat(), "status": "BLOCKED",
-           "protocol": "V5.6", "steps": [], "limitations": []}
+           "protocol": "V5.6", "steps": [], "limitations": [],
+           "supplemental_data": {"coverage": empty_supplemental_coverage()}}
     manifests = []
     binance = bitstamp = None
     scores = {}
@@ -201,6 +205,23 @@ def main() -> int:
                 "absolute_log_basis_unit": "log price-ratio units; USDT/USD not FX-adjusted",
                 "qa_status": check.get("status"),
             }
+        supplemental_started = time.perf_counter()
+        supplemental_data, supplemental_manifests = acquire_supplemental(
+            data_dir / "supplemental"
+        )
+        run["supplemental_data"] = supplemental_data
+        manifests.extend(supplemental_manifests)
+        run["steps"].append({
+            "step": "supplemental_market_context",
+            "status": "PASS" if any(
+                supplemental_data.get(name, {}).get("status") == "PASS"
+                for name in ("binance_futures", "bybit_futures", "deribit_options", "us_spot_etf_flows")
+            ) else "PARTIAL",
+            "coverage": supplemental_data.get("coverage", {}),
+        })
+        run["supplemental_acquisition_seconds"] = round(
+            time.perf_counter() - supplemental_started, 3
+        )
         run["cross_checks"] = cross_checks
         run["numeric_conventions"] = {
             "price": "quote currency per BTC; USD and USDT kept separate",
@@ -220,6 +241,7 @@ def main() -> int:
                 _market_snapshot(bitstamp, "Bitstamp", "BTC/USD", "USD", bitstamp_manifest["retrieved_at_utc"]),
             ],
         }
+        run["cycle_comparison"] = _build_halving_cycle_comparison(bitstamp)
         manifest_path = output_dir / "data_manifest.json"
         write_manifest(manifests, manifest_path)
         # The model consumes Binance BTCUSDT only. Keep the forecast idempotency
@@ -446,6 +468,9 @@ def main() -> int:
     run.setdefault("performance", {})["total_seconds_before_report"] = round(time.perf_counter() - process_started, 3)
     run["finished_at_utc"] = datetime.now(UTC).isoformat()
     (output_dir / "run_report.json").write_text(json.dumps(run, indent=2), encoding="utf-8")
+    (output_dir / "daily_report.md").write_text(
+        render_markdown_report(run, scores), encoding="utf-8"
+    )
     print(json.dumps(run, indent=2))
     return 0 if run["status"].startswith("COMPLETE") else 2
 

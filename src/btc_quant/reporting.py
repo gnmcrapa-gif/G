@@ -11,6 +11,18 @@ def _market_snapshot(frame, venue: str, symbol: str, quote: str, retrieved_at: s
     prior_volumes = frame.iloc[-31:-1]["volume"].astype(float)
     prior_30d_median_volume = float(prior_volumes.median()) if not prior_volumes.empty else None
     stamp = pd.Timestamp(latest["timestamp"]).tz_convert("UTC")
+    closes = frame["close"].astype(float)
+    highs = frame["high"].astype(float)
+    lows = frame["low"].astype(float)
+    def change_over_sessions(sessions: int) -> float | None:
+        if len(frame) <= sessions:
+            return None
+        prior = float(closes.iloc[-(sessions + 1)])
+        return (float(latest["close"]) / prior - 1.0) * 100.0 if prior else None
+    previous_close = closes.shift(1)
+    true_range = pd.concat([
+        highs - lows, (highs - previous_close).abs(), (lows - previous_close).abs()
+    ], axis=1).max(axis=1)
     return {
         "venue": venue, "symbol": symbol, "quote_currency": quote,
         "snapshot_type": "latest_closed_daily_candle_not_realtime_spot",
@@ -34,6 +46,101 @@ def _market_snapshot(frame, venue: str, symbol: str, quote: str, retrieved_at: s
         "close_change_1d_pct": (
             (float(latest["close"]) / float(previous["close"]) - 1.0) * 100.0
             if previous is not None else None
+        ),
+        "close_change_7d_pct": change_over_sessions(7),
+        "close_change_30d_pct": change_over_sessions(30),
+        "volume_7d_btc": float(frame["volume"].astype(float).tail(7).sum()) if len(frame) >= 7 else None,
+        "volume_30d_btc": float(frame["volume"].astype(float).tail(30).sum()) if len(frame) >= 30 else None,
+        "sma_20_quote_per_btc": float(closes.tail(20).mean()) if len(closes) >= 20 else None,
+        "sma_50_quote_per_btc": float(closes.tail(50).mean()) if len(closes) >= 50 else None,
+        "sma_200_quote_per_btc": float(closes.tail(200).mean()) if len(closes) >= 200 else None,
+        "high_20d_quote_per_btc": float(highs.tail(20).max()) if len(highs) >= 20 else None,
+        "low_20d_quote_per_btc": float(lows.tail(20).min()) if len(lows) >= 20 else None,
+        "high_50d_quote_per_btc": float(highs.tail(50).max()) if len(highs) >= 50 else None,
+        "low_50d_quote_per_btc": float(lows.tail(50).min()) if len(lows) >= 50 else None,
+        "atr_14_quote_per_btc": (
+            float(true_range.ewm(alpha=1 / 14, adjust=False, min_periods=14).mean().iloc[-1])
+            if len(true_range) >= 14 else None
+        ),
+        "atr_14_pct_of_close": (
+            float(true_range.ewm(alpha=1 / 14, adjust=False, min_periods=14).mean().iloc[-1])
+            / float(latest["close"]) * 100.0
+            if len(true_range) >= 14 and float(latest["close"]) > 0 else None
+        ),
+    }
+
+
+def _build_halving_cycle_comparison(frame) -> dict:
+    """Compare completed halving cycles at the same elapsed-session horizon; descriptive only."""
+    data = frame.reset_index(drop=True).copy()
+    stamps = pd.to_datetime(data["timestamp"], utc=True)
+    session_dates = stamps.dt.normalize()
+    latest_session = session_dates.iloc[-1]
+    current_halving = pd.Timestamp("2024-04-20", tz="UTC")
+    elapsed_days = int((latest_session - current_halving).days)
+    cycles = []
+    halving_dates = (
+        ("2012 cycle", "2012-11-28"),
+        ("2016 cycle", "2016-07-09"),
+        ("2020 cycle", "2020-05-11"),
+        ("2024 cycle (current)", "2024-04-20"),
+    )
+    for label, date_text in halving_dates:
+        halving = pd.Timestamp(date_text, tz="UTC")
+        starts = data.index[session_dates == halving]
+        if len(starts) == 0:
+            cycles.append({
+                "cycle": label,
+                "halving_date": date_text,
+                "status": "INSUFFICIENT_HISTORY",
+                "first_available_session_utc": stamps.iloc[0].isoformat(),
+            })
+            continue
+        start_idx = int(starts[0])
+        target = halving + pd.Timedelta(days=elapsed_days)
+        ends = data.index[(session_dates <= target) & (data.index >= start_idx)]
+        if len(ends) == 0:
+            cycles.append({
+                "cycle": label, "halving_date": date_text,
+                "status": "INSUFFICIENT_FORWARD_HISTORY",
+            })
+            continue
+        end_idx = int(ends[-1])
+        segment = data.iloc[start_idx:end_idx + 1]
+        closes = segment["close"].astype(float)
+        start_close = float(closes.iloc[0])
+        end_close = float(closes.iloc[-1])
+        peak_idx = int(closes.to_numpy().argmax())
+        peak_close = float(closes.iloc[peak_idx])
+        drawdown = closes / closes.cummax() - 1.0
+        cycles.append({
+            "cycle": label,
+            "halving_date": date_text,
+            "status": "PASS",
+            "elapsed_sessions": len(segment) - 1,
+            "comparison_target_session_utc": stamps.iloc[end_idx].isoformat(),
+            "start_close_usd": start_close,
+            "close_at_same_elapsed_horizon_usd": end_close,
+            "return_at_same_elapsed_horizon_pct": (end_close / start_close - 1.0) * 100.0,
+            "maximum_close_return_pct": (peak_close / start_close - 1.0) * 100.0,
+            "days_to_maximum_close": peak_idx,
+            "maximum_close_drawdown_from_peak_pct": float(drawdown.min()) * 100.0,
+        })
+    current = next((item for item in cycles if item["cycle"].startswith("2024")), {})
+    historical_cycles = [
+        item for item in cycles
+        if not item["cycle"].startswith("2024") and item.get("status") == "PASS"
+    ]
+    return {
+        "status": "PASS" if current.get("status") == "PASS" and historical_cycles else "PARTIAL",
+        "source": "Bitstamp BTC/USD daily OHLCV; same venue and quote currency",
+        "latest_closed_session_utc": stamps.iloc[-1].isoformat(),
+        "current_cycle_elapsed_sessions": elapsed_days,
+        "comparison_horizon_days": elapsed_days,
+        "cycles": cycles,
+        "interpretation_limit": (
+            "Descriptive comparison at the same elapsed days after halving; sample is small, "
+            "cycles are structurally different, and this is not a timing forecast."
         ),
     }
 
@@ -72,6 +179,15 @@ def _build_report_sections(run: dict, scores: dict) -> tuple[dict, dict, dict]:
                     "timestamp_utc": stamp, "source": source, "qa_status": "PASS",
                     "interpretation": "Osservazione descrittiva; non attribuzione causale.",
                 })
+    supplemental = run.get("supplemental_data", {})
+    coverage = supplemental.get("coverage", {})
+    supplemental_facts = [
+        {
+            "statement": f"Supplemental feed {name}: {details.get('status', 'UNSPECIFIED')}.",
+            "evidence": details,
+        }
+        for name, details in coverage.items()
+    ]
     taxonomy = {
         "FACT": [
             {
@@ -91,6 +207,11 @@ def _build_report_sections(run: dict, scores: dict) -> tuple[dict, dict, dict]:
             {
                 "statement": "Il ledger prospettico conteggia esclusivamente eventi SCORE maturati.",
                 "evidence": {"matured_by_horizon": matured, "new_score_events": scored_now},
+            },
+        ] + supplemental_facts + [
+            {
+                "statement": "Il confronto dei cicli post-halving è descrittivo e usa la stessa venue/quote e lo stesso orizzonte temporale.",
+                "evidence": run.get("cycle_comparison", {}),
             },
         ],
         "INTERPRETATION": [
@@ -256,3 +377,271 @@ def _build_longitudinal_comparison(previous: dict | None, current: dict,
             "holdout windows; all such historical results remain continuity diagnostics."
         ),
     }
+
+
+def _display(value, digits: int = 4) -> str:
+    if value is None:
+        return "n/d"
+    if isinstance(value, float):
+        return f"{value:,.{digits}f}"
+    return str(value)
+
+
+def render_markdown_report(run: dict, scores: dict) -> str:
+    """Render a human-readable report from the exact run payload; no extra data lookups."""
+    lines = [
+        "# BTC Quant Desk — report giornaliero",
+        "",
+        f"- Protocollo: **{run.get('protocol', 'n/d')}**",
+        f"- Stato: **{run.get('status', 'BLOCKED')}**",
+        f"- Avvio UTC: {run.get('started_at_utc', 'n/d')}",
+        f"- Fine UTC: {run.get('finished_at_utc', 'n/d')}",
+        f"- Commit: `{run.get('code_provenance', {}).get('commit_sha', 'n/d')}`",
+        f"- Workflow run: {run.get('code_provenance', {}).get('workflow_run_id', 'n/d')}",
+        "",
+        "> I valori di mercato sono distinti tra osservazioni live, snapshot e candele chiuse. USD e USDT non sono convertiti né uniti.",
+        "",
+        "## 1. Acquisizione e qualità dati",
+        "",
+        "| Feed | Stato | Evidenza / dettaglio |",
+        "|---|---|---|",
+    ]
+    for step in run.get("steps", []):
+        qa = step.get("qa", {})
+        detail = (
+            f"righe={qa.get('rows')}, gap={qa.get('gap_count')}, duplicati={qa.get('duplicates')}, "
+            f"ultima candela={qa.get('last_timestamp_utc')}"
+            if qa else step.get("error", step.get("status", "n/d"))
+        )
+        lines.append(f"| {step.get('step')} | {step.get('status')} | {detail} |")
+    lines += ["", "## 2. Prezzi spot — ultime candele giornaliere chiuse", "",
+              "| Venue | Strumento | Candela UTC | Close | 1D | 7D | 30D | Range intraday | Vol 1D BTC | Vol 7D BTC | Vol 30D BTC |",
+              "|---|---|---|---:|---:|---:|---:|---:|---:|---:|---:|"]
+    for item in run.get("market_snapshot", {}).get("venues", []):
+        lines.append(
+            f"| {item.get('venue')} | {item.get('symbol')} ({item.get('quote_currency')}) | "
+            f"{item.get('candle_open_timestamp_utc')} | {_display(item.get('close_quote_per_btc'), 2)} | "
+            f"{_display(item.get('close_change_1d_pct'), 3)}% | "
+            f"{_display(item.get('close_change_7d_pct'), 3)}% | "
+            f"{_display(item.get('close_change_30d_pct'), 3)}% | "
+            f"{_display(item.get('intraday_range_pct'), 3)}% | {_display(item.get('volume_btc'), 2)} | "
+            f"{_display(item.get('volume_7d_btc'), 2)} | {_display(item.get('volume_30d_btc'), 2)} |"
+        )
+    lines += ["", "### Quotazioni spot — ultimo scambio osservato", "",
+              "| Venue | Stato | Prezzo | Variazione 24h | Volume base 24h | Timestamp ultimo scambio UTC | Età sec |",
+              "|---|---|---:|---:|---:|---|---:|"]
+    live_spot = run.get("supplemental_data", {}).get("spot_live", {})
+    for venue, item in live_spot.get("venues", {}).items():
+        lines.append(
+            f"| {venue} | {item.get('status')} | {_display(item.get('last_trade_price'), 2)} | "
+            f"{_display(item.get('price_change_24h_pct'), 3)}% | "
+            f"{_display(item.get('base_volume_24h_btc'), 2)} BTC | "
+            f"{item.get('last_trade_timestamp_utc')} | {_display(item.get('last_trade_age_seconds'), 1)} |"
+        )
+    lines += ["", "### Livelli tecnici descrittivi — non segnali", "",
+              "| Venue | SMA20 | SMA50 | SMA200 | Massimo 20D | Minimo 20D | ATR14 |",
+              "|---|---:|---:|---:|---:|---:|---:|"]
+    for item in run.get("market_snapshot", {}).get("venues", []):
+        lines.append(
+            f"| {item.get('venue')} | {_display(item.get('sma_20_quote_per_btc'), 2)} | "
+            f"{_display(item.get('sma_50_quote_per_btc'), 2)} | "
+            f"{_display(item.get('sma_200_quote_per_btc'), 2)} | "
+            f"{_display(item.get('high_20d_quote_per_btc'), 2)} | "
+            f"{_display(item.get('low_20d_quote_per_btc'), 2)} | "
+            f"{_display(item.get('atr_14_quote_per_btc'), 2)} |"
+        )
+    lines += ["", "## 3. Copertura dei dati supplementari", "",
+              "| Categoria | Stato | Nota / limite |", "|---|---|---|"]
+    supplemental = run.get("supplemental_data", {})
+    coverage = supplemental.get("coverage", {})
+    for name, item in coverage.items():
+        note = item.get("reason", item.get("note", ""))
+        lines.append(f"| {name} | {item.get('status', 'n/d')} | {note} |")
+
+    for name, label in (("binance_futures", "Binance Futures"), ("bybit_futures", "Bybit Linear")):
+        item = supplemental.get(name, {})
+        if item:
+            lines += ["", f"### {label}", "",
+                      f"- Stato: {item.get('status', 'n/d')}",
+                      f"- Funding corrente/ultimo: {_display(item.get('current_funding_rate', item.get('funding_rate_current')))} ({item.get('funding_rate_unit', 'fraction per funding interval')})",
+                      f"- Open interest: {_display(item.get('open_interest_btc'))} BTC",
+                      f"- Variazione OI 1D: {_display(item.get('open_interest_value_change_1d_pct', item.get('open_interest_history_change_1d_pct')))}%",
+                      f"- Variazione OI 7D: {_display(item.get('open_interest_value_change_7d_pct', item.get('open_interest_history_change_7d_pct')))}%",
+                      f"- Variazione OI 30D: {_display(item.get('open_interest_value_change_30d_pct', item.get('open_interest_history_change_30d_pct')))}%",
+                      f"- Long/short account ratio: {_display(item.get('global_long_short_account_ratio'))} (long {_display(item.get('global_long_account_share_pct'), 2)}% / short {_display(item.get('global_short_account_share_pct'), 2)}%)",
+                      f"- Taker buy/sell ratio (Binance proxy): {_display(item.get('taker_buy_sell_ratio_latest'))}",
+                      f"- Volume futures ultima candela chiusa 1D (Binance): {_display(item.get('last_closed_daily_futures_volume_btc'))} BTC",
+                      f"- Volume futures 24h (Bybit): {_display(item.get('volume_24h_btc'))} BTC"]
+            if item.get("errors"):
+                lines.append(f"- Errori feed: {item['errors']}")
+
+    cvd = supplemental.get("cvd", {})
+    if cvd:
+        lines += ["", "### CVD orario Binance — delta taker aggregato", "",
+                  f"- Stato: {cvd.get('status')}. {cvd.get('measurement_note', '')}",
+                  "| Mercato | Finestra | Delta BTC | Delta / volume % | Volume BTC | Buy BTC | Sell BTC |",
+                  "|---|---:|---:|---:|---:|---:|---:|"]
+        for market, label in (("spot", "Spot BTCUSDT"), ("futures", "Futures BTCUSDT")):
+            market_data = cvd.get("markets", {}).get(market, {})
+            for horizon in ("24h", "7d", "30d"):
+                item = market_data.get(horizon, {})
+                lines.append(
+                    f"| {label} | {horizon} | {_display(item.get('cumulative_delta_btc'), 2)} | "
+                    f"{_display(item.get('delta_pct_of_total_volume'), 2)}% | "
+                    f"{_display(item.get('total_volume_btc'), 2)} | "
+                    f"{_display(item.get('taker_buy_volume_btc'), 2)} | "
+                    f"{_display(item.get('taker_sell_volume_btc'), 2)} |"
+                )
+    options = supplemental.get("deribit_options", {})
+    if options:
+        lines += ["", "### Opzioni Deribit", "",
+                  f"- Stato: {options.get('status', 'n/d')}; open interest con ritardo provider di {options.get('open_interest_delay_hours', 'n/d')} ore.",
+                  f"- OI call/put: {_display(options.get('total_call_open_interest_btc'))} / {_display(options.get('total_put_open_interest_btc'))} BTC.",
+                  f"- Put/call OI: {_display(options.get('put_call_open_interest_ratio'))}.",
+                  f"- Put/call volume USD 24h: {_display(options.get('put_call_volume_ratio'))}."]
+        lines += ["", "| Scadenza | DTE | ATM IV % | OI call BTC | OI put BTC |",
+                  "|---|---:|---:|---:|---:|"]
+        for expiry in options.get("expiry_term_structure", [])[:12]:
+            lines.append(
+                f"| {expiry.get('expiry_date')} | {expiry.get('days_to_expiry')} | "
+                f"{_display(expiry.get('nearest_atm_mark_iv_pct'), 2)} | "
+                f"{_display(expiry.get('call_open_interest_btc'), 2)} | "
+                f"{_display(expiry.get('put_open_interest_btc'), 2)} |"
+            )
+        lines += ["", "| Scadenza | 25Δ put IV % | 25Δ call IV % | Put-call skew vol points |",
+                  "|---|---:|---:|---:|"]
+        for skew in options.get("sampled_25d_skew", []):
+            lines.append(
+                f"| {skew.get('expiry_date')} | {_display(skew.get('put_25d_mark_iv_pct'), 2)} | "
+                f"{_display(skew.get('call_25d_mark_iv_pct'), 2)} | "
+                f"{_display(skew.get('put_minus_call_25d_skew_vol_points'), 2)} |"
+            )
+        lines.append(
+            f"- Gamma/dealer positioning: {options.get('dealer_gamma_positioning', {}).get('status')}; "
+            f"{options.get('dealer_gamma_positioning', {}).get('reason', '')}"
+        )
+
+    etf = supplemental.get("us_spot_etf_flows", {})
+    if etf:
+        latest = etf.get("latest_session", {})
+        lines += ["", "### ETF spot Bitcoin USA", "",
+                  f"- Stato: {etf.get('status')}; dati aggiornati al {etf.get('updated_through')} (circa {etf.get('business_sessions_behind_approx')} sessioni USA di ritardo).",
+                  f"- Flusso ultima sessione: {_display(latest.get('netFlowUsd'), 2)} USD.",
+                  f"- AUM totale ultima sessione: {_display(latest.get('totalNetAssetsUsd'), 2)} USD.",
+                  f"- Flusso cumulativo dalla partenza: {_display(etf.get('cumulative_net_flow_usd'), 2)} USD.",
+                  f"- Flusso ultime 21 sessioni: {_display(etf.get('last_21_sessions_net_flow_usd'), 2)} USD.",
+                  f"- Flusso ultime 30 sessioni: {_display(etf.get('last_30_sessions_net_flow_usd'), 2)} USD.",
+                  f"- Fonte/licenza: {etf.get('source')} / {etf.get('license')}."]
+    macro = supplemental.get("macro", {})
+    if macro:
+        lines += ["", "## 4. Macro e mercati USA", "",
+                  "| Serie | Osservazione | Valore | Unità | Stato |",
+                  "|---|---|---:|---|---|"]
+        for series_id, item in macro.get("series", {}).items():
+            lines.append(
+                f"| {series_id} — {item.get('label')} | {item.get('observation_date')} | "
+                f"{_display(item.get('value'), 4)} | {item.get('unit')} | {item.get('status')} |"
+            )
+        if macro.get("errors"):
+            lines.append("")
+            lines.append(f"Feed macro non acquisiti: {macro['errors']}")
+
+    cycle = run.get("cycle_comparison", {})
+    if cycle:
+        lines += ["", "## 5. Ciclo Bitcoin — confronto post-halving", "",
+                  f"- Stato: {cycle.get('status')}; fonte: {cycle.get('source')}.",
+                  f"- Orizzonte corrente: {cycle.get('current_cycle_elapsed_sessions')} sessioni dal 20 aprile 2024.",
+                  f"- Limite: {cycle.get('interpretation_limit', '')}",
+                  "| Ciclo | Stato | Giorni/sessioni | Rendimento stesso orizzonte | Massimo rendimento | Giorni al picco | Drawdown massimo da picco |",
+                  "|---|---|---:|---:|---:|---:|---:|"]
+        for item in cycle.get("cycles", []):
+            lines.append(
+                f"| {item.get('cycle')} | {item.get('status')} | "
+                f"{item.get('elapsed_sessions', 'n/d')} | "
+                f"{_display(item.get('return_at_same_elapsed_horizon_pct'), 2)}% | "
+                f"{_display(item.get('maximum_close_return_pct'), 2)}% | "
+                f"{item.get('days_to_maximum_close', 'n/d')} | "
+                f"{_display(item.get('maximum_close_drawdown_from_peak_pct'), 2)}% |"
+            )
+
+    news = supplemental.get("news", {})
+    if news:
+        lines += ["", "## 6. Eventi, regolamentazione e geopolitica — feed descrittivi", "",
+                  f"- Stato: {news.get('status')}. {news.get('interpretation_limit', '')}",
+                  "| Fonte | Stato | Articoli acquisiti |",
+                  "|---|---|---:|"]
+        for source_name, source_item in news.get("source_status", {}).items():
+            lines.append(
+                f"| {source_name} | {source_item.get('status')} | "
+                f"{source_item.get('article_count', 'n/d')} |"
+            )
+        for article in news.get("articles", [])[:12]:
+            title = str(article.get("title", "")).replace("|", "\\|").replace("\\n", " ")
+            date_label = article.get("published_at_utc") or article.get("seen_at_utc") or "data non disponibile"
+            tags = ", ".join(article.get("keyword_tags", [])) or "nessun tag"
+            lines.append(
+                f"- {date_label} — {article.get('source')} — {title} "
+                f"[{tags}] — {article.get('url')}"
+            )
+
+    taxonomy = run.get("report_taxonomy", {})
+    lines += ["", "## 7. Fatti, interpretazioni, ipotesi e previsioni", "",
+              "### FATTI"]
+    for item in taxonomy.get("FACT", []):
+        lines.append(f"- {item.get('statement')}")
+    lines.append("### INTERPRETAZIONI")
+    for item in taxonomy.get("INTERPRETATION", []):
+        lines.append(f"- {item.get('statement')}")
+    lines.append("### IPOTESI")
+    for item in taxonomy.get("HYPOTHESIS", []):
+        lines.append(
+            f"- {item.get('statement')} — stato: {item.get('status', 'n/d')}; "
+            f"esperimento: {item.get('experiment_id', 'n/d')}."
+        )
+    forecast_taxonomy = taxonomy.get("FORECAST", {})
+    lines += ["### FORECAST",
+              f"- Point forecast emessi in questo run: {len(forecast_taxonomy.get('new_point_forecasts_issued_this_run', []))}.",
+              f"- Forecast maturati/scorati in questo run: {forecast_taxonomy.get('new_forecasts_scored_this_run', 0)}.",
+              f"- Probabilità calibrate pubblicate: {forecast_taxonomy.get('calibrated_probabilities_published', False)}.",
+              f"- {forecast_taxonomy.get('qualification', 'Nessuna previsione qualificata disponibile.')}"]
+
+    lines += ["", "## 8. Validazione quantitativa", "",
+              "Le metriche seguenti sono diagnostiche sul periodo storico già ispezionato; non sono prova prospettica né PnL eseguibile.",
+              "", "| Orizzonte | N | Zero MAE | Drift MAE | Momentum MAE | Ridge MAE |",
+              "|---:|---:|---:|---:|---:|---:|"]
+    for horizon, block in scores.get("holdout_metrics", {}).items():
+        lines.append(
+            f"| {horizon} sessioni | {block.get('zero', {}).get('n', 0)} | "
+            f"{_display(block.get('zero', {}).get('mae'), 6)} | "
+            f"{_display(block.get('drift', {}).get('mae'), 6)} | "
+            f"{_display(block.get('momentum', {}).get('mae'), 6)} | "
+            f"{_display(block.get('ridge', {}).get('mae'), 6)} |"
+        )
+    ledger = run.get("ledger", {})
+    lines += ["", "## 9. Ledger e rischio", "",
+              f"- Stato ledger: {ledger.get('persistence_status', 'n/d')}; eventi prima/dopo: {ledger.get('existing_events_before_run', 'n/d')} / {ledger.get('total_events_after_run', 'n/d')}.",
+              f"- Nuove previsioni: {ledger.get('forecast_events_created', 0)}; duplicate soppresse: {ledger.get('duplicate_forecasts_suppressed', 0)}; score maturati: {ledger.get('score_events_created', 0)}.",
+              f"- Campione prospettico: {run.get('prospective_ledger_validation', {}).get('decision', 'n/d')}.",
+              f"- Rischio: {run.get('risk', {}).get('mode', 'n/d')}; live trading: {run.get('risk', {}).get('live_trading_enabled', False)}; esposizione teorica: {_display(run.get('risk', {}).get('theoretical_exposure_pct'), 2)}%.",
+              "- Champion congelato: zero-return. Ridge è challenger non promosso.",
+              "- Nessun PnL economico o probabilità calibrata è dichiarato.",
+              "", "## 10. Revisione critica e conclusione", ""]
+    audit = run.get("pre_report_review", {})
+    lines.append(
+        f"- Gate pre-report: {audit.get('status', 'n/d')}; cicli completati: "
+        f"{len(audit.get('review_cycles', []))}; fallimenti bloccanti: "
+        f"{audit.get('blocking_failures', [])}."
+    )
+    closing = run.get("closing_assessment", {})
+    for driver in closing.get("observed_drivers", []):
+        lines.append(
+            f"- Fattore osservato: {driver.get('name')} = {_display(driver.get('value'), 4)} "
+            f"{driver.get('unit')} ({driver.get('source')}, {driver.get('timestamp_utc')})."
+        )
+    lines.append(f"- Limite principale: {closing.get('principal_limit', 'n/d')}")
+    lines.append(f"- Evidenza che cambierebbe la valutazione: {closing.get('evidence_that_would_change_assessment', 'n/d')}")
+    lines.append(f"- Prossimo esperimento: {closing.get('single_next_priority_experiment', 'n/d')}")
+    lines += ["", "## 11. Limiti dichiarati", ""]
+    for limitation in run.get("limitations", []):
+        lines.append(f"- {limitation}")
+    return "\n".join(lines) + "\n"

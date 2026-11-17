@@ -62,6 +62,21 @@ def _review_inputs(tmp_path):
         "volume_robust_z_min_history_sessions": 60,
     }
     run = {
+        "supplemental_data": {
+            "coverage": {
+                "spot_ohlcv": {"status": "PASS"},
+                "spot_live_quotes": {"status": "PASS"},
+                "per_exchange_derivatives": {"status": "PASS"},
+                "options": {"status": "PASS"},
+                "us_spot_etf_flows": {"status": "STALE"},
+                "global_etp_flows": {"status": "UNAVAILABLE"},
+                "exchange_flows_and_reserves": {"status": "UNAVAILABLE"},
+                "liquidations": {"status": "UNAVAILABLE"},
+                "macro_and_indices": {"status": "PARTIAL"},
+                "spot_futures_cvd": {"status": "PROXY_ONLY"},
+                "geopolitical_regulatory_news": {"status": "NOT_IMPLEMENTED"},
+            },
+        },
         "started_at_utc": "2025-06-23T12:00:00+00:00",
         "performance": {"acquisition_and_qa_seconds": 10.0, "walk_forward_seconds": 2.0},
         "steps": [
@@ -188,3 +203,15 @@ def test_invalidated_backdated_forecasts_remain_auditable_not_blocking(tmp_path)
     ledger_check = next(item for item in result["checks"]
                         if item["check_id"] == "append_only_ledger_consistency")
     assert ledger_check["status"] == "PASS"
+
+
+
+def test_pre_report_review_blocks_missing_or_unclassified_context_domains(tmp_path):
+    run, manifests, binance, bitstamp, events, scores = _review_inputs(tmp_path)
+    del run["supplemental_data"]["coverage"]["options"]
+    result = run_pre_report_review(
+        run, manifests, binance, bitstamp, events, scores,
+        now=datetime(2025, 6, 23, 12, tzinfo=UTC), run_id="workflow-missing-domain",
+    )
+    assert result["status"] == "FAIL"
+    assert "supplemental_coverage_explicit" in result["blocking_failures"]
