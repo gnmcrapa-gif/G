@@ -604,6 +604,20 @@ def render_markdown_report(run: dict, scores: dict) -> str:
                 f"{_display(item.get('age_days'), 1)}."
             )
         lines.append(f"- Liquidazioni: {ckh.get('liquidations_snapshot_status', 'UNAVAILABLE')} — {ckh.get('liquidations_snapshot_note', 'serie completa non disponibile')}")
+        ranking = ckh.get("exchange_daily_ranking", {})
+        if ranking:
+            lines += ["", f"- Ranking exchange multi-asset: ultimo giorno completo {ranking.get('latest_complete_day_utc')}; pagina aggiornata {ranking.get('page_updated_at_utc')}.",
+                      "| Exchange | Netflow giornaliero USD | Netflow 7d USD | Asset inclusi |",
+                      "|---|---:|---:|---|"]
+            for row in ranking.get("exchanges", []):
+                lines.append(
+                    f"| {row.get('exchange')} | {_display(row.get('daily_netflow_usd') / 1e6 if row.get('daily_netflow_usd') is not None else None, 1)} mln | "
+                    f"{_display(row.get('netflow_7d_usd') / 1e6 if row.get('netflow_7d_usd') is not None else None, 1)} mln | {row.get('coins_covered')} |"
+                )
+            lines.append(f"- Eventi anomali ultimi 30d: {len(ranking.get('events_last_30d', []))}.")
+            for event in ranking.get("events_last_30d", [])[:5]:
+                lines.append(f"  - {event}")
+            lines.append(f"- Perimetro flussi: {ranking.get('flow_scope')}; {ranking.get('free_plan_limit')}")
         lines.append(f"- Limiti etichette exchange: {ckh.get('exchange_labeling_limits', 'n/d')}")
         lines.append("- Attribuzione: CryptoKeyhole; i grafici Free sono CC BY 4.0 ove applicabile. I dati preview/locked non sono usati come osservazioni correnti.")
 
