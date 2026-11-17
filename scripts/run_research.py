@@ -327,6 +327,7 @@ def main() -> int:
             run["audit"]["decision"] = "BLOCKED_BY_PRE_REPORT_REVIEW"
             if "ledger" in run:
                 run["ledger"]["persistence_status"] = "SKIPPED_PRE_REPORT_REVIEW_FAILED"
+            run["post_persistence_verification"] = {"status": "SKIPPED_PRE_REPORT_REVIEW_FAILED"}
         else:
             try:
                 if os.environ.get("GITHUB_EVENT_NAME") == "pull_request":
@@ -350,6 +351,9 @@ def main() -> int:
                 run["persistence_error"] = f"{type(persistence_exc).__name__}: {persistence_exc}"
                 if "ledger" in run:
                     run["ledger"]["persistence_status"] = "FAIL"
+                run["post_persistence_verification"] = {
+                    "status": "FAIL", "error": f"{type(persistence_exc).__name__}: {persistence_exc}",
+                }
                 run["risk"] = {
                     "overlay_version": "1.1", "mode": "paper_only",
                     "live_trading_enabled": False, "theoretical_exposure_pct": 0.0,
@@ -377,6 +381,7 @@ def main() -> int:
         run["status"] = "BLOCKED"
         if "ledger" in run:
             run["ledger"]["persistence_status"] = "SKIPPED_PRE_REPORT_REVIEW_EXCEPTION"
+        run["post_persistence_verification"] = {"status": "SKIPPED_PRE_REPORT_REVIEW_EXCEPTION"}
     run.setdefault("performance", {})["total_seconds_before_report"] = round(time.perf_counter() - process_started, 3)
     run["finished_at_utc"] = datetime.now(UTC).isoformat()
     (output_dir / "run_report.json").write_text(json.dumps(run, indent=2), encoding="utf-8")
