@@ -81,13 +81,18 @@ def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
     close_returns = np.abs(np.diff(np.log(c)))
     intraday_range_pct = (h - l) / o
     volume_median = float(np.median(volume))
-    volume_mad = float(np.median(np.abs(volume - volume_median)))
-    volume_deviation = np.abs(volume - volume_median)
-    robust_volume_z_max = (
-        float(np.max(volume_deviation) / (1.4826 * volume_mad))
-        if volume_mad > 0 else None
+    volume_series = pd.Series(volume, dtype=float)
+    prior_volume = volume_series.shift(1)
+    prior_median = prior_volume.rolling(window=90, min_periods=60).median()
+    prior_mad = prior_volume.rolling(window=90, min_periods=60).apply(
+        lambda values: float(np.median(np.abs(values - np.median(values)))),
+        raw=True,
     )
-    robust_volume_z_index = int(np.argmax(volume_deviation))
+    robust_scale = 1.4826 * prior_mad
+    rolling_robust_z = (volume_series - prior_median).abs() / robust_scale.where(robust_scale > 0)
+    valid_robust_z = rolling_robust_z.replace([np.inf, -np.inf], np.nan).dropna()
+    robust_volume_z_max = float(valid_robust_z.max()) if not valid_robust_z.empty else None
+    robust_volume_z_index = int(valid_robust_z.idxmax()) if not valid_robust_z.empty else None
     volume_max_index = int(np.argmax(volume))
     close_return_max_index = int(np.argmax(close_returns)) + 1 if len(close_returns) else 0
     intraday_range_max_index = int(np.argmax(intraday_range_pct))
@@ -103,11 +108,21 @@ def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
         "zero_volume_rows": int(np.count_nonzero(volume == 0)),
         "zero_volume_pct": float(np.mean(volume == 0) * 100.0),
         "volume_median_btc": volume_median,
+        "volume_median_scope": "full available history; descriptive only",
+        "volume_robust_z_window_sessions": 90,
+        "volume_robust_z_min_history_sessions": 60,
+        "volume_robust_z_scope": "current volume versus median and MAD of the prior 90 completed daily sessions; current session excluded",
         "volume_p99_btc": float(np.quantile(volume, 0.99)),
         "volume_max_btc": float(np.max(volume)),
         "volume_robust_z_max": robust_volume_z_max,
         "volume_robust_z_max_timestamp_utc": (
-            ts.iloc[robust_volume_z_index].isoformat() if robust_volume_z_max is not None else None
+            ts.iloc[robust_volume_z_index].isoformat() if robust_volume_z_index is not None else None
+        ),
+        "volume_robust_z_max_prior_median_btc": (
+            float(prior_median.iloc[robust_volume_z_index]) if robust_volume_z_index is not None else None
+        ),
+        "volume_robust_z_max_prior_mad_btc": (
+            float(prior_mad.iloc[robust_volume_z_index]) if robust_volume_z_index is not None else None
         ),
         "volume_max_timestamp_utc": ts.iloc[volume_max_index].isoformat(),
         "absolute_close_return_max_timestamp_utc": ts.iloc[close_return_max_index].isoformat(),

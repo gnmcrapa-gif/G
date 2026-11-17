@@ -5,6 +5,7 @@ import csv
 import hashlib
 import json
 import os
+import time
 import traceback
 from datetime import UTC, datetime
 from pathlib import Path
@@ -16,6 +17,7 @@ from btc_quant.acquisition import (
     download_kraken_recent,
     write_manifest,
 )
+from btc_quant.audit import run_pre_report_review
 from btc_quant.ledger import (
     append_events,
     generate_forecast_events,
@@ -23,6 +25,11 @@ from btc_quant.ledger import (
     read_events,
     score_matured_events,
     summarize_scored_events,
+)
+from btc_quant.reporting import (
+    _build_longitudinal_comparison,
+    _build_report_sections,
+    _market_snapshot,
 )
 from btc_quant.research import cross_check_venues, walk_forward
 from btc_quant.validation import validate_ohlcv
@@ -38,6 +45,7 @@ def _safe_optional_acquisition(label, function, directory):
                       "url": {"Coinbase": "https://api.exchange.coinbase.com/products/BTC-USD/candles", "Kraken": "https://api.kraken.com/0/public/OHLC"}.get(label),
                       "attempted_at_utc": datetime.now(UTC).isoformat(),
                       "error": f"{type(exc).__name__}: {exc}"}
+
 
 
 
@@ -129,6 +137,7 @@ def _build_audit(run: dict, prospective: dict) -> dict:
     }
 
 
+
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-dir", default="data/raw")
@@ -139,9 +148,23 @@ def main() -> int:
     args = parser.parse_args()
     data_dir, output_dir, ledger_path = Path(args.data_dir), Path(args.output_dir), Path(args.ledger)
     output_dir.mkdir(parents=True, exist_ok=True)
+    previous_report = None
+    previous_report_error = None
+    previous_report_path = output_dir / "run_report.json"
+    if previous_report_path.is_file():
+        try:
+            previous_report = json.loads(previous_report_path.read_text(encoding="utf-8"))
+        except Exception as exc:  # noqa: BLE001 - preserve and disclose prior-report read failures
+            previous_report_error = f"{type(exc).__name__}: {exc}"
+    process_started = time.perf_counter()
+    stage_started = process_started
     run = {"started_at_utc": datetime.now(UTC).isoformat(), "status": "BLOCKED",
-           "protocol": "V5.5", "steps": [], "limitations": []}
+           "protocol": "V5.6", "steps": [], "limitations": []}
     manifests = []
+    binance = bitstamp = None
+    scores = {}
+    all_ledger_events = []
+    pending_events = []
     try:
         binance, binance_manifest = download_binance_daily(data_dir / "binance")
         manifests.append(binance_manifest)
@@ -162,7 +185,40 @@ def main() -> int:
             if frame is not None:
                 cross_checks.append({"venue": label, **cross_check_venues(binance.tail(len(frame)), frame)})
             run["steps"].append({"step": f"{label.lower()}_recent_cross_check", **record})
+        for check in cross_checks:
+            check["metric_metadata"] = {
+                "primary_series": "Binance spot BTCUSDT / USDT",
+                "secondary_series": (
+                    "Coinbase Exchange BTC-USD / USD" if check.get("venue") == "Coinbase"
+                    else "Kraken XBT/USD / USD"
+                ),
+                "timeframe": "1 daily session",
+                "overlap_start_utc": check.get("overlap_start_utc"),
+                "overlap_end_utc": check.get("overlap_end_utc"),
+                "overlap_rows_unit": "daily observations",
+                "return_correlation_unit": "dimensionless",
+                "absolute_log_basis_unit": "log price-ratio units; USDT/USD not FX-adjusted",
+                "qa_status": check.get("status"),
+            }
         run["cross_checks"] = cross_checks
+        run["numeric_conventions"] = {
+            "price": "quote currency per BTC; USD and USDT kept separate",
+            "volume": "BTC per daily candle",
+            "percentage": "percent unless field explicitly says ratio or log return",
+            "log_return": "natural-log return units",
+            "horizon": "daily sessions",
+            "timestamp": "UTC candle-open timestamp; candle close is next UTC midnight",
+            "robust_volume_z": "dimensionless rolling score versus prior 90 completed sessions; minimum 60 sessions",
+        }
+        run["performance"] = {"acquisition_and_qa_seconds": round(time.perf_counter() - stage_started, 3)}
+        run["market_snapshot"] = {
+            "as_of_utc": datetime.now(UTC).isoformat(),
+            "warning": "These are last closed daily candles, not live spot quotes; USD and USDT are not converted or combined.",
+            "venues": [
+                _market_snapshot(binance, "Binance", "BTCUSDT", "USDT", binance_manifest["retrieved_at_utc"]),
+                _market_snapshot(bitstamp, "Bitstamp", "BTC/USD", "USD", bitstamp_manifest["retrieved_at_utc"]),
+            ],
+        }
         manifest_path = output_dir / "data_manifest.json"
         write_manifest(manifests, manifest_path)
         # The model consumes Binance BTCUSDT only. Keep the forecast idempotency
@@ -172,7 +228,22 @@ def main() -> int:
             for item in source.get("objects", []) if item.get("sha256")
         )
         manifest_sha256 = hashlib.sha256(json.dumps(object_hashes).encode()).hexdigest()
+        research_started = time.perf_counter()
         predictions, scores = walk_forward(binance, min_train_rows=args.min_train_rows)
+        scores["metric_metadata"] = {
+            "source": "Binance spot BTCUSDT",
+            "quote_currency": "USDT",
+            "timeframe": "1 daily session",
+            "target": scores.get("target"),
+            "target_unit": "natural-log return units",
+            "horizon_unit": "daily sessions",
+            "historical_window_start_utc": scores.get("holdout_start_utc"),
+            "historical_window_end_utc": scores.get("holdout_end_utc"),
+            "sample_role": scores.get("holdout_role"),
+            "data_qa_status": "PASS" if binance_qa else "BLOCKED",
+            "calibration_status": "NOT_CALIBRATED",
+        }
+        run["performance"]["walk_forward_seconds"] = round(time.perf_counter() - research_started, 3)
         counts = predictions.groupby("horizon").size().to_dict() if len(predictions) else {}
         run["historical_continuity_rows_by_horizon"] = {str(k): int(v) for k, v in counts.items()}
         run["historical_continuity_role"] = "diagnostic_only_not_prospective_ledger_maturity"
@@ -214,8 +285,8 @@ def main() -> int:
             if (row["signal_timestamp_utc"], int(row["horizon"])) not in pending_keys
         ]
         duplicates_suppressed = before_dedupe - len(forecast_events)
-        appended = append_events(ledger_path, invalidation_events + score_events + forecast_events)
-        all_ledger_events = previous_events + invalidation_events + score_events + forecast_events
+        pending_events = invalidation_events + score_events + forecast_events
+        all_ledger_events = previous_events + pending_events
         prospective_summary = summarize_scored_events(
             previous_events + invalidation_events + score_events
         )
@@ -224,8 +295,11 @@ def main() -> int:
                          "score_events_created": len(score_events),
                          "forecast_events_created": len(forecast_events),
                          "duplicate_forecasts_suppressed": duplicates_suppressed,
-                         "events_appended": appended, "existing_events_before_run": len(previous_events),
-                         "total_events_after_run": len(all_ledger_events),
+                         "events_proposed": len(pending_events), "events_appended": 0,
+                         "persistence_status": "PENDING_PRE_REPORT_REVIEW",
+                         "existing_events_before_run": len(previous_events),
+                         "total_events_proposed": len(all_ledger_events),
+                         "total_events_after_run": len(previous_events),
                          "append_only": True}
         run["steps"].append({"step": "walk_forward", "status": scores["status"],
                              "oos_rows": len(predictions), "scores": scores})
@@ -246,8 +320,8 @@ def main() -> int:
         run["error_traceback"] = traceback.format_exc()
         run["limitations"].append("No model claim or positive exposure is permitted when acquisition, QA, or evaluation is blocked.")
         write_manifest(manifests, output_dir / "data_manifest.json")
+    run.setdefault("performance", {})
     try:
-        _append_challenger_proposal(Path(args.challenger_log))
         prospective = run.get("prospective_ledger_validation", {
             "decision": "INSUFFICIENT_PROSPECTIVE_EVIDENCE", "by_horizon": {}
         })
@@ -259,10 +333,116 @@ def main() -> int:
             "reason": "No predictive edge and cost-adjusted strategy value have been demonstrated; abstain.",
         }
         run["audit"] = _build_audit(run, prospective)
+        run["report_taxonomy"], run["economic_validation"], run["closing_assessment"] = (
+            _build_report_sections(run, scores)
+        )
+        run["longitudinal_comparison"] = _build_longitudinal_comparison(
+            previous_report, run, scores
+        )
+        if previous_report_error:
+            run["previous_report_read_warning"] = previous_report_error
+        run["code_provenance"] = {
+            "commit_sha": os.environ.get("GITHUB_SHA", "local-uncommitted"),
+            "ref": os.environ.get("GITHUB_REF", "local"),
+            "workflow_run_id": os.environ.get("GITHUB_RUN_ID", "local"),
+            "event_name": os.environ.get("GITHUB_EVENT_NAME", "local"),
+        }
+        review_started = time.perf_counter()
+        run["pre_report_review"] = run_pre_report_review(
+            run, manifests, binance, bitstamp, all_ledger_events, scores,
+            now=datetime.now(UTC), run_id=os.environ.get("GITHUB_RUN_ID",
+            os.environ.get("GITHUB_RUN_ATTEMPT", run["started_at_utc"])),
+        )
+        run["performance"]["pre_report_review_seconds"] = round(time.perf_counter() - review_started, 3)
+        if run["pre_report_review"]["status"] != "PASS":
+            run["status"] = "BLOCKED"
+            run["risk"] = {
+                "overlay_version": "1.1", "mode": "paper_only",
+                "live_trading_enabled": False, "theoretical_exposure_pct": 0.0,
+                "reason": "Mandatory pre-report review failed; fail-closed abstention.",
+            }
+            run["audit"]["decision"] = "BLOCKED_BY_PRE_REPORT_REVIEW"
+            if "ledger" in run:
+                run["ledger"]["persistence_status"] = "SKIPPED_PRE_REPORT_REVIEW_FAILED"
+            run["post_persistence_verification"] = {"status": "SKIPPED_PRE_REPORT_REVIEW_FAILED"}
+        else:
+            try:
+                if os.environ.get("GITHUB_EVENT_NAME") == "pull_request":
+                    if "ledger" in run:
+                        run["ledger"]["persistence_status"] = "SKIPPED_PULL_REQUEST"
+                    run["pre_report_review"]["post_gate_persistence_status"] = "SKIPPED_PULL_REQUEST"
+                    run["post_persistence_verification"] = {
+                        "status": "SKIPPED_PULL_REQUEST",
+                        "reason": "PR research is read-only; no persistent ledger mutation is attempted.",
+                    }
+                else:
+                    _append_challenger_proposal(Path(args.challenger_log))
+                    appended = append_events(ledger_path, pending_events)
+                    persisted_events = read_events(ledger_path)
+                    previous_ids = {event.get("event_id") for event in previous_events}
+                    proposed_ids = {event.get("event_id") for event in pending_events}
+                    persisted_ids = [event.get("event_id") for event in persisted_events]
+                    persisted_id_set = set(persisted_ids)
+                    verification_ok = (
+                        len(persisted_ids) == len(persisted_id_set)
+                        and previous_ids.issubset(persisted_id_set)
+                        and proposed_ids.issubset(persisted_id_set)
+                    )
+                    if not verification_ok:
+                        raise RuntimeError("post-append ledger verification failed: missing or duplicate event IDs")
+                    ledger_sha256 = hashlib.sha256(ledger_path.read_bytes()).hexdigest()
+                    run["post_persistence_verification"] = {
+                        "status": "PASS", "events_before": len(previous_events),
+                        "events_after": len(persisted_events), "new_events_proposed": len(pending_events),
+                        "all_prior_event_ids_preserved": True,
+                        "all_proposed_event_ids_present": True,
+                        "event_ids_unique": True, "ledger_sha256": ledger_sha256,
+                    }
+                    if "ledger" in run:
+                        run["ledger"]["events_appended"] = appended
+                        run["ledger"]["total_events_after_run"] = len(persisted_events)
+                        run["ledger"]["ledger_sha256_after_append"] = ledger_sha256
+                        run["ledger"]["persistence_status"] = "VERIFIED_IN_WORKSPACE_PENDING_WORKFLOW_COMMIT"
+                    run["pre_report_review"]["post_gate_persistence_status"] = (
+                        "VERIFIED_IN_WORKSPACE_PENDING_WORKFLOW_COMMIT"
+                    )
+            except Exception as persistence_exc:  # noqa: BLE001 - persistence failure blocks the run
+                run["status"] = "BLOCKED"
+                run["persistence_error"] = f"{type(persistence_exc).__name__}: {persistence_exc}"
+                if "ledger" in run:
+                    run["ledger"]["persistence_status"] = "FAIL"
+                run["post_persistence_verification"] = {
+                    "status": "FAIL", "error": f"{type(persistence_exc).__name__}: {persistence_exc}",
+                }
+                run["risk"] = {
+                    "overlay_version": "1.1", "mode": "paper_only",
+                    "live_trading_enabled": False, "theoretical_exposure_pct": 0.0,
+                    "reason": "Post-review ledger persistence failed; fail-closed abstention.",
+                }
+                run["pre_report_review"]["status"] = "FAIL"
+                run["pre_report_review"]["publication_gate"] = "BLOCKED"
+                run["pre_report_review"]["decision"] = "BLOCKED_POST_REVIEW_PERSISTENCE_FAILURE"
+                run["pre_report_review"]["blocking_failures"].append("ledger_persistence_failed")
     except Exception as audit_exc:  # noqa: BLE001 - an audit failure must block confidence
         run["status"] = "BLOCKED"
         run["audit_error"] = f"{type(audit_exc).__name__}: {audit_exc}"
-        run["risk"] = {"live_trading_enabled": False, "theoretical_exposure_pct": 0.0}
+        run["risk"] = {
+            "overlay_version": "1.1", "mode": "paper_only",
+            "live_trading_enabled": False, "theoretical_exposure_pct": 0.0,
+            "reason": "Audit failure; fail-closed abstention.",
+        }
+        run["pre_report_review"] = {
+            "version": "pre-report-review-1.0",
+            "executed_before_report_serialization": False,
+            "status": "FAIL", "publication_gate": "BLOCKED",
+            "blocking_failures": ["pre_report_review_exception"],
+            "error": f"{type(audit_exc).__name__}: {audit_exc}",
+        }
+        run["status"] = "BLOCKED"
+        if "ledger" in run:
+            run["ledger"]["persistence_status"] = "SKIPPED_PRE_REPORT_REVIEW_EXCEPTION"
+        run["post_persistence_verification"] = {"status": "SKIPPED_PRE_REPORT_REVIEW_EXCEPTION"}
+    run.setdefault("performance", {})["total_seconds_before_report"] = round(time.perf_counter() - process_started, 3)
     run["finished_at_utc"] = datetime.now(UTC).isoformat()
     (output_dir / "run_report.json").write_text(json.dumps(run, indent=2), encoding="utf-8")
     print(json.dumps(run, indent=2))

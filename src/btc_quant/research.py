@@ -161,7 +161,7 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
     for horizon in HORIZONS:
         target = forward_open_log_return(data["open"], horizon)
         validation_start = int(holdout_start * 0.80)
-        validation_end = holdout_start - horizon - 2
+        validation_end = holdout_start - horizon - EXECUTION_ENTRY_LAG_SESSIONS
         boundaries = np.linspace(validation_start, validation_end, 4, dtype=int)
         fold_scores = {str(alpha): [] for alpha in RIDGE_ALPHAS}
         fold_counts = []
@@ -338,6 +338,8 @@ def cross_check_venues(primary: pd.DataFrame, secondary: pd.DataFrame) -> dict:
     aligned = left.join(right, how="inner", lsuffix="_primary", rsuffix="_secondary")
     if len(aligned) < 30:
         return {"status": "WARN", "overlap_rows": len(aligned),
+                "overlap_start_utc": aligned.index.min().isoformat() if len(aligned) else None,
+                "overlap_end_utc": aligned.index.max().isoformat() if len(aligned) else None,
                 "reason": "fewer than 30 overlapping daily closes; no correlation claim"}
     ret_left = np.log(aligned["close_primary"]).diff()
     ret_right = np.log(aligned["close_secondary"]).diff()
@@ -345,6 +347,8 @@ def cross_check_venues(primary: pd.DataFrame, secondary: pd.DataFrame) -> dict:
     basis = np.log(aligned["close_primary"] / aligned["close_secondary"])
     return {
         "status": "PASS" if np.isfinite(corr) else "WARN", "overlap_rows": len(aligned),
+        "overlap_start_utc": aligned.index.min().isoformat(),
+        "overlap_end_utc": aligned.index.max().isoformat(),
         "return_correlation": corr,
         "median_absolute_log_basis": float(basis.abs().median()),
         "p99_absolute_log_basis": float(basis.abs().quantile(0.99)),

@@ -14,6 +14,21 @@ import pandas as pd
 from .research import HORIZONS, _ridge_predict, make_features
 from .validation import EXECUTION_ENTRY_LAG_SESSIONS, forward_open_log_return
 
+
+def _scalar_float(value, field_name: str) -> float:
+    """Parse a scalar or legacy one-element NumPy-array CSV representation."""
+    parsed = value
+    if isinstance(value, str):
+        try:
+            parsed = json.loads(value)
+        except json.JSONDecodeError:
+            parsed = value
+    array = np.asarray(parsed, dtype=float).reshape(-1)
+    if array.size != 1 or not np.isfinite(array[0]):
+        raise ValueError(f"{field_name} must contain exactly one finite number")
+    return float(array[0])
+
+
 LEDGER_COLUMNS = [
     "event_id", "event_type", "forecast_id", "recorded_at_utc", "issued_at_utc",
     "model_version", "code_commit", "data_manifest_sha256", "target", "horizon",
@@ -74,7 +89,7 @@ def generate_forecast_events(
             continue
         y_train = target.iloc[train_idx].to_numpy(dtype=float)
         x_train = features.iloc[train_idx].to_numpy(dtype=float)
-        ridge = _ridge_predict(x_train, y_train, x_now.reshape(1, -1), selected_alpha)
+        ridge = float(_ridge_predict(x_train, y_train, x_now.reshape(1, -1), selected_alpha)[0])
         drift = float(y_train.mean())
         momentum_scale = float(np.mean(np.abs(y_train)))
         momentum_sign = np.sign(np.log(close.iloc[t] / close.iloc[t - 20]))
@@ -178,7 +193,7 @@ def score_matured_events(existing_events: list[dict], frame: pd.DataFrame) -> li
         if expiry > latest or entry not in open_by_ts or expiry not in open_by_ts:
             continue
         actual = float(np.log(open_by_ts[expiry] / open_by_ts[entry]))
-        predicted = float(forecast["forecast"])
+        predicted = _scalar_float(forecast["forecast"], "forecast")
         output.append({
             "event_id": f"score-{forecast['forecast_id']}",
             "event_type": "SCORE",
@@ -193,7 +208,7 @@ def score_matured_events(existing_events: list[dict], frame: pd.DataFrame) -> li
             "signal_timestamp_utc": forecast["signal_timestamp_utc"],
             "feature_cutoff_utc": forecast["feature_cutoff_utc"],
             "regime_ex_ante": forecast["regime_ex_ante"],
-            "forecast": forecast["forecast"],
+            "forecast": predicted,
             "benchmark_forecasts": forecast["benchmark_forecasts"],
             "entry_timestamp_utc": forecast["entry_timestamp_utc"],
             "expiry_timestamp_utc": forecast["expiry_timestamp_utc"],
@@ -233,7 +248,7 @@ def summarize_scored_events(events: list[dict], minimum_per_horizon: int = 200) 
             continue
         try:
             actual = float(score["realized_outcome"])
-            ridge = float(forecast["forecast"])
+            ridge = _scalar_float(forecast["forecast"], "forecast")
             benchmarks = json.loads(forecast.get("benchmark_forecasts") or "{}")
             if not np.isfinite([actual, ridge]).all():
                 continue
