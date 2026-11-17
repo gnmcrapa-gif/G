@@ -131,7 +131,7 @@ def _build_audit(run: dict, prospective: dict) -> dict:
         "weakest_component": weakest,
         "three_vulnerabilities": [
             "The historical 2025-11-16 to 2026-11-15 holdout was previously inspected under V5.3.1; it is not independent prospective evidence.",
-            "The predictive feature set remains price-only; derivatives, ETF flows, order flow, macro and on-chain data are not integrated.",
+            "The zero-return champion and price-only Ridge challenger remain unchanged; the OHLCV challenger is prospective-only with no matured lift evidence. Derivatives, ETF flows, order flow, macro and on-chain data are not integrated.",
             "No executable strategy backtest with fees, spread, slippage, funding, turnover and drawdown stress has been completed.",
         ],
         "falsifying_evidence": (
