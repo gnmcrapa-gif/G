@@ -5,6 +5,8 @@ import numpy as np
 import pandas as pd
 
 REQUIRED_OHLCV = ("timestamp", "open", "high", "low", "close", "volume")
+# The daily job runs at 16:00 UTC, after Open[t+1] has already occurred.
+EXECUTION_ENTRY_LAG_SESSIONS = 2
 
 
 class DataValidationError(ValueError):
@@ -84,11 +86,25 @@ def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
     }
 
 
-def forward_open_log_return(open_prices: pd.Series, horizon: int) -> pd.Series:
-    """Target after one full daily execution-latency bar: log(Open[t+h+2]/Open[t+2])."""
+def forward_open_log_return(
+    open_prices: pd.Series, horizon: int, *, entry_lag_sessions: int = EXECUTION_ENTRY_LAG_SESSIONS
+) -> pd.Series:
+    """Return log(Open[t+entry_lag+h]/Open[t+entry_lag]).
+
+    Lag 1 is the theoretical next-open target, but it is not executable by the
+    16:00 UTC daily job because Open[t+1] has already occurred at issuance.
+    Production defaults to lag 2, reserving one complete daily bar for latency.
+    """
     if horizon not in (1, 3, 7, 30):
         raise ValueError("horizon must be one of 1, 3, 7, 30")
+    if (isinstance(entry_lag_sessions, bool)
+            or not isinstance(entry_lag_sessions, int)
+            or entry_lag_sessions < 1):
+        raise ValueError("entry_lag_sessions must be a positive integer")
     values = pd.to_numeric(open_prices, errors="coerce").astype(float)
     if (values.dropna() <= 0).any():
         raise DataValidationError("open prices must be positive")
-    return np.log(values.shift(-(horizon + 2)) / values.shift(-2)).rename(f"target_h{horizon}")
+    return np.log(
+        values.shift(-(horizon + entry_lag_sessions))
+        / values.shift(-entry_lag_sessions)
+    ).rename(f"target_h{horizon}_entrylag{entry_lag_sessions}")
