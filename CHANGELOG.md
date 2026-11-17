@@ -37,3 +37,4 @@
 - Add FRED macro and US index observations with native dates, units and freshness checks.
 - Add a coverage matrix for exchange reserves/netflows, market-wide liquidations, spot CVD, global ETP flows and geopolitical/regulatory news when no verified source is available.
 - Generate a human-readable `daily_report.md` alongside the structured JSON report. Supplemental feeds remain descriptive and do not enter the predictive model until a separate prospective challenger passes.
+- Add a same-venue, same-quote BTC halving-cycle comparison at matched elapsed-session horizons, marking cycles without full halving-date history as insufficient.
