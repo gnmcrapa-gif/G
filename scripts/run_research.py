@@ -464,15 +464,22 @@ def main() -> int:
                 run["ledger"]["persistence_status"] = "SKIPPED_PRE_REPORT_REVIEW_FAILED"
         else:
             try:
-                _append_challenger_proposal(Path(args.challenger_log))
-                appended = append_events(ledger_path, pending_events)
-                if "ledger" in run:
-                    run["ledger"]["events_appended"] = appended
-                    run["ledger"]["total_events_after_run"] = (
-                        run["ledger"]["existing_events_before_run"] + appended
+                if os.environ.get("GITHUB_EVENT_NAME") == "pull_request":
+                    if "ledger" in run:
+                        run["ledger"]["persistence_status"] = "SKIPPED_PULL_REQUEST"
+                    run["pre_report_review"]["post_gate_persistence_status"] = "SKIPPED_PULL_REQUEST"
+                else:
+                    _append_challenger_proposal(Path(args.challenger_log))
+                    appended = append_events(ledger_path, pending_events)
+                    if "ledger" in run:
+                        run["ledger"]["events_appended"] = appended
+                        run["ledger"]["total_events_after_run"] = (
+                            run["ledger"]["existing_events_before_run"] + appended
+                        )
+                        run["ledger"]["persistence_status"] = "APPENDED_TO_WORKSPACE_PENDING_WORKFLOW_COMMIT"
+                    run["pre_report_review"]["post_gate_persistence_status"] = (
+                        "APPENDED_TO_WORKSPACE_PENDING_WORKFLOW_COMMIT"
                     )
-                    run["ledger"]["persistence_status"] = "PASS"
-                run["pre_report_review"]["post_gate_persistence_status"] = "PASS"
             except Exception as persistence_exc:  # noqa: BLE001 - persistence failure blocks the run
                 run["status"] = "BLOCKED"
                 run["persistence_error"] = f"{type(persistence_exc).__name__}: {persistence_exc}"
