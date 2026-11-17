@@ -239,3 +239,5 @@ def test_cryptokeyhole_liquidations_parser_separates_market_and_bitcoin_long_sho
     assert result["hourly_windows_by_coin"]["All 153 coins"]["shorts"]["24h_usd"] == pytest.approx(75_700_000)
     assert result["largest_single_liquidations"][0]["size_usd"] == pytest.approx(1_910_000)
     assert "Hyperliquid" in result["exchanges_excluded"]
+    assert len(result["events_last_30d"]) == 1
+    assert "KuCoin: unusual net outflow" in result["events_last_30d"][0]
