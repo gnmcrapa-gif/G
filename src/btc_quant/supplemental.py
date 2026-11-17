@@ -115,7 +115,21 @@ def _spot_live_snapshot(directory: Path) -> tuple[dict, list[dict]]:
                 }
         except Exception as exc:  # noqa: BLE001
             errors[venue] = f"{type(exc).__name__}: {exc}"
-    status = "PASS" if len(summary) == 2 else "PARTIAL" if summary else "FAIL"
+    now = datetime.now(UTC)
+    for item in summary.values():
+        stamp = item.get("last_trade_timestamp_utc")
+        try:
+            age_seconds = (now - pd.Timestamp(stamp).to_pydatetime()).total_seconds()
+        except (TypeError, ValueError):
+            age_seconds = None
+        item["last_trade_age_seconds"] = age_seconds
+        item["status"] = "PASS" if age_seconds is not None and 0 <= age_seconds <= 300 else "STALE"
+    fresh_count = sum(item.get("status") == "PASS" for item in summary.values())
+    status = (
+        "PASS" if len(summary) == 2 and fresh_count == 2
+        else "STALE" if len(summary) == 2 and fresh_count == 0
+        else "PARTIAL" if summary else "FAIL"
+    )
     manifest = {
         "source": "Binance and Bitstamp public spot ticker endpoints",
         "venue": "Binance;Bitstamp", "symbol": "BTCUSDT;BTC/USD",
@@ -126,7 +140,7 @@ def _spot_live_snapshot(directory: Path) -> tuple[dict, list[dict]]:
         "schema": ["venue-specific ticker JSON"],
         "objects": objects, "status": status, "errors": errors,
     }
-    return {"status": status, "retrieved_at_utc": datetime.now(UTC).isoformat(),
+    return {"status": status, "retrieved_at_utc": now.isoformat(),
             "venues": summary, "errors": errors}, [manifest]
 
 
