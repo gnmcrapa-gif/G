@@ -255,8 +255,6 @@ def run_pre_report_review(
     forecast_ids = {event.get("forecast_id") for event in forecasts}
     invalidated_ids = {event.get("forecast_id") for event in ledger_events
                        if event.get("event_type") == "INVALIDATION"}
-    scored_ids = {event.get("forecast_id") for event in ledger_events
-                  if event.get("event_type") == "SCORE"}
     active_forecasts = [event for event in forecasts
                         if event.get("forecast_id") not in invalidated_ids]
     ledger_ok = (
