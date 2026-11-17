@@ -265,6 +265,29 @@ def run_pre_report_review(
     )
     add("benchmark_completeness", "quant", benchmark_ok,
         "Zero-return, drift, momentum and Ridge must be compared at every declared horizon.")
+
+    metric_metadata = scores.get("metric_metadata", {})
+    conventions = run.get("numeric_conventions", {})
+    units_ok = (
+        metric_metadata.get("source") == "Binance spot BTCUSDT"
+        and metric_metadata.get("quote_currency") == "USDT"
+        and metric_metadata.get("target_unit") == "natural-log return units"
+        and metric_metadata.get("horizon_unit") == "daily sessions"
+        and metric_metadata.get("data_qa_status") == "PASS"
+        and all(key in conventions for key in (
+            "price", "volume", "percentage", "log_return", "horizon", "timestamp"
+        ))
+    )
+    add("numeric_units_and_source_provenance", "protocol", units_ok,
+        "Forecast/benchmark metrics must declare source, quote, units, horizon, UTC window, holdout role and QA.")
+    crosscheck_metadata_ok = all(
+        item.get("metric_metadata", {}).get("overlap_start_utc")
+        and item.get("metric_metadata", {}).get("overlap_end_utc")
+        and item.get("metric_metadata", {}).get("return_correlation_unit") == "dimensionless"
+        for item in cross_checks if item.get("status") == "PASS"
+    )
+    add("crosscheck_metric_provenance", "data", crosscheck_metadata_ok,
+        "Every passing cross-venue statistic must include its UTC overlap window and units.")
     add("probability_claim_guard", "quant",
         run.get("probabilistic_claims_allowed") is False
         and run.get("prospective_ledger_validation", {}).get(
