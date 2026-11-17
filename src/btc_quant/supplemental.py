@@ -962,13 +962,17 @@ def _news_context(directory: Path) -> tuple[dict, list[dict]]:
         payload = response.json()
         gdelt_rows = payload.get("articles", [])
         for row in gdelt_rows:
+            try:
+                seen_at = (
+                    pd.to_datetime(row.get("seendate"), format="%Y%m%dT%H%M%SZ", utc=True).isoformat()
+                    if row.get("seendate") else None
+                )
+            except (TypeError, ValueError):
+                seen_at = None
             articles.append({
                 "title": row.get("title"),
                 "url": row.get("url"),
-                "seen_at_utc": (
-                    pd.to_datetime(row.get("seendate"), format="%Y%m%dT%H%M%SZ", utc=True).isoformat()
-                    if row.get("seendate") else None
-                ),
+                "seen_at_utc": seen_at,
                 "source": row.get("domain", "GDELT"),
                 "source_country": row.get("sourcecountry"),
                 "language": row.get("language"),
@@ -1166,6 +1170,19 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
         summary["cvd"] = {"status": "FAIL", "error": f"{type(exc).__name__}: {exc}"}
         summary["coverage"]["spot_futures_cvd"] = {
             "status": "FAIL", "reason": summary["cvd"]["error"],
+        }
+    try:
+        news_data, news_manifests = _news_context(output_dir / "news")
+        summary["news"] = news_data
+        manifests.extend(news_manifests)
+        summary["coverage"]["geopolitical_regulatory_news"] = {
+            "status": news_data.get("status", "FAIL"),
+            "reason": news_data.get("interpretation_limit"),
+        }
+    except Exception as exc:  # noqa: BLE001
+        summary["news"] = {"status": "FAIL", "error": f"{type(exc).__name__}: {exc}"}
+        summary["coverage"]["geopolitical_regulatory_news"] = {
+            "status": "FAIL", "reason": summary["news"]["error"],
         }
     derivative_statuses = {}
     for name, function, directory in (
