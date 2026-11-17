@@ -222,12 +222,17 @@ def score_matured_events(existing_events: list[dict], frame: pd.DataFrame) -> li
 
 
 
+def forecast_dedupe_key(row: dict) -> tuple[str, int, str]:
+    """One forecast per signal/horizon/model version; allow a new model version in parallel."""
+    return (
+        str(row.get("signal_timestamp_utc", "")),
+        int(row.get("horizon", 0)),
+        str(row.get("model_version", "unknown")),
+    )
+
+
 def summarize_scored_events(events: list[dict], minimum_per_horizon: int = 200) -> dict:
-    """Summarize only genuinely matured, non-invalidated prospective ledger forecasts."""
-    scored_ids = {
-        row.get("forecast_id") for row in events
-        if row.get("event_type") == "SCORE"
-    }
+    """Score only matured forecasts and never pool distinct model versions."""
     invalidated_ids = {
         row.get("forecast_id") for row in events
         if row.get("event_type") == "INVALIDATION"
@@ -236,12 +241,13 @@ def summarize_scored_events(events: list[dict], minimum_per_horizon: int = 200) 
         row.get("forecast_id"): row for row in events
         if row.get("event_type") == "FORECAST"
     }
-    rows_by_horizon: dict[str, list[dict]] = {}
+    rows_by_horizon_version: dict[str, dict[str, list[dict]]] = {}
+    latest_issue_by_horizon_version: dict[str, dict[str, str]] = {}
     for score in events:
         if score.get("event_type") != "SCORE":
             continue
         forecast_id = score.get("forecast_id")
-        if forecast_id not in scored_ids or forecast_id in invalidated_ids:
+        if forecast_id in invalidated_ids:
             continue
         forecast = forecasts.get(forecast_id)
         if forecast is None:
@@ -257,41 +263,62 @@ def summarize_scored_events(events: list[dict], minimum_per_horizon: int = 200) 
                 number = float(value)
                 if np.isfinite(number):
                     row[key] = number
-            rows_by_horizon.setdefault(str(int(score["horizon"])), []).append(row)
+            horizon = str(int(score["horizon"]))
+            version = str(forecast.get("model_version") or "unknown")
+            rows_by_horizon_version.setdefault(horizon, {}).setdefault(version, []).append(row)
+            issued = str(forecast.get("issued_at_utc") or "")
+            latest_issue_by_horizon_version.setdefault(horizon, {})[version] = max(
+                issued, latest_issue_by_horizon_version.get(horizon, {}).get(version, "")
+            )
         except (KeyError, TypeError, ValueError, json.JSONDecodeError):
             continue
 
     result = {}
-    for horizon, rows in rows_by_horizon.items():
-        actual = np.asarray([row["actual"] for row in rows], dtype=float)
-        block = {"n": len(rows), "minimum_for_probabilistic_claims": minimum_per_horizon,
-                 "sample_gate": "MET" if len(rows) >= minimum_per_horizon else "NOT_MET",
-                 "models": {}}
-        for model, key in (("ridge", "ridge"), ("zero", "zero_return"),
-                           ("drift", "training_drift"), ("momentum", "fixed_momentum")):
-            if not all(key in row for row in rows):
-                continue
-            prediction = np.asarray([row[key] for row in rows], dtype=float)
-            error = prediction - actual
-            block["models"][model] = {
-                "mae": float(np.mean(np.abs(error))),
-                "rmse": float(np.sqrt(np.mean(error ** 2))),
-                "mean_error": float(np.mean(error)),
-                "directional_accuracy": (
-                    None if model == "zero"
-                    else float(np.mean(np.sign(prediction) == np.sign(actual)))
-                ),
+    for horizon, versions in rows_by_horizon_version.items():
+        version_blocks = {}
+        for version, rows in versions.items():
+            actual = np.asarray([row["actual"] for row in rows], dtype=float)
+            block = {
+                "n": len(rows),
+                "minimum_for_probabilistic_claims": minimum_per_horizon,
+                "sample_gate": "MET" if len(rows) >= minimum_per_horizon else "NOT_MET",
+                "models": {},
             }
-        if "ridge" in block["models"] and "zero" in block["models"]:
-            ridge_mae = block["models"]["ridge"]["mae"]
-            zero_mae = block["models"]["zero"]["mae"]
-            block["ridge_mae_difference_vs_zero"] = ridge_mae - zero_mae
-            block["ridge_relative_mae_lift_vs_zero"] = (
-                1.0 - ridge_mae / zero_mae if zero_mae > 0 else None
-            )
-        result[horizon] = block
+            for model, key in (("ridge", "ridge"), ("zero", "zero_return"),
+                               ("drift", "training_drift"), ("momentum", "fixed_momentum")):
+                if not all(key in row for row in rows):
+                    continue
+                prediction = np.asarray([row[key] for row in rows], dtype=float)
+                error = prediction - actual
+                block["models"][model] = {
+                    "mae": float(np.mean(np.abs(error))),
+                    "rmse": float(np.sqrt(np.mean(error ** 2))),
+                    "mean_error": float(np.mean(error)),
+                    "directional_accuracy": (
+                        None if model == "zero"
+                        else float(np.mean(np.sign(prediction) == np.sign(actual)))
+                    ),
+                }
+            if "ridge" in block["models"] and "zero" in block["models"]:
+                ridge_mae = block["models"]["ridge"]["mae"]
+                zero_mae = block["models"]["zero"]["mae"]
+                block["ridge_mae_difference_vs_zero"] = ridge_mae - zero_mae
+                block["ridge_relative_mae_lift_vs_zero"] = (
+                    1.0 - ridge_mae / zero_mae if zero_mae > 0 else None
+                )
+            version_blocks[version] = block
+
+        active_version = max(
+            version_blocks,
+            key=lambda version: latest_issue_by_horizon_version[horizon].get(version, ""),
+        )
+        active_block = dict(version_blocks[active_version])
+        active_block["active_model_version"] = active_version
+        active_block["by_model_version"] = version_blocks
+        result[horizon] = active_block
+
     return {
-        "source": "append-only prospective forecast ledger; matured SCORE events only",
+        "source": "append-only prospective forecast ledger; matured SCORE events only; metrics isolated by model version",
         "probability_calibration_claim_allowed": False,
         "minimum_per_horizon": minimum_per_horizon,
         "by_horizon": result,
