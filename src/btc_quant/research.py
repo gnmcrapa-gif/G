@@ -161,7 +161,7 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
     for horizon in HORIZONS:
         target = forward_open_log_return(data["open"], horizon)
         validation_start = int(holdout_start * 0.80)
-        validation_end = holdout_start - horizon - 2
+        validation_end = holdout_start - horizon - EXECUTION_ENTRY_LAG_SESSIONS
         boundaries = np.linspace(validation_start, validation_end, 4, dtype=int)
         fold_scores = {str(alpha): [] for alpha in RIDGE_ALPHAS}
         fold_counts = []
