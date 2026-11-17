@@ -1239,7 +1239,7 @@ class _ExchangeTableParser(HTMLParser):
 
 def _parse_provider_money(text: str) -> float | None:
     cleaned = str(text).replace("−", "-").replace("–", "-").replace(",", "")
-    match = re.search(r"([-+]?)[ $]*([0-9]+(?:\\.[0-9]+)?)\\s*([KMB])?", cleaned, re.I)
+    match = re.search(r"([-+]?)[ $]*([0-9]+(?:\.[0-9]+)?)\s*([KMB])?", cleaned, re.I)
     if not match:
         return None
     multiplier = {"K": 1e3, "M": 1e6, "B": 1e9}.get((match.group(3) or "").upper(), 1.0)
@@ -1263,12 +1263,12 @@ def _parse_ckh_exchange_ranking(html_payload: bytes) -> dict:
                 "netflow_7d_usd": _parse_provider_money(row[2]),
                 "coins_covered": row[3],
             })
-    clean = re.sub(r"<script\\b.*?</script>|<style\\b.*?</style>", " ", html_text, flags=re.I | re.S)
-    clean = re.sub(r"</(?:p|div|li|tr|h[1-6])>", "\\n", clean, flags=re.I)
+    clean = re.sub(r"<script\b.*?</script>|<style\b.*?</style>", " ", html_text, flags=re.I | re.S)
+    clean = re.sub(r"</(?:p|div|li|tr|h[1-6])>", "\n", clean, flags=re.I)
     plain = unescape(re.sub(r"<[^>]+>", " ", clean))
-    plain = re.sub(r"\\s+", " ", plain)
-    asof = re.search(r"Daily ranking, UTC day\\s+([0-9]{1,2}\\s+[A-Za-z]+\\s+[0-9]{4})", plain, re.I)
-    updated = re.search(r"updated\\s+([0-9]{2}:[0-9]{2} UTC on [0-9]{1,2} [A-Za-z]+ [0-9]{4})", plain, re.I)
+    plain = re.sub(r"\s+", " ", plain)
+    asof = re.search(r"Daily ranking, UTC day\s+([0-9]{1,2}\s+[A-Za-z]+\s+[0-9]{4})", plain, re.I)
+    updated = re.search(r"updated\s+([0-9]{2}:[0-9]{2} UTC on [0-9]{1,2} [A-Za-z]+ [0-9]{4})", plain, re.I)
     asof_utc = None
     updated_utc = None
     if asof:
@@ -1285,7 +1285,7 @@ def _parse_ckh_exchange_ranking(html_payload: bytes) -> dict:
     events = []
     if events_block:
         events = re.findall(
-            r"(?:Binance|OKX|Bybit|HTX|KuCoin|Bitfinex|Crypto\\.com):\\s*[^*]+",
+            r"(?:Binance|OKX|Bybit|HTX|KuCoin|Bitfinex|Crypto\.com):\s*[^*]+",
             events_block.group(1), re.I,
         )
     return {
