@@ -9,6 +9,7 @@ from btc_quant.audit import (
     _check_ohlcv_challenger,
     audit_outlier_date,
     build_observed_drivers,
+    build_longitudinal_comparison,
     select_audit_lens,
     verify_binance_archive_coverage,
     verify_bitstamp_page_reconciliation,
@@ -197,3 +198,31 @@ def test_ohlcv_challenger_audit_requires_training_cutoff_before_holdout():
     event["notes"] = event["notes"].replace("2025-10-15", "2025-12-15")
     result = _check_ohlcv_challenger([event], {"ohlcv_challenger": {"status": "PROSPECTIVE_ONLY_ACTIVE"}})
     assert result["status"] == "BLOCKED"
+
+
+
+def test_longitudinal_comparison_separates_continuity_from_prospective_evidence():
+    previous = {
+        "started_at_utc": "2026-11-16T19:00:00+00:00",
+        "steps": [{"step": "walk_forward", "scores": {
+            "holdout_start_utc": "2025-11-17T00:00:00+00:00",
+            "holdout_metrics": {"1": {"zero": {"mae": 0.02, "n": 300}, "ridge": {"mae": 0.021, "n": 300}}},
+        }}],
+        "prospective_ledger_validation": {"by_horizon": {"1": {"n": 0}}},
+    }
+    current = {
+        "started_at_utc": "2026-11-17T19:00:00+00:00",
+        "steps": [{"step": "walk_forward", "scores": {
+            "holdout_start_utc": "2025-11-17T00:00:00+00:00",
+            "holdout_metrics": {"1": {"zero": {"mae": 0.019, "n": 301}, "ridge": {"mae": 0.020, "n": 301}}},
+        }}],
+        "prospective_ledger_validation": {"by_horizon": {"1": {"n": 1}}},
+    }
+    manifests = [{"venue": "Binance", "rows": 3379, "last_timestamp": "2026-11-16T00:00:00Z"}]
+    previous_manifest = {"sources": [{"venue": "Binance", "rows": 3378, "last_timestamp": "2026-11-15T00:00:00Z"}]}
+    result = build_longitudinal_comparison(current, previous, manifests, previous_manifest)
+    assert result["status"] == "PASS"
+    assert result["holdout_cutoff_unchanged"] is True
+    assert result["historical_metric_changes"]["1"]["ridge"]["delta_mae_log_return"] == -0.001
+    assert result["holdout_comparison_role"] == "CONTINUITY_ONLY_NOT_INDEPENDENT_OOS"
+    assert result["price_only_matured_forecasts_by_horizon"]["current"]["1"]["n"] == 1
