@@ -28,7 +28,7 @@ Provider terms apply to public endpoints/archives; no separate legal licensing r
 
 ### Latest out-of-sample evaluation
 
-Final holdout: **2025-11-16 through 2026-11-15 UTC**, untouched by training or tuning. Target horizons: 1, 3, 7, 30 days. The evaluation uses a one-daily-bar operational latency buffer so ledger entries are genuinely in the future at issue time. Ridge alpha is now selected across three purged, expanding chronological validation folds; the final holdout remains untouched. The report also includes Newey-West HAC paired absolute-loss comparisons (lag h-1 for overlapping targets), Holm family-wise multiple-testing correction, and ex-ante bull/bear/range diagnostics.
+Final holdout: **2025-11-17 through 2026-11-15 UTC**, untouched by training or tuning. Target horizons: 1, 3, 7, 30 days. The evaluation uses a one-daily-bar operational latency buffer so ledger entries are genuinely in the future at issue time. Ridge alpha is now selected across three purged, expanding chronological validation folds; the final holdout remains untouched. The report also includes Newey-West HAC paired absolute-loss comparisons (lag h-1 for overlapping targets), Holm family-wise multiple-testing correction, and ex-ante bull/bear/range diagnostics.
 
 MAE is in **log-return units**, not percent. The following metrics are the post-merge V5.4 run on the same untouched historical holdout. The holdout was not used for the three-fold alpha tuning.
 
@@ -87,7 +87,7 @@ python scripts/run_research.py
 - `reports/latest/scores.json`: benchmark and challenger metrics.
 - `reports/latest/oos_predictions.csv`: final-holdout predictions and outcomes.
 - `ledger/forecast_ledger.csv`: append-only price-only Ridge challenger forecasts, invalidations and scores.
-- `ledger/ohlcv_challenger_ledger.csv`: separate append-only OHLCV challenger forecasts, invalidations and scores; trained only before the frozen 2025-11-16 holdout, fixed alpha 100, no tuning on the holdout.
+- `ledger/ohlcv_challenger_ledger.csv`: separate append-only OHLCV challenger forecasts, invalidations and scores; trained only before the frozen 2025-11-17 holdout, fixed alpha 100, no tuning on the holdout.
 
 ## Security and limitations
 
@@ -127,7 +127,7 @@ The repository is public. Do not commit credentials, personal data, exchange acc
 
 ## V5.5 verified scope
 
-V5.5 adds prospective matured-ledger scoring against the zero, drift and momentum forecasts saved at issuance; p90/p99 and worst-decile error diagnostics; low-sample regime warnings; explicit 0% theoretical exposure/abstention; a structured audit; and an append-only experiment proposal register. The historical 2025-11-16–2026-11-15 holdout is explicitly **not globally unseen** because it was previously inspected under V5.3.1. It is continuity diagnostics only. The next OHLCV feature experiment is registered as PROPOSED_NOT_RUN and is not represented as an achieved improvement.
+V5.5 adds prospective matured-ledger scoring against the zero, drift and momentum forecasts saved at issuance; p90/p99 and worst-decile error diagnostics; low-sample regime warnings; explicit 0% theoretical exposure/abstention; a structured audit; and an append-only experiment proposal register. The historical 2025-11-17–2026-11-15 holdout is explicitly **not globally unseen** because it was previously inspected under V5.3.1. It is continuity diagnostics only. The next OHLCV feature experiment is registered as PROPOSED_NOT_RUN and is not represented as an achieved improvement.
 
 
 ## V5.5.1 — target timing correction
@@ -151,6 +151,6 @@ The daily research workflow is scheduled for 16:00 UTC. Since the next daily ope
 
 - Separate feature pipeline adds lagged-median volume surprise, robust volume surprise z-score, candle range/body/wicks and close-location features to the price-only feature set.
 - Fixed Ridge alpha = 100; no tuning on the historical holdout.
-- Training labels end before the frozen 2025-11-16 UTC holdout start. The historical continuity holdout is not used for training or tuning.
+- Training labels end before the frozen 2025-11-17 UTC holdout start. The historical continuity holdout is not used for training or tuning.
 - Point forecasts are appended to `ledger/ohlcv_challenger_ledger.csv` and scored only when entry and expiry opens are available.
 - This starts prospective evidence collection; it does not establish predictive lift, calibration, economic value or promotion. At least 200 matured forecasts per horizon plus independent statistical and cost gates remain required.
