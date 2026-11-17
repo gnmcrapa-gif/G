@@ -243,6 +243,8 @@ def main() -> int:
         run["limitations"].append("The reused historical holdout is continuity diagnostics only, not independent prospective evidence.")
         run["limitations"].append("No cost-adjusted strategy PnL, funding, slippage or execution backtest is claimed.")
         run["limitations"].append("No calibrated probability or live trading claim is permitted.")
+        run["limitations"].append("No derivatives, ETF/ETP, options, on-chain or macro time series were acquired or integrated in this run; no claim is made from them.")
+        run["limitations"].append("No strategy-level cost backtest is admissible until prospective predictive evidence and a documented execution rule, venue fee tier, spread and slippage model exist.")
     except Exception as exc:  # noqa: BLE001 - write a durable failure report for diagnosis
         run["status"] = "BLOCKED"
         run["error"] = f"{type(exc).__name__}: {exc}"
