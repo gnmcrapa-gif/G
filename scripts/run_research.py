@@ -5,8 +5,8 @@ import csv
 import hashlib
 import json
 import os
-import traceback
 import time
+import traceback
 from datetime import UTC, datetime
 from pathlib import Path
 
