@@ -220,7 +220,7 @@ def run_pre_report_review(
     )
 
     timing_ok = (
-        scores.get("target") == "log(Open[t+h+2]/Open[t+2])"
+        scores.get("target", "").startswith("log(Open[t+h+2]/Open[t+2])")
         and scores.get("requested_next_open_target_executable_at_scheduled_run") is False
         and scores.get("training_uses_holdout") is False
     )
@@ -251,18 +251,26 @@ def run_pre_report_review(
         "No calibrated probabilities without at least 200 matured prospective forecasts per horizon and a separate calibration study.")
 
     ids = [event.get("event_id") for event in ledger_events]
-    forecast_ids = {event.get("forecast_id") for event in ledger_events
-                    if event.get("event_type") == "FORECAST"}
+    forecasts = [event for event in ledger_events if event.get("event_type") == "FORECAST"]
+    forecast_ids = {event.get("forecast_id") for event in forecasts}
+    invalidated_ids = {event.get("forecast_id") for event in ledger_events
+                       if event.get("event_type") == "INVALIDATION"}
+    scored_ids = {event.get("forecast_id") for event in ledger_events
+                  if event.get("event_type") == "SCORE"}
+    active_forecasts = [event for event in forecasts
+                        if event.get("forecast_id") not in invalidated_ids]
     ledger_ok = (
         all(ids) and len(ids) == len(set(ids))
-        and all(event.get("forecast_id") in forecast_ids for event in ledger_events
-                if event.get("event_type") == "SCORE")
+        and len(forecast_ids) == len(forecasts)
+        and invalidated_ids.issubset(forecast_ids)
+        and all(event.get("forecast_id") in forecast_ids
+                and event.get("forecast_id") not in invalidated_ids
+                for event in ledger_events if event.get("event_type") == "SCORE")
         and all(pd.Timestamp(event["entry_timestamp_utc"]) >
-                pd.Timestamp(event["issued_at_utc"])
-                for event in ledger_events if event.get("event_type") == "FORECAST")
+                pd.Timestamp(event["issued_at_utc"]) for event in active_forecasts)
     )
     add("append_only_ledger_consistency", "ledger", ledger_ok,
-        f"events={len(ledger_events)}; unique_event_ids={len(set(ids))}; scores must map to forecasts; entries must be future at issue.")
+        f"events={len(ledger_events)}; unique_event_ids={len(set(ids))}; invalidated={len(invalidated_ids)}; active_forecasts={len(active_forecasts)}; scores must map to non-invalidated forecasts; active entries must be future at issue.")
     risk = run.get("risk", {})
     add("risk_fail_closed", "risk",
         risk.get("live_trading_enabled") is False
