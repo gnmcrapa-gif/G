@@ -138,7 +138,7 @@ def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
     specs = {
         "premium_index": ("/fapi/v1/premiumIndex", {"symbol": "BTCUSDT"}),
         "open_interest": ("/fapi/v1/openInterest", {"symbol": "BTCUSDT"}),
-        "open_interest_daily_30d": (
+        "open_interest_daily_200d": (
             "/futures/data/openInterestHist",
             {"symbol": "BTCUSDT", "period": "1d", "limit": 30},
         ),
@@ -176,7 +176,14 @@ def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
         "symbol": "BTCUSDT perpetual",
         "quote_currency": "USDT",
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
-        "status": "PASS" if "premium_index" in raw and "open_interest" in raw else "PARTIAL",
+        "status": (
+            "PASS" if all(key in raw for key in (
+                "premium_index", "open_interest", "open_interest_daily_200d",
+                "taker_buy_sell_daily_30d", "global_long_short_account_ratio_daily_30d",
+                "funding_history",
+            ))
+            else "PARTIAL" if raw else "FAIL"
+        ),
         "errors": errors,
     }
     premium = raw.get("premium_index")
@@ -190,7 +197,7 @@ def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
     if isinstance(oi, dict):
         summary["open_interest_btc"] = _float_or_none(oi.get("openInterest"))
         summary["open_interest_timestamp_utc"] = _timestamp_ms(oi.get("time"))
-    oi_hist = raw.get("open_interest_daily_30d", [])
+    oi_hist = raw.get("open_interest_daily_200d", [])
     if isinstance(oi_hist, list) and oi_hist:
         points = sorted(oi_hist, key=lambda row: int(row.get("timestamp", 0)))
         latest = _float_or_none(points[-1].get("sumOpenInterestValue"))
@@ -263,7 +270,7 @@ def _bybit_derivatives(directory: Path) -> tuple[dict, dict]:
     objects, errors, raw = [], {}, {}
     specs = {
         "ticker": ("/v5/market/tickers", {"category": "linear", "symbol": "BTCUSDT"}),
-        "open_interest_daily_30d": (
+        "open_interest_daily_200d": (
             "/v5/market/open-interest",
             {"category": "linear", "symbol": "BTCUSDT", "intervalTime": "1d", "limit": 200},
         ),
@@ -294,7 +301,13 @@ def _bybit_derivatives(directory: Path) -> tuple[dict, dict]:
         "symbol": "BTCUSDT perpetual",
         "quote_currency": "USDT",
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
-        "status": "PASS" if "ticker" in raw and "open_interest_daily_30d" in raw else "PARTIAL",
+        "status": (
+            "PASS" if all(key in raw for key in (
+                "ticker", "open_interest_daily_200d", "global_account_ratio_daily_30d",
+                "funding_history",
+            ))
+            else "PARTIAL" if raw else "FAIL"
+        ),
         "errors": errors,
     }
     ticker_rows = raw.get("ticker", {}).get("list", [])
@@ -307,10 +320,11 @@ def _bybit_derivatives(directory: Path) -> tuple[dict, dict]:
             "open_interest_btc": _float_or_none(ticker.get("openInterest")),
             "open_interest_value_usdt": _float_or_none(ticker.get("openInterestValue")),
             "funding_rate_current": _float_or_none(ticker.get("fundingRate")),
+            "funding_rate_unit": "fraction per provider funding interval",
             "volume_24h_btc": _float_or_none(ticker.get("volume24h")),
             "turnover_24h_usdt": _float_or_none(ticker.get("turnover24h")),
         })
-    oi_rows = raw.get("open_interest_daily_30d", {}).get("list", [])
+    oi_rows = raw.get("open_interest_daily_200d", {}).get("list", [])
     if oi_rows:
         points = sorted(oi_rows, key=lambda row: int(row.get("timestamp", 0)))
         latest = _float_or_none(points[-1].get("openInterest"))
