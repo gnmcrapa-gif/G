@@ -62,6 +62,21 @@ def _review_inputs(tmp_path):
         "volume_robust_z_min_history_sessions": 60,
     }
     run = {
+        "supplemental_data": {
+            "coverage": {
+                "spot_ohlcv": {"status": "PASS"},
+                "spot_live_quotes": {"status": "PASS"},
+                "per_exchange_derivatives": {"status": "PASS"},
+                "options": {"status": "PASS"},
+                "us_spot_etf_flows": {"status": "STALE"},
+                "global_etp_flows": {"status": "UNAVAILABLE"},
+                "exchange_flows_and_reserves": {"status": "UNAVAILABLE"},
+                "liquidations": {"status": "UNAVAILABLE"},
+                "macro_and_indices": {"status": "PARTIAL"},
+                "spot_futures_cvd": {"status": "PROXY_ONLY"},
+                "geopolitical_regulatory_news": {"status": "NOT_IMPLEMENTED"},
+            },
+        },
         "started_at_utc": "2025-06-23T12:00:00+00:00",
         "performance": {"acquisition_and_qa_seconds": 10.0, "walk_forward_seconds": 2.0},
         "steps": [
