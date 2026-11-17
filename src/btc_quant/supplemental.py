@@ -4,6 +4,7 @@ from __future__ import annotations
 import hashlib
 import io
 import math
+import os
 import re
 import xml.etree.ElementTree as ET
 from datetime import UTC, date, datetime, timedelta
@@ -1541,6 +1542,9 @@ def _contains_liquidation_data(value) -> bool:
 def _cryptokeyhole_context(directory: Path) -> tuple[dict, list[dict]]:
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
+    api_key = os.getenv("CRYPTOKEYHOLE_API_KEY", "").strip()
+    if api_key:
+        session.headers["Authorization"] = f"Bearer {api_key}"
     base = "https://cryptokeyhole.com/api/v1"
     objects, manifests, errors = [], [], {}
     summary = {
@@ -1548,6 +1552,7 @@ def _cryptokeyhole_context(directory: Path) -> tuple[dict, list[dict]]:
         "attribution": "CryptoKeyhole; free chart data under CC BY 4.0 where applicable",
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "status": "PARTIAL",
+        "api_key_configured": bool(api_key),
         "series": {},
         "source_status": {},
     }
