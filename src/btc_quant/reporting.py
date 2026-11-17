@@ -127,8 +127,12 @@ def _build_halving_cycle_comparison(frame) -> dict:
             "maximum_close_drawdown_from_peak_pct": float(drawdown.min()) * 100.0,
         })
     current = next((item for item in cycles if item["cycle"].startswith("2024")), {})
+    historical_cycles = [
+        item for item in cycles
+        if not item["cycle"].startswith("2024") and item.get("status") == "PASS"
+    ]
     return {
-        "status": "PASS" if current.get("status") == "PASS" else "PARTIAL",
+        "status": "PASS" if current.get("status") == "PASS" and historical_cycles else "PARTIAL",
         "source": "Bitstamp BTC/USD daily OHLCV; same venue and quote currency",
         "latest_closed_session_utc": stamps.iloc[-1].isoformat(),
         "current_cycle_elapsed_sessions": elapsed_days,
