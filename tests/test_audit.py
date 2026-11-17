@@ -37,12 +37,9 @@ def _review_inputs(tmp_path):
     manifests = [
         {
             "venue": "Binance", "symbol": "BTCUSDT", "quote_currency": "USDT",
-            "rows": 2000, "objects": binance_objects,
-            "parser_version": "test-1", "schema": ["timestamp", "open", "high", "low", "close", "volume"],
-            "objects": [{
-                "file": str(raw), "sha256": sha, "size_bytes": raw.stat().st_size,
-                "url": "https://example.test/binance", "retrieved_at_utc": "2025-06-23T12:00:00+00:00",
-            }],
+            "rows": 2000, "parser_version": "test-1",
+            "schema": ["timestamp", "open", "high", "low", "close", "volume"],
+            "objects": binance_objects,
         },
         {
             "venue": "Bitstamp", "symbol": "BTC/USD", "quote_currency": "USD",
