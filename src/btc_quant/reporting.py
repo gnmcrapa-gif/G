@@ -485,30 +485,30 @@ def render_markdown_report(run: dict, scores: dict) -> str:
             "", "### OKX BTC-USDT Perpetual", "",
             f"- Stato: {okx.get('status', 'n/d')}; strumento {okx.get('instrument', 'n/d')}.",
             f"- Ultimo prezzo: {_display(okx.get('last_price_usdt'), 2)} USDT.",
-            f"- Volume 24h: {_display(okx.get('volume_24h_base_currency'), 2)} BTC "
-            f"({_display(okx.get('volume_24h_contracts'), 2)} contratti).",
-            f"- Open interest snapshot: {_display(okx.get('open_interest_btc'), 2)} BTC "
-            f"({_display(okx.get('open_interest_usd'), 0)} USD).",
-            f"- OI storico giornaliero UTC: 1D {_display(oi_history.get('change_1d_pct'), 2)}%; "
-            f"7D {_display(oi_history.get('change_7d_pct'), 2)}%; "
-            f"30D {_display(oi_history.get('change_30d_pct'), 2)}% "
-            f"(ultimo punto {oi_history.get('timestamp_utc', 'n/d')}).",
-            f"- Funding previsto per il settlement corrente: {_display(okx.get('funding_rate_predicted_current'), 8)}; "
-            f"ultimo settlement: {_display(okx.get('settled_funding_rate'), 8)} "
-            f"(stato {okx.get('funding_settlement_state', 'n/d')}; "
-            f"unità frazione per intervallo).",
-            f"- Settlement timestamp: {okx.get('funding_timestamp_utc', 'n/d')}; "
-            f"prossimo funding: {okx.get('next_funding_time_utc', 'n/d')}.",
+            (f"- Volume 24h: {_display(okx.get('volume_24h_base_currency'), 2)} BTC "
+             f"({_display(okx.get('volume_24h_contracts'), 2)} contratti)."),
+            (f"- Open interest snapshot: {_display(okx.get('open_interest_btc'), 2)} BTC "
+             f"({_display(okx.get('open_interest_usd'), 0)} USD)."),
+            (f"- OI storico giornaliero UTC: 1D {_display(oi_history.get('change_1d_pct'), 2)}%; "
+             f"7D {_display(oi_history.get('change_7d_pct'), 2)}%; "
+             f"30D {_display(oi_history.get('change_30d_pct'), 2)}% "
+             f"(ultimo punto {oi_history.get('timestamp_utc', 'n/d')})."),
+            (f"- Funding previsto per il settlement corrente: {_display(okx.get('funding_rate_predicted_current'), 8)}; "
+             f"ultimo settlement: {_display(okx.get('settled_funding_rate'), 8)} "
+             f"(stato {okx.get('funding_settlement_state', 'n/d')}; "
+             f"unità frazione per intervallo)."),
+            (f"- Settlement timestamp: {okx.get('funding_timestamp_utc', 'n/d')}; "
+             f"prossimo funding: {okx.get('next_funding_time_utc', 'n/d')}."),
             f"- Storico funding: {okx.get('funding_history_rows', 0)} settlement acquisiti.",
-            f"- Delta taker futures BTC (buy − sell, barre UTC chiuse): "
-            f"1D {_display(taker_windows.get('1d'), 2)} BTC; "
-            f"7D {_display(taker_windows.get('7d'), 2)} BTC; "
-            f"30D {_display(taker_windows.get('30d'), 2)} BTC.",
+            (f"- Delta taker futures BTC (buy − sell, barre UTC chiuse): "
+             f"1D {_display(taker_windows.get('1d'), 2)} BTC; "
+             f"7D {_display(taker_windows.get('7d'), 2)} BTC; "
+             f"30D {_display(taker_windows.get('30d'), 2)} BTC."),
             f"- Nota CVD: {taker_summary.get('measurement_note', 'n/d')}",
             "- Liquidazioni: NOT_ACQUIRED; nessuna stima ricavata da endpoint non pertinenti.",
-            f"- Copertura per venue: Binance {venue_coverage.get('binance_futures', 'n/d')}; "
-            f"Bybit {venue_coverage.get('bybit_futures', 'n/d')}; "
-            f"OKX {venue_coverage.get('okx_swap', okx.get('status', 'n/d'))}.",
+            (f"- Copertura per venue: Binance {venue_coverage.get('binance_futures', 'n/d')}; "
+             f"Bybit {venue_coverage.get('bybit_futures', 'n/d')}; "
+             f"OKX {venue_coverage.get('okx_swap', okx.get('status', 'n/d'))}."),
         ]
         if okx.get("errors"):
             lines.append(f"- Errori feed OKX: {okx['errors']}")
