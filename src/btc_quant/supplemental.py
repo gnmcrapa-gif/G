@@ -7,6 +7,7 @@ import math
 import re
 import xml.etree.ElementTree as ET
 from datetime import UTC, date, datetime, timedelta
+from html.parser import HTMLParser
 from email.utils import parsedate_to_datetime
 from html import unescape
 from pathlib import Path
@@ -1357,30 +1358,48 @@ def _parse_fed_h6_m2_html(payload: bytes) -> tuple[date, float, float | None, da
     """Parse the Federal Reserve H.6 Table 1 seasonally adjusted M2 series."""
     html = payload.decode("utf-8", errors="replace")
     release_match = re.search(
-        r"Release Date:\s*([A-Za-z]+\s+\d{1,2},\s+\d{4})",
+        r"Release Date:\\s*([A-Za-z]+\\s+\\d{1,2},\\s+\\d{4})",
         html,
         flags=re.IGNORECASE,
     )
     if release_match is None:
         raise ValueError("Federal Reserve H.6 page has no release date")
     release_date = datetime.strptime(release_match.group(1), "%B %d, %Y").date()
-    tables = pd.read_html(io.StringIO(html))
-    selected = None
-    for frame in tables:
-        for column in frame.columns:
-            labels = column if isinstance(column, tuple) else (column,)
-            normalized = [str(label).strip().lower() for label in labels]
-            if (
-                any("seasonally adjusted" in label for label in normalized)
-                and any(label == "m2" for label in normalized)
-            ):
-                selected = (frame, frame.columns[0], column)
-                break
-        if selected:
-            break
-    if selected is None:
-        raise ValueError("Federal Reserve H.6 Table 1 has no seasonally adjusted M2 column")
-    frame, date_column, m2_column = selected
+
+    class _H6TableParser(HTMLParser):
+        def __init__(self):
+            super().__init__(convert_charrefs=True)
+            self.tables = []
+            self.table = None
+            self.row = None
+            self.cell = None
+
+        def handle_starttag(self, tag, attrs):
+            if tag == "table":
+                self.table = []
+            elif tag == "tr" and self.table is not None:
+                self.row = []
+            elif tag in {"th", "td"} and self.row is not None:
+                self.cell = []
+
+        def handle_data(self, data):
+            if self.cell is not None:
+                self.cell.append(data)
+
+        def handle_endtag(self, tag):
+            if tag in {"th", "td"} and self.cell is not None and self.row is not None:
+                self.row.append(" ".join(" ".join(self.cell).split()))
+                self.cell = None
+            elif tag == "tr" and self.row is not None and self.table is not None:
+                if self.row:
+                    self.table.append(self.row)
+                self.row = None
+            elif tag == "table" and self.table is not None:
+                self.tables.append(self.table)
+                self.table = None
+
+    table_parser = _H6TableParser()
+    table_parser.feed(html)
     month_map = {
         "jan": 1, "january": 1, "feb": 2, "february": 2,
         "mar": 3, "march": 3, "apr": 4, "april": 4,
@@ -1390,25 +1409,36 @@ def _parse_fed_h6_m2_html(payload: bytes) -> tuple[date, float, float | None, da
         "dec": 12, "december": 12,
     }
     observations = []
-    for _, row in frame.iterrows():
-        label = str(row[date_column]).strip()
-        parts = label.replace(".", "").split()
-        if len(parts) != 2 or parts[0].lower() not in month_map:
+    for table in table_parser.tables:
+        cells = [cell.lower() for row in table for cell in row]
+        if not (
+            any("seasonally adjusted" in cell for cell in cells)
+            and any("not seasonally adjusted" in cell for cell in cells)
+            and any(cell.strip() == "m2" for cell in cells)
+        ):
             continue
-        value_text = str(row[m2_column]).replace(",", "").strip()
-        value = _float_or_none(value_text)
-        if value is None:
-            continue
-        observations.append((
-            date(int(parts[1]), month_map[parts[0].lower()], 1),
-            value,
-        ))
+        for row in table:
+            if len(row) < 3:
+                continue
+            parts = row[0].replace(".", "").split()
+            if len(parts) != 2 or parts[0].lower() not in month_map:
+                continue
+            value = _float_or_none(row[2].replace(",", "").strip())
+            if value is None:
+                continue
+            observations.append((
+                date(int(parts[1]), month_map[parts[0].lower()], 1),
+                value,
+            ))
+        if observations:
+            break
     observations.sort(key=lambda item: item[0])
     if not observations:
         raise ValueError("Federal Reserve H.6 Table 1 has no valid M2 observations")
     latest = observations[-1]
     previous = observations[-2][1] if len(observations) > 1 else None
     return latest[0], latest[1], previous, release_date
+
 
 
 def _fed_h6_m2_fallback(meta: dict, directory: Path,
