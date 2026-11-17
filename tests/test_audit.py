@@ -83,6 +83,10 @@ def _review_inputs(tmp_path):
             "evidence_that_would_change_assessment": "prospective lift and calibration",
             "single_next_priority_experiment": "prospective challenger",
         },
+        "longitudinal_comparison": {
+            "status": "NO_PRIOR_REPORT", "comparison_performed": False,
+        },
+        "code_provenance": {"commit_sha": "test-sha", "workflow_run_id": "test-run"},
     }
     metrics = {
         str(h): {model: {"n": 250} for model in ("zero", "drift", "momentum", "ridge")}
