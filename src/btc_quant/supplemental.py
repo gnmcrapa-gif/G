@@ -1306,15 +1306,15 @@ def _parse_ckh_liquidations(html_payload: bytes) -> dict:
     html_text = html_payload.decode("utf-8", errors="replace")
     parser = _ExchangeTableParser()
     parser.feed(html_text)
-    clean = re.sub(r"<script\\b.*?</script>|<style\\b.*?</style>", " ", html_text, flags=re.I | re.S)
+    clean = re.sub(r"<script\b.*?</script>|<style\b.*?</style>", " ", html_text, flags=re.I | re.S)
     plain = unescape(re.sub(r"<[^>]+>", " ", clean))
-    plain = re.sub(r"\\s+", " ", plain)
+    plain = re.sub(r"\s+", " ", plain)
 
     headline = re.search(
         r"In the 24 hours to ([0-9:]+ UTC on [0-9]{1,2} [A-Za-z]+ [0-9]{4}), "
-        r"CryptoKeyhole counted (\\$[0-9,.]+[KMB]?) of crypto futures liquidations across "
-        r"([0-9]+) coins on [A-Za-z0-9]+ exchanges: (\\$[0-9,.]+[KMB]?) of longs and "
-        r"(\\$[0-9,.]+[KMB]?) of shorts",
+        r"CryptoKeyhole counted (\$[0-9,.]+[KMB]?) of crypto futures liquidations across "
+        r"([0-9]+) coins on [A-Za-z0-9]+ exchanges: (\$[0-9,.]+[KMB]?) of longs and "
+        r"(\$[0-9,.]+[KMB]?) of shorts",
         plain, re.I,
     )
     updated = re.search(r"Last update ([0-9]{1,2} [A-Za-z]+ [0-9]{4}), ([0-9:]+ UTC)", plain, re.I)
@@ -1384,7 +1384,7 @@ def _parse_ckh_liquidations(html_payload: bytes) -> dict:
             for data_row in parser.rows[index + 1:]:
                 if len(data_row) < 6:
                     continue
-                if not re.search(r"\\d{4}", data_row[0]):
+                if not re.search(r"\d{4}", data_row[0]):
                     break
                 largest_days.append({
                     "day_utc": data_row[0],
