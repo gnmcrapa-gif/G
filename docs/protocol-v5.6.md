@@ -53,7 +53,7 @@ No orders, auto-trading or live position sizing are permitted. Risk Overlay v1.1
 
 The report includes a separate last-closed-daily-candle snapshot for Binance BTCUSDT and Bitstamp BTC/USD: timestamp, retrieval time, OHLC, volume, prior close and one-session percentage change. It is explicitly **not** a live spot quote. USD and USDT values are never combined.
 
-The report records acquisition/QA, walk-forward, pre-report review and total runtime. Efficiency is monitored against the workflow timeout; no optimization may remove integrity checks or weaken statistical safeguards merely to shorten execution.
+The report records acquisition/QA, walk-forward, pre-report review and total runtime. It loads the previous persisted report before overwriting it and compares same-venue/same-quote price snapshots, prospective matured counts and benchmark metrics only when the historical evaluation window is identical. Different windows are explicitly marked not comparable. The current code commit, Git ref, workflow run ID and event type are recorded. Efficiency is monitored against the workflow timeout; no optimization may remove integrity checks or weaken statistical safeguards merely to shorten execution.
 
 ## 7. Required report taxonomy
 
