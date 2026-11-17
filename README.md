@@ -98,3 +98,7 @@ python scripts/run_research.py
 ```
 
 The daily GitHub Actions workflow runs at 16:00 UTC and stores raw data, manifests, reports and the append-only ledger on main. Pull-request runs validate code but do not mutate the production ledger or raw-data archive.
+
+### Optional CryptoKeyhole API key
+
+The pipeline works without credentials. If a personal CryptoKeyhole Plus/Pro read-only key is available, add it in GitHub repository **Settings → Secrets and variables → Actions** as `CRYPTOKEYHOLE_API_KEY`. The workflow passes it only as an environment variable to the research process and the client sends it in the HTTP Authorization header; it is never written to reports, manifests or logs. A key unlocks the plan's daily/hourly chart access, including BTC-specific exchange flows/reserves where included in the plan. Do not paste API keys into chat or commit them.
