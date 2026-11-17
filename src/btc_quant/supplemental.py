@@ -1331,7 +1331,7 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
                 "freshness_reference_date": freshness_date.isoformat(),
                 "retrieved_at_utc": datetime.now(UTC).isoformat(),
                 "age_calendar_days": age_days,
-                "status": "PASS" if age_days <= meta["max_age_days"] else "STALE",
+                "status": "PASS" if 0 <= age_days <= meta["max_age_days"] else "STALE",
                 "previous_value": float(valid.iloc[-2][value_col]) if len(valid) > 1 else None,
                 "source_url": f"https://fred.stlouisfed.org/series/{series_id}",
             }
