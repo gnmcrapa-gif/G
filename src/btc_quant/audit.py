@@ -429,9 +429,95 @@ def _check_ohlcv_challenger(events: list[dict], run: dict) -> dict:
     }
 
 
+def _report_scores(report: dict | None) -> dict:
+    if not report:
+        return {}
+    step = next(
+        (item for item in report.get("steps", []) if item.get("step") == "walk_forward"),
+        {},
+    )
+    return step.get("scores", {})
+
+
+def build_longitudinal_comparison(
+    run: dict, previous_report: dict | None, manifests: list[dict],
+    previous_manifest: dict | None,
+) -> dict:
+    """Compare the current report with the last archived run without treating continuity as new OOS."""
+    if not previous_report:
+        return {
+            "status": "WARN_NO_PRIOR_REPORT",
+            "comparison_available": False,
+            "reason": "No previous report was present to archive at run start.",
+        }
+    current_scores = _report_scores(run)
+    previous_scores = _report_scores(previous_report)
+    current_metrics = current_scores.get("holdout_metrics", {})
+    previous_metrics = previous_scores.get("holdout_metrics", {})
+    metric_changes = {}
+    for horizon in ("1", "3", "7", "30"):
+        metric_changes[horizon] = {}
+        for model in ("zero", "ridge"):
+            current = current_metrics.get(horizon, {}).get(model, {})
+            previous = previous_metrics.get(horizon, {}).get(model, {})
+            current_mae, previous_mae = current.get("mae"), previous.get("mae")
+            metric_changes[horizon][model] = {
+                "previous_mae_log_return": previous_mae,
+                "current_mae_log_return": current_mae,
+                "delta_mae_log_return": (
+                    float(current_mae) - float(previous_mae)
+                    if current_mae is not None and previous_mae is not None else None
+                ),
+                "previous_n": previous.get("n"),
+                "current_n": current.get("n"),
+            }
+    def source_rows(items):
+        return {
+            item.get("venue", item.get("source", "unknown")): {
+                "rows": item.get("rows"),
+                "first_timestamp_utc": item.get("first_timestamp"),
+                "last_timestamp_utc": item.get("last_timestamp"),
+                "retrieved_at_utc": item.get("retrieved_at_utc"),
+            }
+            for item in items
+        }
+    previous_sources = [] if previous_manifest is None else previous_manifest.get("sources", [])
+    current_prospective = run.get("prospective_ledger_validation", {}).get("by_horizon", {})
+    previous_prospective = previous_report.get("prospective_ledger_validation", {}).get("by_horizon", {})
+    current_ohlcv = run.get("ohlcv_challenger", {}).get("prospective_validation", {}).get("by_horizon", {})
+    previous_ohlcv = previous_report.get("ohlcv_challenger", {}).get("prospective_validation", {}).get("by_horizon", {})
+    return {
+        "status": "PASS" if previous_manifest is not None else "WARN_PREVIOUS_MANIFEST_MISSING",
+        "comparison_available": True,
+        "previous_run_started_at_utc": previous_report.get("started_at_utc"),
+        "current_run_started_at_utc": run.get("started_at_utc"),
+        "previous_holdout_start_utc": previous_scores.get("holdout_start_utc"),
+        "current_holdout_start_utc": current_scores.get("holdout_start_utc"),
+        "holdout_cutoff_unchanged": previous_scores.get("holdout_start_utc") == current_scores.get("holdout_start_utc"),
+        "holdout_comparison_role": "CONTINUITY_ONLY_NOT_INDEPENDENT_OOS",
+        "historical_metric_changes": metric_changes,
+        "previous_primary_source_rows": source_rows(previous_sources),
+        "current_primary_source_rows": source_rows(manifests),
+        "price_only_matured_forecasts_by_horizon": {
+            "previous": previous_prospective,
+            "current": current_prospective,
+        },
+        "ohlcv_matured_forecasts_by_horizon": {
+            "previous": previous_ohlcv,
+            "current": current_ohlcv,
+        },
+        "interpretation": (
+            "Historical holdout metric changes are continuity diagnostics on the same fixed-start "
+            "window, not independent model evidence. Prospective ledger scores are compared separately."
+        ),
+    }
+
+
 def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFrame | None,
                             bitstamp: pd.DataFrame | None, events: list[dict],
-                            root: Path = Path("."), now: datetime | None = None) -> dict:
+                            root: Path = Path("."), now: datetime | None = None,
+                            previous_report: dict | None = None,
+                            previous_manifest: dict | None = None) -> dict:
     now = now or datetime.now(UTC)
     now = now.astimezone(UTC)
     binance_manifest = _source(manifests, "Binance")
@@ -553,6 +639,19 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
                if item.get("status") in {"BLOCKED", "FAIL"}]
     warnings = [name for name, item in checks.items() if item.get("status", "").startswith("WARN")]
     gate = "BLOCKED" if blocked else ("PASS_WITH_WARNINGS" if warnings else "PASS")
+    longitudinal = build_longitudinal_comparison(run, previous_report, manifests, previous_manifest)
+    red_team = {
+        "status": "PASS_WITH_WARNINGS" if not blocked else "BLOCKED",
+        "attacks": [
+            {"threat": "lookahead_or_late_execution", "status": target["status"], "evidence": target["evidence"]},
+            {"threat": "holdout_contamination_or_rolling_cutoff", "status": holdout["status"], "evidence": holdout["evidence"]},
+            {"threat": "corrupt_or_incomplete_primary_data", "status": "PASS" if raw["status"] == "PASS" and coverage["status"] == "PASS" and bitstamp_pages["status"] == "PASS" else "BLOCKED"},
+            {"threat": "forecast_serialization_or_missed_maturity", "status": ledger["status"], "evidence": ledger["evidence"]},
+            {"threat": "venue_volume_misinterpretation", "status": "WARN" if outlier.get("status", "").startswith("WARN") else outlier.get("status"), "evidence": outlier.get("interpretation", outlier.get("reason"))},
+            {"threat": "optimistic_cost_or_probability_claim", "status": economic_gate["status"], "evidence": economic_gate["reason"]},
+        ],
+        "note": "Red-team findings are explicit; warnings do not become proof of predictive edge.",
+    }
     return {
         "executed_at_utc": now.isoformat(),
         "execution_order": "BEFORE_REPORT_SERIALIZATION",
@@ -561,6 +660,8 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
         "blocked_checks": blocked,
         "warning_checks": warnings,
         "rotating_review": checks["rotating_deep_review"],
+        "red_team": red_team,
+        "longitudinal_comparison": longitudinal,
         "market_snapshot": build_market_snapshot(binance, bitstamp, manifests),
         "forecast_snapshot": build_forecast_snapshot(events),
         "analysis_layers": {
