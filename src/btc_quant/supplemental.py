@@ -371,6 +371,127 @@ def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
     return summary, manifest
 
 
+def _parse_okx_response(payload: dict, endpoint: str) -> list[dict]:
+    """Validate the common OKX V5 REST envelope and return its data rows."""
+    if not isinstance(payload, dict):
+        raise ValueError(f"OKX {endpoint} response is not a JSON object")
+    code = str(payload.get("code", ""))
+    if code != "0":
+        raise RuntimeError(
+            f"OKX {endpoint} code={code or 'missing'} msg={payload.get('msg', '')}"
+        )
+    rows = payload.get("data")
+    if not isinstance(rows, list):
+        raise ValueError(f"OKX {endpoint} response has no data array")
+    return rows
+
+
+def _okx_derivatives(directory: Path) -> tuple[dict, dict]:
+    """Acquire OKX public BTC-USDT perpetual snapshots and funding history."""
+    session = requests.Session()
+    session.headers.update({"User-Agent": USER_AGENT})
+    base = "https://www.okx.com"
+    instrument = "BTC-USDT-SWAP"
+    endpoints = {
+        "ticker": ("/api/v5/market/ticker", {"instId": instrument}),
+        "open_interest": (
+            "/api/v5/public/open-interest",
+            {"instType": "SWAP", "instId": instrument},
+        ),
+        "funding_current": (
+            "/api/v5/public/funding-rate",
+            {"instId": instrument},
+        ),
+        "funding_history": (
+            "/api/v5/public/funding-rate-history",
+            {"instId": instrument, "limit": "100"},
+        ),
+    }
+    raw, objects, errors = {}, [], {}
+    try:
+        for key, (path, params) in endpoints.items():
+            url = base + path
+            try:
+                response = session.get(url, params=params, timeout=(8, 20))
+                response.raise_for_status()
+                payload = response.json()
+                rows = _parse_okx_response(payload, key)
+                raw[key] = rows
+                objects.append(_save_object(
+                    directory, f"okx_{key}.json", response.content,
+                    source="OKX V5 public market data",
+                    url=response.url, venue="OKX", symbol=instrument,
+                    quote="USDT", source_grade="A",
+                ))
+            except Exception as exc:  # noqa: BLE001 - keep endpoint failures independent
+                errors[key] = f"{type(exc).__name__}: {exc}"
+    finally:
+        session.close()
+
+    ticker = raw.get("ticker", [{}])
+    ticker = ticker[0] if ticker else {}
+    oi = raw.get("open_interest", [{}])
+    oi = oi[0] if oi else {}
+    funding = raw.get("funding_current", [{}])
+    funding = funding[0] if funding else {}
+    history = sorted(
+        raw.get("funding_history", []),
+        key=lambda row: int(row.get("fundingTime", 0)),
+    )
+    history_rows = []
+    for row in history:
+        rate = row.get("realizedRate")
+        rate_field = "realizedRate" if rate not in (None, "") else "fundingRate"
+        history_rows.append({
+            "funding_time_utc": _timestamp_ms(row.get("fundingTime")),
+            "funding_rate": _float_or_none(row.get(rate_field)),
+            "funding_rate_field": rate_field,
+        })
+    valid_current = bool(ticker or oi or funding)
+    summary = {
+        "venue": "OKX",
+        "instrument": instrument,
+        "quote_currency": "USDT",
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "status": (
+            "PASS" if all(key in raw for key in endpoints)
+            else "PARTIAL" if valid_current or history_rows else "FAIL"
+        ),
+        "last_price_usdt": _float_or_none(ticker.get("last")),
+        "volume_24h_contracts": _float_or_none(ticker.get("vol24h")),
+        "volume_24h_base_currency": _float_or_none(ticker.get("volCcy24h")),
+        "open_interest_contracts": _float_or_none(oi.get("oi")),
+        "open_interest_btc": _float_or_none(oi.get("oiCcy")),
+        "open_interest_usd": _float_or_none(oi.get("oiUsd")),
+        "open_interest_timestamp_utc": _timestamp_ms(oi.get("ts")),
+        "funding_rate_current": _float_or_none(funding.get("fundingRate")),
+        "funding_rate_unit": "fraction per provider funding interval",
+        "funding_timestamp_utc": _timestamp_ms(funding.get("fundingTime")),
+        "next_funding_rate": _float_or_none(funding.get("nextFundingRate")),
+        "next_funding_time_utc": _timestamp_ms(funding.get("nextFundingTime")),
+        "funding_history": history_rows,
+        "funding_history_rows": len(history_rows),
+        "funding_history_scope": "latest 100 returned settlements; endpoint retention and pagination limits apply",
+        "liquidations": {
+            "status": "NOT_ACQUIRED",
+            "reason": "No complete public liquidation history is inferred from OKX market data endpoints.",
+        },
+        "errors": errors,
+    }
+    manifest = {
+        "source": "OKX V5 public market data",
+        "venue": "OKX", "symbol": instrument, "quote_currency": "USDT",
+        "interval": "current ticker/open-interest/funding plus recent funding settlements",
+        "timezone": "UTC", "schema_version": "1.0", "source_grade": "A",
+        "retrieved_at_utc": summary["retrieved_at_utc"],
+        "parser": "OKX V5 REST envelope and BTC perpetual parser",
+        "parser_version": "1.0",
+        "schema": ["ticker", "open-interest", "current funding", "funding history"],
+        "objects": objects, "status": summary["status"], "errors": errors,
+    }
+    return summary, manifest
+
+
 def _bybit_derivatives(directory: Path) -> tuple[dict, dict]:
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
@@ -1342,6 +1463,7 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
     for name, function, directory in (
         ("binance_futures", _binance_derivatives, output_dir / "binance_futures"),
         ("bybit_futures", _bybit_derivatives, output_dir / "bybit_futures"),
+        ("okx_swap", _okx_derivatives, output_dir / "okx_swap"),
         ("deribit_options", _deribit_options, output_dir / "deribit_options"),
         ("us_spot_etf_flows", _etf_flows, output_dir / "etf_flows"),
     ):
@@ -1349,7 +1471,7 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
             result, manifest = function(directory)
             summary[name] = result
             manifests.append(manifest)
-            if name.endswith("futures"):
+            if name.endswith("futures") or name == "okx_swap":
                 derivative_statuses[name] = result.get("status", "FAIL")
             elif name == "deribit_options":
                 summary["coverage"]["options"]["status"] = result.get("status", "PARTIAL")
@@ -1359,7 +1481,7 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
                     "status": "UNAVAILABLE",
                 })
         except Exception as exc:  # noqa: BLE001
-            if name.endswith("futures"):
+            if name.endswith("futures") or name == "okx_swap":
                 derivative_statuses[name] = "FAIL"
             elif name == "deribit_options":
                 summary["coverage"]["options"]["status"] = "FAIL"
@@ -1386,7 +1508,7 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
     derivative_passes = sum(status == "PASS" for status in derivative_statuses.values())
     summary["coverage"]["per_exchange_derivatives"] = {
         "status": (
-            "PASS" if len(derivative_statuses) == 2 and derivative_passes == 2
+            "PASS" if len(derivative_statuses) == 3 and derivative_passes == 3
             else "PARTIAL" if derivative_passes else "FAIL"
         ),
         "by_exchange": derivative_statuses,
