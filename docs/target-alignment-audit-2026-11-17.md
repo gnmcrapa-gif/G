@@ -46,7 +46,7 @@ The ledger is append-only; late entries are invalidated; matured forecasts are s
 Risk Overlay v1.1 remains paper-only. No executable strategy edge, realistic fees/spread/slippage/funding stress, or strategy-level drawdown validation has been established. Theoretical exposure remains 0%; no orders or auto-trading.
 
 ### Automation and repository governance — PASS WITH LIMITATIONS
-Daily workflow runs at 16:00 UTC and persists evidence. Workflow uses `continue-on-error` around research to allow artifact/report persistence before final failure; this is acceptable only if report status remains BLOCKED and exposure remains zero. Both workflows now pin the current Node 24-compatible checkout/setup-python releases and the artifact upload release to full commit SHAs. This removes the observed Node 20 deprecation warnings and avoids mutable major tags. CI must validate the branch before merge. README and protocol now state the timing rule.
+Daily workflow runs at 16:00 UTC and persists evidence. Workflow uses `continue-on-error` around research to allow artifact/report persistence before final failure; this is acceptable only if report status remains BLOCKED and exposure remains zero. Both workflows now pin the current Node 24-compatible checkout/setup-python releases and the artifact upload release to full commit SHAs. This removes the observed Node 20 deprecation warnings and avoids mutable major tags. The daily-research concurrency group is scoped by Git ref so a slow pull-request research run cannot queue ahead of the production main-branch schedule. CI must validate the branch before merge. README and protocol now state the timing rule.
 
 ## Remaining priority actions (not silently claimed complete)
 
