@@ -70,6 +70,77 @@ def _market_snapshot(frame, venue: str, symbol: str, quote: str, retrieved_at: s
     }
 
 
+def _build_halving_cycle_comparison(frame) -> dict:
+    """Compare completed halving cycles at the same elapsed-session horizon; descriptive only."""
+    data = frame.reset_index(drop=True).copy()
+    stamps = pd.to_datetime(data["timestamp"], utc=True)
+    session_dates = stamps.dt.normalize()
+    latest_session = session_dates.iloc[-1]
+    current_halving = pd.Timestamp("2024-04-20", tz="UTC")
+    elapsed_days = int((latest_session - current_halving).days)
+    cycles = []
+    halving_dates = (
+        ("2012 cycle", "2012-11-28"),
+        ("2016 cycle", "2016-07-09"),
+        ("2020 cycle", "2020-05-11"),
+        ("2024 cycle (current)", "2024-04-20"),
+    )
+    for label, date_text in halving_dates:
+        halving = pd.Timestamp(date_text, tz="UTC")
+        starts = data.index[session_dates == halving]
+        if len(starts) == 0:
+            cycles.append({
+                "cycle": label,
+                "halving_date": date_text,
+                "status": "INSUFFICIENT_HISTORY",
+                "first_available_session_utc": stamps.iloc[0].isoformat(),
+            })
+            continue
+        start_idx = int(starts[0])
+        target = halving + pd.Timedelta(days=elapsed_days)
+        ends = data.index[(session_dates <= target) & (data.index >= start_idx)]
+        if len(ends) == 0:
+            cycles.append({
+                "cycle": label, "halving_date": date_text,
+                "status": "INSUFFICIENT_FORWARD_HISTORY",
+            })
+            continue
+        end_idx = int(ends[-1])
+        segment = data.iloc[start_idx:end_idx + 1]
+        closes = segment["close"].astype(float)
+        start_close = float(closes.iloc[0])
+        end_close = float(closes.iloc[-1])
+        peak_idx = int(closes.to_numpy().argmax())
+        peak_close = float(closes.iloc[peak_idx])
+        drawdown = closes / closes.cummax() - 1.0
+        cycles.append({
+            "cycle": label,
+            "halving_date": date_text,
+            "status": "PASS",
+            "elapsed_sessions": len(segment) - 1,
+            "comparison_target_session_utc": stamps.iloc[end_idx].isoformat(),
+            "start_close_usd": start_close,
+            "close_at_same_elapsed_horizon_usd": end_close,
+            "return_at_same_elapsed_horizon_pct": (end_close / start_close - 1.0) * 100.0,
+            "maximum_close_return_pct": (peak_close / start_close - 1.0) * 100.0,
+            "days_to_maximum_close": peak_idx,
+            "maximum_close_drawdown_from_peak_pct": float(drawdown.min()) * 100.0,
+        })
+    current = next((item for item in cycles if item["cycle"].startswith("2024")), {})
+    return {
+        "status": "PASS" if current.get("status") == "PASS" else "PARTIAL",
+        "source": "Bitstamp BTC/USD daily OHLCV; same venue and quote currency",
+        "latest_closed_session_utc": stamps.iloc[-1].isoformat(),
+        "current_cycle_elapsed_sessions": elapsed_days,
+        "comparison_horizon_days": elapsed_days,
+        "cycles": cycles,
+        "interpretation_limit": (
+            "Descriptive comparison at the same elapsed days after halving; sample is small, "
+            "cycles are structurally different, and this is not a timing forecast."
+        ),
+    }
+
+
 def _build_report_sections(run: dict, scores: dict) -> tuple[dict, dict, dict]:
     metrics = scores.get("holdout_metrics", {})
     horizons = sorted(metrics, key=lambda value: int(value))
