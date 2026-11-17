@@ -186,7 +186,7 @@ def _binance_cvd(directory: Path) -> tuple[dict, list[dict]]:
     session.headers.update({"User-Agent": USER_AGENT})
     objects, manifests, summaries, errors = [], [], {}, {}
     sources = (
-        ("spot", "https://api.binance.com/api/v3/klines", "Binance Spot", "BTCUSDT", "USDT"),
+        ("spot", "https://data-api.binance.vision/api/v3/klines", "Binance Spot public market-data mirror", "BTCUSDT", "USDT"),
         ("futures", BINANCE_FUTURES + "/fapi/v1/klines", "Binance USD-M Futures", "BTCUSDT", "USDT"),
     )
     for market, url, venue, symbol, quote in sources:
@@ -1036,18 +1036,22 @@ def _news_context(directory: Path) -> tuple[dict, list[dict]]:
 
 
 def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
-    session = requests.Session()
-    session.headers.update({"User-Agent": USER_AGENT})
-    observations, manifests, errors = {}, [], {}
+    """Acquire independent FRED series concurrently with bounded per-request timeouts."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    directory.mkdir(parents=True, exist_ok=True)
     today = datetime.now(UTC).date()
-    for series_id, meta in FRED_SERIES.items():
+
+    def fetch_one(series_id: str, meta: dict):
         start = today - timedelta(days=meta["lookback_days"])
-        url = FRED_GRAPH
+        session = requests.Session()
+        session.headers.update({"User-Agent": USER_AGENT})
         obj = None
         try:
             response = session.get(
-                url, params={"id": series_id, "cosd": start.isoformat(), "coed": today.isoformat()},
-                timeout=30,
+                FRED_GRAPH,
+                params={"id": series_id, "cosd": start.isoformat(), "coed": today.isoformat()},
+                timeout=12,
             )
             response.raise_for_status()
             raw = response.content
@@ -1068,7 +1072,7 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
             last = valid.iloc[-1]
             last_date = date.fromisoformat(str(last[date_col])[:10])
             age_days = (today - last_date).days
-            observations[series_id] = {
+            observation = {
                 "label": meta["label"], "value": float(last[value_col]),
                 "unit": meta["unit"], "observation_date": last_date.isoformat(),
                 "retrieved_at_utc": datetime.now(UTC).isoformat(),
@@ -1077,36 +1081,52 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
                 "previous_value": float(valid.iloc[-2][value_col]) if len(valid) > 1 else None,
                 "source_url": f"https://fred.stlouisfed.org/series/{series_id}",
             }
-            manifests.append({
+            manifest = {
                 "source": "FRED / original statistical release provider",
                 "venue": "United States macro", "symbol": series_id,
                 "quote_currency": meta["unit"], "interval": "provider native frequency",
                 "timezone": "observation date; release timing may lag",
                 "schema_version": "1.0", "source_grade": "A",
                 "retrieved_at_utc": datetime.now(UTC).isoformat(),
-                "parser": "pandas CSV parser", "parser_version": "0.3",
+                "parser": "pandas CSV parser", "parser_version": "0.4",
                 "schema": list(frame.columns), "objects": [obj],
-                "status": observations[series_id]["status"],
-            })
-        except Exception as exc:  # noqa: BLE001
-            errors[series_id] = f"{type(exc).__name__}: {exc}"
-            manifests.append({
+                "status": observation["status"],
+            }
+            return series_id, observation, manifest, None
+        except Exception as exc:  # noqa: BLE001 - preserve independent series failures
+            error = f"{type(exc).__name__}: {exc}"
+            manifest = {
                 "source": "FRED / original statistical release provider",
                 "venue": "United States macro", "symbol": series_id,
                 "quote_currency": meta["unit"], "interval": "provider native frequency",
                 "timezone": "observation date", "schema_version": "1.0",
                 "source_grade": "A", "retrieved_at_utc": datetime.now(UTC).isoformat(),
-                "parser": "pandas CSV parser", "parser_version": "0.3",
+                "parser": "pandas CSV parser", "parser_version": "0.4",
                 "schema": ["raw CSV retained; parsing failed"] if obj else [],
-                "objects": [obj] if obj else [], "status": "FAIL",
-                "error": errors[series_id],
-            })
+                "objects": [obj] if obj else [], "status": "FAIL", "error": error,
+            }
+            return series_id, None, manifest, error
+        finally:
+            session.close()
+
+    observations, manifests, errors = {}, [], {}
+    # map() preserves the protocol's deterministic FRED_SERIES order.
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        results = list(executor.map(lambda item: fetch_one(item[0], item[1]), FRED_SERIES.items()))
+    for series_id, observation, manifest, error in results:
+        if observation is not None:
+            observations[series_id] = observation
+        if error is not None:
+            errors[series_id] = error
+        manifests.append(manifest)
+
     passed = sum(item["status"] == "PASS" for item in observations.values())
     summary = {
         "status": "PASS" if passed == len(FRED_SERIES) else "PARTIAL" if passed else "FAIL",
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "series": observations,
         "errors": errors,
+        "acquisition_method": "8-worker bounded concurrency; 12-second per-series timeout",
         "source_note": "FRED observation dates are not release timestamps; monthly/weekly series naturally lag the run date.",
     }
     return summary, manifests
