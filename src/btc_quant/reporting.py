@@ -588,7 +588,7 @@ def render_markdown_report(run: dict, scores: dict) -> str:
         move = _provider_data(ckh.get("latest_move", {}))
         lines += ["", "### Sentiment, leverage e flussi on-chain — CryptoKeyhole", "",
                   f"- Provider status: {ckh.get('status')}; acquisito UTC: {ckh.get('retrieved_at_utc')}.",
-                  f"- Fear & Greed: {_display(fear.get('value', fear.get('score')), 1)} / 100; fascia: {fear.get('band', 'n/d')}; as-of: {fear.get('asOf', fear.get('as_of', 'n/d'))}.",
+                  f"- Fear & Greed: {_display(fear.get('value', fear.get('score')), 1)} / 100; fascia: {fear.get('band', 'n/d')}; as-of: {fear.get('asOf', fear.get('as_of', 'n/d'))}; delayed: {fear.get('delayed', 'n/d')}.",
                   f"- Leverage gauge: {_display(leverage.get('value', leverage.get('score')), 2)}; fascia: {leverage.get('band', 'n/d')}; as-of: {leverage.get('asOf', leverage.get('as_of', 'n/d'))}.",
                   f"- Ultimo market-move: {move.get('title', move.get('headline', move.get('summary', 'nessun evento sintetico disponibile')))}."]
         for key, label in (
