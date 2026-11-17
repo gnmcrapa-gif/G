@@ -26,7 +26,7 @@ from btc_quant.ledger import (
     summarize_scored_events,
 )
 from btc_quant.ohlcv_challenger import generate_ohlcv_forecast_events
-from btc_quant.research import cross_check_venues, walk_forward
+from btc_quant.research import HISTORICAL_HOLDOUT_START_UTC, cross_check_venues, walk_forward
 from btc_quant.validation import validate_ohlcv
 
 
@@ -75,8 +75,8 @@ def _append_challenger_proposal(
         "change_family": "OHLCV feature engineering; isolated challenger only",
         "data_manifest_sha256": manifest_sha256,
         "split_definition": (
-            "Train strictly before 2025-11-17 UTC; fixed alpha=100; fixed-start expanding "
-            "continuity holdout from 2025-11-17 UTC excluded from training "
+            "Train strictly before the fixed 2025-11-17 UTC cutoff; fixed alpha=100; fixed-start expanding "
+            "continuity holdout excluded from training "
             "and tuning; evaluate only new append-only prospective SCORE events."
         ),
         "acceptance_criteria": (
@@ -301,7 +301,7 @@ def main() -> int:
                 "candle range, body, upper wick, lower wick and close location",
             ],
             "training_policy": {
-                "holdout_start_utc": "2025-11-17T00:00:00+00:00",
+                "holdout_start_utc": HISTORICAL_HOLDOUT_START_UTC.isoformat(),
                 "training_labels_end_before_holdout": True,
                 "holdout_used_for_training_or_tuning": False,
                 "alpha": 100.0,
