@@ -472,6 +472,7 @@ def main() -> int:
                         run["ledger"]["existing_events_before_run"] + appended
                     )
                     run["ledger"]["persistence_status"] = "PASS"
+                run["pre_report_review"]["post_gate_persistence_status"] = "PASS"
             except Exception as persistence_exc:  # noqa: BLE001 - persistence failure blocks the run
                 run["status"] = "BLOCKED"
                 run["persistence_error"] = f"{type(persistence_exc).__name__}: {persistence_exc}"
@@ -482,6 +483,10 @@ def main() -> int:
                     "live_trading_enabled": False, "theoretical_exposure_pct": 0.0,
                     "reason": "Post-review ledger persistence failed; fail-closed abstention.",
                 }
+                run["pre_report_review"]["status"] = "FAIL"
+                run["pre_report_review"]["publication_gate"] = "BLOCKED"
+                run["pre_report_review"]["decision"] = "BLOCKED_POST_REVIEW_PERSISTENCE_FAILURE"
+                run["pre_report_review"]["blocking_failures"].append("ledger_persistence_failed")
     except Exception as audit_exc:  # noqa: BLE001 - an audit failure must block confidence
         run["status"] = "BLOCKED"
         run["audit_error"] = f"{type(audit_exc).__name__}: {audit_exc}"
