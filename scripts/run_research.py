@@ -139,7 +139,7 @@ def _build_audit(run: dict, prospective: dict) -> dict:
             "the zero-return benchmark after multiple-testing control and realistic costs "
             "falsifies the proposed feature/model improvement."
         ),
-        "next_priority_experiment": "V5.5-OHLCV-001: isolated volume-surprise and candle-geometry challenger; prospective ledger only.",
+        "next_priority_experiment": "Monitor V5.5-OHLCV-001 in its separate prospective-only ledger; no promotion until matured sample, statistical and economic gates pass.",
         "decision": "KEEP_ZERO_RETURN_CHAMPION; RIDGE_CHALLENGER_ONLY; NO_PROMOTION; ABSTAIN_FROM_LIVE_RISK",
     }
 
