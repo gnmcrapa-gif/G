@@ -379,6 +379,16 @@ def _build_longitudinal_comparison(previous: dict | None, current: dict,
     }
 
 
+def _provider_data(payload: dict) -> dict:
+    if not isinstance(payload, dict):
+        return {}
+    for key in ("data", "result", "current"):
+        nested = payload.get(key)
+        if isinstance(nested, dict):
+            return nested
+    return payload
+
+
 def _display(value, digits: int = 4) -> str:
     if value is None:
         return "n/d"
@@ -570,6 +580,32 @@ def render_markdown_report(run: dict, scores: dict) -> str:
         if macro.get("errors"):
             lines.append("")
             lines.append(f"Feed macro non acquisiti: {macro['errors']}")
+
+    ckh = supplemental.get("cryptokeyhole", {})
+    if ckh:
+        fear = _provider_data(ckh.get("fear_and_greed", {}))
+        leverage = _provider_data(ckh.get("leverage_gauge", {}))
+        move = _provider_data(ckh.get("latest_move", {}))
+        lines += ["", "### Sentiment, leverage e flussi on-chain — CryptoKeyhole", "",
+                  f"- Provider status: {ckh.get('status')}; acquisito UTC: {ckh.get('retrieved_at_utc')}.",
+                  f"- Fear & Greed: {_display(fear.get('value', fear.get('score')), 1)} / 100; fascia: {fear.get('band', 'n/d')}; as-of: {fear.get('asOf', fear.get('as_of', 'n/d'))}.",
+                  f"- Leverage gauge: {_display(leverage.get('value', leverage.get('score')), 2)}; fascia: {leverage.get('band', 'n/d')}; as-of: {leverage.get('asOf', leverage.get('as_of', 'n/d'))}.",
+                  f"- Ultimo market-move: {move.get('title', move.get('headline', move.get('summary', 'nessun evento sintetico disponibile')))}."]
+        for key, label in (
+            ("exchange_netflow_btc", "Netflow exchange BTC"),
+            ("exchange_balance_btc", "Balance exchange BTC"),
+        ):
+            item = ckh.get("series", {}).get(key, {})
+            latest = item.get("latest_final", {})
+            lines.append(
+                f"- {label}: stato {item.get('status')}; ultimo valore finale "
+                f"{_display(latest.get('value'), 4)} {item.get('unit', 'BTC')}; "
+                f"timestamp {latest.get('timestamp_utc', 'n/d')}; età giorni "
+                f"{_display(item.get('age_days'), 1)}."
+            )
+        lines.append(f"- Liquidazioni: {ckh.get('liquidations_snapshot_status', 'UNAVAILABLE')} — {ckh.get('liquidations_snapshot_note', 'serie completa non disponibile')}")
+        lines.append(f"- Limiti etichette exchange: {ckh.get('exchange_labeling_limits', 'n/d')}")
+        lines.append("- Attribuzione: CryptoKeyhole; i grafici Free sono CC BY 4.0 ove applicabile. I dati preview/locked non sono usati come osservazioni correnti.")
 
     cycle = run.get("cycle_comparison", {})
     if cycle:
