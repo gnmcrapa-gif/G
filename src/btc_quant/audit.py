@@ -132,8 +132,8 @@ def run_pre_report_review(
     if binance is not None and not binance.empty:
         first_day = pd.Timestamp(binance["timestamp"].min())
         last_day = pd.Timestamp(binance["timestamp"].max())
-        current_period = pd.Timestamp(current).tz_convert("UTC").to_period("M")
-        last_period = last_day.to_period("M")
+        current_period = pd.Timestamp(current).tz_convert("UTC").tz_localize(None).to_period("M")
+        last_period = last_day.tz_convert("UTC").tz_localize(None).to_period("M")
         monthly_end = min(last_period, current_period - 1)
         expected_months = {
             period.strftime("%Y-%m")
