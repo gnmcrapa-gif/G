@@ -481,7 +481,8 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
         "matured_forecasts_by_horizon": prospective_counts,
         "ohlcv_challenger_matured_by_horizon": ohlcv_counts,
         "minimum_per_horizon": 200,
-        "sample_gate_met": prospective_ready,
+        "sample_gate_met_price_only": prospective_ready,
+        "sample_gate_met_ohlcv": len(ohlcv_counts) == 4 and all(value >= 200 for value in ohlcv_counts.values()),
         "strategy_cost_backtest": "NOT_RUN",
         "reason": (
             "No cost-adjusted strategy test is admissible yet: prospective sample gate is not met, "
