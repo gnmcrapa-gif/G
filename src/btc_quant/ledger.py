@@ -207,7 +207,7 @@ def score_matured_events(existing_events: list[dict], frame: pd.DataFrame) -> li
             "signal_timestamp_utc": forecast["signal_timestamp_utc"],
             "feature_cutoff_utc": forecast["feature_cutoff_utc"],
             "regime_ex_ante": forecast["regime_ex_ante"],
-            "forecast": forecast["forecast"],
+            "forecast": predicted,
             "benchmark_forecasts": forecast["benchmark_forecasts"],
             "entry_timestamp_utc": forecast["entry_timestamp_utc"],
             "expiry_timestamp_utc": forecast["expiry_timestamp_utc"],
