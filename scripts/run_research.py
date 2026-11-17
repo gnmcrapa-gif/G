@@ -162,6 +162,7 @@ def main() -> int:
     output_dir.mkdir(parents=True, exist_ok=True)
     previous_report = None
     previous_report_archive = None
+    previous_report_archive_error = None
     prior_path = output_dir / "run_report.json"
     if prior_path.is_file():
         try:
@@ -172,12 +173,13 @@ def main() -> int:
             shutil.copy2(prior_path, previous_report_archive)
         except Exception as archive_exc:  # noqa: BLE001 - preserve run and disclose archive failure
             previous_report_archive = None
+            previous_report_archive_error = f"{type(archive_exc).__name__}: {archive_exc}"
     run = {"started_at_utc": datetime.now(UTC).isoformat(), "status": "BLOCKED",
            "protocol": "V5.6.0", "steps": [], "limitations": []}
     manifests = []
     run["previous_report_archive"] = None if previous_report_archive is None else str(previous_report_archive)
     if prior_path.is_file() and previous_report_archive is None:
-        run["limitations"].append("Previous report archive failed; longitudinal comparison may be incomplete.")
+        run["limitations"].append(f"Previous report archive failed; longitudinal comparison may be incomplete: {previous_report_archive_error}")
     binance = None
     bitstamp = None
     try:
