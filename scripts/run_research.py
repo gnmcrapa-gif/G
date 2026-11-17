@@ -27,7 +27,7 @@ from btc_quant.ledger import (
     score_matured_events,
     summarize_scored_events,
 )
-from btc_quant.supplemental import acquire_supplemental
+from btc_quant.supplemental import acquire_supplemental, empty_supplemental_coverage
 from btc_quant.reporting import (
     _build_longitudinal_comparison,
     _build_report_sections,
@@ -162,7 +162,8 @@ def main() -> int:
     process_started = time.perf_counter()
     stage_started = process_started
     run = {"started_at_utc": datetime.now(UTC).isoformat(), "status": "BLOCKED",
-           "protocol": "V5.6", "steps": [], "limitations": []}
+           "protocol": "V5.6", "steps": [], "limitations": [],
+           "supplemental_data": {"coverage": empty_supplemental_coverage()}}
     manifests = []
     binance = bitstamp = None
     scores = {}
