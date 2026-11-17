@@ -28,9 +28,9 @@ Provider terms apply to public endpoints/archives; no separate legal licensing r
 
 ### Latest out-of-sample evaluation
 
-Fixed-start expanding historical continuity window: **begins 2025-11-17 UTC**, never used for training or tuning; it is previously inspected and not globally unseen. Target horizons: 1, 3, 7, 30 days. The evaluation uses a one-daily-bar operational latency buffer so ledger entries are genuinely in the future at issue time. Ridge alpha is now selected across three purged, expanding chronological validation folds; the final holdout remains untouched. The report also includes Newey-West HAC paired absolute-loss comparisons (lag h-1 for overlapping targets), Holm family-wise multiple-testing correction, and ex-ante bull/bear/range diagnostics.
+Fixed-start expanding historical continuity window: **begins 2025-11-17 UTC**, never used for training or tuning; it is previously inspected and not globally unseen. Target horizons: 1, 3, 7, 30 days. The evaluation uses a one-daily-bar operational latency buffer so ledger entries are genuinely in the future at issue time. Ridge alpha is selected across three purged, expanding chronological validation folds; the fixed-start continuity window remains excluded from training/tuning but is previously inspected and not globally unseen. The report also includes Newey-West HAC paired absolute-loss comparisons (lag h-1 for overlapping targets), Holm family-wise multiple-testing correction, and ex-ante bull/bear/range diagnostics.
 
-MAE is in **log-return units**, not percent. The following metrics are the post-merge V5.4 run on the same untouched historical holdout. The holdout was not used for the three-fold alpha tuning.
+MAE is in **log-return units**, not percent. The following metrics are the post-merge V5.4 run on the historical continuity window. The window was excluded from three-fold alpha tuning, but it had been inspected previously and is not a globally unseen holdout.
 
 | Horizon | OOS n | Zero MAE | Drift MAE | Momentum MAE | Ridge MAE | Ridge vs zero (Holm p) |
 |---:|---:|---:|---:|---:|---:|---:|
@@ -39,7 +39,7 @@ MAE is in **log-return units**, not percent. The following metrics are the post-
 | 7d | 356 | 0.042261 | 0.043085 | 0.076872 | 0.043009 | 0.980 |
 | 30d | 333 | 0.101414 | 0.102499 | 0.185213 | 0.103350 | 1.000 |
 
-Zero-return has the lowest MAE at every horizon. Ridge therefore remains unpromoted. None of the eight paired comparisons (Ridge vs zero and drift at four horizons) rejects the no-difference null after Holm family-wise correction at 5%. HAC standard errors use max lag h-1 for overlapping target returns. Directional accuracy for the zero-return baseline is reported as not applicable, not as 0%. At least 200 matured OOS forecasts per horizon are available in this holdout, but this alone does not establish calibration or economic value.
+Zero-return has the lowest MAE at every horizon. Ridge therefore remains unpromoted. None of the eight paired comparisons (Ridge vs zero and drift at four horizons) rejects the no-difference null after Holm family-wise correction at 5%. HAC standard errors use max lag h-1 for overlapping target returns. Directional accuracy for the zero-return baseline is reported as not applicable, not as 0%. At least 200 historical continuity rows per horizon are available; these are not prospective ledger SCORE events and do not satisfy the 200-matured-prospective-forecast calibration gate.
 
 ### Forecast ledger
 
@@ -51,7 +51,7 @@ Zero-return has the lowest MAE at every horizon. Ridge therefore remains unpromo
 2. Never claim acquisition, QA, training, backtesting, or validation unless executed and evidenced for that run.
 3. Preserve raw data, provenance, hashes, parser/schema versions, and immutable forecast records.
 4. Keep venues and quote currencies separate.
-5. Use point-in-time features, chronological splits, purge/embargo, and an untouched final holdout.
+5. Use point-in-time features, chronological splits, purge/embargo, and a fixed-start holdout excluded from training and tuning; disclose any prior inspection.
 6. Tune only on validation. Statistical changes remain challengers until independently demonstrated.
 7. Abstain when data are stale, incomplete, or fail QA.
 8. Do not make probability claims without adequate matured OOS calibration evidence.
@@ -101,7 +101,7 @@ The repository is public. Do not commit credentials, personal data, exchange acc
 - Ridge alpha tuning uses three expanding chronological validation folds, each purged so validation labels cannot leak into training.
 - Report paired absolute-loss differences versus zero-return and training-drift baselines using Newey-West HAC standard errors with horizon-1 lags for overlapping returns. P-values use a normal approximation and are diagnostics, not standalone promotion criteria.
 - Report ex-ante bull/bear/range holdout slices. Regime labels use only close versus SMA200 and the 20-session SMA200 slope.
-- The V5.3.1 final holdout is not retuned or reused for V5.4 model selection. V5.4 evaluation uses the same historical holdout strictly as a diagnostic continuity check; a future promotion requires a new, untouched prospective period and independent economic tests.
+- The V5.3.1 historical holdout is not retuned or reused for V5.4 model selection. V5.4 evaluation uses the same fixed-start window strictly as a diagnostic continuity check; it is previously inspected and never enters training/tuning. Promotion requires new prospective SCORE events and independent economic tests.
 
 
 ### V5.4 verified execution
@@ -127,7 +127,7 @@ The repository is public. Do not commit credentials, personal data, exchange acc
 
 ## V5.5 verified scope
 
-V5.5 adds prospective matured-ledger scoring against the zero, drift and momentum forecasts saved at issuance; p90/p99 and worst-decile error diagnostics; low-sample regime warnings; explicit 0% theoretical exposure/abstention; a structured audit; and an append-only experiment proposal register. The fixed-start expanding historical holdout beginning 2025-11-17 UTC is explicitly **not globally unseen** because it was previously inspected under V5.3.1. It remains excluded from training and tuning and is continuity diagnostics only. The next OHLCV feature experiment is registered as PROPOSED_NOT_RUN and is not represented as an achieved improvement.
+V5.5 adds prospective matured-ledger scoring against zero, drift and momentum forecasts saved at issuance; p90/p99 and worst-decile error diagnostics; low-sample regime warnings; 0% theoretical exposure/abstention; a structured audit; and an append-only experiment register. The fixed-start expanding historical window beginning 2025-11-17 UTC is explicitly **not globally unseen** because it was previously inspected under V5.3.1. It remains excluded from training and tuning and is continuity diagnostics only. V5.5-OHLCV-001 is now implemented in a separate prospective-only ledger; no matured lift or improvement is claimed.
 
 
 ## V5.5.1 — target timing correction
