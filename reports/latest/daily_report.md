@@ -2,10 +2,10 @@
 
 - Protocollo: **V5.6**
 - Stato: **COMPLETE_NOT_PROMOTED**
-- Avvio UTC: 2026-11-17T22:34:34.433842+00:00
-- Fine UTC: 2026-11-17T22:36:08.243031+00:00
-- Commit: `fbbf957cdc5446023b228d6fc2e74a1a4b2223d1`
-- Workflow run: 44191321836
+- Avvio UTC: 2026-11-17T22:58:12.967288+00:00
+- Fine UTC: 2026-11-17T23:03:11.622061+00:00
+- Commit: `228374317d3dcf73f20f50deb74164fc80412712`
+- Workflow run: 44195016226
 
 > I valori di mercato sono distinti tra osservazioni live, snapshot e candele chiuse. USD e USDT non sono convertiti né uniti.
 
@@ -31,7 +31,7 @@
 
 | Venue | Stato | Prezzo | Variazione 24h | Volume base 24h | Timestamp ultimo scambio UTC | Età sec |
 |---|---|---:|---:|---:|---|---:|
-| Bitstamp_BTCUSD_USD | PASS | 64,621.12 | -0.330% | 1,073.76 BTC | 2026-11-17T22:35:26+00:00 | 1.3 |
+| Bitstamp_BTCUSD_USD | PASS | 64,695.16 | -0.216% | 1,076.55 BTC | 2026-11-17T22:58:54+00:00 | 0.9 |
 
 ### Livelli tecnici descrittivi — non segnali
 
@@ -99,30 +99,30 @@
 ### Opzioni Deribit
 
 - Stato: PARTIAL; open interest con ritardo provider di 8 ore.
-- OI call/put: 219,769.4000 / 169,614.0000 BTC.
-- Put/call OI: 0.7718.
-- Put/call volume USD 24h: 1.5796.
+- OI call/put: 219,928.0000 / 169,633.4000 BTC.
+- Put/call OI: 0.7713.
+- Put/call volume USD 24h: 1.6021.
 
 | Scadenza | DTE | ATM IV % | OI call BTC | OI put BTC |
 |---|---:|---:|---:|---:|
-| 2026-11-18 | 1 | 41.38 | 1,242.60 | 1,664.30 |
-| 2026-11-19 | 2 | 49.37 | 594.60 | 627.30 |
-| 2026-11-20 | 3 | 50.03 | 20,458.30 | 13,117.80 |
-| 2026-11-21 | 4 | 48.97 | 39.20 | 28.90 |
-| 2026-11-27 | 10 | 44.17 | 51,181.40 | 50,880.60 |
-| 2026-12-04 | 17 | 42.70 | 4,567.90 | 3,312.40 |
-| 2026-12-25 | 38 | 41.40 | 88,450.90 | 60,035.80 |
-| 2027-01-29 | 73 | 41.17 | 6,246.50 | 6,806.10 |
-| 2027-03-26 | 129 | 41.05 | 28,732.40 | 18,660.10 |
-| 2027-06-25 | 220 | 41.24 | 11,483.50 | 10,075.60 |
-| 2027-09-24 | 311 | 41.17 | 6,772.10 | 4,405.10 |
+| 2026-11-18 | 1 | 38.63 | 1,254.50 | 1,663.30 |
+| 2026-11-19 | 2 | 46.74 | 595.20 | 638.10 |
+| 2026-11-20 | 3 | 47.23 | 20,463.40 | 13,118.00 |
+| 2026-11-21 | 4 | 46.56 | 41.40 | 28.90 |
+| 2026-11-27 | 10 | 42.41 | 51,283.10 | 50,883.90 |
+| 2026-12-04 | 17 | 41.94 | 4,569.30 | 3,314.50 |
+| 2026-12-25 | 38 | 41.04 | 88,479.10 | 60,035.00 |
+| 2027-01-29 | 73 | 40.99 | 6,254.00 | 6,819.90 |
+| 2027-03-26 | 129 | 40.91 | 28,732.40 | 18,651.10 |
+| 2027-06-25 | 220 | 41.12 | 11,483.50 | 10,075.60 |
+| 2027-09-24 | 311 | 41.11 | 6,772.10 | 4,405.10 |
 
 | Scadenza | 25Δ put IV % | 25Δ call IV % | Put-call skew vol points |
 |---|---:|---:|---:|
 | 2026-11-18 | n/d | n/d | n/d |
 | 2026-11-19 | n/d | n/d | n/d |
 | 2026-11-20 | n/d | n/d | n/d |
-| 2026-11-21 | 55.57 | n/d | n/d |
+| 2026-11-21 | 52.96 | n/d | n/d |
 - Gamma/dealer positioning: NOT_IDENTIFIABLE; Public open interest and option Greeks do not reveal whether dealers are net long or short; no dealer-side sign is inferred.
 
 ### ETF spot Bitcoin USA
@@ -140,7 +140,7 @@
 | Serie | Osservazione | Valore | Unità | Stato |
 |---|---|---:|---|---|
 
-Feed macro non acquisiti: {'DGS2': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'DGS10': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'DFII10': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'FEDFUNDS': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'CPIAUCSL': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'PCEPILFE': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'UNRATE': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'PAYEMS': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'DTWEXBGS': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'WALCL': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'RRPONTSYD': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'NFCI': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'SP500': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'NASDAQCOM': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'VIXCLS': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)", 'M2SL': "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=12)"}
+Feed macro non acquisiti: {'DGS2': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DGS2&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'DGS10': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DGS10&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'DFII10': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DFII10&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'FEDFUNDS': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=FEDFUNDS&cosd=2021-11-18&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'CPIAUCSL': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=CPIAUCSL&cosd=2021-11-18&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'PCEPILFE': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=PCEPILFE&cosd=2021-11-18&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'UNRATE': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=UNRATE&cosd=2021-11-18&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'PAYEMS': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=PAYEMS&cosd=2021-11-18&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'DTWEXBGS': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DTWEXBGS&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'WALCL': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=WALCL&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'RRPONTSYD': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=RRPONTSYD&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'NFCI': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=NFCI&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'SP500': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=SP500&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'NASDAQCOM': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=NASDAQCOM&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'VIXCLS': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=VIXCLS&cosd=2025-11-17&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'M2SL': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=M2SL&cosd=2021-11-18&coed=2026-11-17 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))'}
 
 ## 5. Ciclo Bitcoin — confronto post-halving
 
