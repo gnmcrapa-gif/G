@@ -154,9 +154,9 @@ def test_cboe_vix_csv_parser_skips_provider_preamble_and_utf8_bom():
     from btc_quant.supplemental import _parse_cboe_vix_csv
 
     payload = (
-        "\\ufeff\\"Cboe Global Markets historical data\\"\\n"
-        "DATE,OPEN,HIGH,LOW,CLOSE\\n"
-        "11/17/2026,19.0,20.0,18.0,19.5\\n"
+        "\ufeff\"Cboe Global Markets historical data\"\n"
+        "DATE,OPEN,HIGH,LOW,CLOSE\n"
+        "11/17/2026,19.0,20.0,18.0,19.5\n"
     ).encode("utf-8")
     assert _parse_cboe_vix_csv(payload) == (date(2026, 11, 17), 19.5)
 
