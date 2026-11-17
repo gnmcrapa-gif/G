@@ -348,15 +348,15 @@ def render_markdown_report(run: dict, scores: dict) -> str:
             f"{_display(item.get('volume_7d_btc'), 2)} | {_display(item.get('volume_30d_btc'), 2)} |"
         )
     lines += ["", "### Quotazioni spot — ultimo scambio osservato", "",
-              "| Venue | Prezzo | Variazione 24h | Volume base 24h | Timestamp ultimo scambio UTC |",
-              "|---|---:|---:|---:|---|"]
+              "| Venue | Stato | Prezzo | Variazione 24h | Volume base 24h | Timestamp ultimo scambio UTC | Età sec |",
+              "|---|---|---:|---:|---:|---|---:|"]
     live_spot = run.get("supplemental_data", {}).get("spot_live", {})
     for venue, item in live_spot.get("venues", {}).items():
         lines.append(
-            f"| {venue} | {_display(item.get('last_trade_price'), 2)} | "
+            f"| {venue} | {item.get('status')} | {_display(item.get('last_trade_price'), 2)} | "
             f"{_display(item.get('price_change_24h_pct'), 3)}% | "
             f"{_display(item.get('base_volume_24h_btc'), 2)} BTC | "
-            f"{item.get('last_trade_timestamp_utc')} |"
+            f"{item.get('last_trade_timestamp_utc')} | {_display(item.get('last_trade_age_seconds'), 1)} |"
         )
     lines += ["", "### Livelli tecnici descrittivi — non segnali", "",
               "| Venue | SMA20 | SMA50 | SMA200 | Massimo 20D | Minimo 20D | ATR14 |",
