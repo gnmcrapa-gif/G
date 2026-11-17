@@ -6,9 +6,9 @@ import io
 import math
 import re
 import xml.etree.ElementTree as ET
+from datetime import UTC, date, datetime, timedelta
 from email.utils import parsedate_to_datetime
 from html import unescape
-from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
 
 import pandas as pd
