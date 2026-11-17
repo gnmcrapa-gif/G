@@ -374,7 +374,7 @@ def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
 def _parse_okx_response(payload: dict, endpoint: str) -> list[dict]:
     """Validate the common OKX V5 REST envelope and return its data rows."""
     if not isinstance(payload, dict):
-        raise ValueError(f"OKX {endpoint} response is not a JSON object")
+        raise TypeError(f"OKX {endpoint} response is not a JSON object")
     code = str(payload.get("code", ""))
     if code != "0":
         raise RuntimeError(
@@ -1514,7 +1514,6 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
                 "schema": [], "objects": [], "status": "FAIL",
                 "error": summary[name]["error"],
             })
-    derivative_passes = sum(status == "PASS" for status in derivative_statuses.values())
     summary["coverage"]["per_exchange_derivatives"] = {
         "status": _derivative_coverage_status(derivative_statuses),
         "by_exchange": derivative_statuses,
