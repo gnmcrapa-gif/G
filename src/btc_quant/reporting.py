@@ -265,3 +265,171 @@ def _build_longitudinal_comparison(previous: dict | None, current: dict,
             "holdout windows; all such historical results remain continuity diagnostics."
         ),
     }
+
+
+def _display(value, digits: int = 4) -> str:
+    if value is None:
+        return "n/d"
+    if isinstance(value, float):
+        return f"{value:,.{digits}f}"
+    return str(value)
+
+
+def render_markdown_report(run: dict, scores: dict) -> str:
+    """Render a human-readable report from the exact run payload; no extra data lookups."""
+    lines = [
+        "# BTC Quant Desk — report giornaliero",
+        "",
+        f"- Protocollo: **{run.get('protocol', 'n/d')}**",
+        f"- Stato: **{run.get('status', 'BLOCKED')}**",
+        f"- Avvio UTC: {run.get('started_at_utc', 'n/d')}",
+        f"- Fine UTC: {run.get('finished_at_utc', 'n/d')}",
+        f"- Commit: `{run.get('code_provenance', {}).get('commit_sha', 'n/d')}`",
+        f"- Workflow run: {run.get('code_provenance', {}).get('workflow_run_id', 'n/d')}",
+        "",
+        "> I valori di mercato sono distinti tra osservazioni live, snapshot e candele chiuse. USD e USDT non sono convertiti né uniti.",
+        "",
+        "## 1. Acquisizione e qualità dati",
+        "",
+        "| Feed | Stato | Evidenza / dettaglio |",
+        "|---|---|---|",
+    ]
+    for step in run.get("steps", []):
+        qa = step.get("qa", {})
+        detail = (
+            f"righe={qa.get('rows')}, gap={qa.get('gap_count')}, duplicati={qa.get('duplicates')}, "
+            f"ultima candela={qa.get('last_timestamp_utc')}"
+            if qa else step.get("error", step.get("status", "n/d"))
+        )
+        lines.append(f"| {step.get('step')} | {step.get('status')} | {detail} |")
+    lines += ["", "## 2. Prezzi spot — ultime candele giornaliere chiuse", "",
+              "| Venue | Strumento | Candela UTC | Close | Variazione 1D | Range intraday | Volume BTC |",
+              "|---|---|---|---:|---:|---:|---:|"]
+    for item in run.get("market_snapshot", {}).get("venues", []):
+        lines.append(
+            f"| {item.get('venue')} | {item.get('symbol')} ({item.get('quote_currency')}) | "
+            f"{item.get('candle_open_timestamp_utc')} | {_display(item.get('close_quote_per_btc'), 2)} | "
+            f"{_display(item.get('close_change_1d_pct'), 3)}% | "
+            f"{_display(item.get('intraday_range_pct'), 3)}% | {_display(item.get('volume_btc'), 2)} |"
+        )
+    lines += ["", "## 3. Copertura dei dati supplementari", "",
+              "| Categoria | Stato | Nota / limite |", "|---|---|---|"]
+    supplemental = run.get("supplemental_data", {})
+    coverage = supplemental.get("coverage", {})
+    for name, item in coverage.items():
+        note = item.get("reason", item.get("note", ""))
+        lines.append(f"| {name} | {item.get('status', 'n/d')} | {note} |")
+
+    for name, label in (("binance_futures", "Binance Futures"), ("bybit_futures", "Bybit Linear")):
+        item = supplemental.get(name, {})
+        if item:
+            lines += ["", f"### {label}", "",
+                      f"- Stato: {item.get('status', 'n/d')}",
+                      f"- Funding corrente/ultimo: {_display(item.get('current_funding_rate', item.get('funding_rate_current')))}",
+                      f"- Open interest: {_display(item.get('open_interest_btc'))} BTC",
+                      f"- Variazione OI 1D: {_display(item.get('open_interest_value_change_1d_pct', item.get('open_interest_history_change_1d_pct')))}%",
+                      f"- Variazione OI 7D: {_display(item.get('open_interest_value_change_7d_pct', item.get('open_interest_history_change_7d_pct')))}%",
+                      f"- Taker buy/sell ratio (Binance proxy): {_display(item.get('taker_buy_sell_ratio_latest'))}",
+                      f"- Volume futures 24h (Bybit): {_display(item.get('volume_24h_btc'))} BTC"]
+            if item.get("errors"):
+                lines.append(f"- Errori feed: {item['errors']}")
+
+    options = supplemental.get("deribit_options", {})
+    if options:
+        lines += ["", "### Opzioni Deribit", "",
+                  f"- Stato: {options.get('status', 'n/d')}; open interest con ritardo provider di {options.get('open_interest_delay_hours', 'n/d')} ore.",
+                  f"- OI call/put: {_display(options.get('total_call_open_interest_btc'))} / {_display(options.get('total_put_open_interest_btc'))} BTC.",
+                  f"- Put/call OI: {_display(options.get('put_call_open_interest_ratio'))}.",
+                  f"- Put/call volume USD 24h: {_display(options.get('put_call_volume_ratio'))}."]
+        lines += ["", "| Scadenza | DTE | ATM IV % | OI call BTC | OI put BTC |",
+                  "|---|---:|---:|---:|---:|"]
+        for expiry in options.get("expiry_term_structure", [])[:12]:
+            lines.append(
+                f"| {expiry.get('expiry_date')} | {expiry.get('days_to_expiry')} | "
+                f"{_display(expiry.get('nearest_atm_mark_iv_pct'), 2)} | "
+                f"{_display(expiry.get('call_open_interest_btc'), 2)} | "
+                f"{_display(expiry.get('put_open_interest_btc'), 2)} |"
+            )
+        lines += ["", "| Scadenza | 25Δ put IV % | 25Δ call IV % | Put-call skew vol points |",
+                  "|---|---:|---:|---:|"]
+        for skew in options.get("sampled_25d_skew", []):
+            lines.append(
+                f"| {skew.get('expiry_date')} | {_display(skew.get('put_25d_mark_iv_pct'), 2)} | "
+                f"{_display(skew.get('call_25d_mark_iv_pct'), 2)} | "
+                f"{_display(skew.get('put_minus_call_25d_skew_vol_points'), 2)} |"
+            )
+        lines.append(
+            f"- Gamma/dealer positioning: {options.get('dealer_gamma_positioning', {}).get('status')}; "
+            f"{options.get('dealer_gamma_positioning', {}).get('reason', '')}"
+        )
+
+    etf = supplemental.get("us_spot_etf_flows", {})
+    if etf:
+        latest = etf.get("latest_session", {})
+        lines += ["", "### ETF spot Bitcoin USA", "",
+                  f"- Stato: {etf.get('status')}; dati aggiornati al {etf.get('updated_through')} "
+                  f"(circa {etf.get('business_sessions_behind_approx')} sessioni USA di ritardo).",
+                  f"- Flusso ultima sessione: {_display(latest.get('netFlowUsd'), 2)} USD.",
+                  f"- AUM totale ultima sessione: {_display(latest.get('totalNetAssetsUsd'), 2)} USD.",
+                  f"- Flusso cumulativo dalla partenza: {_display(etf.get('cumulative_net_flow_usd'), 2)} USD.",
+                  f"- Flusso ultime 21 sessioni: {_display(etf.get('last_21_sessions_net_flow_usd'), 2)} USD.",
+                  f"- Flusso ultime 30 sessioni: {_display(etf.get('last_30_sessions_net_flow_usd'), 2)} USD.",
+                  f"- Fonte/licenza: {etf.get('source')} / {etf.get('license')}."]
+    macro = supplemental.get("macro", {})
+    if macro:
+        lines += ["", "## 4. Macro e mercati USA", "",
+                  "| Serie | Osservazione | Valore | Unità | Stato |",
+                  "|---|---|---:|---|---|"]
+        for series_id, item in macro.get("series", {}).items():
+            lines.append(
+                f"| {series_id} — {item.get('label')} | {item.get('observation_date')} | "
+                f"{_display(item.get('value'), 4)} | {item.get('unit')} | {item.get('status')} |"
+            )
+        if macro.get("errors"):
+            lines.append(f"")
+            lines.append(f"Feed macro non acquisiti: {macro['errors']}")
+
+    lines += ["", "## 5. Validazione quantitativa", "",
+              "Le metriche seguenti sono diagnostiche sul periodo storico già ispezionato; non sono prova prospettica né PnL eseguibile.",
+              "", "| Orizzonte | N | Zero MAE | Drift MAE | Momentum MAE | Ridge MAE |",
+              "|---:|---:|---:|---:|---:|---:|"]
+    for horizon, block in scores.get("holdout_metrics", {}).items():
+        lines.append(
+            f"| {horizon} sessioni | {block.get('zero', {}).get('n', 0)} | "
+            f"{_display(block.get('zero', {}).get('mae'), 6)} | "
+            f"{_display(block.get('drift', {}).get('mae'), 6)} | "
+            f"{_display(block.get('momentum', {}).get('mae'), 6)} | "
+            f"{_display(block.get('ridge', {}).get('mae'), 6)} |"
+        )
+    ledger = run.get("ledger", {})
+    lines += ["", "## 6. Ledger e rischio", "",
+              f"- Stato ledger: {ledger.get('persistence_status', 'n/d')}; eventi prima/dopo: "
+              f"{ledger.get('existing_events_before_run', 'n/d')} / {ledger.get('total_events_after_run', 'n/d')}.",
+              f"- Nuove previsioni: {ledger.get('forecast_events_created', 0)}; duplicate soppresse: "
+              f"{ledger.get('duplicate_forecasts_suppressed', 0)}; score maturati: {ledger.get('score_events_created', 0)}.",
+              f"- Campione prospettico: {run.get('prospective_ledger_validation', {}).get('decision', 'n/d')}.",
+              f"- Rischio: {run.get('risk', {}).get('mode', 'n/d')}; live trading: "
+              f"{run.get('risk', {}).get('live_trading_enabled', False)}; esposizione teorica: "
+              f"{_display(run.get('risk', {}).get('theoretical_exposure_pct'), 2)}%.",
+              "- Champion congelato: zero-return. Ridge è challenger non promosso.",
+              "- Nessun PnL economico o probabilità calibrata è dichiarato.",
+              "", "## 7. Revisione critica e conclusione", ""]
+    audit = run.get("pre_report_review", {})
+    lines.append(
+        f"- Gate pre-report: {audit.get('status', 'n/d')}; cicli completati: "
+        f"{len(audit.get('review_cycles', []))}; fallimenti bloccanti: "
+        f"{audit.get('blocking_failures', [])}."
+    )
+    closing = run.get("closing_assessment", {})
+    for driver in closing.get("observed_drivers", []):
+        lines.append(
+            f"- Fattore osservato: {driver.get('name')} = {_display(driver.get('value'), 4)} "
+            f"{driver.get('unit')} ({driver.get('source')}, {driver.get('timestamp_utc')})."
+        )
+    lines.append(f"- Limite principale: {closing.get('principal_limit', 'n/d')}")
+    lines.append(f"- Evidenza che cambierebbe la valutazione: {closing.get('evidence_that_would_change_assessment', 'n/d')}")
+    lines.append(f"- Prossimo esperimento: {closing.get('single_next_priority_experiment', 'n/d')}")
+    lines += ["", "## 8. Limiti dichiarati", ""]
+    for limitation in run.get("limitations", []):
+        lines.append(f"- {limitation}")
+    return "\n".join(lines) + "\n"
