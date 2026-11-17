@@ -24,10 +24,10 @@ All timestamps are UTC daily candle-open timestamps. Both primary venues have ov
 
 ### Data-quality findings
 
-- Binance maximum robust volume deviation: 27.21 (dimensionless robust diagnostic), on 2022-11-08 UTC; maximum volume 760,705.36 BTC. This is a diagnostic, not an automatic data rejection.
-- Binance largest absolute close-to-close log return: 0.5026 (log-return units), 2020-03-12 UTC.
-- Binance largest intraday high-low range / open: 45.27%, 2020-03-13 UTC.
-- Bitstamp maximum robust volume deviation: 23.00, 2018-02-06 UTC.
+- The earlier full-history robust volume z-scores (27.21 for Binance and 23.00 for Bitstamp) are withdrawn: a single full-sample median/MAD is not a reliable outlier baseline for non-stationary exchange volume across 9–10 years.
+- V5.6 replaces that statistic with a rolling 90-session median/MAD score, excluding the current session and requiring at least 60 prior observations. The new maximum and timestamp must be recomputed by the next V5.6 run; no replacement value is claimed yet.
+- Binance largest absolute close-to-close log return in the V5.5.1 run: 0.5026 (log-return units), 2020-03-12 UTC.
+- Binance largest intraday high-low range / open in the V5.5.1 run: 45.27%, 2020-03-13 UTC.
 - Outlier diagnostics do not establish erroneous data. Venue-level volume is not expected to match.
 
 ## Historical continuity scorecard
