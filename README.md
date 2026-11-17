@@ -91,7 +91,7 @@ python scripts/run_research.py
 
 ## Security and limitations
 
-The repository is public. Do not commit credentials, personal data, exchange account exports, or non-public/licensed datasets. This is a price-only research model; no strategy PnL, fees/spread/slippage/funding stress test, regime-stratified significance, multiple-testing correction, derivatives, ETF, options, on-chain, or macro model is claimed. Those gaps must be addressed before any economic or live-trading conclusion.
+The repository is public. Do not commit credentials, personal data, exchange account exports, or non-public/licensed datasets. The frozen champion and price-only Ridge benchmark remain price-only; a separate OHLCV challenger is prospective-only and unpromoted. No strategy PnL or fee/spread/slippage/funding stress test is claimed. Holm multiple-testing correction is applied to the historical continuity comparisons, but those data are not independent prospective evidence. Derivatives, ETF, options, on-chain and macro models are not integrated. Those gaps must be addressed before any economic or live-trading conclusion.
 
 
 ## V5.4 research upgrade
