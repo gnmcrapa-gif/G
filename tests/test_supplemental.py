@@ -45,6 +45,19 @@ def test_numeric_helpers_reject_nonfinite_and_zero_denominator():
     assert _pct_change(None, 110.0) is None
 
 
+def test_monthly_macro_freshness_uses_period_end_not_first_of_month():
+    from datetime import date
+
+    from btc_quant.supplemental import _freshness_reference_date
+
+    assert _freshness_reference_date(
+        date(2026, 10, 1), {"frequency": "monthly"},
+    ) == date(2026, 10, 31)
+    assert _freshness_reference_date(
+        date(2026, 11, 17), {"frequency": "daily"},
+    ) == date(2026, 11, 17)
+
+
 def test_macro_series_have_units_frequencies_and_freshness_limits():
     assert FRED_SERIES["DGS10"]["unit"] == "percent"
     assert FRED_SERIES["DFII10"]["max_age_days"] == 5
