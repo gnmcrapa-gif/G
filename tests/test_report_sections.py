@@ -98,6 +98,8 @@ def test_market_snapshot_adds_7d_30d_and_technical_reference_levels():
     assert snapshot["high_20d_quote_per_btc"] == 351.0
     assert snapshot["low_20d_quote_per_btc"] == 328.0
     assert snapshot["atr_14_quote_per_btc"] == 4.0
+    assert snapshot["volume_7d_btc"] == 7000.0
+    assert snapshot["volume_30d_btc"] == 30000.0
 
 
 def test_markdown_report_discloses_stale_and_unavailable_context_sources():
