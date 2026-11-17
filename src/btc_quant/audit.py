@@ -88,7 +88,10 @@ def verify_binance_archive_coverage(source: dict | None, now: datetime) -> dict:
     yesterday = today - timedelta(days=1)
     current_month = date(today.year, today.month, 1)
     objects = source.get("objects", [])
-    by_name = {Path(obj.get("file", "")).stem: obj for obj in objects}
+    by_name = {
+        Path(obj.get("original_filename") or obj.get("file", "")).stem: obj
+        for obj in objects
+    }
     expected_months = _month_keys(start, current_month - timedelta(days=1))
     expected_days = [
         (date(today.year, today.month, day)).isoformat()
