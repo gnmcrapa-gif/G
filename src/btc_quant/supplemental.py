@@ -1509,7 +1509,9 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
     summary["coverage"]["per_exchange_derivatives"] = {
         "status": (
             "PASS" if len(derivative_statuses) == 3 and derivative_passes == 3
-            else "PARTIAL" if derivative_passes else "FAIL"
+            else "PARTIAL" if any(
+                status in {"PASS", "PARTIAL"} for status in derivative_statuses.values()
+            ) else "FAIL"
         ),
         "by_exchange": derivative_statuses,
     }
