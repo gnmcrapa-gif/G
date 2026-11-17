@@ -603,6 +603,35 @@ def render_markdown_report(run: dict, scores: dict) -> str:
                 f"timestamp {latest.get('timestamp_utc', 'n/d')}; età giorni "
                 f"{_display(item.get('age_days'), 1)}."
             )
+        liquidation = ckh.get("liquidations_page", {})
+        if liquidation:
+            lines += ["", f"- Liquidazioni 24h multi-asset: {_display(liquidation.get('all_coins_24h_total_usd') / 1e6 if liquidation.get('all_coins_24h_total_usd') is not None else None, 1)} mln USD; long {_display(liquidation.get('all_coins_24h_longs_usd') / 1e6 if liquidation.get('all_coins_24h_longs_usd') is not None else None, 1)} mln; short {_display(liquidation.get('all_coins_24h_shorts_usd') / 1e6 if liquidation.get('all_coins_24h_shorts_usd') is not None else None, 1)} mln.",
+                      f"- Copertura: {liquidation.get('coins_covered')} coin; finestra fino a {liquidation.get('window_end_utc')}; pagina aggiornata {liquidation.get('page_updated_at_utc')}.",
+                      f"- Bitcoin 24h: long {_display(liquidation.get('bitcoin_24h_longs_usd') / 1e6 if liquidation.get('bitcoin_24h_longs_usd') is not None else None, 1)} mln USD; short {_display(liquidation.get('bitcoin_24h_shorts_usd') / 1e6 if liquidation.get('bitcoin_24h_shorts_usd') is not None else None, 1)} mln USD (somma componenti arrotondate: {_display(liquidation.get('bitcoin_24h_total_usd') / 1e6 if liquidation.get('bitcoin_24h_total_usd') is not None else None, 1)} mln).",
+                      "| Mercato | Lato | 1h USD | 4h USD | 12h USD | 24h USD |",
+                      "|---|---|---:|---:|---:|---:|"]
+            for coin in ("Bitcoin", "All 153 coins"):
+                for side in ("longs", "shorts"):
+                    values = liquidation.get("hourly_windows_by_coin", {}).get(coin, {}).get(side, {})
+                    lines.append(
+                        f"| {coin} | {side} | "
+                        f"{_display(values.get('1h_usd') / 1e6 if values.get('1h_usd') is not None else None, 2)} mln | "
+                        f"{_display(values.get('4h_usd') / 1e6 if values.get('4h_usd') is not None else None, 2)} mln | "
+                        f"{_display(values.get('12h_usd') / 1e6 if values.get('12h_usd') is not None else None, 2)} mln | "
+                        f"{_display(values.get('24h_usd') / 1e6 if values.get('24h_usd') is not None else None, 2)} mln |"
+                    )
+            btc_largest = next(
+                (row for row in liquidation.get("largest_single_liquidations", []) if row.get("coin") == "BTC"),
+                None,
+            )
+            if btc_largest:
+                lines.append(
+                    f"- Maggiore singola liquidazione BTC nella tabella live: {btc_largest.get('side')} "
+                    f"{_display(btc_largest.get('size_usd') / 1e6 if btc_largest.get('size_usd') is not None else None, 2)} mln USD "
+                    f"su {btc_largest.get('venue')} alle {btc_largest.get('time_utc')} UTC."
+                )
+            lines.append(f"- Limiti copertura liquidazioni: {liquidation.get('limitations')}")
+            lines.append(f"- Fonte: {liquidation.get('source_url')}")
         lines.append(f"- Liquidazioni: {ckh.get('liquidations_snapshot_status', 'UNAVAILABLE')} — {ckh.get('liquidations_snapshot_note', 'serie completa non disponibile')}")
         ranking = ckh.get("exchange_daily_ranking", {})
         if ranking:
