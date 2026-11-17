@@ -1155,6 +1155,72 @@ def _treasury_yield_fallback(series_id: str, meta: dict, directory: Path,
     return observation, manifest
 
 
+def _parse_cboe_vix_csv(payload: bytes) -> tuple[date, float]:
+    """Parse Cboe's official daily VIX history CSV and return its latest close."""
+    text = payload.decode("utf-8-sig")
+    lines = text.splitlines()
+    header_index = next(
+        (index for index, line in enumerate(lines) if line.strip().upper().startswith("DATE,")),
+        None,
+    )
+    if header_index is None:
+        raise ValueError("Cboe VIX CSV has no DATE header row")
+    frame = pd.read_csv(io.StringIO("\n".join(lines[header_index:])))
+    frame.columns = [str(column).strip().upper() for column in frame.columns]
+    required = {"DATE", "CLOSE"}
+    if not required.issubset(frame.columns):
+        raise ValueError(f"Cboe VIX CSV missing columns: {sorted(required - set(frame.columns))}")
+    dates = pd.to_datetime(frame["DATE"], errors="coerce")
+    closes = pd.to_numeric(frame["CLOSE"], errors="coerce")
+    valid = pd.DataFrame({"date": dates, "close": closes}).dropna()
+    valid = valid[valid["close"] > 0]
+    if valid.empty:
+        raise ValueError("Cboe VIX CSV has no valid positive closes")
+    latest = valid.loc[valid["date"].idxmax()]
+    return latest["date"].date(), float(latest["close"])
+
+
+def _cboe_vix_fallback(series_id: str, meta: dict, directory: Path,
+                       today: date) -> tuple[dict, dict]:
+    """Fetch daily VIX history directly from Cboe when the FRED transport fails."""
+    if series_id != "VIXCLS":
+        raise ValueError(f"No Cboe fallback configured for {series_id}")
+    url = "https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv"
+    response = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=(8, 20))
+    response.raise_for_status()
+    raw = response.content
+    observation_date, value = _parse_cboe_vix_csv(raw)
+    age_days = (today - observation_date).days
+    obj = _save_object(
+        directory, "cboe_vix_history.csv", raw,
+        source="Cboe official VIX historical daily prices",
+        url=response.url, venue="Cboe", symbol="VIX",
+        quote="index points", source_grade="A",
+    )
+    observation = {
+        "label": meta["label"], "value": value, "unit": "index points",
+        "observation_date": observation_date.isoformat(),
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "age_calendar_days": age_days,
+        "status": "PASS" if 0 <= age_days <= meta["max_age_days"] else "STALE",
+        "previous_value": None,
+        "source_url": url,
+        "source_method": "Cboe official historical daily VIX close; independent of FRED transport",
+    }
+    manifest = {
+        "source": "Cboe official VIX historical daily prices",
+        "venue": "Cboe", "symbol": "VIX", "quote_currency": "index points",
+        "interval": "daily", "timezone": "Cboe session date",
+        "schema_version": "1.0", "source_grade": "A",
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "parser": "Cboe VIX history CSV parser", "parser_version": "1.0",
+        "schema": ["DATE", "OPEN", "HIGH", "LOW", "CLOSE"],
+        "objects": [obj], "status": observation["status"],
+        "fallback_for": "FRED transport failure",
+    }
+    return observation, manifest
+
+
 def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
     """Acquire independent FRED series concurrently with bounded per-request timeouts."""
     from concurrent.futures import ThreadPoolExecutor
@@ -1225,6 +1291,18 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
                 except Exception as fallback_exc:  # noqa: BLE001
                     error = (
                         f"FRED failed ({fred_error}); Treasury fallback failed "
+                        f"({type(fallback_exc).__name__}: {fallback_exc})"
+                    )
+            elif series_id == "VIXCLS":
+                try:
+                    fallback_observation, fallback_manifest = _cboe_vix_fallback(
+                        series_id, meta, directory, today,
+                    )
+                    fallback_manifest["fred_primary_error"] = fred_error
+                    return series_id, fallback_observation, fallback_manifest, None
+                except Exception as fallback_exc:  # noqa: BLE001
+                    error = (
+                        f"FRED failed ({fred_error}); Cboe fallback failed "
                         f"({type(fallback_exc).__name__}: {fallback_exc})"
                     )
             else:

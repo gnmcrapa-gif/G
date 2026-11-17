@@ -139,6 +139,37 @@ def test_treasury_xml_parser_rejects_unsupported_series():
         _parse_treasury_yield_xml(b"<feed/>", "VIXCLS")
 
 
+def test_cboe_vix_csv_parser_reads_latest_official_close():
+    from datetime import date
+
+    from btc_quant.supplemental import _parse_cboe_vix_csv
+
+    payload = b"DATE,OPEN,HIGH,LOW,CLOSE\n11/16/2026,18.0,19.0,17.0,18.5\n11/17/2026,19.0,20.0,18.0,19.5\n"
+    assert _parse_cboe_vix_csv(payload) == (date(2026, 11, 17), 19.5)
+
+
+def test_cboe_vix_csv_parser_skips_provider_preamble_and_utf8_bom():
+    from datetime import date
+
+    from btc_quant.supplemental import _parse_cboe_vix_csv
+
+    payload = (
+        "\ufeff\"Cboe Global Markets historical data\"\n"
+        "DATE,OPEN,HIGH,LOW,CLOSE\n"
+        "11/17/2026,19.0,20.0,18.0,19.5\n"
+    ).encode("utf-8")
+    assert _parse_cboe_vix_csv(payload) == (date(2026, 11, 17), 19.5)
+
+
+def test_cboe_vix_csv_parser_rejects_invalid_schema_and_unsupported_series():
+    from btc_quant.supplemental import _cboe_vix_fallback, _parse_cboe_vix_csv
+
+    with pytest.raises(ValueError, match="missing columns"):
+        _parse_cboe_vix_csv(b"DATE,OPEN\n11/17/2026,19.0\n")
+    with pytest.raises(ValueError, match="No Cboe fallback"):
+        _cboe_vix_fallback("SP500", {}, None, None)
+
+
 def test_fred_session_retries_transient_http_failures_with_bounded_policy():
     import requests
 
