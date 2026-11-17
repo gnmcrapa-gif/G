@@ -293,6 +293,20 @@ def run_pre_report_review(
         and bool(run.get("closing_assessment", {}).get("single_next_priority_experiment")),
         "Report closes with observed factors, principal limitation, falsifying evidence and exactly one next experiment.")
 
+    performance = run.get("performance", {})
+    measured = [
+        performance.get("acquisition_and_qa_seconds"),
+        performance.get("walk_forward_seconds"),
+    ]
+    runtime_ok = (
+        len(measured) == 2
+        and all(isinstance(value, (int, float)) and value >= 0 for value in measured)
+        and sum(measured) <= 7200
+    )
+    add("runtime_efficiency_budget", "operations", runtime_ok,
+        f"acquisition_and_qa_seconds={measured[0]}; walk_forward_seconds={measured[1]}; "
+        "measured stages must be non-negative and remain within the 120-minute workflow budget.")
+
     # Rotate the adversarial lens by workflow run id; all blocking controls above still run every time.
     lens_index = int(hashlib.sha256(str(run_id).encode()).hexdigest()[:8], 16) % len(REVIEW_LENSES)
     lens = REVIEW_LENSES[lens_index]
