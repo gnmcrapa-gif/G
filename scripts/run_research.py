@@ -27,7 +27,8 @@ from btc_quant.ledger import (
     score_matured_events,
     summarize_scored_events,
 )
-from btc_quant.supplemental import acquire_supplemental\nfrom btc_quant.reporting import (
+from btc_quant.supplemental import acquire_supplemental
+from btc_quant.reporting import (
     _build_longitudinal_comparison,
     _build_report_sections,
     _market_snapshot,
