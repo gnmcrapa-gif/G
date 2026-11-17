@@ -186,7 +186,7 @@ def _binance_cvd(directory: Path) -> tuple[dict, list[dict]]:
     session.headers.update({"User-Agent": USER_AGENT})
     objects, manifests, summaries, errors = [], [], {}, {}
     sources = (
-        ("spot", "https://api.binance.com/api/v3/klines", "Binance Spot", "BTCUSDT", "USDT"),
+        ("spot", "https://data-api.binance.vision/api/v3/klines", "Binance Spot public market-data mirror", "BTCUSDT", "USDT"),
         ("futures", BINANCE_FUTURES + "/fapi/v1/klines", "Binance USD-M Futures", "BTCUSDT", "USDT"),
     )
     for market, url, venue, symbol, quote in sources:
@@ -871,14 +871,33 @@ def _parse_rss_articles(payload: bytes, source: str) -> list[dict]:
 
 
 def _news_keyword_tags(title: str, snippet: str = "") -> list[str]:
-    text = f"{title} {snippet}".lower()
+    text = f"{title} {snippet}"
     groups = {
-        "regulatory": ("sec", "cftc", "regulation", "regulatory", "legislation", "court", "mica", "law"),
-        "macro_monetary": ("federal reserve", "fomc", "inflation", "cpi", "treasury", "yield", "interest rate", "payroll"),
-        "geopolitical": ("war", "sanctions", "election", "tariff", "conflict", "ceasefire", "ukraine", "iran", "israel", "russia"),
-        "crypto": ("bitcoin", "crypto", "digital asset", "etf", "exchange"),
+        "regulatory": (
+            "SEC", "CFTC", "regulation", "regulatory", "legislation",
+            "legislative", "court", "MiCA", "rulemaking", "rule",
+        ),
+        "macro_monetary": (
+            "Federal Reserve", "FOMC", "inflation", "CPI", "Treasury",
+            "yield", "interest rate", "payroll", "monetary policy",
+            "central bank", "ECB", "Bank of Japan", "BOJ", "PCE",
+            "employment report",
+        ),
+        "geopolitical": (
+            "war", "sanctions", "election", "tariff", "conflict",
+            "ceasefire", "Ukraine", "Iran", "Israel", "Russia",
+            "invasion", "military strike", "blockade",
+        ),
+        "crypto": (
+            "Bitcoin", "BTC", "cryptocurrency", "crypto", "digital asset",
+            "spot ETF", "ETF", "crypto exchange",
+        ),
     }
-    return [tag for tag, words in groups.items() if any(word in text for word in words)]
+    # Match complete words/phrases; avoid accidental substring hits such as SEC in "second".
+    return [
+        tag for tag, words in groups.items()
+        if any(re.search(r"\b" + re.escape(word) + r"\b", text, flags=re.IGNORECASE) for word in words)
+    ]
 
 
 def _news_context(directory: Path) -> tuple[dict, list[dict]]:
@@ -933,8 +952,8 @@ def _news_context(directory: Path) -> tuple[dict, list[dict]]:
                 "error": errors[name],
             })
     source_status["CFTC"] = {
-        "status": "UNAVAILABLE",
-        "reason": "CFTC reports its RSS feeds temporarily disabled as of October 2026.",
+        "status": "NOT_CONFIGURED",
+        "reason": "No verified CFTC news feed endpoint is configured in this build; no CFTC news coverage is claimed.",
     }
 
     gdelt_url = "https://api.gdeltproject.org/api/v2/doc/doc"
@@ -1009,7 +1028,13 @@ def _news_context(directory: Path) -> tuple[dict, list[dict]]:
         key = article.get("url") or article.get("title")
         if key and article.get("title"):
             article["keyword_tags"] = _news_keyword_tags(article["title"], article.get("snippet", ""))
-            deduped[key] = article
+            # Keep only headlines relevant to BTC/crypto, monetary policy, regulation or geopolitics.
+            if article["keyword_tags"]:
+                deduped[key] = article
+    for source_name, source_item in source_status.items():
+        source_item["relevant_article_count"] = sum(
+            article.get("source") == source_name for article in deduped.values()
+        )
     final_articles = sorted(
         deduped.values(),
         key=lambda row: row.get("published_at_utc") or row.get("seen_at_utc") or "",
@@ -1036,18 +1061,22 @@ def _news_context(directory: Path) -> tuple[dict, list[dict]]:
 
 
 def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
-    session = requests.Session()
-    session.headers.update({"User-Agent": USER_AGENT})
-    observations, manifests, errors = {}, [], {}
+    """Acquire independent FRED series concurrently with bounded per-request timeouts."""
+    from concurrent.futures import ThreadPoolExecutor
+
+    directory.mkdir(parents=True, exist_ok=True)
     today = datetime.now(UTC).date()
-    for series_id, meta in FRED_SERIES.items():
+
+    def fetch_one(series_id: str, meta: dict):
         start = today - timedelta(days=meta["lookback_days"])
-        url = FRED_GRAPH
+        session = requests.Session()
+        session.headers.update({"User-Agent": USER_AGENT})
         obj = None
         try:
             response = session.get(
-                url, params={"id": series_id, "cosd": start.isoformat(), "coed": today.isoformat()},
-                timeout=30,
+                FRED_GRAPH,
+                params={"id": series_id, "cosd": start.isoformat(), "coed": today.isoformat()},
+                timeout=12,
             )
             response.raise_for_status()
             raw = response.content
@@ -1068,7 +1097,7 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
             last = valid.iloc[-1]
             last_date = date.fromisoformat(str(last[date_col])[:10])
             age_days = (today - last_date).days
-            observations[series_id] = {
+            observation = {
                 "label": meta["label"], "value": float(last[value_col]),
                 "unit": meta["unit"], "observation_date": last_date.isoformat(),
                 "retrieved_at_utc": datetime.now(UTC).isoformat(),
@@ -1077,36 +1106,52 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
                 "previous_value": float(valid.iloc[-2][value_col]) if len(valid) > 1 else None,
                 "source_url": f"https://fred.stlouisfed.org/series/{series_id}",
             }
-            manifests.append({
+            manifest = {
                 "source": "FRED / original statistical release provider",
                 "venue": "United States macro", "symbol": series_id,
                 "quote_currency": meta["unit"], "interval": "provider native frequency",
                 "timezone": "observation date; release timing may lag",
                 "schema_version": "1.0", "source_grade": "A",
                 "retrieved_at_utc": datetime.now(UTC).isoformat(),
-                "parser": "pandas CSV parser", "parser_version": "0.3",
+                "parser": "pandas CSV parser", "parser_version": "0.4",
                 "schema": list(frame.columns), "objects": [obj],
-                "status": observations[series_id]["status"],
-            })
-        except Exception as exc:  # noqa: BLE001
-            errors[series_id] = f"{type(exc).__name__}: {exc}"
-            manifests.append({
+                "status": observation["status"],
+            }
+            return series_id, observation, manifest, None
+        except Exception as exc:  # noqa: BLE001 - preserve independent series failures
+            error = f"{type(exc).__name__}: {exc}"
+            manifest = {
                 "source": "FRED / original statistical release provider",
                 "venue": "United States macro", "symbol": series_id,
                 "quote_currency": meta["unit"], "interval": "provider native frequency",
                 "timezone": "observation date", "schema_version": "1.0",
                 "source_grade": "A", "retrieved_at_utc": datetime.now(UTC).isoformat(),
-                "parser": "pandas CSV parser", "parser_version": "0.3",
+                "parser": "pandas CSV parser", "parser_version": "0.4",
                 "schema": ["raw CSV retained; parsing failed"] if obj else [],
-                "objects": [obj] if obj else [], "status": "FAIL",
-                "error": errors[series_id],
-            })
+                "objects": [obj] if obj else [], "status": "FAIL", "error": error,
+            }
+            return series_id, None, manifest, error
+        finally:
+            session.close()
+
+    observations, manifests, errors = {}, [], {}
+    # map() preserves the protocol's deterministic FRED_SERIES order.
+    with ThreadPoolExecutor(max_workers=8) as executor:
+        results = list(executor.map(lambda item: fetch_one(item[0], item[1]), FRED_SERIES.items()))
+    for series_id, observation, manifest, error in results:
+        if observation is not None:
+            observations[series_id] = observation
+        if error is not None:
+            errors[series_id] = error
+        manifests.append(manifest)
+
     passed = sum(item["status"] == "PASS" for item in observations.values())
     summary = {
         "status": "PASS" if passed == len(FRED_SERIES) else "PARTIAL" if passed else "FAIL",
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "series": observations,
         "errors": errors,
+        "acquisition_method": "8-worker bounded concurrency; 12-second per-series timeout",
         "source_note": "FRED observation dates are not release timestamps; monthly/weekly series naturally lag the run date.",
     }
     return summary, manifests

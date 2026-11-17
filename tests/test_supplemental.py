@@ -109,3 +109,8 @@ def test_official_rss_parser_keeps_publication_time_source_and_url():
 def test_news_keyword_tags_are_explicitly_rule_based():
     tags = _news_keyword_tags("Federal Reserve signals rates amid Bitcoin ETF flows")
     assert tags == ["macro_monetary", "crypto"]
+
+def test_news_tags_use_whole_words_and_exclude_generic_policy_headlines():
+    assert _news_keyword_tags("President Trump’s Immigration Policies Are Saving American Lives") == []
+    assert _news_keyword_tags("The SEC announces a new digital asset rule") == ["regulatory", "crypto"]
+    assert _news_keyword_tags("The second-quarter report is released") == []

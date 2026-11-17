@@ -568,12 +568,13 @@ def render_markdown_report(run: dict, scores: dict) -> str:
     if news:
         lines += ["", "## 6. Eventi, regolamentazione e geopolitica — feed descrittivi", "",
                   f"- Stato: {news.get('status')}. {news.get('interpretation_limit', '')}",
-                  "| Fonte | Stato | Articoli acquisiti |",
-                  "|---|---|---:|"]
+                  "| Fonte | Stato | Acquisiti | Rilevanti nel report |",
+                  "|---|---|---:|---:|"]
         for source_name, source_item in news.get("source_status", {}).items():
             lines.append(
                 f"| {source_name} | {source_item.get('status')} | "
-                f"{source_item.get('article_count', 'n/d')} |"
+                f"{source_item.get('article_count', 'n/d')} | "
+                f"{source_item.get('relevant_article_count', 'n/d')} |"
             )
         for article in news.get("articles", [])[:12]:
             title = str(article.get("title", "")).replace("|", "\\|").replace("\\n", " ")
@@ -600,7 +601,7 @@ def render_markdown_report(run: dict, scores: dict) -> str:
         )
     forecast_taxonomy = taxonomy.get("FORECAST", {})
     lines += ["### FORECAST",
-              f"- Point forecast emessi in questo run: {len(forecast_taxonomy.get('new_point_forecasts_issued_this_run', []))}.",
+              f"- Point forecast emessi in questo run: {forecast_taxonomy.get('new_point_forecasts_issued_this_run', 0)}.",
               f"- Forecast maturati/scorati in questo run: {forecast_taxonomy.get('new_forecasts_scored_this_run', 0)}.",
               f"- Probabilità calibrate pubblicate: {forecast_taxonomy.get('calibrated_probabilities_published', False)}.",
               f"- {forecast_taxonomy.get('qualification', 'Nessuna previsione qualificata disponibile.')}"]

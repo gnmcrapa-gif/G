@@ -38,3 +38,4 @@
 - Add a coverage matrix for exchange reserves/netflows, market-wide liquidations, spot CVD, global ETP flows and geopolitical/regulatory news when no verified source is available.
 - Generate a human-readable `daily_report.md` alongside the structured JSON report. Supplemental feeds remain descriptive and do not enter the predictive model until a separate prospective challenger passes.
 - Add a same-venue, same-quote BTC halving-cycle comparison at matched elapsed-session horizons, marking cycles without full halving-date history as insufficient.
+- Bound FRED acquisition with parallel workers/timeouts; use Binance's public spot market-data mirror for hourly 24h/7d/30d CVD; filter irrelevant news headlines with whole-word tags and mark CFTC news NOT_CONFIGURED rather than asserting an unverified outage.
