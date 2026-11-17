@@ -122,8 +122,8 @@ def run_pre_report_review(
     monthly_seen, daily_seen = set(), set()
     for obj in binance_objects:
         url = obj.get("url", "")
-        month_match = re.search(r"BTCUSDT-1d-(\\d{4}-\\d{2})\\.zip$", url)
-        day_match = re.search(r"BTCUSDT-1d-(\\d{4}-\\d{2}-\\d{2})\\.zip$", url)
+        month_match = re.search(r"BTCUSDT-1d-(\d{4}-\d{2})\.zip$", url)
+        day_match = re.search(r"BTCUSDT-1d-(\d{4}-\d{2}-\d{2})\.zip$", url)
         if "/monthly/" in url and month_match:
             monthly_seen.add(month_match.group(1))
         if "/daily/" in url and day_match:
