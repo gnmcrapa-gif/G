@@ -9,7 +9,7 @@ Every scheduled or manual research run must execute the review **after acquisiti
 The review is executable code, not a narrative assertion. Its checks and evidence are stored in `pre_report_review`. A report must include:
 - review version, run ID, UTC timestamp and explicit `executed_before_report_serialization=true`;
 - each check ID, category, PASS/FAIL/WARN, blocking flag and evidence;
-- six review cycles: protocol, data, quant, ledger, risk and red-team;
+- seven review cycles: protocol, data, quant, ledger, risk, operations and red-team;
 - blocking failures, warnings, publication gate and final decision;
 - one rotating adversarial lens selected from volume outlier, close-return outlier, intraday-range outlier and ledger replay. The lens is keyed by GitHub run ID; all mandatory invariants still run on every execution.
 
