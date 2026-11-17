@@ -23,11 +23,21 @@ def _sha256_bytes(payload: bytes) -> str:
 def _save_raw(output_dir: Path, name: str, payload: bytes, url: str, source: str,
               venue: str, symbol: str, quote: str, source_grade: str = "B") -> dict:
     output_dir.mkdir(parents=True, exist_ok=True)
-    path = output_dir / name
-    path.write_bytes(payload)
+    digest = _sha256_bytes(payload)
+    original_path = output_dir / name
+    if original_path.is_file() and _sha256_bytes(original_path.read_bytes()) != digest:
+        path = original_path.with_name(f"{original_path.stem}_{digest}{original_path.suffix}")
+    else:
+        path = original_path
+    if path.is_file():
+        if _sha256_bytes(path.read_bytes()) != digest:
+            raise RuntimeError(f"content-addressed raw path collision: {path}")
+    else:
+        path.write_bytes(payload)
     return {
         "source": source, "url": url, "retrieved_at_utc": datetime.now(UTC).isoformat(),
-        "file": str(path), "size_bytes": len(payload), "sha256": _sha256_bytes(payload),
+        "file": str(path), "original_filename": name, "content_addressed": path != original_path,
+        "size_bytes": len(payload), "sha256": digest,
         "venue": venue, "symbol": symbol, "quote_currency": quote,
         "schema_version": "1.0", "source_grade": source_grade,
         "license_terms_note": "Public endpoint/archive; provider terms apply; legal review not performed.",
