@@ -114,3 +114,20 @@ def test_news_tags_use_whole_words_and_exclude_generic_policy_headlines():
     assert _news_keyword_tags("President Trump’s Immigration Policies Are Saving American Lives") == []
     assert _news_keyword_tags("The SEC announces a new digital asset rule") == ["regulatory", "crypto"]
     assert _news_keyword_tags("The second-quarter report is released") == []
+
+
+def test_fred_session_retries_transient_http_failures_with_bounded_policy():
+    import requests
+
+    from btc_quant.supplemental import _configure_fred_session
+
+    session = _configure_fred_session(requests.Session())
+    adapter = session.get_adapter("https://")
+    retry = adapter.max_retries
+    assert retry.total == 2
+    assert retry.connect == 2
+    assert retry.read == 1
+    assert retry.status == 2
+    assert retry.status_forcelist == frozenset({429, 500, 502, 503, 504})
+    assert retry.allowed_methods == frozenset({"GET"})
+    session.close()
