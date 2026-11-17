@@ -206,6 +206,9 @@ def test_markdown_report_includes_okx_perpetual_context_and_cvd_limits():
                 "status": "PASS",
                 "instrument": "BTC-USDT-SWAP",
                 "last_price_usdt": 64881.6,
+                "ticker_timestamp_utc": "2026-11-17T23:24:10+00:00",
+                "retrieved_at_utc": "2026-11-17T23:24:10+00:00",
+                "open_interest_timestamp_utc": "2026-11-17T23:24:10+00:00",
                 "volume_24h_base_currency": 116747.6857,
                 "volume_24h_contracts": 11674768.57,
                 "open_interest_btc": 31166.2211,
@@ -249,6 +252,8 @@ def test_markdown_report_includes_okx_perpetual_context_and_cvd_limits():
         },
     }, {})
     assert "### OKX BTC-USDT Perpetual" in report
+    assert "Snapshot acquisito UTC: 2026-11-17T23:24:10+00:00" in report
+    assert "ticker 2026-11-17T23:24:10+00:00" in report
     assert "31,166.22 BTC" in report
     assert "Funding previsto per il prossimo settlement" in report
     assert "Ultimo funding effettivamente settled" in report
