@@ -1,3 +1,5 @@
+import pytest
+
 from btc_quant.supplemental import (
     FRED_SERIES,
     _find_etf_sessions,
@@ -35,7 +37,7 @@ def test_numeric_helpers_reject_nonfinite_and_zero_denominator():
     assert _float_or_none("12.5") == 12.5
     assert _float_or_none("not-a-number") is None
     assert _float_or_none("nan") is None
-    assert _pct_change(100.0, 110.0) == 10.0
+    assert _pct_change(100.0, 110.0) == pytest.approx(10.0)
     assert _pct_change(0.0, 110.0) is None
     assert _pct_change(None, 110.0) is None
 
