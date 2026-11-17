@@ -1,7 +1,7 @@
 {
-  "started_at_utc": "2026-11-17T19:08:53.894892+00:00",
+  "started_at_utc": "2026-11-17T21:29:28.005479+00:00",
   "status": "COMPLETE_NOT_PROMOTED",
-  "protocol": "V5.5",
+  "protocol": "V5.6",
   "steps": [
     {
       "step": "binance_acquisition_and_qa",
@@ -15,14 +15,20 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 19.159,
+        "latest_candle_age_hours": 21.502,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 36285.648526,
+        "volume_median_scope": "full available history; descriptive only",
+        "volume_robust_z_window_sessions": 90,
+        "volume_robust_z_min_history_sessions": 60,
+        "volume_robust_z_scope": "current volume versus median and MAD of the prior 90 completed daily sessions; current session excluded",
         "volume_p99_btc": 386126.8690075998,
         "volume_max_btc": 760705.362783,
-        "volume_robust_z_max": 27.208963143199416,
-        "volume_robust_z_max_timestamp_utc": "2022-11-08T00:00:00+00:00",
+        "volume_robust_z_max": 16.306271304475462,
+        "volume_robust_z_max_timestamp_utc": "2017-12-22T00:00:00+00:00",
+        "volume_robust_z_max_prior_median_btc": 2127.8952125,
+        "volume_robust_z_max_prior_mad_btc": 1404.2367785000001,
         "volume_max_timestamp_utc": "2022-11-08T00:00:00+00:00",
         "absolute_close_return_max_timestamp_utc": "2020-03-12T00:00:00+00:00",
         "intraday_range_pct_max_timestamp_utc": "2020-03-13T00:00:00+00:00",
@@ -45,14 +51,20 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 19.16,
+        "latest_candle_age_hours": 21.503,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 3154.24801664,
+        "volume_median_scope": "full available history; descriptive only",
+        "volume_robust_z_window_sessions": 90,
+        "volume_robust_z_min_history_sessions": 60,
+        "volume_robust_z_scope": "current volume versus median and MAD of the prior 90 completed daily sessions; current session excluded",
         "volume_p99_btc": 29213.55860212485,
         "volume_max_btc": 70961.36965826,
-        "volume_robust_z_max": 22.995195613554866,
-        "volume_robust_z_max_timestamp_utc": "2018-02-06T00:00:00+00:00",
+        "volume_robust_z_max": 18.491222774779747,
+        "volume_robust_z_max_timestamp_utc": "2022-05-12T00:00:00+00:00",
+        "volume_robust_z_max_prior_median_btc": 1720.69774649,
+        "volume_robust_z_max_prior_mad_btc": 541.9684757649999,
         "volume_max_timestamp_utc": "2018-02-06T00:00:00+00:00",
         "absolute_close_return_max_timestamp_utc": "2020-03-12T00:00:00+00:00",
         "intraday_range_pct_max_timestamp_utc": "2020-03-13T00:00:00+00:00",
@@ -74,17 +86,25 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-17T19:09:34.648260+00:00",
+      "retrieved_at_utc": "2026-11-17T21:30:10.801592+00:00",
       "parser": "Coinbase candle array parser",
       "parser_version": "0.2",
+      "schema": [
+        "timestamp_utc",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
       "objects": [
         {
           "source": "Coinbase Exchange candles API",
           "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=2026-01-21T00%3A00%3A00%2B00%3A00&end=2026-11-17T00%3A00%3A00%2B00%3A00",
-          "retrieved_at_utc": "2026-11-17T19:09:34.648204+00:00",
+          "retrieved_at_utc": "2026-11-17T21:30:10.801560+00:00",
           "file": "data/raw/coinbase/coinbase_btcusd_1d_recent.json",
-          "size_bytes": 18462,
-          "sha256": "d0cec2fe19540f9a19a03e9ab07e2c7f2cf7c92de30e7bc9179a4e06a041296d",
+          "size_bytes": 18463,
+          "sha256": "643daa1788e5876c489e737f94942297cefc7fcb46fc610c905221bfa5e01ca4",
           "venue": "Coinbase",
           "symbol": "BTC-USD",
           "quote_currency": "USD",
@@ -106,14 +126,20 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 19.16,
+        "latest_candle_age_hours": 21.503,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 7277.57349707,
+        "volume_median_scope": "full available history; descriptive only",
+        "volume_robust_z_window_sessions": 90,
+        "volume_robust_z_min_history_sessions": 60,
+        "volume_robust_z_scope": "current volume versus median and MAD of the prior 90 completed daily sessions; current session excluded",
         "volume_p99_btc": 25565.57779594427,
         "volume_max_btc": 49371.20579141,
-        "volume_robust_z_max": 10.23825676412563,
-        "volume_robust_z_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
+        "volume_robust_z_max": 4.784311409099119,
+        "volume_robust_z_max_timestamp_utc": "2026-06-05T00:00:00+00:00",
+        "volume_robust_z_max_prior_median_btc": 7749.444414265,
+        "volume_robust_z_max_prior_mad_btc": 2958.2150715399994,
         "volume_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
         "absolute_close_return_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
         "intraday_range_pct_max_timestamp_utc": "2026-02-06T00:00:00+00:00",
@@ -136,17 +162,25 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-17T19:09:34.773688+00:00",
+      "retrieved_at_utc": "2026-11-17T21:30:10.945122+00:00",
       "parser": "Kraken OHLC parser",
       "parser_version": "0.2",
+      "schema": [
+        "timestamp_utc",
+        "open",
+        "high",
+        "low",
+        "close",
+        "volume"
+      ],
       "objects": [
         {
           "source": "Kraken public OHLC API",
           "url": "https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1440",
-          "retrieved_at_utc": "2026-11-17T19:09:34.773376+00:00",
+          "retrieved_at_utc": "2026-11-17T21:30:10.944872+00:00",
           "file": "data/raw/kraken/kraken_btcusd_1d_recent.json",
           "size_bytes": 62328,
-          "sha256": "b811d6d7e314cf4b32414f4320e82bd9cc5c52175015702c491ec7bf38902d5e",
+          "sha256": "42ad5142e2071ab82bbace98906839b4ac104ba77f0c20eb76aa07dc52d81d10",
           "venue": "Kraken",
           "symbol": "XBT/USD",
           "quote_currency": "USD",
@@ -168,14 +202,20 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 19.16,
+        "latest_candle_age_hours": 21.503,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 1673.7672171250001,
+        "volume_median_scope": "full available history; descriptive only",
+        "volume_robust_z_window_sessions": 90,
+        "volume_robust_z_min_history_sessions": 60,
+        "volume_robust_z_scope": "current volume versus median and MAD of the prior 90 completed daily sessions; current session excluded",
         "volume_p99_btc": 6441.87900574148,
         "volume_max_btc": 12178.16328649,
-        "volume_robust_z_max": 10.332163683975802,
+        "volume_robust_z_max": 10.098358088892004,
         "volume_robust_z_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
+        "volume_robust_z_max_prior_median_btc": 1642.27551366,
+        "volume_robust_z_max_prior_mad_btc": 703.7142952449999,
         "volume_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
         "absolute_close_return_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
         "intraday_range_pct_max_timestamp_utc": "2025-10-10T00:00:00+00:00",
@@ -1281,7 +1321,20 @@
         "target": "log(Open[t+h+2]/Open[t+2]); signal after close t; one complete daily bar reserved for execution latency; entry at first open not passed at the 16:00 UTC run",
         "requested_next_open_target": "log(Open[t+h+1]/Open[t+1])",
         "requested_next_open_target_executable_at_scheduled_run": false,
-        "target_timing_decision": "The scheduled run is 16:00 UTC; Open[t+1] occurs at 00:00 UTC before issuance. The production research target therefore uses entry Open[t+2]. The h+1 target remains available only as a non-executable theoretical diagnostic."
+        "target_timing_decision": "The scheduled run is 16:00 UTC; Open[t+1] occurs at 00:00 UTC before issuance. The production research target therefore uses entry Open[t+2]. The h+1 target remains available only as a non-executable theoretical diagnostic.",
+        "metric_metadata": {
+          "source": "Binance spot BTCUSDT",
+          "quote_currency": "USDT",
+          "timeframe": "1 daily session",
+          "target": "log(Open[t+h+2]/Open[t+2]); signal after close t; one complete daily bar reserved for execution latency; entry at first open not passed at the 16:00 UTC run",
+          "target_unit": "natural-log return units",
+          "horizon_unit": "daily sessions",
+          "historical_window_start_utc": "2025-11-17T00:00:00+00:00",
+          "historical_window_end_utc": "2026-11-16T00:00:00+00:00",
+          "sample_role": "historical_continuity_diagnostic_only",
+          "data_qa_status": "PASS",
+          "calibration_status": "NOT_CALIBRATED"
+        }
       }
     }
   ],
@@ -1298,21 +1351,106 @@
       "venue": "Coinbase",
       "status": "PASS",
       "overlap_rows": 300,
+      "overlap_start_utc": "2026-01-21T00:00:00+00:00",
+      "overlap_end_utc": "2026-11-16T00:00:00+00:00",
       "return_correlation": 0.9999377831874277,
       "median_absolute_log_basis": 0.0006287805020273266,
       "p99_absolute_log_basis": 0.002041720754428182,
-      "warning": "USDT/USD quote basis is not FX-adjusted; venues remain separate."
+      "warning": "USDT/USD quote basis is not FX-adjusted; venues remain separate.",
+      "metric_metadata": {
+        "primary_series": "Binance spot BTCUSDT / USDT",
+        "secondary_series": "Coinbase Exchange BTC-USD / USD",
+        "timeframe": "1 daily session",
+        "overlap_start_utc": "2026-01-21T00:00:00+00:00",
+        "overlap_end_utc": "2026-11-16T00:00:00+00:00",
+        "overlap_rows_unit": "daily observations",
+        "return_correlation_unit": "dimensionless",
+        "absolute_log_basis_unit": "log price-ratio units; USDT/USD not FX-adjusted",
+        "qa_status": "PASS"
+      }
     },
     {
       "venue": "Kraken",
       "status": "PASS",
       "overlap_rows": 720,
+      "overlap_start_utc": "2024-11-27T00:00:00+00:00",
+      "overlap_end_utc": "2026-11-16T00:00:00+00:00",
       "return_correlation": 0.9998168779860978,
       "median_absolute_log_basis": 0.00043252939246410567,
       "p99_absolute_log_basis": 0.0019442860569989732,
-      "warning": "USDT/USD quote basis is not FX-adjusted; venues remain separate."
+      "warning": "USDT/USD quote basis is not FX-adjusted; venues remain separate.",
+      "metric_metadata": {
+        "primary_series": "Binance spot BTCUSDT / USDT",
+        "secondary_series": "Kraken XBT/USD / USD",
+        "timeframe": "1 daily session",
+        "overlap_start_utc": "2024-11-27T00:00:00+00:00",
+        "overlap_end_utc": "2026-11-16T00:00:00+00:00",
+        "overlap_rows_unit": "daily observations",
+        "return_correlation_unit": "dimensionless",
+        "absolute_log_basis_unit": "log price-ratio units; USDT/USD not FX-adjusted",
+        "qa_status": "PASS"
+      }
     }
   ],
+  "numeric_conventions": {
+    "price": "quote currency per BTC; USD and USDT kept separate",
+    "volume": "BTC per daily candle",
+    "percentage": "percent unless field explicitly says ratio or log return",
+    "log_return": "natural-log return units",
+    "horizon": "daily sessions",
+    "timestamp": "UTC candle-open timestamp; candle close is next UTC midnight",
+    "robust_volume_z": "dimensionless rolling score versus prior 90 completed sessions; minimum 60 sessions"
+  },
+  "performance": {
+    "acquisition_and_qa_seconds": 42.964,
+    "walk_forward_seconds": 0.163,
+    "pre_report_review_seconds": 0.009,
+    "total_seconds_before_report": 43.163
+  },
+  "market_snapshot": {
+    "as_of_utc": "2026-11-17T21:30:10.969410+00:00",
+    "warning": "These are last closed daily candles, not live spot quotes; USD and USDT are not converted or combined.",
+    "venues": [
+      {
+        "venue": "Binance",
+        "symbol": "BTCUSDT",
+        "quote_currency": "USDT",
+        "snapshot_type": "latest_closed_daily_candle_not_realtime_spot",
+        "candle_open_timestamp_utc": "2026-11-16T00:00:00+00:00",
+        "candle_close_timestamp_utc": "2026-11-17T00:00:00+00:00",
+        "retrieved_at_utc": "2026-11-17T21:30:08.616086+00:00",
+        "open_quote_per_btc": 65351.05,
+        "high_quote_per_btc": 65696.16,
+        "low_quote_per_btc": 63905.01,
+        "close_quote_per_btc": 64882.87,
+        "volume_btc": 21929.23589,
+        "prior_30d_median_volume_btc": 14591.395154999998,
+        "volume_vs_prior_30d_median": 1.502888219875641,
+        "intraday_range_pct": 2.74081288670955,
+        "prior_close_quote_per_btc": 65351.05,
+        "close_change_1d_pct": -0.7164077700358318
+      },
+      {
+        "venue": "Bitstamp",
+        "symbol": "BTC/USD",
+        "quote_currency": "USD",
+        "snapshot_type": "latest_closed_daily_candle_not_realtime_spot",
+        "candle_open_timestamp_utc": "2026-11-16T00:00:00+00:00",
+        "candle_close_timestamp_utc": "2026-11-17T00:00:00+00:00",
+        "retrieved_at_utc": "2026-11-17T21:30:10.500994+00:00",
+        "open_quote_per_btc": 65310.48,
+        "high_quote_per_btc": 65609.6,
+        "low_quote_per_btc": 63815.27,
+        "close_quote_per_btc": 64821.9,
+        "volume_btc": 990.61837348,
+        "prior_30d_median_volume_btc": 1543.8089315349998,
+        "volume_vs_prior_30d_median": 0.6416716170277847,
+        "intraday_range_pct": 2.7473844932697005,
+        "prior_close_quote_per_btc": 65312.48,
+        "close_change_1d_pct": -0.7511275027376141
+      }
+    ]
+  },
   "historical_continuity_rows_by_horizon": {
     "1": 362,
     "3": 360,
@@ -1333,10 +1471,14 @@
     "score_events_created": 0,
     "forecast_events_created": 0,
     "duplicate_forecasts_suppressed": 4,
+    "events_proposed": 0,
     "events_appended": 0,
+    "persistence_status": "VERIFIED_IN_WORKSPACE_PENDING_WORKFLOW_COMMIT",
     "existing_events_before_run": 16,
+    "total_events_proposed": 16,
     "total_events_after_run": 16,
-    "append_only": true
+    "append_only": true,
+    "ledger_sha256_after_append": "c99e834515c687a6caa48a0c946a1b6d6917ed3fa7139a58006fabe397c2c346"
   },
   "risk": {
     "overlay_version": "1.1",
@@ -1383,5 +1525,782 @@
     "next_priority_experiment": "V5.5-OHLCV-001: isolated volume-surprise and candle-geometry challenger; prospective ledger only.",
     "decision": "KEEP_ZERO_RETURN_CHAMPION; RIDGE_CHALLENGER_ONLY; NO_PROMOTION; ABSTAIN_FROM_LIVE_RISK"
   },
-  "finished_at_utc": "2026-11-17T19:09:34.893583+00:00"
+  "report_taxonomy": {
+    "FACT": [
+      {
+        "statement": "binance_acquisition_and_qa: PASS.",
+        "evidence": {
+          "rows": 3379,
+          "duplicates": 0,
+          "missing_volume": 0,
+          "first_timestamp_utc": "2017-08-17T00:00:00+00:00",
+          "last_timestamp_utc": "2026-11-16T00:00:00+00:00",
+          "gap_count": 0,
+          "closed_candles_only": "PASS",
+          "latest_age_days": 1,
+          "latest_candle_age_hours": 21.502,
+          "zero_volume_rows": 0,
+          "zero_volume_pct": 0.0,
+          "volume_median_btc": 36285.648526,
+          "volume_median_scope": "full available history; descriptive only",
+          "volume_robust_z_window_sessions": 90,
+          "volume_robust_z_min_history_sessions": 60,
+          "volume_robust_z_scope": "current volume versus median and MAD of the prior 90 completed daily sessions; current session excluded",
+          "volume_p99_btc": 386126.8690075998,
+          "volume_max_btc": 760705.362783,
+          "volume_robust_z_max": 16.306271304475462,
+          "volume_robust_z_max_timestamp_utc": "2017-12-22T00:00:00+00:00",
+          "volume_robust_z_max_prior_median_btc": 2127.8952125,
+          "volume_robust_z_max_prior_mad_btc": 1404.2367785000001,
+          "volume_max_timestamp_utc": "2022-11-08T00:00:00+00:00",
+          "absolute_close_return_max_timestamp_utc": "2020-03-12T00:00:00+00:00",
+          "intraday_range_pct_max_timestamp_utc": "2020-03-13T00:00:00+00:00",
+          "absolute_close_return_p99": 0.11694178429087611,
+          "absolute_close_return_max": 0.5026069427414583,
+          "intraday_range_pct_p99": 0.19237185006201118,
+          "intraday_range_pct_max": 0.45268030691602723,
+          "diagnostic_note": "Zero-volume and tail metrics are descriptive QA diagnostics, not automatic rejection thresholds."
+        }
+      },
+      {
+        "statement": "bitstamp_acquisition_and_qa: PASS.",
+        "evidence": {
+          "rows": 3650,
+          "duplicates": 0,
+          "missing_volume": 0,
+          "first_timestamp_utc": "2016-11-19T00:00:00+00:00",
+          "last_timestamp_utc": "2026-11-16T00:00:00+00:00",
+          "gap_count": 0,
+          "closed_candles_only": "PASS",
+          "latest_age_days": 1,
+          "latest_candle_age_hours": 21.503,
+          "zero_volume_rows": 0,
+          "zero_volume_pct": 0.0,
+          "volume_median_btc": 3154.24801664,
+          "volume_median_scope": "full available history; descriptive only",
+          "volume_robust_z_window_sessions": 90,
+          "volume_robust_z_min_history_sessions": 60,
+          "volume_robust_z_scope": "current volume versus median and MAD of the prior 90 completed daily sessions; current session excluded",
+          "volume_p99_btc": 29213.55860212485,
+          "volume_max_btc": 70961.36965826,
+          "volume_robust_z_max": 18.491222774779747,
+          "volume_robust_z_max_timestamp_utc": "2022-05-12T00:00:00+00:00",
+          "volume_robust_z_max_prior_median_btc": 1720.69774649,
+          "volume_robust_z_max_prior_mad_btc": 541.9684757649999,
+          "volume_max_timestamp_utc": "2018-02-06T00:00:00+00:00",
+          "absolute_close_return_max_timestamp_utc": "2020-03-12T00:00:00+00:00",
+          "intraday_range_pct_max_timestamp_utc": "2020-03-13T00:00:00+00:00",
+          "absolute_close_return_p99": 0.11964439300853298,
+          "absolute_close_return_max": 0.49396945967608197,
+          "intraday_range_pct_p99": 0.18704483474685074,
+          "intraday_range_pct_max": 0.4420685424657195,
+          "diagnostic_note": "Zero-volume and tail metrics are descriptive QA diagnostics, not automatic rejection thresholds."
+        }
+      },
+      {
+        "statement": "coinbase_recent_cross_check: PASS.",
+        "evidence": {
+          "status": "PASS",
+          "rows": 300,
+          "duplicates": 0,
+          "missing_volume": 0,
+          "first_timestamp_utc": "2026-01-21T00:00:00+00:00",
+          "last_timestamp_utc": "2026-11-16T00:00:00+00:00",
+          "gap_count": 0,
+          "closed_candles_only": "PASS",
+          "latest_age_days": 1,
+          "latest_candle_age_hours": 21.503,
+          "zero_volume_rows": 0,
+          "zero_volume_pct": 0.0,
+          "volume_median_btc": 7277.57349707,
+          "volume_median_scope": "full available history; descriptive only",
+          "volume_robust_z_window_sessions": 90,
+          "volume_robust_z_min_history_sessions": 60,
+          "volume_robust_z_scope": "current volume versus median and MAD of the prior 90 completed daily sessions; current session excluded",
+          "volume_p99_btc": 25565.57779594427,
+          "volume_max_btc": 49371.20579141,
+          "volume_robust_z_max": 4.784311409099119,
+          "volume_robust_z_max_timestamp_utc": "2026-06-05T00:00:00+00:00",
+          "volume_robust_z_max_prior_median_btc": 7749.444414265,
+          "volume_robust_z_max_prior_mad_btc": 2958.2150715399994,
+          "volume_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
+          "absolute_close_return_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
+          "intraday_range_pct_max_timestamp_utc": "2026-02-06T00:00:00+00:00",
+          "absolute_close_return_p99": 0.06899803817327972,
+          "absolute_close_return_max": 0.15062029241072317,
+          "intraday_range_pct_p99": 0.0982022796575952,
+          "intraday_range_pct_max": 0.1864389341450346,
+          "diagnostic_note": "Zero-volume and tail metrics are descriptive QA diagnostics, not automatic rejection thresholds."
+        }
+      },
+      {
+        "statement": "kraken_recent_cross_check: PASS.",
+        "evidence": {
+          "status": "PASS",
+          "rows": 720,
+          "duplicates": 0,
+          "missing_volume": 0,
+          "first_timestamp_utc": "2024-11-27T00:00:00+00:00",
+          "last_timestamp_utc": "2026-11-16T00:00:00+00:00",
+          "gap_count": 0,
+          "closed_candles_only": "PASS",
+          "latest_age_days": 1,
+          "latest_candle_age_hours": 21.503,
+          "zero_volume_rows": 0,
+          "zero_volume_pct": 0.0,
+          "volume_median_btc": 1673.7672171250001,
+          "volume_median_scope": "full available history; descriptive only",
+          "volume_robust_z_window_sessions": 90,
+          "volume_robust_z_min_history_sessions": 60,
+          "volume_robust_z_scope": "current volume versus median and MAD of the prior 90 completed daily sessions; current session excluded",
+          "volume_p99_btc": 6441.87900574148,
+          "volume_max_btc": 12178.16328649,
+          "volume_robust_z_max": 10.098358088892004,
+          "volume_robust_z_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
+          "volume_robust_z_max_prior_median_btc": 1642.27551366,
+          "volume_robust_z_max_prior_mad_btc": 703.7142952449999,
+          "volume_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
+          "absolute_close_return_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
+          "intraday_range_pct_max_timestamp_utc": "2025-10-10T00:00:00+00:00",
+          "absolute_close_return_p99": 0.06856255403997878,
+          "absolute_close_return_max": 0.14976592015252166,
+          "intraday_range_pct_p99": 0.10091557150102462,
+          "intraday_range_pct_max": 0.18486593973656315,
+          "diagnostic_note": "Zero-volume and tail metrics are descriptive QA diagnostics, not automatic rejection thresholds."
+        }
+      },
+      {
+        "statement": "walk_forward: SCORED_NOT_PROMOTED.",
+        "evidence": "stato registrato nel run report"
+      },
+      {
+        "statement": "Le metriche storiche sono diagnostiche di continuit\u00e0, non prove prospettiche.",
+        "evidence": {
+          "holdout_role": "historical_continuity_diagnostic_only",
+          "holdout_globally_unseen": false,
+          "historical_rows_by_horizon": {
+            "1": 362,
+            "3": 360,
+            "7": 356,
+            "30": 333
+          }
+        }
+      },
+      {
+        "statement": "Il ledger prospettico conteggia esclusivamente eventi SCORE maturati.",
+        "evidence": {
+          "matured_by_horizon": {
+            "1": 0,
+            "3": 0,
+            "7": 0,
+            "30": 0
+          },
+          "new_score_events": 0
+        }
+      }
+    ],
+    "INTERPRETATION": [
+      {
+        "statement": "Zero-return ha la MAE pi\u00f9 bassa in tutti gli orizzonti storici confrontati.",
+        "horizons_where_zero_has_lowest_mae": [
+          "1",
+          "3",
+          "7",
+          "30"
+        ],
+        "scope": "holdout storico gi\u00e0 ispezionato; sola diagnostica di continuit\u00e0"
+      },
+      {
+        "statement": "Ridge resta challenger non promosso; nessuna conclusione economica \u00e8 autorizzata."
+      }
+    ],
+    "HYPOTHESIS": [
+      {
+        "experiment_id": "V5.5-OHLCV-001",
+        "statement": "Volume normalizzato e geometria delle candele potrebbero aggiungere informazione oltre le feature price-only.",
+        "status": "PROPOSED_NOT_RUN",
+        "evaluation_scope": "solo ledger prospettico; holdout storico escluso"
+      }
+    ],
+    "FORECAST": {
+      "new_point_forecasts_issued_this_run": 0,
+      "new_forecasts_scored_this_run": 0,
+      "matured_prospective_counts_by_horizon": {
+        "1": 0,
+        "3": 0,
+        "7": 0,
+        "30": 0
+      },
+      "calibrated_probabilities_published": false,
+      "directional_alerts_published": false,
+      "qualification": "Eventuali valori nel ledger sono point forecast sperimentali; non sono probabilit\u00e0 calibrate n\u00e9 segnali operativi."
+    }
+  },
+  "economic_validation": {
+    "status": "BLOCKED_INSUFFICIENT_PROSPECTIVE_EVIDENCE",
+    "matured_prospective_forecasts_by_horizon": {
+      "1": 0,
+      "3": 0,
+      "7": 0,
+      "30": 0
+    },
+    "minimum_required_per_horizon": 200,
+    "historical_holdout_used_for_economic_promotion": false,
+    "cost_adjusted_strategy_backtest_executed": false,
+    "reason": "Nessun campione prospettico maturo sufficiente; il periodo storico \u00e8 gi\u00e0 stato ispezionato. Non sono disponibili nel run una regola operativa approvata e serie storiche documentate di fee effettive, spread, slippage e funding per simulare PnL eseguibile.",
+    "required_inputs": [
+      "almeno 200 forecast prospettici maturati per orizzonte",
+      "regola di ingresso/uscita e sizing fissata ex ante",
+      "fee schedule applicabile all'account/venue e relativo timestamp",
+      "spread e slippage osservati o una sensibilit\u00e0 esplicitamente ipotetica",
+      "funding solo per strumenti derivati, con serie e timestamp",
+      "stress 1x/2x/3x costi, turnover, drawdown e confronto benchmark"
+    ]
+  },
+  "closing_assessment": {
+    "observed_drivers": [
+      {
+        "name": "Variazione close-to-close",
+        "value": -0.7164077700358318,
+        "unit": "%",
+        "window": "1 sessione giornaliera",
+        "timestamp_utc": "2026-11-16T00:00:00+00:00",
+        "source": "Binance spot BTCUSDT",
+        "qa_status": "PASS",
+        "interpretation": "Osservazione descrittiva; non attribuzione causale."
+      },
+      {
+        "name": "Ampiezza intraday high-low/open",
+        "value": 2.74081288670955,
+        "unit": "%",
+        "window": "candela giornaliera",
+        "timestamp_utc": "2026-11-16T00:00:00+00:00",
+        "source": "Binance spot BTCUSDT",
+        "qa_status": "PASS",
+        "interpretation": "Osservazione descrittiva; non attribuzione causale."
+      },
+      {
+        "name": "Volume rispetto alla mediana precedente",
+        "value": 1.502888219875641,
+        "unit": "multiplo",
+        "window": "volume giornaliero / mediana 30 sessioni precedenti",
+        "timestamp_utc": "2026-11-16T00:00:00+00:00",
+        "source": "Binance spot BTCUSDT",
+        "qa_status": "PASS",
+        "interpretation": "Osservazione descrittiva; non attribuzione causale."
+      }
+    ],
+    "principal_limit": "Assenza di evidenza prospettica maturata e di validazione economica eseguibile; il holdout storico \u00e8 solo diagnostico.",
+    "evidence_that_would_change_assessment": "Un campione prospettico indipendente, almeno 200 osservazioni maturate per orizzonte, lift stabile contro zero-return/drift dopo HAC-Holm, calibrazione verificata e valore netto positivo dopo costi documentati e stress 1x/2x/3x.",
+    "single_next_priority_experiment": "V5.5-OHLCV-001: challenger volume-surprise/candle-geometry, registrato prima del test e valutato esclusivamente sul ledger prospettico."
+  },
+  "longitudinal_comparison": {
+    "status": "COMPARISON_AVAILABLE",
+    "comparison_performed": true,
+    "previous_run_started_at_utc": "2026-11-17T19:08:53.894892+00:00",
+    "previous_run_finished_at_utc": "2026-11-17T19:09:34.893583+00:00",
+    "previous_run_status": "COMPLETE_NOT_PROMOTED",
+    "current_run_status": "COMPLETE_NOT_PROMOTED",
+    "same_venue_price_snapshots": [
+      {
+        "venue": "Binance",
+        "symbol": "BTCUSDT",
+        "status": "NOT_COMPARABLE_NO_MATCHING_PRIOR_SNAPSHOT"
+      },
+      {
+        "venue": "Bitstamp",
+        "symbol": "BTC/USD",
+        "status": "NOT_COMPARABLE_NO_MATCHING_PRIOR_SNAPSHOT"
+      }
+    ],
+    "historical_benchmark_comparison": {
+      "status": "COMPARABLE_SAME_HISTORICAL_CONTINUITY_WINDOW",
+      "holdout_start_utc": "2025-11-17T00:00:00+00:00",
+      "holdout_end_utc": "2026-11-16T00:00:00+00:00",
+      "zero_return_mae": {
+        "1": {
+          "previous_zero_mae_log_return_units": 0.0159226722032426,
+          "current_zero_mae_log_return_units": 0.0159226722032426,
+          "difference_log_return_units": 0.0
+        },
+        "3": {
+          "previous_zero_mae_log_return_units": 0.028544963789301145,
+          "current_zero_mae_log_return_units": 0.028544963789301145,
+          "difference_log_return_units": 0.0
+        },
+        "7": {
+          "previous_zero_mae_log_return_units": 0.04251990456241008,
+          "current_zero_mae_log_return_units": 0.04251990456241008,
+          "difference_log_return_units": 0.0
+        },
+        "30": {
+          "previous_zero_mae_log_return_units": 0.10188071374590402,
+          "current_zero_mae_log_return_units": 0.10188071374590402,
+          "difference_log_return_units": 0.0
+        }
+      },
+      "warning": "Same previously inspected historical window; not independent prospective evidence."
+    },
+    "prospective_matured_counts": {
+      "1": {
+        "previous_matured": 0,
+        "current_matured": 0
+      },
+      "3": {
+        "previous_matured": 0,
+        "current_matured": 0
+      },
+      "7": {
+        "previous_matured": 0,
+        "current_matured": 0
+      },
+      "30": {
+        "previous_matured": 0,
+        "current_matured": 0
+      }
+    },
+    "interpretation_policy": "Compare price snapshots only within identical venue/symbol/quote. Compare MAE only on identical holdout windows; all such historical results remain continuity diagnostics."
+  },
+  "code_provenance": {
+    "commit_sha": "67d20c1dc83ee821e6328dfabee94b5f7ab8a9f3",
+    "ref": "refs/heads/main",
+    "workflow_run_id": "44180291352",
+    "event_name": "push"
+  },
+  "anomaly_event_cross_venue_checks": {
+    "outlier_volume": {
+      "timestamp_utc": "2017-12-22T00:00:00+00:00",
+      "venues": {
+        "Binance_BTCUSDT": {
+          "status": "PASS",
+          "open": 15514.03,
+          "high": 15699.34,
+          "low": 10961.0,
+          "close": 13326.61,
+          "volume_btc": 36076.271175,
+          "intraday_range_pct": 30.542289785439376,
+          "close_log_return": -0.1506022841748821,
+          "volume_vs_prior_90d_median": 16.953969802213653,
+          "quote_currency": "USDT"
+        },
+        "Bitstamp_BTCUSD": {
+          "status": "PASS",
+          "open": 15600.0,
+          "high": 15795.61,
+          "low": 11159.93,
+          "close": 14009.79,
+          "volume_btc": 57444.88580326,
+          "intraday_range_pct": 29.715897435897435,
+          "close_log_return": -0.10751518433771375,
+          "volume_vs_prior_90d_median": 4.437459555392481,
+          "quote_currency": "USD"
+        }
+      },
+      "absolute_close_return_difference": 0.043087099837168366,
+      "volume_comparison_policy": "Venue volumes are not expected to match; compare each venue with its own trailing median.",
+      "binance_usdt_to_bitstamp_usd_close_price_ratio": 0.9512355288694548,
+      "implied_usd_per_usdt_if_btc_prices_were_at_parity": 1.051264350048512,
+      "binance_usdt_to_bitstamp_usd_open_price_ratio": 0.9944891025641026,
+      "quote_basis_caveat": "The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged."
+    },
+    "absolute_volume_max": {
+      "timestamp_utc": "2022-11-08T00:00:00+00:00",
+      "venues": {
+        "Binance_BTCUSDT": {
+          "status": "PASS",
+          "open": 20590.67,
+          "high": 20700.88,
+          "low": 17166.83,
+          "close": 18547.23,
+          "volume_btc": 760705.362783,
+          "intraday_range_pct": 17.163356024840375,
+          "close_log_return": -0.10453994878635704,
+          "volume_vs_prior_90d_median": 2.9884364114788387,
+          "quote_currency": "USDT"
+        },
+        "Bitstamp_BTCUSD": {
+          "status": "PASS",
+          "open": 20591.0,
+          "high": 20669.0,
+          "low": 17114.0,
+          "close": 18550.0,
+          "volume_btc": 12035.90178845,
+          "intraday_range_pct": 17.2648244378612,
+          "close_log_return": -0.10433573198625395,
+          "volume_vs_prior_90d_median": 8.260268552197584,
+          "quote_currency": "USD"
+        }
+      },
+      "absolute_close_return_difference": 0.00020421680010308807,
+      "volume_comparison_policy": "Venue volumes are not expected to match; compare each venue with its own trailing median.",
+      "binance_usdt_to_bitstamp_usd_close_price_ratio": 0.9998506738544474,
+      "implied_usd_per_usdt_if_btc_prices_were_at_parity": 1.0001493484471806,
+      "binance_usdt_to_bitstamp_usd_open_price_ratio": 0.9999839735806905,
+      "quote_basis_caveat": "The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged."
+    },
+    "outlier_close_return": {
+      "timestamp_utc": "2020-03-12T00:00:00+00:00",
+      "venues": {
+        "Binance_BTCUSDT": {
+          "status": "PASS",
+          "open": 7934.58,
+          "high": 7966.17,
+          "low": 4410.0,
+          "close": 4800.0,
+          "volume_btc": 261505.608653,
+          "intraday_range_pct": 44.818629341439625,
+          "close_log_return": -0.5026069427414592,
+          "volume_vs_prior_90d_median": 5.083543066164295,
+          "quote_currency": "USDT"
+        },
+        "Bitstamp_BTCUSD": {
+          "status": "PASS",
+          "open": 7956.29,
+          "high": 7969.9,
+          "low": 4776.59,
+          "close": 4841.67,
+          "volume_btc": 58513.38918903,
+          "intraday_range_pct": 40.13566624645406,
+          "close_log_return": -0.4939694596760823,
+          "volume_vs_prior_90d_median": 10.054439449782079,
+          "quote_currency": "USD"
+        }
+      },
+      "absolute_close_return_difference": 0.008637483065376927,
+      "volume_comparison_policy": "Venue volumes are not expected to match; compare each venue with its own trailing median.",
+      "binance_usdt_to_bitstamp_usd_close_price_ratio": 0.9913934654778207,
+      "implied_usd_per_usdt_if_btc_prices_were_at_parity": 1.00868125,
+      "binance_usdt_to_bitstamp_usd_open_price_ratio": 0.9972713412909786,
+      "quote_basis_caveat": "The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged."
+    },
+    "outlier_intraday_range": {
+      "timestamp_utc": "2020-03-13T00:00:00+00:00",
+      "venues": {
+        "Binance_BTCUSDT": {
+          "status": "PASS",
+          "open": 4800.01,
+          "high": 5955.0,
+          "low": 3782.13,
+          "close": 5578.6,
+          "volume_btc": 402201.673764,
+          "intraday_range_pct": 45.268030691602725,
+          "close_log_return": 0.15032193094234547,
+          "volume_vs_prior_90d_median": 7.639212539174264,
+          "quote_currency": "USDT"
+        },
+        "Bitstamp_BTCUSD": {
+          "status": "PASS",
+          "open": 4841.67,
+          "high": 5990.35,
+          "low": 3850.0,
+          "close": 5622.74,
+          "volume_btc": 54419.64133553,
+          "intraday_range_pct": 44.20685424657195,
+          "close_log_return": 0.14955938704060256,
+          "volume_vs_prior_90d_median": 9.231324833310927,
+          "quote_currency": "USD"
+        }
+      },
+      "absolute_close_return_difference": 0.000762543901742907,
+      "volume_comparison_policy": "Venue volumes are not expected to match; compare each venue with its own trailing median.",
+      "binance_usdt_to_bitstamp_usd_close_price_ratio": 0.9921497348267927,
+      "implied_usd_per_usdt_if_btc_prices_were_at_parity": 1.007912379450041,
+      "binance_usdt_to_bitstamp_usd_open_price_ratio": 0.9913955308808737,
+      "quote_basis_caveat": "The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged."
+    }
+  },
+  "rotating_event_review": {
+    "timestamp_utc": "2020-03-12T00:00:00+00:00",
+    "venues": {
+      "Binance_BTCUSDT": {
+        "status": "PASS",
+        "open": 7934.58,
+        "high": 7966.17,
+        "low": 4410.0,
+        "close": 4800.0,
+        "volume_btc": 261505.608653,
+        "intraday_range_pct": 44.818629341439625,
+        "close_log_return": -0.5026069427414592,
+        "volume_vs_prior_90d_median": 5.083543066164295,
+        "quote_currency": "USDT"
+      },
+      "Bitstamp_BTCUSD": {
+        "status": "PASS",
+        "open": 7956.29,
+        "high": 7969.9,
+        "low": 4776.59,
+        "close": 4841.67,
+        "volume_btc": 58513.38918903,
+        "intraday_range_pct": 40.13566624645406,
+        "close_log_return": -0.4939694596760823,
+        "volume_vs_prior_90d_median": 10.054439449782079,
+        "quote_currency": "USD"
+      }
+    },
+    "absolute_close_return_difference": 0.008637483065376927,
+    "volume_comparison_policy": "Venue volumes are not expected to match; compare each venue with its own trailing median.",
+    "binance_usdt_to_bitstamp_usd_close_price_ratio": 0.9913934654778207,
+    "implied_usd_per_usdt_if_btc_prices_were_at_parity": 1.00868125,
+    "binance_usdt_to_bitstamp_usd_open_price_ratio": 0.9972713412909786,
+    "quote_basis_caveat": "The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged."
+  },
+  "pre_report_review": {
+    "version": "pre-report-review-1.0",
+    "executed_before_report_serialization": true,
+    "reviewed_at_utc": "2026-11-17T21:30:11.158785+00:00",
+    "run_id": "44180291352",
+    "rotating_adversarial_lens": "outlier_close_return",
+    "checks": [
+      {
+        "check_id": "primary_sources_acquired_and_qa",
+        "category": "data",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Binance BTCUSDT and Bitstamp BTC/USD must both have successful acquisition and OHLCV QA."
+      },
+      {
+        "check_id": "rolling_volume_outlier_method",
+        "category": "data",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Volume outliers must use the prior 90 completed sessions, current excluded, with at least 60 observations; no full-history z-score."
+      },
+      {
+        "check_id": "venue_quote_separation",
+        "category": "protocol",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Binance BTCUSDT/USDT and Bitstamp BTC/USD/USD remain separate series."
+      },
+      {
+        "check_id": "binance_archive_month_day_completeness",
+        "category": "lineage",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "monthly_archives=111; daily_current_month_objects=16; expected month/day archive keys derived from parsed first/last UTC timestamps."
+      },
+      {
+        "check_id": "bitstamp_pagination_accounting",
+        "category": "lineage",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "raw_rows=4000; page_overlap_duplicates=349; parsed_rows=3650; excluded_current_day_rows=1."
+      },
+      {
+        "check_id": "raw_object_integrity",
+        "category": "lineage",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "verified_objects=133; errors=[]"
+      },
+      {
+        "check_id": "raw_manifest_provenance",
+        "category": "lineage",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Each raw object must have URL, retrieval timestamp, SHA-256, size and source parser/schema metadata."
+      },
+      {
+        "check_id": "five_year_history_available",
+        "category": "data",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Both primary venues must contain at least five years of daily observations."
+      },
+      {
+        "check_id": "primary_data_freshness",
+        "category": "data",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Both primary venues must end no earlier than the previous UTC daily session."
+      },
+      {
+        "check_id": "independent_venue_crosscheck",
+        "category": "data",
+        "status": "PASS",
+        "blocking": false,
+        "evidence": "Passing recent cross-checks=2; Coinbase/Kraken outages remain disclosed as optional-source failures."
+      },
+      {
+        "check_id": "target_execution_and_no_leakage",
+        "category": "quant",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Production entry uses the first future daily open; target and training/holdout separation are explicit."
+      },
+      {
+        "check_id": "holdout_honest_label",
+        "category": "quant",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Previously inspected history is labelled continuity diagnostic, not globally unseen evidence."
+      },
+      {
+        "check_id": "benchmark_completeness",
+        "category": "quant",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Zero-return, drift, momentum and Ridge must be compared at every declared horizon."
+      },
+      {
+        "check_id": "numeric_units_and_source_provenance",
+        "category": "protocol",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Forecast/benchmark metrics must declare source, quote, units, horizon, UTC window, holdout role and QA."
+      },
+      {
+        "check_id": "crosscheck_metric_provenance",
+        "category": "data",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Every passing cross-venue statistic must include its UTC overlap window and units."
+      },
+      {
+        "check_id": "probability_claim_guard",
+        "category": "quant",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "No calibrated probabilities without at least 200 matured prospective forecasts per horizon and a separate calibration study."
+      },
+      {
+        "check_id": "append_only_ledger_consistency",
+        "category": "ledger",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "events=16; unique_event_ids=16; invalidated=4; active_forecasts=8; scores must map to non-invalidated forecasts; active entries must be future at issue."
+      },
+      {
+        "check_id": "risk_fail_closed",
+        "category": "risk",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Live trading disabled; paper-only overlay; theoretical exposure exactly 0%."
+      },
+      {
+        "check_id": "report_fact_taxonomy",
+        "category": "protocol",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Report must explicitly separate FACT, INTERPRETATION, HYPOTHESIS and FORECAST."
+      },
+      {
+        "check_id": "economic_claim_guard",
+        "category": "quant",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "No executable PnL claim without prospective outcomes, an ex-ante trade rule and documented fee/spread/slippage/funding inputs."
+      },
+      {
+        "check_id": "closing_assessment_present",
+        "category": "protocol",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Report closes with observed factors, principal limitation, falsifying evidence and exactly one next experiment."
+      },
+      {
+        "check_id": "longitudinal_comparison_present",
+        "category": "protocol",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Report must compare to the previous persisted run when available, without mixing venues/quotes or comparing different holdout windows."
+      },
+      {
+        "check_id": "run_code_provenance",
+        "category": "lineage",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "Report records the exact code commit and workflow run ID."
+      },
+      {
+        "check_id": "runtime_efficiency_budget",
+        "category": "operations",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "acquisition_and_qa_seconds=42.964; walk_forward_seconds=0.163; measured stages must be non-negative and remain within the 120-minute workflow budget."
+      },
+      {
+        "check_id": "rotating_red_team_outlier_close_return",
+        "category": "red_team",
+        "status": "PASS",
+        "blocking": false,
+        "evidence": "event=2020-03-12T00:00:00+00:00; screening_thresholds=2% absolute log-return difference and 2% raw quote-price ratio gap; thresholds are WARN-only, not calibrated FX or data rejection rules; context={'timestamp_utc': '2020-03-12T00:00:00+00:00', 'venues': {'Binance_BTCUSDT': {'status': 'PASS', 'open': 7934.58, 'high': 7966.17, 'low': 4410.0, 'close': 4800.0, 'volume_btc': 261505.608653, 'intraday_range_pct': 44.818629341439625, 'close_log_return': -0.5026069427414592, 'volume_vs_prior_90d_median': 5.083543066164295, 'quote_currency': 'USDT'}, 'Bitstamp_BTCUSD': {'status': 'PASS', 'open': 7956.29, 'high': 7969.9, 'low': 4776.59, 'close': 4841.67, 'volume_btc': 58513.38918903, 'intraday_range_pct': 40.13566624645406, 'close_log_return': -0.4939694596760823, 'volume_vs_prior_90d_median': 10.054439449782079, 'quote_currency': 'USD'}}, 'absolute_close_return_difference': 0.008637483065376927, 'volume_comparison_policy': 'Venue volumes are not expected to match; compare each venue with its own trailing median.', 'binance_usdt_to_bitstamp_usd_close_price_ratio': 0.9913934654778207, 'implied_usd_per_usdt_if_btc_prices_were_at_parity': 1.00868125, 'binance_usdt_to_bitstamp_usd_open_price_ratio': 0.9972713412909786, 'quote_basis_caveat': 'The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged.'}"
+      }
+    ],
+    "review_cycles": [
+      {
+        "cycle": 1,
+        "review_lens": "data",
+        "status": "PASS",
+        "checks_reviewed": 6,
+        "failures": [],
+        "warnings": []
+      },
+      {
+        "cycle": 2,
+        "review_lens": "quant",
+        "status": "PASS",
+        "checks_reviewed": 5,
+        "failures": [],
+        "warnings": []
+      },
+      {
+        "cycle": 3,
+        "review_lens": "ledger",
+        "status": "PASS",
+        "checks_reviewed": 1,
+        "failures": [],
+        "warnings": []
+      },
+      {
+        "cycle": 4,
+        "review_lens": "risk",
+        "status": "PASS",
+        "checks_reviewed": 1,
+        "failures": [],
+        "warnings": []
+      },
+      {
+        "cycle": 5,
+        "review_lens": "operations",
+        "status": "PASS",
+        "checks_reviewed": 1,
+        "failures": [],
+        "warnings": []
+      },
+      {
+        "cycle": 6,
+        "review_lens": "red_team",
+        "status": "PASS",
+        "checks_reviewed": 1,
+        "failures": [],
+        "warnings": []
+      },
+      {
+        "cycle": 7,
+        "review_lens": "protocol",
+        "status": "PASS",
+        "checks_reviewed": 5,
+        "failures": [],
+        "warnings": []
+      }
+    ],
+    "blocking_failures": [],
+    "warnings": [],
+    "status": "PASS",
+    "publication_gate": "OPEN",
+    "decision": "ALLOW_REPORT_WITH_DISCLOSED_LIMITATIONS",
+    "post_gate_persistence_status": "VERIFIED_IN_WORKSPACE_PENDING_WORKFLOW_COMMIT"
+  },
+  "post_persistence_verification": {
+    "status": "PASS",
+    "events_before": 16,
+    "events_after": 16,
+    "new_events_proposed": 0,
+    "all_prior_event_ids_preserved": true,
+    "all_proposed_event_ids_present": true,
+    "event_ids_unique": true,
+    "ledger_sha256": "c99e834515c687a6caa48a0c946a1b6d6917ed3fa7139a58006fabe397c2c346"
+  },
+  "finished_at_utc": "2026-11-17T21:30:11.168518+00:00"
 }

@@ -1088,5 +1088,18 @@
   "target": "log(Open[t+h+2]/Open[t+2]); signal after close t; one complete daily bar reserved for execution latency; entry at first open not passed at the 16:00 UTC run",
   "requested_next_open_target": "log(Open[t+h+1]/Open[t+1])",
   "requested_next_open_target_executable_at_scheduled_run": false,
-  "target_timing_decision": "The scheduled run is 16:00 UTC; Open[t+1] occurs at 00:00 UTC before issuance. The production research target therefore uses entry Open[t+2]. The h+1 target remains available only as a non-executable theoretical diagnostic."
+  "target_timing_decision": "The scheduled run is 16:00 UTC; Open[t+1] occurs at 00:00 UTC before issuance. The production research target therefore uses entry Open[t+2]. The h+1 target remains available only as a non-executable theoretical diagnostic.",
+  "metric_metadata": {
+    "source": "Binance spot BTCUSDT",
+    "quote_currency": "USDT",
+    "timeframe": "1 daily session",
+    "target": "log(Open[t+h+2]/Open[t+2]); signal after close t; one complete daily bar reserved for execution latency; entry at first open not passed at the 16:00 UTC run",
+    "target_unit": "natural-log return units",
+    "horizon_unit": "daily sessions",
+    "historical_window_start_utc": "2025-11-17T00:00:00+00:00",
+    "historical_window_end_utc": "2026-11-16T00:00:00+00:00",
+    "sample_role": "historical_continuity_diagnostic_only",
+    "data_qa_status": "PASS",
+    "calibration_status": "NOT_CALIBRATED"
+  }
 }
