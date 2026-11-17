@@ -338,7 +338,7 @@ def _bybit_derivatives(directory: Path) -> tuple[dict, dict]:
             ) / 86400_000
             summary[f"open_interest_history_change_{days}d_pct"] = (
                 _pct_change(_float_or_none(prior.get("openInterest")), latest)
-                if actual_days >= days - 2 else None
+                if actual_days >= max(1, days - 2) else None
             )
         summary["open_interest_history_max_days"] = (
             int(points[-1].get("timestamp", 0)) - int(points[0].get("timestamp", 0))
@@ -536,8 +536,12 @@ def _deribit_options(directory: Path) -> tuple[dict, dict]:
             "greeks_samples": [row for row in candidates],
         })
 
+    skew_available = any(
+        row.get("put_minus_call_25d_skew_vol_points") is not None
+        for row in skew_by_expiry
+    )
     summary = {
-        "status": "PASS" if ticker_rows else "PARTIAL",
+        "status": "PASS" if skew_available else "PARTIAL",
         "venue": "Deribit",
         "instrument_scope": "active BTC options",
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
