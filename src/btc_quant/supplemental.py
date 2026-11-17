@@ -617,23 +617,28 @@ def _etf_flows(directory: Path) -> tuple[dict, dict]:
         quote="USD", source_grade="B",
     ))
     data_url = TFTC_BASE + "/data.json"
-    data_response = session.get(data_url, timeout=30)
-    data_response.raise_for_status()
-    data_raw = data_response.content
-    data_payload = data_response.json()
-    objects.append(_save_object(
-        directory, "us_spot_btc_etf_full_history.json", data_raw,
-        source="The Commoner Bitcoin ETF Tracker by TFTC",
-        url=data_response.url, venue="US spot Bitcoin ETFs", symbol="daily history",
-        quote="USD", source_grade="B",
-    ))
+    full_history_error = None
+    data_payload = {}
+    try:
+        data_response = session.get(data_url, timeout=30)
+        data_response.raise_for_status()
+        data_raw = data_response.content
+        data_payload = data_response.json()
+        objects.append(_save_object(
+            directory, "us_spot_btc_etf_full_history.json", data_raw,
+            source="The Commoner Bitcoin ETF Tracker by TFTC",
+            url=data_response.url, venue="US spot Bitcoin ETFs", symbol="daily history",
+            quote="USD", source_grade="B",
+        ))
+    except (requests.RequestException, ValueError) as exc:
+        full_history_error = f"{type(exc).__name__}: {exc}"
     latest_session = latest.get("latestSession") or {}
     updated_through = latest.get("updatedThrough") or latest_session.get("date")
     sessions = _find_etf_sessions(data_payload)
     if not sessions:
         sessions = latest.get("recentSessions") or []
     sessions = sorted(sessions, key=lambda row: row.get("date", ""))
-    latest_date = date.fromisoformat(updated_through) if updated_through else None
+    latest_date = date.fromisoformat(str(updated_through)[:10]) if updated_through else None
     today = datetime.now(UTC).date()
     business_days_old = 0
     if latest_date:
@@ -669,6 +674,7 @@ def _etf_flows(directory: Path) -> tuple[dict, dict]:
         ),
         "history_rows_available": len(sessions),
         "history_coverage_start": sessions[0].get("date") if sessions else None,
+        "full_history_error": full_history_error,
         "global_etp_flows": {
             "status": "UNAVAILABLE",
             "reason": "This dataset covers US spot ETFs only; global ETPs require a separate source.",
@@ -720,6 +726,7 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
     for series_id, meta in FRED_SERIES.items():
         start = today - timedelta(days=meta["lookback_days"])
         url = FRED_GRAPH
+        obj = None
         try:
             response = session.get(
                 url, params={"id": series_id, "cosd": start.isoformat(), "coed": today.isoformat()},
@@ -773,7 +780,7 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
                 "timezone": "observation date", "schema_version": "1.0",
                 "source_grade": "A", "retrieved_at_utc": datetime.now(UTC).isoformat(),
                 "parser": "pandas CSV parser", "parser_version": "0.3",
-                "schema": [], "objects": [], "status": "FAIL",
+                "schema": [], "objects": [obj] if obj else [], "status": "FAIL",
                 "error": errors[series_id],
             })
     passed = sum(item["status"] == "PASS" for item in observations.values())
