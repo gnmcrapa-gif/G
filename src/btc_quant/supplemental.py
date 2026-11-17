@@ -1414,7 +1414,7 @@ def _parse_fed_h6_m2_html(payload: bytes) -> tuple[date, float, float | None, da
         if not (
             any("seasonally adjusted" in cell for cell in cells)
             and any("not seasonally adjusted" in cell for cell in cells)
-            and any(cell.strip() == "m2" for cell in cells)
+            and any(cell.strip().startswith("m2") for cell in cells)
         ):
             continue
         for row in table:
