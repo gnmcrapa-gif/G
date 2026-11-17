@@ -3,7 +3,6 @@ from __future__ import annotations
 
 import hashlib
 import io
-import json
 import math
 from datetime import UTC, date, datetime, timedelta
 from pathlib import Path
@@ -477,6 +476,7 @@ def _deribit_options(directory: Path) -> tuple[dict, dict]:
 
     # Query Greeks only for a bounded set of near-ATM contracts in the nearest four expiries.
     ticker_rows = []
+    ticker_errors = []
     selected_expiries = [row["expiry_date"] for row in expiry_rows if row["days_to_expiry"] >= 0][:4]
     for expiry in selected_expiries:
         options = [row for row in parsed_rows if row["expiry_date"] == expiry]
@@ -512,7 +512,11 @@ def _deribit_options(directory: Path) -> tuple[dict, dict]:
                     "mark_iv_pct": _float_or_none(ticker.get("mark_iv")),
                     "ticker_timestamp_utc": _timestamp_ms(ticker.get("timestamp")),
                 })
-            except Exception:
+            except (requests.RequestException, ValueError, RuntimeError, KeyError, TypeError) as exc:
+                ticker_errors.append({
+                    "instrument_name": instrument,
+                    "error": f"{type(exc).__name__}: {exc}",
+                })
                 continue
 
     skew_by_expiry = []
@@ -561,6 +565,7 @@ def _deribit_options(directory: Path) -> tuple[dict, dict]:
             "reason": "Public open interest and option Greeks do not reveal whether dealers are net long or short; no dealer-side sign is inferred.",
         },
         "ticker_greeks_sample_count": len(ticker_rows),
+        "ticker_greeks_errors": ticker_errors,
         "greeks_status": "PASS" if ticker_rows else "UNAVAILABLE",
         "raw_option_instruments": len(parsed_rows),
         "open_interest_delay_hours": 8,
@@ -628,7 +633,6 @@ def _etf_flows(directory: Path) -> tuple[dict, dict]:
     if not sessions:
         sessions = latest.get("recentSessions") or []
     sessions = sorted(sessions, key=lambda row: row.get("date", ""))
-    newest = sessions[-1] if sessions else latest_session
     latest_date = date.fromisoformat(updated_through) if updated_through else None
     today = datetime.now(UTC).date()
     business_days_old = 0
