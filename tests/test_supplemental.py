@@ -1,3 +1,5 @@
+from datetime import UTC, datetime, timedelta
+
 import pytest
 
 from btc_quant.supplemental import (
@@ -142,14 +144,16 @@ def test_bitwise_weekly_parser_does_not_invent_missing_global_flows():
 
 
 def test_cryptokeyhole_series_requires_finality_and_rejects_preview_data():
+    final_time = (datetime.now(UTC) - timedelta(days=1)).isoformat()
+    provisional_time = datetime.now(UTC).isoformat()
     payload = {
         "metric": "ckh.ExchangeNetflowVolumeBTC",
         "unit": "BTC",
         "source": "labeled exchange wallets",
         "method": "net inflow minus outflow",
         "points": [
-            {"t": "2026-11-15T00:00:00Z", "v": "-120.5", "finality": "final"},
-            {"t": "2026-11-16T00:00:00Z", "v": "30.0", "finality": "provisional"},
+            {"t": final_time, "v": "-120.5", "finality": "final"},
+            {"t": provisional_time, "v": "30.0", "finality": "provisional"},
         ],
     }
     result = _ckh_series_summary(payload, None)
