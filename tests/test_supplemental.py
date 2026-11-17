@@ -272,6 +272,63 @@ def test_bls_cpi_fallback_uses_official_v1_api_and_month_end_freshness(monkeypat
     assert manifest["source_grade"] == "A"
 
 
+def test_fed_h6_m2_parser_extracts_sa_m2_and_release_date():
+    from datetime import date
+
+    from btc_quant.supplemental import _parse_fed_h6_m2_html
+
+    html = b"""<html><body><p>Release Date: October 27, 2026</p>
+    <table>
+    <thead>
+    <tr><th rowspan="3">Date</th><th colspan="3">Seasonally adjusted</th><th colspan="7">Not seasonally adjusted</th></tr>
+    <tr><th>M1</th><th>M2</th><th>Monetary base</th><th colspan="3">M1</th><th colspan="2">M2</th><th colspan="2">Memorandum: Reserves</th></tr>
+    <tr><th>Currency</th><th>Reserve balances</th><th>Monetary base</th><th>Total reserves</th><th>Borrowings</th><th>Nonborrowed</th><th>Other</th><th>Reserves</th><th>Borrowings</th><th>Nonborrowed</th></tr>
+    </thead><tbody>
+    <tr><td>Aug. 2026</td><td>19967.3</td><td>23,300.9</td><td>2475.6</td><td>2936.0</td><td>5411.6</td><td>19932.1</td><td>23242.5</td><td>2936.0</td><td>5501.1</td><td>2930.5</td></tr>
+    <tr><td>Sept. 2026</td><td>20061.2</td><td>23,413.9</td><td>2483.0</td><td>2966.8</td><td>5449.8</td><td>20009.7</td><td>23339.6</td><td>2966.8</td><td>6295.0</td><td>2960.5</td></tr>
+    </tbody></table></body></html>"""
+    observation_date, value, previous, release_date = _parse_fed_h6_m2_html(html)
+    assert observation_date == date(2026, 9, 1)
+    assert value == pytest.approx(23413.9)
+    assert previous == pytest.approx(23300.9)
+    assert release_date == date(2026, 10, 27)
+
+
+def test_fed_h6_m2_fallback_uses_release_date_for_freshness(monkeypatch, tmp_path):
+    from datetime import date
+
+    from btc_quant import supplemental
+
+    html = b"""<html><body><p>Release Date: October 27, 2026</p>
+    <table><thead>
+    <tr><th rowspan="3">Date</th><th colspan="2">Seasonally adjusted</th><th>Other</th></tr>
+    <tr><th>M1</th><th>M2</th><th>Other</th></tr>
+    <tr><th>Currency</th><th>Reserve balances</th><th>Other</th></tr>
+    </thead><tbody>
+    <tr><td>Sept. 2026</td><td>20061.2</td><td>23,413.9</td><td>0</td></tr>
+    </tbody></table></body></html>"""
+
+    class FakeResponse:
+        content = html
+        url = "https://www.federalreserve.gov/releases/h6/current/default.htm"
+
+        def raise_for_status(self):
+            return None
+
+    monkeypatch.setattr(supplemental.requests, "get", lambda *args, **kwargs: FakeResponse())
+    observation, manifest = supplemental._fed_h6_m2_fallback(
+        {"label": "US M2 money stock", "unit": "billions of USD", "max_age_days": 45},
+        tmp_path,
+        date(2026, 11, 18),
+    )
+    assert observation["value"] == pytest.approx(23413.9)
+    assert observation["freshness_reference_date"] == "2026-10-27"
+    assert observation["age_calendar_days"] == 22
+    assert observation["status"] == "PASS"
+    assert observation["source_url"] == FakeResponse.url
+    assert manifest["source_grade"] == "A"
+
+
 def test_monthly_macro_freshness_uses_period_end_not_first_of_month():
     from datetime import date
 
