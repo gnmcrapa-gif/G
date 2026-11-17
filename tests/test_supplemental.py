@@ -5,8 +5,8 @@ from btc_quant.supplemental import (
     _find_etf_sessions,
     _float_or_none,
     _parse_deribit_instrument,
-    empty_supplemental_coverage,
     _pct_change,
+    empty_supplemental_coverage,
 )
 
 
