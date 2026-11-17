@@ -88,3 +88,5 @@ The report acquires optional public context feeds independently from the price-o
 - Global ETP flows remain explicitly unavailable until a global source with a documented weekly methodology and data timestamps is separately acquired and tested.
 
 Every optional category must appear in the report coverage matrix as PASS, PARTIAL, STALE, PROXY_ONLY, UNAVAILABLE or NOT_IMPLEMENTED. Optional feed failure never fabricates a value and does not silently become a successful cross-check. All downloaded payloads receive URL, retrieval timestamp, size, SHA-256, schema/parser and source metadata. Optional context is not added to the forecast feature set or used for promotion until a separately pre-registered, point-in-time challenger passes prospective evaluation.
+
+- Halving-cycle context: compare Bitstamp BTC/USD cycles at the same elapsed daily-session horizon after the 2012, 2016, 2020 and 2024 halvings. A cycle is omitted as insufficient history if the venue series does not include the halving session. The comparison is descriptive only, not a cycle-timing forecast or model feature.
