@@ -1221,7 +1221,7 @@ def _cboe_vix_fallback(series_id: str, meta: dict, directory: Path,
         "age_calendar_days": age_days,
         "status": "PASS" if 0 <= age_days <= meta["max_age_days"] else "STALE",
         "previous_value": None,
-        "source_url": url,
+        "source_url": response.url,
         "source_method": "Cboe official historical daily VIX close; independent of FRED transport",
     }
     manifest = {
@@ -1353,6 +1353,109 @@ def _bls_macro_fallback(series_id: str, meta: dict, directory: Path,
     return observation, manifest
 
 
+def _parse_fed_h6_m2_html(payload: bytes) -> tuple[date, float, float | None, date]:
+    """Parse the Federal Reserve H.6 Table 1 seasonally adjusted M2 series."""
+    html = payload.decode("utf-8", errors="replace")
+    release_match = re.search(
+        r"Release Date:\\s*([A-Za-z]+\\s+\\d{1,2},\\s+\\d{4})",
+        html,
+        flags=re.IGNORECASE,
+    )
+    if release_match is None:
+        raise ValueError("Federal Reserve H.6 page has no release date")
+    release_date = datetime.strptime(release_match.group(1), "%B %d, %Y").date()
+    tables = pd.read_html(io.StringIO(html))
+    selected = None
+    for frame in tables:
+        for column in frame.columns:
+            labels = column if isinstance(column, tuple) else (column,)
+            normalized = [str(label).strip().lower() for label in labels]
+            if (
+                any("seasonally adjusted" in label for label in normalized)
+                and any(label == "m2" for label in normalized)
+            ):
+                selected = (frame, frame.columns[0], column)
+                break
+        if selected:
+            break
+    if selected is None:
+        raise ValueError("Federal Reserve H.6 Table 1 has no seasonally adjusted M2 column")
+    frame, date_column, m2_column = selected
+    month_map = {
+        "jan": 1, "january": 1, "feb": 2, "february": 2,
+        "mar": 3, "march": 3, "apr": 4, "april": 4,
+        "may": 5, "jun": 6, "june": 6, "jul": 7, "july": 7,
+        "aug": 8, "august": 8, "sep": 9, "sept": 9, "september": 9,
+        "oct": 10, "october": 10, "nov": 11, "november": 11,
+        "dec": 12, "december": 12,
+    }
+    observations = []
+    for _, row in frame.iterrows():
+        label = str(row[date_column]).strip()
+        parts = label.replace(".", "").split()
+        if len(parts) != 2 or parts[0].lower() not in month_map:
+            continue
+        value_text = str(row[m2_column]).replace(",", "").strip()
+        value = _float_or_none(value_text)
+        if value is None:
+            continue
+        observations.append((
+            date(int(parts[1]), month_map[parts[0].lower()], 1),
+            value,
+        ))
+    observations.sort(key=lambda item: item[0])
+    if not observations:
+        raise ValueError("Federal Reserve H.6 Table 1 has no valid M2 observations")
+    latest = observations[-1]
+    previous = observations[-2][1] if len(observations) > 1 else None
+    return latest[0], latest[1], previous, release_date
+
+
+def _fed_h6_m2_fallback(meta: dict, directory: Path,
+                        today: date) -> tuple[dict, dict]:
+    """Fetch seasonally adjusted M2 from the official Federal Reserve H.6 release."""
+    url = "https://www.federalreserve.gov/releases/h6/current/default.htm"
+    response = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=(8, 20))
+    response.raise_for_status()
+    raw = response.content
+    observation_date, value, previous_value, release_date = _parse_fed_h6_m2_html(raw)
+    age_days = (today - release_date).days
+    obj = _save_object(
+        directory, "federal_reserve_h6_m2.html", raw,
+        source="Federal Reserve Board H.6 Money Stock Measures, Table 1",
+        url=response.url, venue="Federal Reserve Board", symbol="M2",
+        quote="billions of USD, seasonally adjusted", source_grade="A",
+    )
+    observation = {
+        "label": meta["label"], "value": value, "unit": meta["unit"],
+        "observation_date": observation_date.isoformat(),
+        "freshness_reference_date": release_date.isoformat(),
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "age_calendar_days": age_days,
+        "status": "PASS" if 0 <= age_days <= meta["max_age_days"] else "STALE",
+        "previous_value": previous_value,
+        "source_url": response.url,
+        "source_method": (
+            "official Federal Reserve H.6 Table 1 seasonally adjusted M2; "
+            f"release dated {release_date.isoformat()}"
+        ),
+    }
+    manifest = {
+        "source": "Federal Reserve Board H.6 Money Stock Measures",
+        "venue": "Federal Reserve Board", "symbol": "M2",
+        "quote_currency": "billions of USD, seasonally adjusted",
+        "interval": "monthly", "timezone": "observation month",
+        "schema_version": "1.0", "source_grade": "A",
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "release_date": release_date.isoformat(),
+        "parser": "Federal Reserve H.6 Table 1 HTML parser", "parser_version": "1.0",
+        "schema": ["Release Date", "Table 1", "Date", "Seasonally adjusted M2"],
+        "objects": [obj], "status": observation["status"],
+        "fallback_for": "FRED transport failure",
+    }
+    return observation, manifest
+
+
 def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
     """Acquire independent FRED series concurrently with bounded per-request timeouts."""
     from concurrent.futures import ThreadPoolExecutor
@@ -1449,6 +1552,18 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
                 except Exception as fallback_exc:  # noqa: BLE001
                     error = (
                         f"FRED failed ({fred_error}); BLS fallback failed "
+                        f"({type(fallback_exc).__name__}: {fallback_exc})"
+                    )
+            elif series_id == "M2SL":
+                try:
+                    fallback_observation, fallback_manifest = _fed_h6_m2_fallback(
+                        meta, directory, today,
+                    )
+                    fallback_manifest["fred_primary_error"] = fred_error
+                    return series_id, fallback_observation, fallback_manifest, None
+                except Exception as fallback_exc:  # noqa: BLE001
+                    error = (
+                        f"FRED failed ({fred_error}); Federal Reserve H.6 fallback failed "
                         f"({type(fallback_exc).__name__}: {fallback_exc})"
                     )
             else:
