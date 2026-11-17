@@ -321,6 +321,10 @@ def run_pre_report_review(
                                 for q in (steps.get("binance_acquisition_and_qa", {}).get("qa", {}),
                                           steps.get("bitstamp_acquisition_and_qa", {}).get("qa", {}))
                                 if q.get("volume_robust_z_max_timestamp_utc")), None),
+        "absolute_volume_max": next((q.get("volume_max_timestamp_utc")
+                                     for q in (steps.get("binance_acquisition_and_qa", {}).get("qa", {}),
+                                               steps.get("bitstamp_acquisition_and_qa", {}).get("qa", {}))
+                                     if q.get("volume_max_timestamp_utc")), None),
         "outlier_close_return": next((q.get("absolute_close_return_max_timestamp_utc")
                                       for q in (steps.get("binance_acquisition_and_qa", {}).get("qa", {}),
                                                 steps.get("bitstamp_acquisition_and_qa", {}).get("qa", {}))
