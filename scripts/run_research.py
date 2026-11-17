@@ -25,6 +25,7 @@ from btc_quant.ledger import (
     score_matured_events,
     summarize_scored_events,
 )
+from btc_quant.ohlcv_challenger import generate_ohlcv_forecast_events
 from btc_quant.research import cross_check_venues, walk_forward
 from btc_quant.validation import validate_ohlcv
 
@@ -148,10 +149,12 @@ def main() -> int:
     parser.add_argument("--data-dir", default="data/raw")
     parser.add_argument("--output-dir", default="reports/latest")
     parser.add_argument("--ledger", default="ledger/forecast_ledger.csv")
+    parser.add_argument("--ohlcv-ledger", default="ledger/ohlcv_challenger_ledger.csv")
     parser.add_argument("--challenger-log", default="ledger/challenger_log.csv")
     parser.add_argument("--min-train-rows", type=int, default=1095)
     args = parser.parse_args()
     data_dir, output_dir, ledger_path = Path(args.data_dir), Path(args.output_dir), Path(args.ledger)
+    ohlcv_ledger_path = Path(args.ohlcv_ledger)
     output_dir.mkdir(parents=True, exist_ok=True)
     run = {"started_at_utc": datetime.now(UTC).isoformat(), "status": "BLOCKED",
            "protocol": "V5.6.0", "steps": [], "limitations": []}
@@ -188,6 +191,7 @@ def main() -> int:
             for item in source.get("objects", []) if item.get("sha256")
         )
         manifest_sha256 = hashlib.sha256(json.dumps(object_hashes).encode()).hexdigest()
+        run["data_manifest_sha256"] = manifest_sha256
         predictions, scores = walk_forward(binance, min_train_rows=args.min_train_rows)
         counts = predictions.groupby("horizon").size().to_dict() if len(predictions) else {}
         run["historical_continuity_rows_by_horizon"] = {str(k): int(v) for k, v in counts.items()}
@@ -243,6 +247,81 @@ def main() -> int:
                          "events_appended": appended, "existing_events_before_run": len(previous_events),
                          "total_events_after_run": len(all_ledger_events),
                          "append_only": True}
+
+        # Isolated OHLCV challenger: separate append-only ledger, fixed alpha,
+        # and training labels ending strictly before the historical continuity holdout.
+        ohlcv_previous = read_events(ohlcv_ledger_path)
+        ohlcv_invalidations = invalidate_late_forecasts(ohlcv_previous)
+        ohlcv_scores = score_matured_events(ohlcv_previous + ohlcv_invalidations, binance)
+        ohlcv_candidates = generate_ohlcv_forecast_events(
+            binance, manifest_sha256, os.environ.get("GITHUB_SHA", "local-uncommitted"),
+            min_train_rows=args.min_train_rows,
+        ) if scores.get("status") == "SCORED_NOT_PROMOTED" else []
+        ohlcv_scored_ids = {
+            row.get("forecast_id") for row in ohlcv_previous + ohlcv_scores
+            if row.get("event_type") == "SCORE"
+        }
+        ohlcv_invalidated_ids = {
+            row.get("forecast_id") for row in ohlcv_previous + ohlcv_invalidations
+            if row.get("event_type") == "INVALIDATION"
+        }
+        ohlcv_pending_keys = {
+            (row.get("signal_timestamp_utc"), int(row.get("horizon")))
+            for row in ohlcv_previous
+            if row.get("event_type") == "FORECAST"
+            and row.get("forecast_id") not in ohlcv_scored_ids | ohlcv_invalidated_ids
+        }
+        ohlcv_before_dedupe = len(ohlcv_candidates)
+        ohlcv_forecasts = [
+            row for row in ohlcv_candidates
+            if (row["signal_timestamp_utc"], int(row["horizon"])) not in ohlcv_pending_keys
+        ]
+        ohlcv_duplicates = ohlcv_before_dedupe - len(ohlcv_forecasts)
+        ohlcv_appended = append_events(
+            ohlcv_ledger_path, ohlcv_invalidations + ohlcv_scores + ohlcv_forecasts
+        )
+        ohlcv_all_events = ohlcv_previous + ohlcv_invalidations + ohlcv_scores + ohlcv_forecasts
+        ohlcv_summary = summarize_scored_events(
+            ohlcv_previous + ohlcv_invalidations + ohlcv_scores
+        )
+        ohlcv_pending = sum(
+            row.get("event_type") == "FORECAST"
+            and row.get("forecast_id") not in ohlcv_scored_ids | ohlcv_invalidated_ids
+            for row in ohlcv_all_events
+        )
+        run["ohlcv_challenger"] = {
+            "experiment_id": "V5.5-OHLCV-001",
+            "status": "PROSPECTIVE_ONLY_ACTIVE" if ohlcv_pending or ohlcv_forecasts else "BLOCKED_INSUFFICIENT_PREHOLDOUT_HISTORY",
+            "model_version": "ohlcv-challenger-0.1-fixed-alpha-100",
+            "features": [
+                "price-only lagged returns and volatility",
+                "30-session lagged-median log-volume surprise",
+                "30-session robust volume surprise z-score",
+                "candle range, body, upper wick, lower wick and close location",
+            ],
+            "training_policy": {
+                "holdout_start_utc": "2025-11-16T00:00:00+00:00",
+                "training_labels_end_before_holdout": True,
+                "holdout_used_for_training_or_tuning": False,
+                "alpha": 100.0,
+                "alpha_tuning": "NONE_FIXED_PRE_REGISTERED",
+            },
+            "prospective_validation": ohlcv_summary,
+            "ledger": {
+                "existing_events_before_run": len(ohlcv_previous),
+                "invalidations_created": len(ohlcv_invalidations),
+                "score_events_created": len(ohlcv_scores),
+                "forecast_events_created": len(ohlcv_forecasts),
+                "duplicate_forecasts_suppressed": ohlcv_duplicates,
+                "events_appended": ohlcv_appended,
+                "total_events_after_run": len(ohlcv_all_events),
+                "pending_forecasts": ohlcv_pending,
+                "append_only": True,
+            },
+            "promotion": "NOT_PROMOTED; require at least 200 matured forecasts per horizon, HAC/Holm comparisons and documented cost-adjusted economic evidence.",
+        }
+        run["steps"].append({"step": "ohlcv_challenger", "status": run["ohlcv_challenger"]["status"],
+                             "forecast_events": len(ohlcv_forecasts), "score_events": len(ohlcv_scores)})
         run["steps"].append({"step": "walk_forward", "status": scores["status"],
                              "oos_rows": len(predictions), "scores": scores})
         required_pass = all(step["status"] == "PASS" for step in run["steps"]
@@ -258,6 +337,7 @@ def main() -> int:
         run["limitations"].append("No calibrated probability or live trading claim is permitted.")
         run["limitations"].append("No derivatives, ETF/ETP, options, on-chain or macro time series were acquired or integrated in this run; no claim is made from them.")
         run["limitations"].append("No strategy-level cost backtest is admissible until prospective predictive evidence and a documented execution rule, venue fee tier, spread and slippage model exist.")
+        run["limitations"].append("The OHLCV challenger is active in a separate prospective-only ledger; no matured performance or promotion is claimed.")
     except Exception as exc:  # noqa: BLE001 - write a durable failure report for diagnosis
         run["status"] = "BLOCKED"
         run["error"] = f"{type(exc).__name__}: {exc}"
@@ -265,7 +345,11 @@ def main() -> int:
         run["limitations"].append("No model claim or positive exposure is permitted when acquisition, QA, or evaluation is blocked.")
         write_manifest(manifests, output_dir / "data_manifest.json")
     try:
-        _append_challenger_proposal(Path(args.challenger_log))
+        _append_challenger_proposal(
+            Path(args.challenger_log),
+            implemented=run.get("ohlcv_challenger", {}).get("status") == "PROSPECTIVE_ONLY_ACTIVE",
+            manifest_sha256=run.get("data_manifest_sha256", ""),
+        )
         prospective = run.get("prospective_ledger_validation", {
             "decision": "INSUFFICIENT_PROSPECTIVE_EVIDENCE", "by_horizon": {}
         })
@@ -280,7 +364,7 @@ def main() -> int:
         # Mandatory review runs before run_report.json is serialized. It checks
         # source-object hashes, archive coverage, target timing, holdout hygiene,
         # ledger invariants, risk gates and a rotating deep-review lens.
-        ledger_events = read_events(ledger_path)
+        ledger_events = read_events(ledger_path) + read_events(ohlcv_ledger_path)
         review = build_pre_report_review(
             run, manifests, binance, bitstamp, ledger_events,
             root=Path.cwd(), now=datetime.now(UTC),
