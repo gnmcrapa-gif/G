@@ -6,7 +6,7 @@ import math
 import numpy as np
 import pandas as pd
 
-from .validation import forward_open_log_return, validate_ohlcv
+from .validation import EXECUTION_ENTRY_LAG_SESSIONS, forward_open_log_return, validate_ohlcv
 
 HORIZONS = (1, 3, 7, 30)
 RIDGE_ALPHAS = (0.1, 1.0, 10.0, 100.0)
@@ -167,7 +167,7 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
         fold_counts = []
         for fold_number in range(3):
             fold_start, fold_end = int(boundaries[fold_number]), int(boundaries[fold_number + 1])
-            train_end = fold_start - horizon - 3
+            train_end = fold_start - horizon - EXECUTION_ENTRY_LAG_SESSIONS - 1
             train_idx = _valid_indices(
                 target, features, np.arange(61, max(61, train_end + 1))
             )
@@ -197,12 +197,12 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
             for key, values in fold_scores.items()
         }
         selected_alpha = min(RIDGE_ALPHAS, key=lambda alpha: alpha_scores[str(alpha)])
-        final_train_end = holdout_start - horizon - 3
+        final_train_end = holdout_start - horizon - EXECUTION_ENTRY_LAG_SESSIONS - 1
         final_train_idx = _valid_indices(
             target, features, np.arange(61, final_train_end + 1)
         )
         holdout_idx = _valid_indices(
-            target, features, np.arange(holdout_start, max(holdout_start, n - horizon - 2))
+            target, features, np.arange(holdout_start, max(holdout_start, n - horizon - EXECUTION_ENTRY_LAG_SESSIONS))
         )
         if len(final_train_idx) < min_train_rows or len(holdout_idx) < 200:
             return pd.DataFrame(), {
