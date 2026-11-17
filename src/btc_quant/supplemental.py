@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import hashlib
+import io
 import json
 import math
 from datetime import UTC, date, datetime, timedelta
@@ -439,6 +440,7 @@ def _deribit_options(directory: Path) -> tuple[dict, dict]:
             "reason": "Public open interest and option Greeks do not reveal whether dealers are net long or short; no dealer-side sign is inferred.",
         },
         "ticker_greeks_sample_count": len(ticker_rows),
+        "greeks_status": "PASS" if ticker_rows else "UNAVAILABLE",
         "raw_option_instruments": len(parsed_rows),
         "open_interest_delay_hours": 8,
     }
@@ -595,7 +597,7 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
                 url=response.url, venue="United States macro", symbol=series_id,
                 quote=meta["unit"], source_grade="A",
             )
-            frame = pd.read_csv(pd.io.common.BytesIO(raw))
+            frame = pd.read_csv(io.BytesIO(raw))
             if frame.empty or len(frame.columns) < 2:
                 raise ValueError(f"FRED CSV has unexpected schema for {series_id}")
             date_col, value_col = frame.columns[0], frame.columns[1]
