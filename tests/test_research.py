@@ -71,12 +71,15 @@ def test_walk_forward_runs_purged_holdout_without_leakage():
         "close": close,
         "volume": np.full(n, 100.0),
     })
-    predictions, summary = walk_forward(frame, min_train_rows=100, holdout_rows=365)
+    predictions, summary = walk_forward(frame, min_train_rows=100)
     assert summary["status"] == "SCORED_NOT_PROMOTED"
     assert summary["holdout_is_untouched"] is False
     assert summary["holdout_training_and_tuning_excluded_in_this_run"] is True
     assert summary["holdout_globally_unseen"] is False
     assert summary["holdout_role"] == "historical_continuity_diagnostic_only"
+    assert summary["holdout_start_utc"] == "2025-11-17T00:00:00+00:00"
+    assert summary["holdout_definition"] == "fixed_start_expanding_diagnostic_never_used_for_training_or_tuning"
+    assert all(pd.Timestamp(item["final_train_end_utc"]) < pd.Timestamp(summary["holdout_start_utc"]) for item in summary["validation_tuning"].values())
     assert summary["training_uses_holdout"] is False
     assert set(predictions["horizon"].unique()) == {1, 3, 7, 30}
     assert (predictions["split"] == "final_holdout").all()
