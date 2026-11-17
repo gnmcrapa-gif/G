@@ -270,6 +270,21 @@ def run_pre_report_review(
         and risk.get("mode") == "paper_only",
         "Live trading disabled; paper-only overlay; theoretical exposure exactly 0%.")
 
+    taxonomy = run.get("report_taxonomy", {})
+    add("report_fact_taxonomy", "protocol",
+        all(key in taxonomy for key in ("FACT", "INTERPRETATION", "HYPOTHESIS", "FORECAST")),
+        "Report must explicitly separate FACT, INTERPRETATION, HYPOTHESIS and FORECAST.")
+    economic = run.get("economic_validation", {})
+    add("economic_claim_guard", "quant",
+        economic.get("cost_adjusted_strategy_backtest_executed") is False
+        and economic.get("historical_holdout_used_for_economic_promotion") is False,
+        "No executable PnL claim without prospective outcomes, an ex-ante trade rule and documented fee/spread/slippage/funding inputs.")
+    add("closing_assessment_present", "protocol",
+        bool(run.get("closing_assessment", {}).get("principal_limit"))
+        and bool(run.get("closing_assessment", {}).get("evidence_that_would_change_assessment"))
+        and bool(run.get("closing_assessment", {}).get("single_next_priority_experiment")),
+        "Report closes with observed factors, principal limitation, falsifying evidence and exactly one next experiment.")
+
     # Rotate the adversarial lens by workflow run id; all blocking controls above still run every time.
     lens_index = int(hashlib.sha256(str(run_id).encode()).hexdigest()[:8], 16) % len(REVIEW_LENSES)
     lens = REVIEW_LENSES[lens_index]
