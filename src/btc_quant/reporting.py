@@ -466,7 +466,27 @@ def render_markdown_report(run: dict, scores: dict) -> str:
             lines.append("")
             lines.append(f"Feed macro non acquisiti: {macro['errors']}")
 
-    lines += ["", "## 5. Validazione quantitativa", "",
+    news = supplemental.get("news", {})
+    if news:
+        lines += ["", "## 5. Eventi, regolamentazione e geopolitica — feed descrittivi", "",
+                  f"- Stato: {news.get('status')}. {news.get('interpretation_limit', '')}",
+                  "| Fonte | Stato | Articoli acquisiti |",
+                  "|---|---|---:|"]
+        for source_name, source_item in news.get("source_status", {}).items():
+            lines.append(
+                f"| {source_name} | {source_item.get('status')} | "
+                f"{source_item.get('article_count', 'n/d')} |"
+            )
+        for article in news.get("articles", [])[:12]:
+            title = str(article.get("title", "")).replace("|", "\\|").replace("\\n", " ")
+            date_label = article.get("published_at_utc") or article.get("seen_at_utc") or "data non disponibile"
+            tags = ", ".join(article.get("keyword_tags", [])) or "nessun tag"
+            lines.append(
+                f"- {date_label} — {article.get('source')} — {title} "
+                f"[{tags}] — {article.get('url')}"
+            )
+
+    lines += ["", "## 6. Validazione quantitativa", "",
               "Le metriche seguenti sono diagnostiche sul periodo storico già ispezionato; non sono prova prospettica né PnL eseguibile.",
               "", "| Orizzonte | N | Zero MAE | Drift MAE | Momentum MAE | Ridge MAE |",
               "|---:|---:|---:|---:|---:|---:|"]
@@ -479,14 +499,14 @@ def render_markdown_report(run: dict, scores: dict) -> str:
             f"{_display(block.get('ridge', {}).get('mae'), 6)} |"
         )
     ledger = run.get("ledger", {})
-    lines += ["", "## 6. Ledger e rischio", "",
+    lines += ["", "## 7. Ledger e rischio", "",
               f"- Stato ledger: {ledger.get('persistence_status', 'n/d')}; eventi prima/dopo: {ledger.get('existing_events_before_run', 'n/d')} / {ledger.get('total_events_after_run', 'n/d')}.",
               f"- Nuove previsioni: {ledger.get('forecast_events_created', 0)}; duplicate soppresse: {ledger.get('duplicate_forecasts_suppressed', 0)}; score maturati: {ledger.get('score_events_created', 0)}.",
               f"- Campione prospettico: {run.get('prospective_ledger_validation', {}).get('decision', 'n/d')}.",
               f"- Rischio: {run.get('risk', {}).get('mode', 'n/d')}; live trading: {run.get('risk', {}).get('live_trading_enabled', False)}; esposizione teorica: {_display(run.get('risk', {}).get('theoretical_exposure_pct'), 2)}%.",
               "- Champion congelato: zero-return. Ridge è challenger non promosso.",
               "- Nessun PnL economico o probabilità calibrata è dichiarato.",
-              "", "## 7. Revisione critica e conclusione", ""]
+              "", "## 8. Revisione critica e conclusione", ""]
     audit = run.get("pre_report_review", {})
     lines.append(
         f"- Gate pre-report: {audit.get('status', 'n/d')}; cicli completati: "
@@ -502,7 +522,7 @@ def render_markdown_report(run: dict, scores: dict) -> str:
     lines.append(f"- Limite principale: {closing.get('principal_limit', 'n/d')}")
     lines.append(f"- Evidenza che cambierebbe la valutazione: {closing.get('evidence_that_would_change_assessment', 'n/d')}")
     lines.append(f"- Prossimo esperimento: {closing.get('single_next_priority_experiment', 'n/d')}")
-    lines += ["", "## 8. Limiti dichiarati", ""]
+    lines += ["", "## 9. Limiti dichiarati", ""]
     for limitation in run.get("limitations", []):
         lines.append(f"- {limitation}")
     return "\n".join(lines) + "\n"
