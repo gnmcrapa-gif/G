@@ -150,8 +150,8 @@ def _summarize_hourly_taker_delta(rows: list) -> dict:
         [row for row in rows if int(row[6]) < now_ms],
         key=lambda row: int(row[0]),
     )
-    result = {"status": "PASS" if len(closed) >= 168 else "PARTIAL", "closed_hourly_bars": len(closed)}
-    for label, hours in (("24h", 24), ("7d", 168)):
+    result = {"status": "PASS" if len(closed) >= 720 else "PARTIAL", "closed_hourly_bars": len(closed)}
+    for label, hours in (("24h", 24), ("7d", 168), ("30d", 720)):
         window = closed[-hours:]
         if len(window) < hours:
             result[label] = {"status": "INSUFFICIENT_BARS", "required_hours": hours, "actual_hours": len(window)}
@@ -188,8 +188,8 @@ def _binance_cvd(directory: Path) -> tuple[dict, list[dict]]:
     for market, url, venue, symbol, quote in sources:
         try:
             rows, obj = _request_json(
-                session, "GET", url, directory, f"{market}_btc_cvd_1h_7d.json",
-                params={"symbol": symbol, "interval": "1h", "limit": 169},
+                session, "GET", url, directory, f"{market}_btc_cvd_1h_30d.json",
+                params={"symbol": symbol, "interval": "1h", "limit": 745},
                 source=f"{venue} hourly taker-volume candles",
                 venue=venue, symbol=symbol, quote=quote,
             )
@@ -198,7 +198,7 @@ def _binance_cvd(directory: Path) -> tuple[dict, list[dict]]:
             manifests.append({
                 "source": f"{venue} hourly taker-volume candles",
                 "venue": venue, "symbol": symbol, "quote_currency": quote,
-                "interval": "1h", "timezone": "UTC",
+                "interval": "1h; 24h/7d/30d rolling windows", "timezone": "UTC",
                 "schema_version": "1.0", "source_grade": "A",
                 "retrieved_at_utc": datetime.now(UTC).isoformat(),
                 "parser": "Binance kline taker-buy/sell volume delta parser",
@@ -214,7 +214,7 @@ def _binance_cvd(directory: Path) -> tuple[dict, list[dict]]:
             manifests.append({
                 "source": f"{venue} hourly taker-volume candles",
                 "venue": venue, "symbol": symbol, "quote_currency": quote,
-                "interval": "1h", "timezone": "UTC",
+                "interval": "1h; 24h/7d/30d rolling windows", "timezone": "UTC",
                 "schema_version": "1.0", "source_grade": "A",
                 "retrieved_at_utc": datetime.now(UTC).isoformat(),
                 "parser": "Binance kline taker-buy/sell volume delta parser",
@@ -230,7 +230,7 @@ def _binance_cvd(directory: Path) -> tuple[dict, list[dict]]:
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "markets": summaries,
         "errors": errors,
-        "measurement_note": "Hourly Binance kline taker-buy base volume minus inferred taker-sell base volume; not tick-level order-book delta.",
+        "measurement_note": "Hourly Binance kline taker-buy base volume minus inferred taker-sell base volume for rolling 24h/7d/30d windows; not tick-level order-book delta.",
     }, manifests
 
 
