@@ -5,6 +5,7 @@ from btc_quant.supplemental import (
     _find_etf_sessions,
     _float_or_none,
     _news_keyword_tags,
+    _parse_bitwise_weekly_flows,
     _parse_deribit_instrument,
     _parse_rss_articles,
     _pct_change,
@@ -109,3 +110,29 @@ def test_official_rss_parser_keeps_publication_time_source_and_url():
 def test_news_keyword_tags_are_explicitly_rule_based():
     tags = _news_keyword_tags("Federal Reserve signals rates amid Bitcoin ETF flows")
     assert tags == ["macro_monetary", "crypto"]
+
+
+
+def test_bitwise_weekly_global_etp_parser_extracts_global_btc_and_us_spot_subset():
+    html = b"""<html><head>
+    <meta property="article:published_time" content="2026-11-16T08:00:00+00:00">
+    </head><body><h1>Weekly Crypto Market Compass</h1>
+    <p>Global crypto ETPs experienced around -1633.9 mn USD in net outflows last week,
+    after -1779.4 mn USD in net outflows the previous week.</p>
+    <p>Global Bitcoin ETPs experienced net outflows of -1112.7 mn USD last week,
+    of which -1119.8 mn USD in net outflows were related to US spot Bitcoin ETFs.</p>
+    </body></html>"""
+    result = _parse_bitwise_weekly_flows(html, 2026, 47)
+    assert result["report_week"] == "2026-W47"
+    assert result["global_crypto_etp_weekly_flow_usd_mn"] == pytest.approx(-1633.9)
+    assert result["global_bitcoin_etp_weekly_flow_usd_mn"] == pytest.approx(-1112.7)
+    assert result["us_spot_bitcoin_etf_component_usd_mn"] == pytest.approx(-1119.8)
+    assert result["non_us_bitcoin_etp_residual_usd_mn"] == pytest.approx(7.1)
+    assert result["published_at_utc"] == "2026-11-16T08:00:00+00:00"
+    assert result["status"] == "PASS"
+
+
+def test_bitwise_weekly_parser_does_not_invent_missing_global_flows():
+    html = b"<html><body><h1>Unrelated report</h1></body></html>"
+    with pytest.raises(ValueError):
+        _parse_bitwise_weekly_flows(html, 2026, 47)
