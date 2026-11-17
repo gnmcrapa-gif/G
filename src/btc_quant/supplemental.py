@@ -1313,10 +1313,13 @@ def _parse_ckh_exchange_ranking(html_payload: bytes) -> dict:
     events_block = re.search(r"Events, last 30 days(.*?)Exchanges covered", plain, re.I)
     events = []
     if events_block:
-        events = re.findall(
-            r"(?:Binance|OKX|Bybit|HTX|KuCoin|Bitfinex|Crypto\.com):\s*[^*]+",
-            events_block.group(1), re.I,
-        )
+        exchange_pattern = r"(?:Binance|OKX|Bybit|HTX|KuCoin|Bitfinex|Crypto\.com)"
+        event_matches = list(re.finditer(rf"{exchange_pattern}:\s*", events_block.group(1), re.I))
+        for index, match in enumerate(event_matches):
+            end = event_matches[index + 1].start() if index + 1 < len(event_matches) else len(events_block.group(1))
+            event_text = events_block.group(1)[match.start():end].strip(" ;\n")
+            if event_text:
+                events.append(event_text)
     return {
         "status": "PASS" if len(rows) >= 4 and asof_utc else "PARTIAL" if rows else "FAIL",
         "latest_complete_day_utc": asof_utc,
