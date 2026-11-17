@@ -68,6 +68,58 @@ jobs:
             git rebase origin/main
             git push origin HEAD:main
           fi
+      - name: Verify persisted remote evidence
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request' && steps.research.outcome == 'success'
+        run: |
+          set -euo pipefail
+          git fetch origin main
+          test "$(git rev-parse HEAD)" = "$(git rev-parse origin/main)"
+          python - <<'PY'
+          import csv
+          import hashlib
+          import json
+          import subprocess
+          from pathlib import Path
+
+          required = [
+              "reports/latest/run_report.json",
+              "reports/latest/data_manifest.json",
+              "reports/latest/scores.json",
+              "reports/latest/oos_predictions.csv",
+              "ledger/forecast_ledger.csv",
+              "ledger/challenger_log.csv",
+          ]
+          for relative in required:
+              local = Path(relative).read_bytes()
+              remote = subprocess.check_output(["git", "show", f"origin/main:{relative}"])
+              assert local == remote, f"remote read-back mismatch: {relative}"
+
+          report = json.loads(Path("reports/latest/run_report.json").read_text())
+          manifest = json.loads(Path("reports/latest/data_manifest.json").read_text())
+          assert report["status"] == "COMPLETE_NOT_PROMOTED", report["status"]
+          assert report["pre_report_review"]["status"] == "PASS"
+          assert report["risk"]["theoretical_exposure_pct"] == 0
+          ledger_bytes = Path("ledger/forecast_ledger.csv").read_bytes()
+          ledger_sha = hashlib.sha256(ledger_bytes).hexdigest()
+          assert report["post_persistence_verification"]["ledger_sha256"] == ledger_sha
+
+          checked = 0
+          for source in manifest["sources"]:
+              for item in source.get("objects", []):
+                  path = Path(item["file"])
+                  raw = path.read_bytes()
+                  assert len(raw) == item["size_bytes"], f"size mismatch: {path}"
+                  assert hashlib.sha256(raw).hexdigest() == item["sha256"], f"SHA-256 mismatch: {path}"
+                  remote_raw = subprocess.check_output(["git", "show", f"origin/main:{path.as_posix()}"])
+                  assert remote_raw == raw, f"remote raw-data mismatch: {path}"
+                  checked += 1
+
+          with Path("ledger/forecast_ledger.csv").open(newline="", encoding="utf-8") as handle:
+              rows = list(csv.DictReader(handle))
+          event_ids = [row["event_id"] for row in rows]
+          assert len(event_ids) == len(set(event_ids)), "duplicate ledger event IDs"
+          print(f"REMOTE_PERSISTENCE_VERIFIED files={len(required)} raw_objects={checked} ledger_events={len(rows)} ledger_sha256={ledger_sha}")
+          PY
       - name: Upload diagnostic artifact
         if: always()
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
