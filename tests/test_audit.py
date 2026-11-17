@@ -203,3 +203,15 @@ def test_invalidated_backdated_forecasts_remain_auditable_not_blocking(tmp_path)
     ledger_check = next(item for item in result["checks"]
                         if item["check_id"] == "append_only_ledger_consistency")
     assert ledger_check["status"] == "PASS"
+
+
+
+def test_pre_report_review_blocks_missing_or_unclassified_context_domains(tmp_path):
+    run, manifests, binance, bitstamp, events, scores = _review_inputs(tmp_path)
+    del run["supplemental_data"]["coverage"]["options"]
+    result = run_pre_report_review(
+        run, manifests, binance, bitstamp, events, scores,
+        now=datetime(2025, 6, 23, 12, tzinfo=UTC), run_id="workflow-missing-domain",
+    )
+    assert result["status"] == "FAIL"
+    assert "supplemental_coverage_explicit" in result["blocking_failures"]
