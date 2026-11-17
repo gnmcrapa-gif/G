@@ -933,8 +933,8 @@ def _news_context(directory: Path) -> tuple[dict, list[dict]]:
                 "error": errors[name],
             })
     source_status["CFTC"] = {
-        "status": "UNAVAILABLE",
-        "reason": "CFTC reports its RSS feeds temporarily disabled as of October 2026.",
+        "status": "NOT_CONFIGURED",
+        "reason": "No verified CFTC news feed endpoint is configured in this build; no CFTC news coverage is claimed.",
     }
 
     gdelt_url = "https://api.gdeltproject.org/api/v2/doc/doc"
