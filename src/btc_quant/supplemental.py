@@ -403,6 +403,51 @@ def _parse_okx_array_response(payload: dict, endpoint: str, min_columns: int) ->
     return rows
 
 
+def _summarize_okx_daily_taker_volume(rows: list[list], today_utc: date) -> dict:
+    """Summarize completed UTC daily BTC taker buy/sell volume, excluding today's open bar."""
+    parsed = []
+    for row in rows:
+        timestamp = int(row[0])
+        sell_volume = _float_or_none(row[1])
+        buy_volume = _float_or_none(row[2])
+        if sell_volume is None or buy_volume is None:
+            continue
+        observation_date = datetime.fromtimestamp(timestamp / 1000, UTC).date()
+        if observation_date >= today_utc:
+            continue
+        parsed.append({
+            "timestamp_utc": _timestamp_ms(timestamp),
+            "date_utc": observation_date.isoformat(),
+            "sell_volume_btc": sell_volume,
+            "buy_volume_btc": buy_volume,
+            "delta_btc": buy_volume - sell_volume,
+            "timestamp_ms": timestamp,
+        })
+    parsed.sort(key=lambda item: item["timestamp_ms"])
+    windows = {}
+    for days in (1, 7, 30):
+        sample = parsed[-days:]
+        contiguous = (
+            len(sample) == days
+            and all(
+                sample[index]["timestamp_ms"] - sample[index - 1]["timestamp_ms"] == 86400_000
+                for index in range(1, len(sample))
+            )
+        )
+        windows[f"{days}d"] = (
+            sum(item["delta_btc"] for item in sample) if contiguous else None
+        )
+    return {
+        "closed_daily_rows": len(parsed),
+        "cumulative_delta_btc": windows,
+        "measurement_note": (
+            "OKX BTC-USDT perpetual contract taker volume in BTC; buy minus sell. "
+            "Completed UTC daily bars only; exchange-specific derivatives delta proxy, "
+            "not spot CVD or total-market CVD."
+        ),
+    }
+
+
 def _okx_derivatives(directory: Path) -> tuple[dict, dict]:
     """Acquire OKX public BTC-USDT perpetual snapshots and funding history."""
     session = requests.Session()
@@ -515,7 +560,9 @@ def _okx_derivatives(directory: Path) -> tuple[dict, dict]:
         }
         for row in taker_rows
     ]
-    valid_taker = [row for row in taker_delta if row["delta_btc"] is not None]
+    taker_volume_summary = _summarize_okx_daily_taker_volume(
+        raw.get("taker_volume_daily", []), datetime.now(UTC).date()
+    )
     valid_current = bool(ticker or oi or funding)
     summary = {
         "venue": "OKX",
@@ -543,13 +590,7 @@ def _okx_derivatives(directory: Path) -> tuple[dict, dict]:
         "funding_history": history_rows,
         "daily_taker_volume": taker_delta,
         "daily_taker_volume_history_rows": len(taker_delta),
-        "daily_taker_cumulative_delta_btc": (
-            sum(row["delta_btc"] for row in valid_taker) if valid_taker else None
-        ),
-        "daily_taker_measurement_note": (
-            "OKX BTC-USDT perpetual contract taker volume, unit=BTC; buy minus sell. "
-            "Exchange-specific derivatives delta, not spot CVD or total-market CVD."
-        ),
+        "daily_taker_volume_summary": taker_volume_summary,
         "funding_history_rows": len(history_rows),
         "funding_history_scope": "latest 100 returned settlements; OKX documents up to three months, pagination and retention limits apply",
         "open_interest_history_scope": "daily UTC series; latest 100 points returned by OKX",
