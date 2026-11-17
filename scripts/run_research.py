@@ -28,6 +28,7 @@ from btc_quant.ledger import (
     summarize_scored_events,
 )
 from btc_quant.reporting import (
+    _build_halving_cycle_comparison,
     _build_longitudinal_comparison,
     _build_report_sections,
     _market_snapshot,
@@ -240,6 +241,7 @@ def main() -> int:
                 _market_snapshot(bitstamp, "Bitstamp", "BTC/USD", "USD", bitstamp_manifest["retrieved_at_utc"]),
             ],
         }
+        run["cycle_comparison"] = _build_halving_cycle_comparison(bitstamp)
         manifest_path = output_dir / "data_manifest.json"
         write_manifest(manifests, manifest_path)
         # The model consumes Binance BTCUSDT only. Keep the forecast idempotency
