@@ -8,6 +8,7 @@ from btc_quant.audit import (
     _check_ledger,
     audit_outlier_date,
     build_observed_drivers,
+    select_audit_lens,
     verify_binance_archive_coverage,
     verify_bitstamp_page_reconciliation,
     verify_raw_objects,
@@ -166,3 +167,13 @@ def test_report_observed_drivers_are_fixed_1_7_30_session_facts():
     assert [row["window_sessions"] for row in result["three_observed_price_drivers"]] == [1, 7, 30]
     assert result["latest_volume_vs_previous_30_session_median"] == 1.5
     assert all(row["source"] == "Binance BTCUSDT spot daily OHLCV" for row in result["three_observed_price_drivers"])
+
+
+
+def test_audit_rotation_can_change_between_same_day_reruns():
+    now = datetime(2026, 11, 17, 16, tzinfo=UTC)
+    first = select_audit_lens({"started_at_utc": "2026-11-17T16:00:00+00:00"}, now)
+    second = select_audit_lens({"started_at_utc": "2026-11-17T16:00:01+00:00"}, now)
+    assert first[0] != second[0]
+    assert first[1] in AUDIT_LENSES
+    assert second[1] in AUDIT_LENSES
