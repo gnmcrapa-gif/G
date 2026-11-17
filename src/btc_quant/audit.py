@@ -144,7 +144,7 @@ def verify_bitstamp_page_reconciliation(source: dict | None) -> dict:
     filtered_rows = raw_rows - duplicates - canonical_rows
     ok = bool(objects) and duplicates >= 0 and 0 <= filtered_rows <= 1
     return {
-        "status": "PASS" if ok else "WARN",
+        "status": "PASS" if ok else "BLOCKED",
         "page_count": len(objects),
         "raw_page_rows": raw_rows,
         "page_overlap_duplicates_removed": duplicates,
@@ -256,7 +256,7 @@ def _check_target_alignment() -> dict:
     }
 
 
-def _check_ledger(events: list[dict], now: datetime) -> dict:
+def _check_ledger(events: list[dict], now: datetime, latest_data_timestamp=None) -> dict:
     ids = [row.get("event_id") for row in events]
     duplicates = len(ids) - len(set(ids))
     by_forecast = {}
@@ -265,6 +265,8 @@ def _check_ledger(events: list[dict], now: datetime) -> dict:
     invalidated_ids = {
         row.get("forecast_id") for row in events if row.get("event_type") == "INVALIDATION"
     }
+    scored_ids = {row.get("forecast_id") for row in events if row.get("event_type") == "SCORE"}
+    latest_data = pd.Timestamp(latest_data_timestamp) if latest_data_timestamp is not None else None
     issues = []
     legacy_vector_count = 0
     for row in events:
@@ -287,6 +289,10 @@ def _check_ledger(events: list[dict], now: datetime) -> dict:
                     raise ValueError("forecast issue timestamp is in the future")
                 if row.get("forecast_id") not in invalidated_ids and not issued < entry < expiry:
                     raise ValueError("valid forecast chronology must satisfy issued < entry < expiry")
+                if (row.get("forecast_id") not in invalidated_ids
+                        and row.get("forecast_id") not in scored_ids
+                        and latest_data is not None and expiry <= latest_data):
+                    raise ValueError("matured pending forecast has no SCORE event")
                 if not entry < expiry:
                     raise ValueError("expiry must follow entry even for invalidated forecasts")
             except (KeyError, TypeError, ValueError) as exc:
@@ -332,7 +338,8 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
     coverage = verify_binance_archive_coverage(binance_manifest, now)
     bitstamp_pages = verify_bitstamp_page_reconciliation(bitstamp_manifest)
     target = _check_target_alignment()
-    ledger = _check_ledger(events, now)
+    latest_data_timestamp = (binance["timestamp"].max() if binance is not None and not binance.empty else None)
+    ledger = _check_ledger(events, now, latest_data_timestamp)
     scores = next((step.get("scores", {}) for step in run.get("steps", [])
                    if step.get("step") == "walk_forward"), {})
     holdout_ok = (
