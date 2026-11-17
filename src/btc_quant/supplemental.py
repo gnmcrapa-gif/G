@@ -1276,6 +1276,26 @@ def _parse_ckh_exchange_ranking(html_payload: bytes) -> dict:
     clean = re.sub(r"</(?:p|div|li|tr|h[1-6])>", "\n", clean, flags=re.I)
     plain = unescape(re.sub(r"<[^>]+>", " ", clean))
     plain = re.sub(r"\s+", " ", plain)
+    if not rows:
+        ranking_block = re.search(
+            r"Daily ranking, UTC day.*?(?=Events, last 30 days|$)",
+            plain, re.I,
+        )
+        if ranking_block:
+            coin_pattern = r"(?:Bitcoin|Ether|Stablecoins \(Ethereum\)|Litecoin|Dogecoin|Bitcoin Cash)"
+            for exchange in known_exchanges:
+                match = re.search(
+                    rf"{re.escape(exchange)}\s+([−-]?\$[0-9,.]+[KMB]?)\s+"
+                    rf"([−-]?\$[0-9,.]+[KMB]?)\s+({coin_pattern}(?:,\s*{coin_pattern})*)",
+                    ranking_block.group(0), re.I,
+                )
+                if match:
+                    rows.append({
+                        "exchange": exchange,
+                        "daily_netflow_usd": _parse_provider_money(match.group(1)),
+                        "netflow_7d_usd": _parse_provider_money(match.group(2)),
+                        "coins_covered": match.group(3),
+                    })
     asof = re.search(r"Daily ranking, UTC day\s+([0-9]{1,2}\s+[A-Za-z]+\s+[0-9]{4})", plain, re.I)
     updated = re.search(r"updated\s+([0-9]{2}:[0-9]{2} UTC on [0-9]{1,2} [A-Za-z]+ [0-9]{4})", plain, re.I)
     asof_utc = None
