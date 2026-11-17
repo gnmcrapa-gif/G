@@ -14,7 +14,7 @@ class DataValidationError(ValueError):
 
 
 def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
-                   require_closed: bool = True, now: pd.Timestamp | None = None) -> dict[str, int | float | str]:
+                   require_closed: bool = True, now: pd.Timestamp | None = None) -> dict[str, int | float | str | None]:
     """Validate without repairing rows; input timestamps must explicitly be UTC-aware."""
     missing = [column for column in REQUIRED_OHLCV if column not in frame.columns]
     if missing:
@@ -82,10 +82,15 @@ def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
     intraday_range_pct = (h - l) / o
     volume_median = float(np.median(volume))
     volume_mad = float(np.median(np.abs(volume - volume_median)))
+    volume_deviation = np.abs(volume - volume_median)
     robust_volume_z_max = (
-        float(np.max(np.abs(volume - volume_median)) / (1.4826 * volume_mad))
+        float(np.max(volume_deviation) / (1.4826 * volume_mad))
         if volume_mad > 0 else None
     )
+    robust_volume_z_index = int(np.argmax(volume_deviation))
+    volume_max_index = int(np.argmax(volume))
+    close_return_max_index = int(np.argmax(close_returns)) + 1 if len(close_returns) else 0
+    intraday_range_max_index = int(np.argmax(intraday_range_pct))
     candle_close_utc = ts.max() + pd.Timedelta(days=1)
     exact_age_hours = max(0.0, (current - candle_close_utc).total_seconds() / 3600.0)
     return {
@@ -101,6 +106,12 @@ def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
         "volume_p99_btc": float(np.quantile(volume, 0.99)),
         "volume_max_btc": float(np.max(volume)),
         "volume_robust_z_max": robust_volume_z_max,
+        "volume_robust_z_max_timestamp_utc": (
+            ts.iloc[robust_volume_z_index].isoformat() if robust_volume_z_max is not None else None
+        ),
+        "volume_max_timestamp_utc": ts.iloc[volume_max_index].isoformat(),
+        "absolute_close_return_max_timestamp_utc": ts.iloc[close_return_max_index].isoformat(),
+        "intraday_range_pct_max_timestamp_utc": ts.iloc[intraday_range_max_index].isoformat(),
         "absolute_close_return_p99": float(np.quantile(close_returns, 0.99)) if len(close_returns) else 0.0,
         "absolute_close_return_max": float(np.max(close_returns)) if len(close_returns) else 0.0,
         "intraday_range_pct_p99": float(np.quantile(intraday_range_pct, 0.99)),
