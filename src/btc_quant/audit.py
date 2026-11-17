@@ -263,6 +263,9 @@ def _check_ledger(events: list[dict], now: datetime) -> dict:
     by_forecast = {}
     for row in events:
         by_forecast.setdefault(row.get("forecast_id"), []).append(row)
+    invalidated_ids = {
+        row.get("forecast_id") for row in events if row.get("event_type") == "INVALIDATION"
+    }
     issues = []
     legacy_vector_count = 0
     for row in events:
@@ -281,19 +284,35 @@ def _check_ledger(events: list[dict], now: datetime) -> dict:
                 expiry = pd.Timestamp(row["expiry_timestamp_utc"])
                 if issued.tzinfo is None or entry.tzinfo is None or expiry.tzinfo is None:
                     raise ValueError("timestamps must be timezone-aware")
-                if not issued < entry < expiry:
-                    raise ValueError("forecast chronology must satisfy issued < entry < expiry")
+                if issued > pd.Timestamp(now):
+                    raise ValueError("forecast issue timestamp is in the future")
+                if row.get("forecast_id") not in invalidated_ids and not issued < entry < expiry:
+                    raise ValueError("valid forecast chronology must satisfy issued < entry < expiry")
+                if not entry < expiry:
+                    raise ValueError("expiry must follow entry even for invalidated forecasts")
             except (KeyError, TypeError, ValueError) as exc:
                 issues.append({"forecast_id": row.get("forecast_id"), "reason": str(exc)})
+        elif kind == "INVALIDATION":
+            linked = by_forecast.get(row.get("forecast_id"), [])
+            if not any(item.get("event_type") == "FORECAST" for item in linked):
+                issues.append({"forecast_id": row.get("forecast_id"), "reason": "orphan INVALIDATION event"})
         elif kind == "SCORE":
             linked = by_forecast.get(row.get("forecast_id"), [])
             if not any(item.get("event_type") == "FORECAST" for item in linked):
                 issues.append({"forecast_id": row.get("forecast_id"), "reason": "orphan SCORE event"})
+            if row.get("forecast_id") in invalidated_ids:
+                issues.append({"forecast_id": row.get("forecast_id"), "reason": "invalidated forecast was scored"})
+            if sum(item.get("event_type") == "SCORE" for item in linked) > 1:
+                issues.append({"forecast_id": row.get("forecast_id"), "reason": "multiple SCORE events for one forecast"})
             try:
                 if not np.isfinite(float(row.get("realized_outcome"))):
                     raise ValueError("non-finite realized outcome")
-            except (TypeError, ValueError):
-                issues.append({"forecast_id": row.get("forecast_id"), "reason": "invalid realized outcome"})
+                expiry = pd.Timestamp(row["expiry_timestamp_utc"])
+                recorded = pd.Timestamp(row["recorded_at_utc"])
+                if recorded.tzinfo is None or expiry.tzinfo is None or recorded < expiry:
+                    raise ValueError("SCORE must be recorded at or after expiry")
+            except (KeyError, TypeError, ValueError):
+                issues.append({"forecast_id": row.get("forecast_id"), "reason": "invalid score chronology or realized outcome"})
     return {
         "status": "PASS" if duplicates == 0 and not issues else "BLOCKED",
         "event_count": len(events), "duplicate_event_ids": duplicates,
