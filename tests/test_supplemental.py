@@ -128,6 +128,6 @@ def test_fred_session_retries_transient_http_failures_with_bounded_policy():
     assert retry.connect == 2
     assert retry.read == 1
     assert retry.status == 2
-    assert retry.status_forcelist == frozenset({429, 500, 502, 503, 504})
+    assert retry.status_forcelist == (429, 500, 502, 503, 504)
     assert retry.allowed_methods == frozenset({"GET"})
     session.close()
