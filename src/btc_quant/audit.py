@@ -72,6 +72,20 @@ def _event_context(timestamp: str, binance: pd.DataFrame,
         result["volume_comparison_policy"] = (
             "Venue volumes are not expected to match; compare each venue with its own trailing median."
         )
+        if left.get("close") and right.get("close"):
+            close_ratio = left["close"] / right["close"]
+            result["binance_usdt_to_bitstamp_usd_close_price_ratio"] = close_ratio
+            result["implied_usd_per_usdt_if_btc_prices_were_at_parity"] = (
+                right["close"] / left["close"]
+            )
+        if left.get("open") and right.get("open"):
+            result["binance_usdt_to_bitstamp_usd_open_price_ratio"] = (
+                left["open"] / right["open"]
+            )
+        result["quote_basis_caveat"] = (
+            "The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, "
+            "not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged."
+        )
     return result
 
 
