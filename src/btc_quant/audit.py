@@ -551,7 +551,8 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
                 },
                 "latest_candles": build_market_snapshot(binance, bitstamp),
                 "observed_price_drivers": observed_drivers,
-                "prospective_matured_forecasts": run.get("prospective_ledger_validation", {}).get("by_horizon", {}),
+                "prospective_matured_forecasts_price_only": run.get("prospective_ledger_validation", {}).get("by_horizon", {}),
+                "prospective_matured_forecasts_ohlcv": run.get("ohlcv_challenger", {}).get("prospective_validation", {}).get("by_horizon", {}),
             },
             "INTERPRETATION": {
                 "historical_holdout": "Continuity diagnostic only; not globally unseen.",
