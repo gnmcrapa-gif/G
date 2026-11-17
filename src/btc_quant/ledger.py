@@ -63,7 +63,7 @@ def generate_forecast_events(
     for horizon in HORIZONS:
         selected_alpha = (ridge_alpha_by_horizon or {}).get(horizon, ridge_alpha)
         target = forward_open_log_return(data["open"], horizon, entry_lag_sessions=EXECUTION_ENTRY_LAG_SESSIONS)
-        last_train = t - horizon - 2
+        last_train = t - horizon - EXECUTION_ENTRY_LAG_SESSIONS
         if last_train < 0:
             continue
         train_idx = np.arange(0, last_train + 1)
