@@ -1060,6 +1060,28 @@ def _news_context(directory: Path) -> tuple[dict, list[dict]]:
     return summary, manifests
 
 
+def _configure_fred_session(session: requests.Session) -> requests.Session:
+    """Use bounded retries for transient FRED throttling and server/network errors."""
+    from requests.adapters import HTTPAdapter
+    from urllib3.util.retry import Retry
+
+    retry = Retry(
+        total=2,
+        connect=2,
+        read=1,
+        status=2,
+        backoff_factor=0.8,
+        backoff_max=4,
+        status_forcelist=(429, 500, 502, 503, 504),
+        allowed_methods=frozenset({"GET"}),
+        respect_retry_after_header=False,
+    )
+    adapter = HTTPAdapter(max_retries=retry)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    return session
+
+
 def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
     """Acquire independent FRED series concurrently with bounded per-request timeouts."""
     from concurrent.futures import ThreadPoolExecutor
@@ -1069,14 +1091,14 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
 
     def fetch_one(series_id: str, meta: dict):
         start = today - timedelta(days=meta["lookback_days"])
-        session = requests.Session()
+        session = _configure_fred_session(requests.Session())
         session.headers.update({"User-Agent": USER_AGENT})
         obj = None
         try:
             response = session.get(
                 FRED_GRAPH,
                 params={"id": series_id, "cosd": start.isoformat(), "coed": today.isoformat()},
-                timeout=12,
+                timeout=(8, 30),
             )
             response.raise_for_status()
             raw = response.content
@@ -1136,7 +1158,7 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
 
     observations, manifests, errors = {}, [], {}
     # map() preserves the protocol's deterministic FRED_SERIES order.
-    with ThreadPoolExecutor(max_workers=8) as executor:
+    with ThreadPoolExecutor(max_workers=4) as executor:
         results = list(executor.map(lambda item: fetch_one(item[0], item[1]), FRED_SERIES.items()))
     for series_id, observation, manifest, error in results:
         if observation is not None:
@@ -1151,7 +1173,7 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "series": observations,
         "errors": errors,
-        "acquisition_method": "8-worker bounded concurrency; 12-second per-series timeout",
+        "acquisition_method": "4-worker bounded concurrency; 8s connect/30s read timeout; 2 bounded retries for transient HTTP/network errors",
         "source_note": "FRED observation dates are not release timestamps; monthly/weekly series naturally lag the run date.",
     }
     return summary, manifests

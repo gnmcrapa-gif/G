@@ -55,7 +55,7 @@ def _safe_optional_acquisition(label, function, directory):
 
 def _append_challenger_proposal(path: Path) -> None:
     """Register the next falsifiable experiment once; never imply it has been run."""
-    experiment_id = "V5.5-OHLCV-001"
+    experiment_id = "V5.6-OHLCV-001"
     path.parent.mkdir(parents=True, exist_ok=True)
     existing = set()
     if path.exists():
@@ -136,7 +136,7 @@ def _build_audit(run: dict, prospective: dict) -> dict:
             "the zero-return benchmark after multiple-testing control and realistic costs "
             "falsifies the proposed feature/model improvement."
         ),
-        "next_priority_experiment": "V5.5-OHLCV-001: isolated volume-surprise and candle-geometry challenger; prospective ledger only.",
+        "next_priority_experiment": "V5.6-OHLCV-001: isolated volume-surprise and candle-geometry challenger; prospective ledger only.",
         "decision": "KEEP_ZERO_RETURN_CHAMPION; RIDGE_CHALLENGER_ONLY; NO_PROMOTION; ABSTAIN_FROM_LIVE_RISK",
     }
 

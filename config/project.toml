@@ -1,6 +1,6 @@
 [project]
 name = "btc-quant-desk"
-protocol = "V5.5"
+protocol = "V5.6"
 timezone = "UTC"
 bar_interval = "1d"
 horizons = [1, 3, 7, 30]
