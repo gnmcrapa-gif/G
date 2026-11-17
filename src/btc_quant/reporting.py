@@ -475,6 +475,50 @@ def render_markdown_report(run: dict, scores: dict) -> str:
             if item.get("errors"):
                 lines.append(f"- Errori feed: {item['errors']}")
 
+    okx = supplemental.get("okx_swap", {})
+    if okx:
+        oi_history = okx.get("open_interest_history", {})
+        taker_summary = okx.get("daily_taker_volume_summary", {})
+        taker_windows = taker_summary.get("cumulative_delta_btc", {})
+        venue_coverage = coverage.get("per_exchange_derivatives", {}).get("by_exchange", {})
+        lines += [
+            "", "### OKX BTC-USDT Perpetual", "",
+            f"- Stato: {okx.get('status', 'n/d')}; strumento {okx.get('instrument', 'n/d')}.",
+            f"- Snapshot acquisito UTC: {okx.get('retrieved_at_utc', 'n/d')}.",
+            (f"- Ultimo prezzo: {_display(okx.get('last_price_usdt'), 2)} USDT "
+             f"(ticker {okx.get('ticker_timestamp_utc', 'n/d')})."),
+            (f"- Volume 24h: {_display(okx.get('volume_24h_base_currency'), 2)} BTC "
+             f"({_display(okx.get('volume_24h_contracts'), 2)} contratti)."),
+            (f"- Open interest snapshot: {_display(okx.get('open_interest_btc'), 2)} BTC "
+             f"({_display(okx.get('open_interest_usd'), 0)} USD; "
+             f"snapshot {okx.get('open_interest_timestamp_utc', 'n/d')})."),
+            (f"- OI storico giornaliero UTC: 1D {_display(oi_history.get('change_1d_pct'), 2)}%; "
+             f"7D {_display(oi_history.get('change_7d_pct'), 2)}%; "
+             f"30D {_display(oi_history.get('change_30d_pct'), 2)}% "
+             f"(ultimo punto {oi_history.get('timestamp_utc', 'n/d')})."),
+            (f"- Funding previsto per il prossimo settlement ({okx.get('funding_timestamp_utc', 'n/d')}): "
+             f"{_display(okx.get('funding_rate_predicted_current'), 8)} "
+             f"(frazione per intervallo)."),
+            (f"- Ultimo funding effettivamente settled: {_display(okx.get('settled_funding_rate'), 8)} "
+             f"al {okx.get('last_settled_funding_time_utc', 'n/d')} "
+             f"(stato {okx.get('funding_settlement_state', 'n/d')})."),
+            f"- Settlement successivo dopo il periodo corrente: {okx.get('next_funding_time_utc', 'n/d')}.",
+            f"- Storico funding: {okx.get('funding_history_rows', 0)} settlement acquisiti.",
+            (f"- Delta taker futures BTC (buy − sell, barre UTC chiuse): "
+             f"1D {_display(taker_windows.get('1d'), 2)} BTC; "
+             f"7D {_display(taker_windows.get('7d'), 2)} BTC; "
+             f"30D {_display(taker_windows.get('30d'), 2)} BTC."),
+            (f"- Copertura delta taker: {taker_summary.get('closed_daily_rows', 0)} barre UTC complete "
+             f"su {okx.get('daily_taker_volume_history_rows', 0)} scaricate."),
+            f"- Nota CVD: {taker_summary.get('measurement_note', 'n/d')}",
+            "- Liquidazioni: NOT_ACQUIRED; nessuna stima ricavata da endpoint non pertinenti.",
+            (f"- Copertura per venue: Binance {venue_coverage.get('binance_futures', 'n/d')}; "
+             f"Bybit {venue_coverage.get('bybit_futures', 'n/d')}; "
+             f"OKX {venue_coverage.get('okx_swap', okx.get('status', 'n/d'))}."),
+        ]
+        if okx.get("errors"):
+            lines.append(f"- Errori feed OKX: {okx['errors']}")
+
     cvd = supplemental.get("cvd", {})
     if cvd:
         lines += ["", "### CVD orario Binance — delta taker aggregato", "",
@@ -535,12 +579,15 @@ def render_markdown_report(run: dict, scores: dict) -> str:
     macro = supplemental.get("macro", {})
     if macro:
         lines += ["", "## 4. Macro e mercati USA", "",
-                  "| Serie | Osservazione | Valore | Unità | Stato |",
-                  "|---|---|---:|---|---|"]
+                  "| Serie | Periodo osservato | Freschezza fino | Valore | Unità | Stato | Recuperato UTC | Fonte / metodo |",
+                  "|---|---|---|---:|---|---|---|---|"]
         for series_id, item in macro.get("series", {}).items():
             lines.append(
                 f"| {series_id} — {item.get('label')} | {item.get('observation_date')} | "
-                f"{_display(item.get('value'), 4)} | {item.get('unit')} | {item.get('status')} |"
+                f"{item.get('freshness_reference_date', item.get('observation_date'))} | "
+                f"{_display(item.get('value'), 4)} | {item.get('unit')} | {item.get('status')} | "
+                f"{item.get('retrieved_at_utc', macro.get('retrieved_at_utc', 'n/d'))} | "
+                f"{item.get('source_method', item.get('source_url', 'FRED'))} |"
             )
         if macro.get("errors"):
             lines.append("")

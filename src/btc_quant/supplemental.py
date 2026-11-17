@@ -371,6 +371,253 @@ def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
     return summary, manifest
 
 
+def _parse_okx_response(payload: dict, endpoint: str) -> list[dict]:
+    """Validate the common OKX V5 REST envelope and return its data rows."""
+    if not isinstance(payload, dict):
+        raise TypeError(f"OKX {endpoint} response is not a JSON object")
+    code = str(payload.get("code", ""))
+    if code != "0":
+        raise RuntimeError(
+            f"OKX {endpoint} code={code or 'missing'} msg={payload.get('msg', '')}"
+        )
+    rows = payload.get("data")
+    if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+        raise ValueError(f"OKX {endpoint} response has no valid data array")
+    return rows
+
+
+def _parse_okx_array_response(payload: dict, endpoint: str, min_columns: int) -> list[list]:
+    """Validate OKX Rubik endpoints whose data rows are positional arrays."""
+    if not isinstance(payload, dict):
+        raise TypeError(f"OKX {endpoint} response is not a JSON object")
+    code = str(payload.get("code", ""))
+    if code != "0":
+        raise RuntimeError(
+            f"OKX {endpoint} code={code or 'missing'} msg={payload.get('msg', '')}"
+        )
+    rows = payload.get("data")
+    if not isinstance(rows, list) or any(
+        not isinstance(row, list) or len(row) < min_columns for row in rows
+    ):
+        raise ValueError(f"OKX {endpoint} response has invalid positional data rows")
+    return rows
+
+
+def _summarize_okx_daily_taker_volume(rows: list[list], today_utc: date) -> dict:
+    """Summarize completed UTC daily BTC taker buy/sell volume, excluding today's open bar."""
+    parsed = []
+    for row in rows:
+        timestamp = int(row[0])
+        sell_volume = _float_or_none(row[1])
+        buy_volume = _float_or_none(row[2])
+        if sell_volume is None or buy_volume is None:
+            continue
+        observation_date = datetime.fromtimestamp(timestamp / 1000, UTC).date()
+        if observation_date >= today_utc:
+            continue
+        parsed.append({
+            "timestamp_utc": _timestamp_ms(timestamp),
+            "date_utc": observation_date.isoformat(),
+            "sell_volume_btc": sell_volume,
+            "buy_volume_btc": buy_volume,
+            "delta_btc": buy_volume - sell_volume,
+            "timestamp_ms": timestamp,
+        })
+    parsed.sort(key=lambda item: item["timestamp_ms"])
+    windows = {}
+    for days in (1, 7, 30):
+        sample = parsed[-days:]
+        contiguous = (
+            len(sample) == days
+            and all(
+                sample[index]["timestamp_ms"] - sample[index - 1]["timestamp_ms"] == 86400_000
+                for index in range(1, len(sample))
+            )
+        )
+        windows[f"{days}d"] = (
+            sum(item["delta_btc"] for item in sample) if contiguous else None
+        )
+    return {
+        "closed_daily_rows": len(parsed),
+        "cumulative_delta_btc": windows,
+        "measurement_note": (
+            "OKX BTC-USDT perpetual contract taker volume in BTC; buy minus sell. "
+            "Completed UTC daily bars only; exchange-specific derivatives delta proxy, "
+            "not spot CVD or total-market CVD."
+        ),
+    }
+
+
+def _okx_derivatives(directory: Path) -> tuple[dict, dict]:
+    """Acquire OKX public BTC-USDT perpetual snapshots and funding history."""
+    session = requests.Session()
+    session.headers.update({"User-Agent": USER_AGENT})
+    base = "https://www.okx.com"
+    instrument = "BTC-USDT-SWAP"
+    endpoints = {
+        "ticker": ("/api/v5/market/ticker", {"instId": instrument}),
+        "open_interest": (
+            "/api/v5/public/open-interest",
+            {"instType": "SWAP", "instId": instrument},
+        ),
+        "funding_current": (
+            "/api/v5/public/funding-rate",
+            {"instId": instrument},
+        ),
+        "funding_history": (
+            "/api/v5/public/funding-rate-history",
+            {"instId": instrument, "limit": "100"},
+        ),
+        "open_interest_history": (
+            "/api/v5/rubik/stat/contracts/open-interest-history",
+            {"instId": instrument, "period": "1Dutc", "limit": "100"},
+        ),
+        "taker_volume_daily": (
+            "/api/v5/rubik/stat/taker-volume-contract",
+            {"instId": instrument, "period": "1Dutc", "unit": "0", "limit": "30"},
+        ),
+    }
+    raw, objects, errors = {}, [], {}
+    try:
+        for key, (path, params) in endpoints.items():
+            url = base + path
+            try:
+                response = session.get(url, params=params, timeout=(8, 20))
+                response.raise_for_status()
+                payload = response.json()
+                if key == "open_interest_history":
+                    rows = _parse_okx_array_response(payload, key, 4)
+                elif key == "taker_volume_daily":
+                    rows = _parse_okx_array_response(payload, key, 3)
+                else:
+                    rows = _parse_okx_response(payload, key)
+                raw[key] = rows
+                objects.append(_save_object(
+                    directory, f"okx_{key}.json", response.content,
+                    source="OKX V5 public market data",
+                    url=response.url, venue="OKX", symbol=instrument,
+                    quote="USDT", source_grade="A",
+                ))
+            except Exception as exc:  # noqa: BLE001 - keep endpoint failures independent
+                errors[key] = f"{type(exc).__name__}: {exc}"
+    finally:
+        session.close()
+
+    ticker = raw.get("ticker", [{}])
+    ticker = ticker[0] if ticker else {}
+    oi = raw.get("open_interest", [{}])
+    oi = oi[0] if oi else {}
+    funding = raw.get("funding_current", [{}])
+    funding = funding[0] if funding else {}
+    history = sorted(
+        raw.get("funding_history", []),
+        key=lambda row: int(row.get("fundingTime", 0)),
+    )
+    history_rows = []
+    for row in history:
+        rate = row.get("realizedRate")
+        rate_field = "realizedRate" if rate not in (None, "") else "fundingRate"
+        history_rows.append({
+            "funding_time_utc": _timestamp_ms(row.get("fundingTime")),
+            "funding_rate": _float_or_none(row.get(rate_field)),
+            "funding_rate_field": rate_field,
+        })
+    oi_history = sorted(
+        raw.get("open_interest_history", []), key=lambda row: int(row[0])
+    )
+    oi_history_summary = {}
+    if oi_history:
+        latest_oi = oi_history[-1]
+        oi_history_summary = {
+            "timestamp_utc": _timestamp_ms(latest_oi[0]),
+            "contracts": _float_or_none(latest_oi[1]),
+            "btc": _float_or_none(latest_oi[2]),
+            "usd": _float_or_none(latest_oi[3]),
+            "history_rows": len(oi_history),
+        }
+        latest_ts = int(latest_oi[0])
+        for days in (1, 7, 30):
+            target = latest_ts - days * 86400_000
+            prior = min(oi_history, key=lambda row: abs(int(row[0]) - target))
+            actual_days = (latest_ts - int(prior[0])) / 86400_000
+            oi_history_summary[f"change_{days}d_pct"] = (
+                _pct_change(_float_or_none(prior[2]), _float_or_none(latest_oi[2]))
+                if actual_days >= max(1, days - 2) else None
+            )
+    taker_rows = sorted(
+        raw.get("taker_volume_daily", []), key=lambda row: int(row[0])
+    )
+    taker_delta = [
+        {
+            "timestamp_utc": _timestamp_ms(row[0]),
+            "sell_volume_btc": _float_or_none(row[1]),
+            "buy_volume_btc": _float_or_none(row[2]),
+            "delta_btc": (
+                (_float_or_none(row[2]) or 0.0) - (_float_or_none(row[1]) or 0.0)
+                if _float_or_none(row[1]) is not None and _float_or_none(row[2]) is not None
+                else None
+            ),
+        }
+        for row in taker_rows
+    ]
+    taker_volume_summary = _summarize_okx_daily_taker_volume(
+        raw.get("taker_volume_daily", []), datetime.now(UTC).date()
+    )
+    valid_current = bool(ticker or oi or funding)
+    summary = {
+        "venue": "OKX",
+        "instrument": instrument,
+        "quote_currency": "USDT",
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "status": (
+            "PASS" if all(bool(raw.get(key)) for key in endpoints)
+            else "PARTIAL" if valid_current or history_rows else "FAIL"
+        ),
+        "last_price_usdt": _float_or_none(ticker.get("last")),
+        "ticker_timestamp_utc": _timestamp_ms(ticker.get("ts")),
+        "volume_24h_contracts": _float_or_none(ticker.get("vol24h")),
+        "volume_24h_base_currency": _float_or_none(ticker.get("volCcy24h")),
+        "open_interest_contracts": _float_or_none(oi.get("oi")),
+        "open_interest_btc": _float_or_none(oi.get("oiCcy")),
+        "open_interest_usd": _float_or_none(oi.get("oiUsd")),
+        "open_interest_timestamp_utc": _timestamp_ms(oi.get("ts")),
+        "open_interest_history": oi_history_summary,
+        "funding_rate_predicted_current": _float_or_none(funding.get("fundingRate")),
+        "settled_funding_rate": _float_or_none(funding.get("settFundingRate")),
+        "funding_settlement_state": funding.get("settState"),
+        "funding_rate_unit": "fraction per provider funding interval",
+        "funding_timestamp_utc": _timestamp_ms(funding.get("fundingTime")),
+        "last_settled_funding_time_utc": _timestamp_ms(funding.get("prevFundingTime")),
+        "next_funding_time_utc": _timestamp_ms(funding.get("nextFundingTime")),
+        "funding_history": history_rows,
+        "daily_taker_volume": taker_delta,
+        "daily_taker_volume_history_rows": len(taker_delta),
+        "daily_taker_volume_summary": taker_volume_summary,
+        "funding_history_rows": len(history_rows),
+        "funding_history_scope": "latest 100 returned settlements; OKX documents up to three months, pagination and retention limits apply",
+        "open_interest_history_scope": "daily UTC series; latest 100 points returned by OKX",
+        "daily_taker_volume_scope": "daily UTC contract taker buy/sell volumes; latest 30 points returned by OKX",
+        "liquidations": {
+            "status": "NOT_ACQUIRED",
+            "reason": "No complete public liquidation history is inferred from OKX market data endpoints.",
+        },
+        "errors": errors,
+    }
+    manifest = {
+        "source": "OKX V5 public market data",
+        "venue": "OKX", "symbol": instrument, "quote_currency": "USDT",
+        "interval": "current ticker/open-interest/funding; daily UTC OI and taker-volume history; recent funding settlements",
+        "timezone": "UTC", "schema_version": "1.0", "source_grade": "A",
+        "retrieved_at_utc": summary["retrieved_at_utc"],
+        "parser": "OKX V5 REST envelope and BTC perpetual parser",
+        "parser_version": "1.0",
+        "schema": ["ticker", "open-interest", "current funding", "funding history",
+                   "daily UTC open-interest history", "daily UTC contract taker volume"],
+        "objects": objects, "status": summary["status"], "errors": errors,
+    }
+    return summary, manifest
+
+
 def _bybit_derivatives(directory: Path) -> tuple[dict, dict]:
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
@@ -1344,6 +1591,15 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
     return summary, manifests
 
 
+def _derivative_coverage_status(statuses: dict[str, str]) -> str:
+    """Distinguish a partially responding venue from total derivatives-feed failure."""
+    if len(statuses) == 3 and all(status == "PASS" for status in statuses.values()):
+        return "PASS"
+    if any(status in {"PASS", "PARTIAL"} for status in statuses.values()):
+        return "PARTIAL"
+    return "FAIL"
+
+
 def empty_supplemental_coverage() -> dict:
     """Return explicit not-run states so even blocked reports disclose missing domains."""
     return {
@@ -1420,6 +1676,7 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
     for name, function, directory in (
         ("binance_futures", _binance_derivatives, output_dir / "binance_futures"),
         ("bybit_futures", _bybit_derivatives, output_dir / "bybit_futures"),
+        ("okx_swap", _okx_derivatives, output_dir / "okx_swap"),
         ("deribit_options", _deribit_options, output_dir / "deribit_options"),
         ("us_spot_etf_flows", _etf_flows, output_dir / "etf_flows"),
     ):
@@ -1427,7 +1684,7 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
             result, manifest = function(directory)
             summary[name] = result
             manifests.append(manifest)
-            if name.endswith("futures"):
+            if name.endswith("futures") or name == "okx_swap":
                 derivative_statuses[name] = result.get("status", "FAIL")
             elif name == "deribit_options":
                 summary["coverage"]["options"]["status"] = result.get("status", "PARTIAL")
@@ -1437,7 +1694,7 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
                     "status": "UNAVAILABLE",
                 })
         except Exception as exc:  # noqa: BLE001
-            if name.endswith("futures"):
+            if name.endswith("futures") or name == "okx_swap":
                 derivative_statuses[name] = "FAIL"
             elif name == "deribit_options":
                 summary["coverage"]["options"]["status"] = "FAIL"
@@ -1461,12 +1718,8 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
                 "schema": [], "objects": [], "status": "FAIL",
                 "error": summary[name]["error"],
             })
-    derivative_passes = sum(status == "PASS" for status in derivative_statuses.values())
     summary["coverage"]["per_exchange_derivatives"] = {
-        "status": (
-            "PASS" if len(derivative_statuses) == 2 and derivative_passes == 2
-            else "PARTIAL" if derivative_passes else "FAIL"
-        ),
+        "status": _derivative_coverage_status(derivative_statuses),
         "by_exchange": derivative_statuses,
     }
     try:

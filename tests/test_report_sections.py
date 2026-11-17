@@ -139,6 +139,133 @@ def test_markdown_report_discloses_stale_and_unavailable_context_sources():
 
 
 
+def test_macro_report_discloses_observation_freshness_retrieval_and_source():
+    report = render_markdown_report({
+        "protocol": "V5.6",
+        "status": "COMPLETE_NOT_PROMOTED",
+        "started_at_utc": "2026-11-18T00:00:00+00:00",
+        "supplemental_data": {
+            "coverage": {},
+            "macro": {
+                "status": "PARTIAL",
+                "retrieved_at_utc": "2026-11-18T00:05:00+00:00",
+                "series": {
+                    "CPIAUCSL": {
+                        "label": "US CPI index",
+                        "observation_date": "2026-10-01",
+                        "freshness_reference_date": "2026-10-31",
+                        "value": 326.5,
+                        "unit": "index 1982-84=100",
+                        "status": "PASS",
+                        "retrieved_at_utc": "2026-11-18T00:04:00+00:00",
+                        "source_method": "official BLS monthly series API v1",
+                    },
+                },
+                "errors": {},
+            },
+            "spot_live": {"venues": {}},
+        },
+        "steps": [],
+        "market_snapshot": {"venues": []},
+        "ledger": {},
+        "risk": {"mode": "paper_only", "live_trading_enabled": False, "theoretical_exposure_pct": 0},
+        "pre_report_review": {"status": "PASS", "review_cycles": [], "blocking_failures": []},
+        "closing_assessment": {},
+        "report_taxonomy": {
+            "FACT": [], "INTERPRETATION": [], "HYPOTHESIS": [],
+            "FORECAST": {
+                "new_point_forecasts_issued_this_run": 0,
+                "new_forecasts_scored_this_run": 0,
+                "calibrated_probabilities_published": False,
+                "qualification": "No calibrated forecast.",
+            },
+        },
+    }, {})
+    assert "2026-10-31" in report
+    assert "2026-11-18T00:04:00+00:00" in report
+    assert "official BLS monthly series API v1" in report
+
+
+def test_markdown_report_includes_okx_perpetual_context_and_cvd_limits():
+    report = render_markdown_report({
+        "protocol": "V5.6",
+        "status": "COMPLETE_NOT_PROMOTED",
+        "started_at_utc": "2026-11-17T23:00:00+00:00",
+        "supplemental_data": {
+            "coverage": {
+                "per_exchange_derivatives": {
+                    "status": "PARTIAL",
+                    "by_exchange": {
+                        "binance_futures": "FAIL",
+                        "bybit_futures": "FAIL",
+                        "okx_swap": "PASS",
+                    },
+                },
+            },
+            "okx_swap": {
+                "status": "PASS",
+                "instrument": "BTC-USDT-SWAP",
+                "last_price_usdt": 64881.6,
+                "ticker_timestamp_utc": "2026-11-17T23:24:10+00:00",
+                "retrieved_at_utc": "2026-11-17T23:24:10+00:00",
+                "open_interest_timestamp_utc": "2026-11-17T23:24:10+00:00",
+                "volume_24h_base_currency": 116747.6857,
+                "volume_24h_contracts": 11674768.57,
+                "open_interest_btc": 31166.2211,
+                "open_interest_usd": 2021693546.9369,
+                "open_interest_history": {
+                    "timestamp_utc": "2026-11-17T00:00:00+00:00",
+                    "change_1d_pct": 1.9,
+                    "change_7d_pct": -13.1,
+                    "change_30d_pct": 3.5,
+                },
+                "funding_rate_predicted_current": -0.0000131486,
+                "settled_funding_rate": -0.0000069841,
+                "funding_settlement_state": "settled",
+                "funding_timestamp_utc": "2026-11-18T00:00:00+00:00",
+                "last_settled_funding_time_utc": "2026-11-17T16:00:00+00:00",
+                "next_funding_time_utc": "2026-11-18T08:00:00+00:00",
+                "daily_taker_volume_history_rows": 30,
+                "funding_history_rows": 100,
+                "daily_taker_volume_summary": {
+                    "closed_daily_rows": 29,
+                    "cumulative_delta_btc": {"1d": -313.2, "7d": -22127.8, "30d": None},
+                    "measurement_note": "Exchange-specific derivatives delta proxy; not spot CVD.",
+                },
+                "errors": {},
+            },
+            "spot_live": {"venues": {}},
+        },
+        "steps": [],
+        "market_snapshot": {"venues": []},
+        "ledger": {},
+        "risk": {"mode": "paper_only", "live_trading_enabled": False, "theoretical_exposure_pct": 0},
+        "pre_report_review": {"status": "PASS", "review_cycles": [], "blocking_failures": []},
+        "closing_assessment": {},
+        "report_taxonomy": {
+            "FACT": [], "INTERPRETATION": [], "HYPOTHESIS": [],
+            "FORECAST": {
+                "new_point_forecasts_issued_this_run": 0,
+                "new_forecasts_scored_this_run": 0,
+                "calibrated_probabilities_published": False,
+                "qualification": "No calibrated forecast.",
+            },
+        },
+    }, {})
+    assert "### OKX BTC-USDT Perpetual" in report
+    assert "Snapshot acquisito UTC: 2026-11-17T23:24:10+00:00" in report
+    assert "ticker 2026-11-17T23:24:10+00:00" in report
+    assert "31,166.22 BTC" in report
+    assert "Funding previsto per il prossimo settlement" in report
+    assert "Ultimo funding effettivamente settled" in report
+    assert "2026-11-17T16:00:00+00:00" in report
+    assert "29 barre UTC complete su 30 scaricate" in report
+    assert "30D n/d BTC" in report
+    assert "not spot CVD" in report
+    assert "Binance FAIL; Bybit FAIL; OKX PASS" in report
+    assert "Liquidazioni: NOT_ACQUIRED" in report
+
+
 def test_halving_cycle_comparison_uses_same_elapsed_horizon_and_marks_missing_history():
     timestamps = pd.date_range("2020-05-11", "2026-11-16", freq="D", tz="UTC")
     close = [100.0 + index for index in range(len(timestamps))]

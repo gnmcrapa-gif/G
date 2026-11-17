@@ -20,6 +20,18 @@ def test_deribit_option_instrument_parser_extracts_expiry_strike_and_side():
     assert _parse_deribit_instrument("BTC-27NOV26-invalid-C") is None
 
 
+def test_okx_response_parser_accepts_success_and_rejects_api_errors():
+    from btc_quant.supplemental import _parse_okx_response
+
+    assert _parse_okx_response({"code": "0", "data": [{"oi": "12"}]}, "open_interest") == [{"oi": "12"}]
+    with pytest.raises(RuntimeError, match="code=50011"):
+        _parse_okx_response({"code": "50011", "msg": "Rate limit", "data": []}, "funding")
+    with pytest.raises(ValueError, match="valid data array"):
+        _parse_okx_response({"code": "0", "data": None}, "ticker")
+    with pytest.raises(ValueError, match="valid data array"):
+        _parse_okx_response({"code": "0", "data": ["not-an-object"]}, "ticker")
+
+
 def test_etf_session_extractor_selects_full_history_not_recent_preview():
     preview = [
         {"date": f"2026-11-{day:02d}", "netFlowUsd": float(day)}
@@ -43,6 +55,55 @@ def test_numeric_helpers_reject_nonfinite_and_zero_denominator():
     assert _pct_change(100.0, 110.0) == pytest.approx(10.0)
     assert _pct_change(0.0, 110.0) is None
     assert _pct_change(None, 110.0) is None
+
+
+def test_okx_rubik_parser_validates_positional_oi_and_taker_rows():
+    from btc_quant.supplemental import _parse_okx_array_response
+
+    oi_rows = _parse_okx_array_response(
+        {"code": "0", "data": [["1794873600000", "100", "0.01", "1000"]]},
+        "open_interest_history",
+        4,
+    )
+    assert oi_rows[0][2] == "0.01"
+    taker_rows = _parse_okx_array_response(
+        {"code": "0", "data": [["1794873600000", "2.0", "3.0"]]},
+        "taker_volume_daily",
+        3,
+    )
+    assert taker_rows[0][2] == "3.0"
+    with pytest.raises(ValueError, match="invalid positional data rows"):
+        _parse_okx_array_response(
+            {"code": "0", "data": [["1794873600000", "2.0"]]},
+            "taker_volume_daily",
+            3,
+        )
+
+
+def test_okx_daily_taker_summary_excludes_incomplete_utc_bar():
+    from datetime import UTC, date, datetime, timedelta
+
+    from btc_quant.supplemental import _summarize_okx_daily_taker_volume
+
+    today = date(2026, 11, 18)
+    start = datetime(2026, 11, 15, tzinfo=UTC)
+    rows = []
+    for offset in range(4):
+        timestamp = int((start + timedelta(days=offset)).timestamp() * 1000)
+        rows.append([str(timestamp), "10", "12"])
+    summary = _summarize_okx_daily_taker_volume(rows, today)
+    assert summary["closed_daily_rows"] == 3
+    assert summary["cumulative_delta_btc"]["1d"] == pytest.approx(2.0)
+    assert summary["cumulative_delta_btc"]["7d"] is None
+    assert summary["cumulative_delta_btc"]["30d"] is None
+
+
+def test_derivative_coverage_is_partial_when_any_venue_has_partial_data():
+    from btc_quant.supplemental import _derivative_coverage_status
+
+    assert _derivative_coverage_status({"binance_futures": "FAIL", "bybit_futures": "FAIL", "okx_swap": "PARTIAL"}) == "PARTIAL"
+    assert _derivative_coverage_status({"binance_futures": "PASS", "bybit_futures": "PASS", "okx_swap": "PASS"}) == "PASS"
+    assert _derivative_coverage_status({"binance_futures": "FAIL", "bybit_futures": "FAIL", "okx_swap": "FAIL"}) == "FAIL"
 
 
 def test_macro_series_have_units_frequencies_and_freshness_limits():
