@@ -260,7 +260,7 @@ def main() -> int:
         ]
         duplicates_suppressed = before_dedupe - len(forecast_events)
         appended = append_events(ledger_path, invalidation_events + score_events + forecast_events)
-all_ledger_events = previous_events + invalidation_events + score_events + forecast_events
+        all_ledger_events = previous_events + invalidation_events + score_events + forecast_events
         prospective_summary = summarize_scored_events(
             previous_events + invalidation_events + score_events
         )
