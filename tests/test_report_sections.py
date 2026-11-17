@@ -139,6 +139,53 @@ def test_markdown_report_discloses_stale_and_unavailable_context_sources():
 
 
 
+def test_macro_report_discloses_observation_freshness_retrieval_and_source():
+    report = render_markdown_report({
+        "protocol": "V5.6",
+        "status": "COMPLETE_NOT_PROMOTED",
+        "started_at_utc": "2026-11-18T00:00:00+00:00",
+        "supplemental_data": {
+            "coverage": {},
+            "macro": {
+                "status": "PARTIAL",
+                "retrieved_at_utc": "2026-11-18T00:05:00+00:00",
+                "series": {
+                    "CPIAUCSL": {
+                        "label": "US CPI index",
+                        "observation_date": "2026-10-01",
+                        "freshness_reference_date": "2026-10-31",
+                        "value": 326.5,
+                        "unit": "index 1982-84=100",
+                        "status": "PASS",
+                        "retrieved_at_utc": "2026-11-18T00:04:00+00:00",
+                        "source_method": "official BLS monthly series API v1",
+                    },
+                },
+                "errors": {},
+            },
+            "spot_live": {"venues": {}},
+        },
+        "steps": [],
+        "market_snapshot": {"venues": []},
+        "ledger": {},
+        "risk": {"mode": "paper_only", "live_trading_enabled": False, "theoretical_exposure_pct": 0},
+        "pre_report_review": {"status": "PASS", "review_cycles": [], "blocking_failures": []},
+        "closing_assessment": {},
+        "report_taxonomy": {
+            "FACT": [], "INTERPRETATION": [], "HYPOTHESIS": [],
+            "FORECAST": {
+                "new_point_forecasts_issued_this_run": 0,
+                "new_forecasts_scored_this_run": 0,
+                "calibrated_probabilities_published": False,
+                "qualification": "No calibrated forecast.",
+            },
+        },
+    }, {})
+    assert "2026-10-31" in report
+    assert "2026-11-18T00:04:00+00:00" in report
+    assert "official BLS monthly series API v1" in report
+
+
 def test_markdown_report_includes_okx_perpetual_context_and_cvd_limits():
     report = render_markdown_report({
         "protocol": "V5.6",
