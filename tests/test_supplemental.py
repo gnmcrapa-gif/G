@@ -11,6 +11,7 @@ from btc_quant.supplemental import (
     _news_keyword_tags,
     _parse_bitwise_weekly_flows,
     _parse_ckh_exchange_ranking,
+    _parse_ckh_liquidations,
     _parse_deribit_instrument,
     _parse_provider_money,
     _parse_rss_articles,
@@ -203,3 +204,38 @@ def test_cryptokeyhole_provider_money_parser_handles_sign_and_scale():
     assert _parse_provider_money("−$1.25B") == pytest.approx(-1_250_000_000)
     assert _parse_provider_money("+$77.7M") == pytest.approx(77_700_000)
     assert _parse_provider_money("+415.2K") == pytest.approx(415_200)
+
+
+
+def test_cryptokeyhole_liquidations_parser_separates_market_and_bitcoin_long_short():
+    html = b"""<html><body>
+    <p>In the 24 hours to 22:04 UTC on 17 Nov 2026, CryptoKeyhole counted $209.1M
+    of crypto futures liquidations across 153 coins on eight exchanges: $133.4M of longs
+    and $75.7M of shorts.</p>
+    <p>Last update 17 Nov 2026, 22:04 UTC</p>
+    <table>
+      <tr><th>Coin</th><th>Side</th><th>This hour</th><th>4 hours</th><th>12 hours</th><th>24 hours</th></tr>
+      <tr><td>Bitcoin</td><td>Longs</td><td>$512.33</td><td>$372,926</td><td>$35.7M</td><td>$49.1M</td></tr>
+      <tr><td></td><td>Shorts</td><td>$0</td><td>$5.36M</td><td>$22.8M</td><td>$26.2M</td></tr>
+      <tr><td>All 153 coins</td><td>Longs</td><td>$39,475</td><td>$1.93M</td><td>$96.7M</td><td>$133.4M</td></tr>
+      <tr><td></td><td>Shorts</td><td>$9,306</td><td>$12.9M</td><td>$58.3M</td><td>$75.7M</td></tr>
+    </table>
+    <table>
+      <tr><th>Time (UTC)</th><th>Coin</th><th>Side</th><th>Venue</th><th>Size</th><th>Price</th></tr>
+      <tr><td>12:27</td><td>BTC</td><td>Short</td><td>Binance BTCUSDT</td><td>$1.91M</td><td>$65,040</td></tr>
+    </table>
+    <table>
+      <tr><th>Day (UTC)</th><th>All coins</th><th>Longs</th><th>Shorts</th><th>Bitcoin</th><th>Ethereum</th></tr>
+      <tr><td>Sat 14 Nov 2026</td><td>$1.35B</td><td>$1.27B</td><td>$83.9M</td><td>$491.3M</td><td>$415.3M</td></tr>
+    </table>
+    </body></html>"""
+    result = _parse_ckh_liquidations(html)
+    assert result["status"] == "PASS"
+    assert result["all_coins_24h_total_usd"] == pytest.approx(209_100_000)
+    assert result["all_coins_24h_longs_usd"] == pytest.approx(133_400_000)
+    assert result["bitcoin_24h_longs_usd"] == pytest.approx(49_100_000)
+    assert result["bitcoin_24h_shorts_usd"] == pytest.approx(26_200_000)
+    assert result["bitcoin_24h_total_usd"] == pytest.approx(75_300_000)
+    assert result["hourly_windows_by_coin"]["All 153 coins"]["shorts"]["24h_usd"] == pytest.approx(75_700_000)
+    assert result["largest_single_liquidations"][0]["size_usd"] == pytest.approx(1_910_000)
+    assert "Hyperliquid" in result["exchanges_excluded"]
