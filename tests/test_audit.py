@@ -230,3 +230,21 @@ def test_longitudinal_comparison_separates_continuity_from_prospective_evidence(
     assert result["historical_metric_changes"]["1"]["ridge"]["delta_mae_log_return"] == pytest.approx(-0.001)
     assert result["holdout_comparison_role"] == "CONTINUITY_ONLY_NOT_INDEPENDENT_OOS"
     assert result["price_only_matured_forecasts_by_horizon"]["current"]["1"]["n"] == 1
+
+
+
+def test_ledger_audit_blocks_valid_forecast_with_misaligned_target():
+    now = datetime(2026, 11, 17, 20, tzinfo=UTC)
+    event = {
+        "event_id": "f", "event_type": "FORECAST", "forecast_id": "f",
+        "issued_at_utc": "2026-11-17T16:00:00+00:00",
+        "signal_timestamp_utc": "2026-11-16T00:00:00+00:00",
+        "feature_cutoff_utc": "2026-11-17T00:00:00+00:00",
+        "target": "log(Open[t+h+1]/Open[t+1])", "horizon": 1,
+        "entry_timestamp_utc": "2026-11-18T00:00:00+00:00",
+        "expiry_timestamp_utc": "2026-11-19T00:00:00+00:00",
+        "forecast": 0.01,
+    }
+    result = _check_ledger([event], now)
+    assert result["status"] == "BLOCKED"
+    assert "executable h+2 protocol" in result["issues"][0]["reason"]
