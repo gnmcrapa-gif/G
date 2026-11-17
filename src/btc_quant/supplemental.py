@@ -1036,7 +1036,7 @@ def _news_context(directory: Path) -> tuple[dict, list[dict]]:
 
 
 def _flow_millions(value_text: str, direction: str) -> float:
-    value = float(re.sub(r"[,\\s]", "", value_text))
+    value = float(re.sub(r"[,\s]", "", value_text))
     return -abs(value) if direction.lower() == "outflows" else abs(value)
 
 
@@ -1044,27 +1044,27 @@ def _parse_bitwise_weekly_flows(
     html_payload: bytes, report_year: int, report_week: int
 ) -> dict:
     html_text = html_payload.decode("utf-8", errors="replace")
-    clean = re.sub(r"<script\\b.*?</script>|<style\\b.*?</style>", " ", html_text, flags=re.I | re.S)
+    clean = re.sub(r"<script\b.*?</script>|<style\b.*?</style>", " ", html_text, flags=re.I | re.S)
     text_content = unescape(re.sub(r"<[^>]+>", " ", clean))
-    text_content = re.sub(r"\\s+", " ", text_content)
+    text_content = re.sub(r"\s+", " ", text_content)
 
     global_crypto = re.search(
-        r"Global crypto ETPs experienced around\\s*([+-]?\\s*[\\d,.]+)\\s*mn USD in net\\s*(inflows|outflows)",
+        r"Global crypto ETPs experienced around\s*([+-]?\s*[\d,.]+)\s*mn USD in net\s*(inflows|outflows)",
         text_content, re.I,
     )
     global_btc = re.search(
-        r"Global Bitcoin ETPs experienced net\\s*(inflows|outflows)\\s*of\\s*([+-]?\\s*[\\d,.]+)\\s*mn USD",
+        r"Global Bitcoin ETPs experienced net\s*(inflows|outflows)\s*of\s*([+-]?\s*[\d,.]+)\s*mn USD",
         text_content, re.I,
     )
     us_spot_btc = re.search(
-        r"of which\\s*([+-]?\\s*[\\d,.]+)\\s*mn USD in net\\s*(inflows|outflows)\\s*were related to US spot Bitcoin ETFs",
+        r"of which\s*([+-]?\s*[\d,.]+)\s*mn USD in net\s*(inflows|outflows)\s*were related to US spot Bitcoin ETFs",
         text_content, re.I,
     )
     if not global_crypto and not global_btc:
         raise ValueError("Bitwise weekly page did not expose parseable global ETP flow statements")
 
     published = re.search(
-        r'<meta[^>]+(?:property|name)=["\\'](?:article:published_time|datePublished)["\\'][^>]+content=["\\']([^"\\']+)',
+        r'<meta[^>]+(?:property|name)=["\'](?:article:published_time|datePublished)["\'][^>]+content=["\']([^"\']+)',
         html_text, re.I,
     )
     published_at = None
