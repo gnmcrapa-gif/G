@@ -5,6 +5,7 @@ import csv
 import hashlib
 import json
 import os
+import shutil
 import traceback
 from datetime import UTC, datetime
 from pathlib import Path
@@ -149,17 +150,34 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-dir", default="data/raw")
     parser.add_argument("--output-dir", default="reports/latest")
+    parser.add_argument("--archive-dir", default="reports/archive")
     parser.add_argument("--ledger", default="ledger/forecast_ledger.csv")
     parser.add_argument("--ohlcv-ledger", default="ledger/ohlcv_challenger_ledger.csv")
     parser.add_argument("--challenger-log", default="ledger/challenger_log.csv")
     parser.add_argument("--min-train-rows", type=int, default=1095)
     args = parser.parse_args()
     data_dir, output_dir, ledger_path = Path(args.data_dir), Path(args.output_dir), Path(args.ledger)
+    archive_dir = Path(args.archive_dir)
     ohlcv_ledger_path = Path(args.ohlcv_ledger)
     output_dir.mkdir(parents=True, exist_ok=True)
+    previous_report = None
+    previous_report_archive = None
+    prior_path = output_dir / "run_report.json"
+    if prior_path.is_file():
+        try:
+            previous_report = json.loads(prior_path.read_text(encoding="utf-8"))
+            archive_dir.mkdir(parents=True, exist_ok=True)
+            archive_name = f"run_{datetime.now(UTC).strftime('%Y%m%dT%H%M%S%fZ')}.json"
+            previous_report_archive = archive_dir / archive_name
+            shutil.copy2(prior_path, previous_report_archive)
+        except Exception as archive_exc:  # noqa: BLE001 - preserve run and disclose archive failure
+            previous_report_archive = None
     run = {"started_at_utc": datetime.now(UTC).isoformat(), "status": "BLOCKED",
            "protocol": "V5.6.0", "steps": [], "limitations": []}
     manifests = []
+    run["previous_report_archive"] = None if previous_report_archive is None else str(previous_report_archive)
+    if prior_path.is_file() and previous_report_archive is None:
+        run["limitations"].append("Previous report archive failed; longitudinal comparison may be incomplete.")
     binance = None
     bitstamp = None
     try:
@@ -388,7 +406,7 @@ def main() -> int:
         ledger_events = read_events(ledger_path) + read_events(ohlcv_ledger_path)
         review = build_pre_report_review(
             run, manifests, binance, bitstamp, ledger_events,
-            root=Path.cwd(), now=datetime.now(UTC),
+            root=Path.cwd(), now=datetime.now(UTC), previous_report=previous_report,
         )
         run["pre_report_review"] = review
         if review["gate"] == "BLOCKED":
