@@ -8,7 +8,7 @@
 - Added cross-venue anomaly context for rolling volume surprise, absolute maximum volume, largest close return and largest candle range; quote-basis gaps are disclosed without silently converting USD/USDT.
 - Added explicit FACT / INTERPRETATION / HYPOTHESIS / FORECAST sections, last-closed-candle snapshots, economic-validation gates, three observed market factors and a single next experiment.
 - Added same-venue/same-quote longitudinal comparison and only compares historical MAE when holdout windows match.
-- Staged ledger events are reviewed before append; pull-request runs do not mutate the persistent ledger.
+- Staged ledger events are reviewed before append; pull-request runs do not mutate the persistent ledger. Main-branch appends are reread and checked for preservation/uniqueness of all event IDs, with a post-append SHA-256.
 - Added legacy one-element-array forecast parsing and scalar serialization so old ledger rows can mature without being lost.
 - Derived validation purge boundaries from the shared execution-entry lag constant.
 - Added runtime budget, exact code provenance and report publication gates.
