@@ -286,6 +286,10 @@ def main() -> int:
             ohlcv_summary = summarize_scored_events(
                 ohlcv_previous + ohlcv_invalidations + ohlcv_scores
             )
+            for horizon_block in ohlcv_summary.get("by_horizon", {}).values():
+                model_metrics = horizon_block.get("models", {})
+                if "ridge" in model_metrics:
+                    model_metrics["ohlcv_challenger"] = model_metrics.pop("ridge")
             ohlcv_pending = sum(
                 row.get("event_type") == "FORECAST"
                 and row.get("forecast_id") not in ohlcv_scored_ids | ohlcv_invalidated_ids
