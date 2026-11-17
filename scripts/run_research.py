@@ -126,6 +126,7 @@ def _build_audit(run: dict, prospective: dict) -> dict:
                 ) else "WARN_OR_BLOCKED")},
             {"component": "historical_holdout", "status": "DIAGNOSTIC_ONLY_NOT_GLOBALLY_UNSEEN"},
             {"component": "prospective_ledger", "status": prospective.get("decision", "INSUFFICIENT_PROSPECTIVE_EVIDENCE")},
+            {"component": "ohlcv_challenger", "status": run.get("ohlcv_challenger", {}).get("status", "NOT_STARTED")},
             {"component": "economic_strategy_validation", "status": "NOT_COMPLETED"},
         ],
         "weakest_component": weakest,
@@ -378,7 +379,7 @@ def main() -> int:
         run["audit"]["pre_report_gate"] = review["gate"]
         run["audit"]["rotating_review_lens"] = review["rotating_review"]["lens"]
         run["audit"]["decision"] = (
-            "KEEP_ZERO_RETURN_CHAMPION; RIDGE_CHALLENGER_ONLY; NO_PROMOTION; "
+            "KEEP_ZERO_RETURN_CHAMPION; RIDGE_CHALLENGER_ONLY; OHLCV_PROSPECTIVE_ONLY; NO_PROMOTION; "
             "ABSTAIN_FROM_LIVE_RISK"
         )
     except Exception as audit_exc:  # noqa: BLE001 - an audit failure must block confidence
