@@ -383,14 +383,12 @@ def render_markdown_report(run: dict, scores: dict) -> str:
         if item:
             lines += ["", f"### {label}", "",
                       f"- Stato: {item.get('status', 'n/d')}",
-                      f"- Funding corrente/ultimo: {_display(item.get('current_funding_rate', item.get('funding_rate_current')))} "
-                      f"({item.get('funding_rate_unit', 'fraction per funding interval')})",
+                      f"- Funding corrente/ultimo: {_display(item.get('current_funding_rate', item.get('funding_rate_current')))} ({item.get('funding_rate_unit', 'fraction per funding interval')})",
                       f"- Open interest: {_display(item.get('open_interest_btc'))} BTC",
                       f"- Variazione OI 1D: {_display(item.get('open_interest_value_change_1d_pct', item.get('open_interest_history_change_1d_pct')))}%",
                       f"- Variazione OI 7D: {_display(item.get('open_interest_value_change_7d_pct', item.get('open_interest_history_change_7d_pct')))}%",
                       f"- Variazione OI 30D: {_display(item.get('open_interest_value_change_30d_pct', item.get('open_interest_history_change_30d_pct')))}%",
-                      f"- Long/short account ratio: {_display(item.get('global_long_short_account_ratio'))} "
-                      f"(long {_display(item.get('global_long_account_share_pct'), 2)}% / short {_display(item.get('global_short_account_share_pct'), 2)}%)",
+                      f"- Long/short account ratio: {_display(item.get('global_long_short_account_ratio'))} (long {_display(item.get('global_long_account_share_pct'), 2)}% / short {_display(item.get('global_short_account_share_pct'), 2)}%)",
                       f"- Taker buy/sell ratio (Binance proxy): {_display(item.get('taker_buy_sell_ratio_latest'))}",
                       f"- Volume futures ultima candela chiusa 1D (Binance): {_display(item.get('last_closed_daily_futures_volume_btc'))} BTC",
                       f"- Volume futures 24h (Bybit): {_display(item.get('volume_24h_btc'))} BTC"]
