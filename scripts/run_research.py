@@ -75,8 +75,8 @@ def _append_challenger_proposal(
         "change_family": "OHLCV feature engineering; isolated challenger only",
         "data_manifest_sha256": manifest_sha256,
         "split_definition": (
-            "Train strictly before 2025-11-17 UTC; fixed alpha=100; historical "
-            "2025-11-17 to 2026-11-16 continuity holdout excluded from training "
+            "Train strictly before 2025-11-17 UTC; fixed alpha=100; fixed-start expanding "
+            "continuity holdout from 2025-11-17 UTC excluded from training 
             "and tuning; evaluate only new append-only prospective SCORE events."
         ),
         "acceptance_criteria": (
@@ -131,7 +131,7 @@ def _build_audit(run: dict, prospective: dict) -> dict:
         ],
         "weakest_component": weakest,
         "three_vulnerabilities": [
-            "The historical 2025-11-17 to 2026-11-16 holdout was previously inspected under V5.3.1; it is not independent prospective evidence.",
+            "The fixed-start expanding historical holdout beginning 2025-11-17 UTC was previously inspected under V5.3.1; it is not independent prospective evidence.",
             "The zero-return champion and price-only Ridge challenger remain unchanged; the OHLCV challenger is prospective-only with no matured lift evidence. Derivatives, ETF flows, order flow, macro and on-chain data are not integrated.",
             "No executable strategy backtest with fees, spread, slippage, funding, turnover and drawdown stress has been completed.",
         ],
