@@ -110,7 +110,7 @@ def test_ledger_audit_accepts_documented_legacy_late_entry_invalidation():
     now = datetime(2026, 11, 17, 20, tzinfo=UTC)
     forecast = {
         "event_id": "f", "event_type": "FORECAST", "forecast_id": "f",
-        "issued_at_utc": "2026-11-16T19:18:40+00:00",
+        "issued_at_utc": "2026-11-17T19:18:40+00:00",
         "entry_timestamp_utc": "2026-11-16T00:00:00+00:00",
         "expiry_timestamp_utc": "2026-11-17T00:00:00+00:00",
         "forecast": "[-0.01]",
