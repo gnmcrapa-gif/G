@@ -27,3 +27,13 @@
 - Isolate prospective matured metrics by model version so historical scores from different challenger versions cannot be pooled.
 - Add a post-push remote read-back gate that verifies the main ref, report/ledger bytes, all raw-object SHA-256 hashes and sizes, and ledger event-ID uniqueness.
 - Refresh README production status and evidence for the verified V5.6 main run.
+
+## [Unreleased] — multisource context extension
+
+- Add timestamped last-trade spot snapshots for Binance and Bitstamp, 1D/7D/30D price changes, moving averages, recent ranges and ATR14.
+- Add public Binance USD-M Futures and Bybit Linear funding/open-interest context, with explicit 30-day history limits and taker-flow proxy labels.
+- Add Deribit options OI by expiry/strike, put/call ratios, ATM IV term structure and sampled 25-delta skew; disclose the provider's 8-hour OI delay and non-identifiability of dealer positioning.
+- Add US spot ETF daily/cumulative flows and AUM from the public TFTC open dataset, preserving update-through date and staleness.
+- Add FRED macro and US index observations with native dates, units and freshness checks.
+- Add a coverage matrix for exchange reserves/netflows, market-wide liquidations, spot CVD, global ETP flows and geopolitical/regulatory news when no verified source is available.
+- Generate a human-readable `daily_report.md` alongside the structured JSON report. Supplemental feeds remain descriptive and do not enter the predictive model until a separate prospective challenger passes.
