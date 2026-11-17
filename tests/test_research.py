@@ -195,7 +195,7 @@ def test_historical_holdout_start_does_not_roll_when_new_days_arrive():
         "low": np.minimum(open_price, close) * 0.99,
         "close": close, "volume": np.full(n, 100.0),
     })
-    _, first = walk_forward(frame, min_train_rows=100)
+    _, first = walk_forward(frame, min_train_rows=100, now=end + pd.Timedelta(days=1, hours=16))
     extra_t = np.arange(n, n + 5, dtype=float)
     extra_close = close[-1] * np.exp(np.cumsum(0.0002 + 0.008 * np.sin(extra_t / 17.0)))
     extra_open = extra_close * (1.0 + 0.001 * np.sin(extra_t / 7.0))
@@ -205,6 +205,6 @@ def test_historical_holdout_start_does_not_roll_when_new_days_arrive():
         "low": np.minimum(extra_open, extra_close) * 0.99,
         "close": extra_close, "volume": np.full(5, 110.0),
     })
-    _, second = walk_forward(pd.concat([frame, extra], ignore_index=True), min_train_rows=100)
+    _, second = walk_forward(pd.concat([frame, extra], ignore_index=True), min_train_rows=100, now=end + pd.Timedelta(days=6, hours=16))
     assert first["holdout_start_utc"] == second["holdout_start_utc"] == "2025-11-17T00:00:00+00:00"
     assert second["holdout_rows_current"] == first["holdout_rows_current"] + 5
