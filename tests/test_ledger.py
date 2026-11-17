@@ -1,6 +1,6 @@
 import numpy as np
-import pytest
 import pandas as pd
+import pytest
 
 from btc_quant.ledger import (
     generate_forecast_events,
@@ -120,7 +120,7 @@ def test_legacy_singleton_array_forecast_is_scored_and_summarized():
     }
     scores = score_matured_events([forecast], frame)
     assert len(scores) == 1
-    assert scores[0]["forecast"] == "[-0.01]"
+    assert scores[0]["forecast"] == pytest.approx(-0.01)
     assert scores[0]["forecast_error"] == pytest.approx(-0.01 - np.log(1.1))
     summary = summarize_scored_events([forecast, *scores])
     block = summary["by_horizon"]["1"]
