@@ -12,6 +12,7 @@ import numpy as np
 import pandas as pd
 
 from .research import HORIZONS, _ridge_predict, make_features
+from .validation import EXECUTION_ENTRY_LAG_SESSIONS, forward_open_log_return
 
 LEDGER_COLUMNS = [
     "event_id", "event_type", "forecast_id", "recorded_at_utc", "issued_at_utc",
@@ -61,8 +62,8 @@ def generate_forecast_events(
     events = []
     for horizon in HORIZONS:
         selected_alpha = (ridge_alpha_by_horizon or {}).get(horizon, ridge_alpha)
-        target = np.log(data["open"].shift(-(horizon + 2)) / data["open"].shift(-2))
-        last_train = t - horizon - 2
+        target = forward_open_log_return(data["open"], horizon, entry_lag_sessions=EXECUTION_ENTRY_LAG_SESSIONS)
+        last_train = t - horizon - EXECUTION_ENTRY_LAG_SESSIONS
         if last_train < 0:
             continue
         train_idx = np.arange(0, last_train + 1)
@@ -86,8 +87,8 @@ def generate_forecast_events(
         forecast_id = hashlib.sha256(
             f"{signal_ts.isoformat()}|{horizon}|{model_version}|{manifest_sha256}".encode()
         ).hexdigest()[:24]
-        expiry = signal_ts + pd.Timedelta(days=horizon + 2)
-        entry = signal_ts + pd.Timedelta(days=2)
+        expiry = signal_ts + pd.Timedelta(days=horizon + EXECUTION_ENTRY_LAG_SESSIONS)
+        entry = signal_ts + pd.Timedelta(days=EXECUTION_ENTRY_LAG_SESSIONS)
         # A delayed daily run must never issue a forecast whose entry is already past.
         if entry <= pd.Timestamp(now_utc):
             continue
@@ -100,7 +101,7 @@ def generate_forecast_events(
             "model_version": model_version,
             "code_commit": code_commit,
             "data_manifest_sha256": manifest_sha256,
-            "target": "log(Open[t+h+2]/Open[t+2])",
+            "target": f"log(Open[t+h+{EXECUTION_ENTRY_LAG_SESSIONS}]/Open[t+{EXECUTION_ENTRY_LAG_SESSIONS}])",
             "horizon": horizon,
             "signal_timestamp_utc": signal_ts.isoformat(),
             "feature_cutoff_utc": feature_cutoff.isoformat(),

@@ -1,4 +1,4 @@
-"""Price-only research with purged multi-fold tuning and untouched final holdout."""
+"""Price-only research with purged tuning and a disclosed historical continuity holdout."""
 from __future__ import annotations
 
 import math
@@ -6,7 +6,7 @@ import math
 import numpy as np
 import pandas as pd
 
-from .validation import forward_open_log_return, validate_ohlcv
+from .validation import EXECUTION_ENTRY_LAG_SESSIONS, forward_open_log_return, validate_ohlcv
 
 HORIZONS = (1, 3, 7, 30)
 RIDGE_ALPHAS = (0.1, 1.0, 10.0, 100.0)
@@ -167,7 +167,7 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
         fold_counts = []
         for fold_number in range(3):
             fold_start, fold_end = int(boundaries[fold_number]), int(boundaries[fold_number + 1])
-            train_end = fold_start - horizon - 3
+            train_end = fold_start - horizon - EXECUTION_ENTRY_LAG_SESSIONS - 1
             train_idx = _valid_indices(
                 target, features, np.arange(61, max(61, train_end + 1))
             )
@@ -197,12 +197,12 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
             for key, values in fold_scores.items()
         }
         selected_alpha = min(RIDGE_ALPHAS, key=lambda alpha: alpha_scores[str(alpha)])
-        final_train_end = holdout_start - horizon - 3
+        final_train_end = holdout_start - horizon - EXECUTION_ENTRY_LAG_SESSIONS - 1
         final_train_idx = _valid_indices(
             target, features, np.arange(61, final_train_end + 1)
         )
         holdout_idx = _valid_indices(
-            target, features, np.arange(holdout_start, max(holdout_start, n - horizon - 2))
+            target, features, np.arange(holdout_start, max(holdout_start, n - horizon - EXECUTION_ENTRY_LAG_SESSIONS))
         )
         if len(final_train_idx) < min_train_rows or len(holdout_idx) < 200:
             return pd.DataFrame(), {
@@ -255,7 +255,12 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
         "training_uses_holdout": False,
         "features": "price-only BTC close returns, rolling volatility and trend",
         "regime_definition": "bull/bear/range from close versus SMA200 and SMA200 20-session slope; ex ante",
-        "target": "log(Open[t+h+2]/Open[t+2]); signal after close t; one daily bar latency; entry future open",
+        "target": "log(Open[t+h+2]/Open[t+2]); signal after close t; one complete daily bar reserved for execution latency; entry at first open not passed at the 16:00 UTC run",
+        "requested_next_open_target": "log(Open[t+h+1]/Open[t+1])",
+        "requested_next_open_target_executable_at_scheduled_run": False,
+        "target_timing_decision": ("The scheduled run is 16:00 UTC; Open[t+1] occurs at 00:00 UTC before issuance. "
+                                   "The production research target therefore uses entry Open[t+2]. "
+                                   "The h+1 target remains available only as a non-executable theoretical diagnostic."),
     })
     return predictions, summary
 

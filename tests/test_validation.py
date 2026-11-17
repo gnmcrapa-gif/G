@@ -54,11 +54,24 @@ def test_incomplete_current_day_fails():
         validate_ohlcv(frame, now=now)
 
 
-def test_target_alignment_matches_next_open_to_future_open():
+def test_target_alignment_defaults_to_executable_open_after_latency_bar():
     opens = pd.Series([100.0, 110.0, 121.0, 133.1, 146.41])
     target = forward_open_log_return(opens, horizon=1)
     assert target.iloc[0] == pytest.approx(np.log(133.1 / 121.0))
     assert target.iloc[-3:].isna().all()
+
+
+def test_theoretical_next_open_target_is_explicit_and_separate():
+    opens = pd.Series([100.0, 110.0, 121.0, 133.1, 146.41])
+    target = forward_open_log_return(opens, horizon=1, entry_lag_sessions=1)
+    assert target.iloc[0] == pytest.approx(np.log(121.0 / 110.0))
+
+
+def test_entry_lag_must_be_positive_integer():
+    with pytest.raises(ValueError, match="positive integer"):
+        forward_open_log_return(pd.Series([100.0, 101.0, 102.0]), 1, entry_lag_sessions=0)
+    with pytest.raises(ValueError, match="positive integer"):
+        forward_open_log_return(pd.Series([100.0, 101.0, 102.0]), 1, entry_lag_sessions=1.5)
 
 
 def test_non_positive_open_fails():
@@ -84,3 +97,17 @@ def test_non_utc_timestamps_are_rejected():
 def test_two_day_stale_data_are_rejected():
     with pytest.raises(DataValidationError, match="stale daily data"):
         validate_ohlcv(sample_frame(), now=pd.Timestamp("2024-01-05T12:00:00Z"))
+
+
+def test_qa_reports_zero_volume_tail_and_exact_freshness_diagnostics():
+    frame = sample_frame()
+    frame.loc[1, "volume"] = 0.0
+    result = validate_ohlcv(frame, now=pd.Timestamp("2024-01-04T12:00:00Z"))
+    assert result["zero_volume_rows"] == 1
+    assert result["zero_volume_pct"] == pytest.approx(100.0 / 3.0)
+    assert result["volume_median_btc"] == pytest.approx(10.0)
+    assert result["latest_candle_age_hours"] == pytest.approx(12.0)
+    assert result["absolute_close_return_max"] > 0
+    assert result["volume_robust_z_max_timestamp_utc"] is not None
+    assert result["volume_max_timestamp_utc"] == "2024-01-03T00:00:00+00:00"
+    assert "not automatic rejection" in result["diagnostic_note"]
