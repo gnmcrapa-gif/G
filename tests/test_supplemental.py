@@ -214,6 +214,62 @@ def test_bls_monthly_parser_orders_rows_and_preserves_footnotes():
     assert footnotes == [{"code": "P", "text": "Preliminary."}]
 
 
+def test_bls_cpi_fallback_uses_official_v1_api_and_month_end_freshness(monkeypatch, tmp_path):
+    import json
+    from datetime import date
+
+    from btc_quant import supplemental
+
+    payload = {
+        "status": "REQUEST_SUCCEEDED",
+        "message": [],
+        "Results": {
+            "series": [{
+                "seriesID": "CUSR0000SA0",
+                "data": [
+                    {"year": "2026", "period": "M10", "value": "326.5", "footnotes": []},
+                    {"year": "2026", "period": "M09", "value": "325.8", "footnotes": []},
+                ],
+            }],
+        },
+    }
+
+    class FakeResponse:
+        content = json.dumps(payload).encode("utf-8")
+        url = "https://api.bls.gov/publicAPI/v1/timeseries/data/"
+
+        def raise_for_status(self):
+            return None
+
+        def json(self):
+            return payload
+
+    captured = {}
+
+    def fake_post(url, **kwargs):
+        captured["url"] = url
+        captured.update(kwargs)
+        return FakeResponse()
+
+    monkeypatch.setattr(supplemental.requests, "post", fake_post)
+    observation, manifest = supplemental._bls_macro_fallback(
+        "CPIAUCSL",
+        {
+            "label": "US CPI index", "unit": "index 1982-84=100",
+            "lookback_days": 1825, "max_age_days": 45, "frequency": "monthly",
+        },
+        tmp_path,
+        date(2026, 11, 18),
+    )
+    assert captured["url"] == "https://api.bls.gov/publicAPI/v1/timeseries/data/"
+    assert captured["json"]["seriesid"] == ["CUSR0000SA0"]
+    assert observation["observation_date"] == "2026-10-01"
+    assert observation["freshness_reference_date"] == "2026-10-31"
+    assert observation["age_calendar_days"] == 18
+    assert observation["status"] == "PASS"
+    assert manifest["source_grade"] == "A"
+
+
 def test_bls_monthly_parser_rejects_failed_or_empty_series():
     from btc_quant.supplemental import _parse_bls_monthly_series
 
