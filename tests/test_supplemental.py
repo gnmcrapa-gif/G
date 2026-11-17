@@ -3,6 +3,7 @@ from btc_quant.supplemental import (
     _find_etf_sessions,
     _float_or_none,
     _parse_deribit_instrument,
+    empty_supplemental_coverage,
     _pct_change,
 )
 
@@ -44,3 +45,18 @@ def test_macro_series_have_units_frequencies_and_freshness_limits():
     assert FRED_SERIES["DFII10"]["max_age_days"] == 5
     assert "not ICE DXY" in FRED_SERIES["DTWEXBGS"]["label"]
     assert FRED_SERIES["CPIAUCSL"]["lookback_days"] >= 365
+
+
+
+def test_every_market_domain_has_an_explicit_default_not_run_or_unavailable_status():
+    coverage = empty_supplemental_coverage()
+    expected = {
+        "spot_ohlcv", "spot_live_quotes", "per_exchange_derivatives", "options",
+        "us_spot_etf_flows", "global_etp_flows", "exchange_flows_and_reserves",
+        "liquidations", "macro_and_indices", "spot_futures_cvd",
+        "geopolitical_regulatory_news",
+    }
+    assert set(coverage) == expected
+    assert all(item.get("status") for item in coverage.values())
+    assert coverage["exchange_flows_and_reserves"]["status"] == "UNAVAILABLE"
+    assert coverage["spot_futures_cvd"]["status"] == "PROXY_ONLY"
