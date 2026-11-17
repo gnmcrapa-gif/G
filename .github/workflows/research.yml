@@ -23,7 +23,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: btc-quant-daily-research
+  group: btc-quant-daily-research-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
