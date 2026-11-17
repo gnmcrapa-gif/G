@@ -10,6 +10,8 @@ import time
 from datetime import UTC, datetime
 from pathlib import Path
 
+import pandas as pd
+
 from btc_quant.acquisition import (
     download_binance_daily,
     download_bitstamp_recent,
