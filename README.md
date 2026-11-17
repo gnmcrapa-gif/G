@@ -73,7 +73,7 @@ See [Protocol V5.6](docs/protocol-v5.6.md), [Changelog](CHANGELOG.md), [Protocol
 
 ## Supplemental market context — implementation status
 
-The V5.6 extension is adding timestamped public feeds for live last-trade spot snapshots, Binance/Bybit derivatives, Deribit options, US spot ETF flows and FRED macro/US indices. The daily report will show the actual observation date, retrieval time, quote/unit, source, freshness and any provider delay. These context feeds do **not** train the current price-only Ridge challenger and do not alter the frozen zero-return champion.
+The V5.6 extension is adding timestamped public feeds for live last-trade spot snapshots, Binance/Bybit derivatives, Deribit options, US spot ETF flows and FRED macro/US indices. The daily report will show the actual observation date, retrieval time, quote/unit, source, freshness and any provider delay, plus headline timestamps and source domains. These context feeds do **not** train the current price-only Ridge challenger and do not alter the frozen zero-return champion.
 
 Known source limits are explicit:
 - Binance historical open-interest statistics and taker buy/sell ratio endpoints expose only about the latest 30 days; they are not long-history series.
@@ -83,7 +83,7 @@ Known source limits are explicit:
 - A complete market-wide liquidation series, spot/futures CVD, global ETP flows and verified geopolitical/regulatory event feed are not claimed unless a source is actually acquired and QA-checked.
 - FRED macro observations retain their native publication/observation dates; monthly and weekly series are not treated as real-time.
 
-The report's coverage matrix distinguishes PASS, PARTIAL, STALE, PROXY_ONLY, UNAVAILABLE and NOT_IMPLEMENTED. Missing optional feeds never block primary OHLCV research by themselves, but are never represented as present. See [Protocol V5.6](docs/protocol-v5.6.md).
+The report's coverage matrix distinguishes PASS, PARTIAL, STALE, PROXY_ONLY, UNAVAILABLE, NOT_IMPLEMENTED and NOT_RUN. Missing optional feeds never block primary OHLCV research by themselves, but are never represented as present. See [Protocol V5.6](docs/protocol-v5.6.md).
 
 ## Reproduction
 
