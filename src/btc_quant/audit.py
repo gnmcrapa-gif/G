@@ -140,7 +140,8 @@ def run_pre_report_review(
     )
     add(
         "raw_manifest_provenance", "lineage",
-        all(obj.get("url") and obj.get("retrieved_at_utc") and obj.get("parser_version")
+        all(obj.get("url") and obj.get("retrieved_at_utc") and obj.get("sha256")
+            and obj.get("size_bytes") is not None
             for source in manifests for obj in source.get("objects", []))
         and all(source.get("parser_version") and source.get("schema")
                 for source in manifests if source.get("objects")),
