@@ -174,7 +174,8 @@ def main() -> int:
         manifest_sha256 = hashlib.sha256(json.dumps(object_hashes).encode()).hexdigest()
         predictions, scores = walk_forward(binance, min_train_rows=args.min_train_rows)
         counts = predictions.groupby("horizon").size().to_dict() if len(predictions) else {}
-        run["matured_oos_counts_by_horizon"] = {str(k): int(v) for k, v in counts.items()}
+        run["historical_continuity_rows_by_horizon"] = {str(k): int(v) for k, v in counts.items()}
+        run["historical_continuity_role"] = "diagnostic_only_not_prospective_ledger_maturity"
         run["probabilistic_claims_allowed"] = False
         predictions.to_csv(output_dir / "oos_predictions.csv", index=False)
         (output_dir / "scores.json").write_text(json.dumps(scores, indent=2), encoding="utf-8")
