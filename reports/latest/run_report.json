@@ -1,5 +1,5 @@
 {
-  "started_at_utc": "2026-11-17T21:29:28.005479+00:00",
+  "started_at_utc": "2026-11-17T21:38:20.606315+00:00",
   "status": "COMPLETE_NOT_PROMOTED",
   "protocol": "V5.6",
   "steps": [
@@ -15,7 +15,7 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 21.502,
+        "latest_candle_age_hours": 21.651,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 36285.648526,
@@ -51,7 +51,7 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 21.503,
+        "latest_candle_age_hours": 21.652,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 3154.24801664,
@@ -86,7 +86,7 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-17T21:30:10.801592+00:00",
+      "retrieved_at_utc": "2026-11-17T21:39:07.505983+00:00",
       "parser": "Coinbase candle array parser",
       "parser_version": "0.2",
       "schema": [
@@ -101,10 +101,10 @@
         {
           "source": "Coinbase Exchange candles API",
           "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=2026-01-21T00%3A00%3A00%2B00%3A00&end=2026-11-17T00%3A00%3A00%2B00%3A00",
-          "retrieved_at_utc": "2026-11-17T21:30:10.801560+00:00",
+          "retrieved_at_utc": "2026-11-17T21:39:07.505940+00:00",
           "file": "data/raw/coinbase/coinbase_btcusd_1d_recent.json",
-          "size_bytes": 18463,
-          "sha256": "643daa1788e5876c489e737f94942297cefc7fcb46fc610c905221bfa5e01ca4",
+          "size_bytes": 18462,
+          "sha256": "aa75b9a659126634afff08a0f091aca42d0f6d46882eb7f1765b2e230ed9360d",
           "venue": "Coinbase",
           "symbol": "BTC-USD",
           "quote_currency": "USD",
@@ -126,7 +126,7 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 21.503,
+        "latest_candle_age_hours": 21.652,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 7277.57349707,
@@ -162,7 +162,7 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-17T21:30:10.945122+00:00",
+      "retrieved_at_utc": "2026-11-17T21:39:07.748654+00:00",
       "parser": "Kraken OHLC parser",
       "parser_version": "0.2",
       "schema": [
@@ -177,10 +177,10 @@
         {
           "source": "Kraken public OHLC API",
           "url": "https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1440",
-          "retrieved_at_utc": "2026-11-17T21:30:10.944872+00:00",
+          "retrieved_at_utc": "2026-11-17T21:39:07.748291+00:00",
           "file": "data/raw/kraken/kraken_btcusd_1d_recent.json",
           "size_bytes": 62328,
-          "sha256": "42ad5142e2071ab82bbace98906839b4ac104ba77f0c20eb76aa07dc52d81d10",
+          "sha256": "8fc1b9e10463cdefcbd2ea5f90f74bca1b24e42df0a791707f27ed25101a540a",
           "venue": "Kraken",
           "symbol": "XBT/USD",
           "quote_currency": "USD",
@@ -202,7 +202,7 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 21.503,
+        "latest_candle_age_hours": 21.652,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 1673.7672171250001,
@@ -1402,13 +1402,13 @@
     "robust_volume_z": "dimensionless rolling score versus prior 90 completed sessions; minimum 60 sessions"
   },
   "performance": {
-    "acquisition_and_qa_seconds": 42.964,
-    "walk_forward_seconds": 0.163,
-    "pre_report_review_seconds": 0.009,
-    "total_seconds_before_report": 43.163
+    "acquisition_and_qa_seconds": 47.17,
+    "walk_forward_seconds": 0.196,
+    "pre_report_review_seconds": 0.01,
+    "total_seconds_before_report": 47.412
   },
   "market_snapshot": {
-    "as_of_utc": "2026-11-17T21:30:10.969410+00:00",
+    "as_of_utc": "2026-11-17T21:39:07.776559+00:00",
     "warning": "These are last closed daily candles, not live spot quotes; USD and USDT are not converted or combined.",
     "venues": [
       {
@@ -1418,7 +1418,7 @@
         "snapshot_type": "latest_closed_daily_candle_not_realtime_spot",
         "candle_open_timestamp_utc": "2026-11-16T00:00:00+00:00",
         "candle_close_timestamp_utc": "2026-11-17T00:00:00+00:00",
-        "retrieved_at_utc": "2026-11-17T21:30:08.616086+00:00",
+        "retrieved_at_utc": "2026-11-17T21:39:04.832952+00:00",
         "open_quote_per_btc": 65351.05,
         "high_quote_per_btc": 65696.16,
         "low_quote_per_btc": 63905.01,
@@ -1437,7 +1437,7 @@
         "snapshot_type": "latest_closed_daily_candle_not_realtime_spot",
         "candle_open_timestamp_utc": "2026-11-16T00:00:00+00:00",
         "candle_close_timestamp_utc": "2026-11-17T00:00:00+00:00",
-        "retrieved_at_utc": "2026-11-17T21:30:10.500994+00:00",
+        "retrieved_at_utc": "2026-11-17T21:39:07.176591+00:00",
         "open_quote_per_btc": 65310.48,
         "high_quote_per_btc": 65609.6,
         "low_quote_per_btc": 63815.27,
@@ -1460,7 +1460,7 @@
   "historical_continuity_role": "diagnostic_only_not_prospective_ledger_maturity",
   "probabilistic_claims_allowed": false,
   "prospective_ledger_validation": {
-    "source": "append-only prospective forecast ledger; matured SCORE events only",
+    "source": "append-only prospective forecast ledger; matured SCORE events only; metrics isolated by model version",
     "probability_calibration_claim_allowed": false,
     "minimum_per_horizon": 200,
     "by_horizon": {},
@@ -1538,7 +1538,7 @@
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 21.502,
+          "latest_candle_age_hours": 21.651,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
           "volume_median_btc": 36285.648526,
@@ -1573,7 +1573,7 @@
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 21.503,
+          "latest_candle_age_hours": 21.652,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
           "volume_median_btc": 3154.24801664,
@@ -1609,7 +1609,7 @@
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 21.503,
+          "latest_candle_age_hours": 21.652,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
           "volume_median_btc": 7277.57349707,
@@ -1645,7 +1645,7 @@
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 21.503,
+          "latest_candle_age_hours": 21.652,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
           "volume_median_btc": 1673.7672171250001,
@@ -1797,20 +1797,30 @@
   "longitudinal_comparison": {
     "status": "COMPARISON_AVAILABLE",
     "comparison_performed": true,
-    "previous_run_started_at_utc": "2026-11-17T19:08:53.894892+00:00",
-    "previous_run_finished_at_utc": "2026-11-17T19:09:34.893583+00:00",
+    "previous_run_started_at_utc": "2026-11-17T21:29:28.005479+00:00",
+    "previous_run_finished_at_utc": "2026-11-17T21:30:11.168518+00:00",
     "previous_run_status": "COMPLETE_NOT_PROMOTED",
     "current_run_status": "COMPLETE_NOT_PROMOTED",
     "same_venue_price_snapshots": [
       {
         "venue": "Binance",
         "symbol": "BTCUSDT",
-        "status": "NOT_COMPARABLE_NO_MATCHING_PRIOR_SNAPSHOT"
+        "quote_currency": "USDT",
+        "previous_candle_open_timestamp_utc": "2026-11-16T00:00:00+00:00",
+        "current_candle_open_timestamp_utc": "2026-11-16T00:00:00+00:00",
+        "close_change_since_previous_report_pct": 0.0,
+        "unit": "%",
+        "comparison_type": "same_venue_same_quote_only"
       },
       {
         "venue": "Bitstamp",
         "symbol": "BTC/USD",
-        "status": "NOT_COMPARABLE_NO_MATCHING_PRIOR_SNAPSHOT"
+        "quote_currency": "USD",
+        "previous_candle_open_timestamp_utc": "2026-11-16T00:00:00+00:00",
+        "current_candle_open_timestamp_utc": "2026-11-16T00:00:00+00:00",
+        "close_change_since_previous_report_pct": 0.0,
+        "unit": "%",
+        "comparison_type": "same_venue_same_quote_only"
       }
     ],
     "historical_benchmark_comparison": {
@@ -1862,9 +1872,9 @@
     "interpretation_policy": "Compare price snapshots only within identical venue/symbol/quote. Compare MAE only on identical holdout windows; all such historical results remain continuity diagnostics."
   },
   "code_provenance": {
-    "commit_sha": "67d20c1dc83ee821e6328dfabee94b5f7ab8a9f3",
+    "commit_sha": "91d06c403919312288047e21cacb90c4430bb1b8",
     "ref": "refs/heads/main",
-    "workflow_run_id": "44180291352",
+    "workflow_run_id": "44181836262",
     "event_name": "push"
   },
   "anomaly_event_cross_venue_checks": {
@@ -2047,8 +2057,8 @@
   "pre_report_review": {
     "version": "pre-report-review-1.0",
     "executed_before_report_serialization": true,
-    "reviewed_at_utc": "2026-11-17T21:30:11.158785+00:00",
-    "run_id": "44180291352",
+    "reviewed_at_utc": "2026-11-17T21:39:08.008309+00:00",
+    "run_id": "44181836262",
     "rotating_adversarial_lens": "outlier_close_return",
     "checks": [
       {
@@ -2217,7 +2227,7 @@
         "category": "operations",
         "status": "PASS",
         "blocking": true,
-        "evidence": "acquisition_and_qa_seconds=42.964; walk_forward_seconds=0.163; measured stages must be non-negative and remain within the 120-minute workflow budget."
+        "evidence": "acquisition_and_qa_seconds=47.17; walk_forward_seconds=0.196; measured stages must be non-negative and remain within the 120-minute workflow budget."
       },
       {
         "check_id": "rotating_red_team_outlier_close_return",
@@ -2302,5 +2312,5 @@
     "event_ids_unique": true,
     "ledger_sha256": "c99e834515c687a6caa48a0c946a1b6d6917ed3fa7139a58006fabe397c2c346"
   },
-  "finished_at_utc": "2026-11-17T21:30:11.168518+00:00"
+  "finished_at_utc": "2026-11-17T21:39:08.018740+00:00"
 }
