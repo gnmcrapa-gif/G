@@ -134,6 +134,45 @@ def test_treasury_xml_parser_reads_official_nominal_yield_fields():
     assert _parse_treasury_yield_xml(payload, "DFII10") == (date(2026, 11, 17), 2.10)
 
 
+def test_dfii10_fallback_requests_official_real_yield_curve(monkeypatch, tmp_path):
+    from datetime import date
+
+    import btc_quant.supplemental as supplemental
+
+    payload = b"""<?xml version="1.0"?>
+    <feed xmlns="http://www.w3.org/2005/Atom" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices">
+      <entry><content><m:properties>
+        <d:NEW_DATE>2026-11-17T00:00:00</d:NEW_DATE>
+        <d:TC_10YEAR>2.10</d:TC_10YEAR>
+      </m:properties></content></entry>
+    </feed>"""
+
+    class FakeResponse:
+        content = payload
+        url = "https://home.treasury.gov/test-real-yield.xml"
+
+        def raise_for_status(self):
+            return None
+
+    captured = {}
+
+    def fake_get(url, **kwargs):
+        captured.update(kwargs)
+        return FakeResponse()
+
+    monkeypatch.setattr(supplemental.requests, "get", fake_get)
+    observation, manifest = supplemental._treasury_yield_fallback(
+        "DFII10",
+        {"label": "US 10Y real yield", "max_age_days": 5},
+        tmp_path,
+        date(2026, 11, 17),
+    )
+    assert captured["params"]["data"] == "daily_treasury_real_yield_curve"
+    assert observation["value"] == pytest.approx(2.10)
+    assert observation["status"] == "PASS"
+    assert "real yield curve" in manifest["source"]
+
+
 def test_treasury_xml_parser_rejects_unsupported_series():
     from btc_quant.supplemental import _parse_treasury_yield_xml
 
