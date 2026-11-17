@@ -421,8 +421,7 @@ def render_markdown_report(run: dict, scores: dict) -> str:
     if etf:
         latest = etf.get("latest_session", {})
         lines += ["", "### ETF spot Bitcoin USA", "",
-                  f"- Stato: {etf.get('status')}; dati aggiornati al {etf.get('updated_through')} "
-                  f"(circa {etf.get('business_sessions_behind_approx')} sessioni USA di ritardo).",
+                  f"- Stato: {etf.get('status')}; dati aggiornati al {etf.get('updated_through')} (circa {etf.get('business_sessions_behind_approx')} sessioni USA di ritardo).",
                   f"- Flusso ultima sessione: {_display(latest.get('netFlowUsd'), 2)} USD.",
                   f"- AUM totale ultima sessione: {_display(latest.get('totalNetAssetsUsd'), 2)} USD.",
                   f"- Flusso cumulativo dalla partenza: {_display(etf.get('cumulative_net_flow_usd'), 2)} USD.",
@@ -440,7 +439,7 @@ def render_markdown_report(run: dict, scores: dict) -> str:
                 f"{_display(item.get('value'), 4)} | {item.get('unit')} | {item.get('status')} |"
             )
         if macro.get("errors"):
-            lines.append(f"")
+            lines.append("")
             lines.append(f"Feed macro non acquisiti: {macro['errors']}")
 
     lines += ["", "## 5. Validazione quantitativa", "",
@@ -457,14 +456,10 @@ def render_markdown_report(run: dict, scores: dict) -> str:
         )
     ledger = run.get("ledger", {})
     lines += ["", "## 6. Ledger e rischio", "",
-              f"- Stato ledger: {ledger.get('persistence_status', 'n/d')}; eventi prima/dopo: "
-              f"{ledger.get('existing_events_before_run', 'n/d')} / {ledger.get('total_events_after_run', 'n/d')}.",
-              f"- Nuove previsioni: {ledger.get('forecast_events_created', 0)}; duplicate soppresse: "
-              f"{ledger.get('duplicate_forecasts_suppressed', 0)}; score maturati: {ledger.get('score_events_created', 0)}.",
+              f"- Stato ledger: {ledger.get('persistence_status', 'n/d')}; eventi prima/dopo: {ledger.get('existing_events_before_run', 'n/d')} / {ledger.get('total_events_after_run', 'n/d')}.",
+              f"- Nuove previsioni: {ledger.get('forecast_events_created', 0)}; duplicate soppresse: {ledger.get('duplicate_forecasts_suppressed', 0)}; score maturati: {ledger.get('score_events_created', 0)}.",
               f"- Campione prospettico: {run.get('prospective_ledger_validation', {}).get('decision', 'n/d')}.",
-              f"- Rischio: {run.get('risk', {}).get('mode', 'n/d')}; live trading: "
-              f"{run.get('risk', {}).get('live_trading_enabled', False)}; esposizione teorica: "
-              f"{_display(run.get('risk', {}).get('theoretical_exposure_pct'), 2)}%.",
+              f"- Rischio: {run.get('risk', {}).get('mode', 'n/d')}; live trading: {run.get('risk', {}).get('live_trading_enabled', False)}; esposizione teorica: {_display(run.get('risk', {}).get('theoretical_exposure_pct'), 2)}%.",
               "- Champion congelato: zero-return. Ridge è challenger non promosso.",
               "- Nessun PnL economico o probabilità calibrata è dichiarato.",
               "", "## 7. Revisione critica e conclusione", ""]
