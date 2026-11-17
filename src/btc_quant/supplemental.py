@@ -1573,7 +1573,20 @@ def _cryptokeyhole_context(directory: Path) -> tuple[dict, list[dict]]:
             objects.append(obj)
             payload = response.json()
             payloads[key] = payload
-            summary["source_status"][key] = "PASS"
+            payload_data = payload.get("data", payload) if isinstance(payload, dict) else {}
+            if not isinstance(payload_data, dict):
+                payload_data = {}
+            if key == "fear_and_greed":
+                value = payload_data.get("value")
+                endpoint_status = "PASS" if isinstance(value, (int, float)) and 0 <= value <= 100 else "FAIL"
+            elif key == "leverage_gauge":
+                value = payload_data.get("value", payload_data.get("score"))
+                endpoint_status = "PASS" if isinstance(value, (int, float)) else "FAIL"
+            elif key == "latest_move":
+                endpoint_status = "PASS" if payload_data else "NO_EVENT"
+            else:
+                endpoint_status = "PASS" if payload_data else "FAIL"
+            summary["source_status"][key] = endpoint_status
             manifests.append({
                 "source": f"CryptoKeyhole API {path}", "venue": "CryptoKeyhole",
                 "symbol": key, "quote_currency": "provider-native",
