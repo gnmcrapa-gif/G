@@ -1479,7 +1479,7 @@ def _ckh_series_summary(payload: dict, preview_header: str | None) -> dict:
     latest = finals[-1]
     age_days = (datetime.now(UTC) - pd.Timestamp(latest["timestamp_utc"]).to_pydatetime()).total_seconds() / 86400
     return {
-        "status": "PASS" if 0 <= age_days <= 2 else "STALE",
+        "status": "PASS" if 0 <= age_days <= 1.5 else "STALE",
         "metric": container.get("metric", payload.get("metric")),
         "name": container.get("name", payload.get("name")),
         "unit": container.get("unit", payload.get("unit")),
