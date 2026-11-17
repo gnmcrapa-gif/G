@@ -132,16 +132,21 @@ def run_pre_report_review(
     if binance is not None and not binance.empty:
         first_day = pd.Timestamp(binance["timestamp"].min())
         last_day = pd.Timestamp(binance["timestamp"].max())
+        current_period = pd.Timestamp(current).tz_convert("UTC").to_period("M")
+        last_period = last_day.to_period("M")
+        monthly_end = min(last_period, current_period - 1)
         expected_months = {
             period.strftime("%Y-%m")
             for period in pd.period_range(first_day.strftime("%Y-%m"),
-                                          (last_day.to_period("M") - 1).strftime("%Y-%m"),
-                                          freq="M")
+                                          monthly_end.strftime("%Y-%m"), freq="M")
         }
-        expected_days = {
-            day.strftime("%Y-%m-%d")
-            for day in pd.date_range(last_day.replace(day=1), last_day, freq="D")
-        }
+        expected_days = (
+            {
+                day.strftime("%Y-%m-%d")
+                for day in pd.date_range(last_day.replace(day=1), last_day, freq="D")
+            }
+            if last_period == current_period else set()
+        )
         archive_coverage_ok = expected_months.issubset(monthly_seen) and expected_days.issubset(daily_seen)
     add("binance_archive_month_day_completeness", "lineage", archive_coverage_ok,
         f"monthly_archives={len(monthly_seen)}; daily_current_month_objects={len(daily_seen)}; "
