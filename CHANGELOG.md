@@ -20,3 +20,10 @@
 - Centralized target construction for research and ledger.
 - Distinguished historical continuity rows from prospective matured ledger outcomes.
 - Added initial OHLCV tail and freshness diagnostics.
+
+## [Unreleased] — reliability follow-up
+
+- Make pending-forecast deduplication model-version-aware: one forecast per signal/horizon/version, without suppressing a separately versioned challenger.
+- Isolate prospective matured metrics by model version so historical scores from different challenger versions cannot be pooled.
+- Add a post-push remote read-back gate that verifies the main ref, report/ledger bytes, all raw-object SHA-256 hashes and sizes, and ledger event-ID uniqueness.
+- Refresh README production status and evidence for the verified V5.6 main run.
