@@ -6,6 +6,7 @@ from btc_quant.supplemental import (
     _float_or_none,
     _parse_deribit_instrument,
     _pct_change,
+    _summarize_hourly_taker_delta,
     empty_supplemental_coverage,
 )
 
@@ -62,3 +63,24 @@ def test_every_market_domain_has_an_explicit_default_not_run_or_unavailable_stat
     assert all(item.get("status") for item in coverage.values())
     assert coverage["exchange_flows_and_reserves"]["status"] == "UNAVAILABLE"
     assert coverage["spot_futures_cvd"]["status"] == "PROXY_ONLY"
+
+
+
+def test_hourly_taker_delta_calculates_exact_24h_7d_and_30d_windows():
+    import time
+
+    now_ms = int(time.time() * 1000)
+    start_ms = now_ms - 900 * 60 * 60 * 1000
+    rows = []
+    for index in range(721):
+        open_time = start_ms + index * 60 * 60 * 1000
+        rows.append([
+            open_time, "100", "110", "90", "105", "10",
+            open_time + 3_599_999, "1000", 100, "6", "600", "0",
+        ])
+    result = _summarize_hourly_taker_delta(rows)
+    assert result["status"] == "PASS"
+    assert result["24h"]["cumulative_delta_btc"] == pytest.approx(48.0)
+    assert result["7d"]["cumulative_delta_btc"] == pytest.approx(336.0)
+    assert result["30d"]["cumulative_delta_btc"] == pytest.approx(1440.0)
+    assert result["30d"]["delta_pct_of_total_volume"] == pytest.approx(20.0)
