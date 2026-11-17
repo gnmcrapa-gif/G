@@ -1150,7 +1150,7 @@ def _treasury_yield_fallback(series_id: str, meta: dict, directory: Path,
         "age_calendar_days": age_days,
         "status": "PASS" if 0 <= age_days <= meta["max_age_days"] else "STALE",
         "previous_value": None,
-        "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
+        "source_url": response.url,
         "source_method": (
             "official Treasury daily par real yield curve; independent of FRED transport"
             if series_id == "DFII10"
@@ -1357,7 +1357,7 @@ def _parse_fed_h6_m2_html(payload: bytes) -> tuple[date, float, float | None, da
     """Parse the Federal Reserve H.6 Table 1 seasonally adjusted M2 series."""
     html = payload.decode("utf-8", errors="replace")
     release_match = re.search(
-        r"Release Date:\\s*([A-Za-z]+\\s+\\d{1,2},\\s+\\d{4})",
+        r"Release Date:\s*([A-Za-z]+\s+\\d{1,2},\s+\\d{4})",
         html,
         flags=re.IGNORECASE,
     )
