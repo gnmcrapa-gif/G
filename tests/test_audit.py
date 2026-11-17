@@ -68,7 +68,19 @@ def _review_inputs(tmp_path):
             {"step": "binance_acquisition_and_qa", "status": "PASS", "qa": qa},
             {"step": "bitstamp_acquisition_and_qa", "status": "PASS", "qa": qa},
         ],
-        "cross_checks": [{"venue": "Coinbase", "status": "PASS"}],
+        "cross_checks": [{
+            "venue": "Coinbase", "status": "PASS",
+            "metric_metadata": {
+                "overlap_start_utc": "2025-01-01T00:00:00+00:00",
+                "overlap_end_utc": "2025-06-22T00:00:00+00:00",
+                "return_correlation_unit": "dimensionless",
+            },
+        }],
+        "numeric_conventions": {
+            "price": "quote currency per BTC", "volume": "BTC",
+            "percentage": "%", "log_return": "natural-log return units",
+            "horizon": "daily sessions", "timestamp": "UTC candle-open",
+        },
         "probabilistic_claims_allowed": False,
         "prospective_ledger_validation": {"probability_calibration_claim_allowed": False},
         "risk": {"mode": "paper_only", "live_trading_enabled": False, "theoretical_exposure_pct": 0.0},
@@ -95,6 +107,11 @@ def _review_inputs(tmp_path):
     }
     scores = {
         "target": "log(Open[t+h+2]/Open[t+2]); signal after close t",
+        "metric_metadata": {
+            "source": "Binance spot BTCUSDT", "quote_currency": "USDT",
+            "target_unit": "natural-log return units", "horizon_unit": "daily sessions",
+            "data_qa_status": "PASS",
+        },
         "requested_next_open_target_executable_at_scheduled_run": False,
         "training_uses_holdout": False,
         "holdout_globally_unseen": False,
