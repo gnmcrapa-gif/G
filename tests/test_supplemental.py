@@ -57,6 +57,29 @@ def test_numeric_helpers_reject_nonfinite_and_zero_denominator():
     assert _pct_change(None, 110.0) is None
 
 
+def test_okx_rubik_parser_validates_positional_oi_and_taker_rows():
+    from btc_quant.supplemental import _parse_okx_array_response
+
+    oi_rows = _parse_okx_array_response(
+        {"code": "0", "data": [["1794873600000", "100", "0.01", "1000"]]},
+        "open_interest_history",
+        4,
+    )
+    assert oi_rows[0][2] == "0.01"
+    taker_rows = _parse_okx_array_response(
+        {"code": "0", "data": [["1794873600000", "2.0", "3.0"]]},
+        "taker_volume_daily",
+        3,
+    )
+    assert taker_rows[0][2] == "3.0"
+    with pytest.raises(ValueError, match="invalid positional data rows"):
+        _parse_okx_array_response(
+            {"code": "0", "data": [["1794873600000", "2.0"]]},
+            "taker_volume_daily",
+            3,
+        )
+
+
 def test_derivative_coverage_is_partial_when_any_venue_has_partial_data():
     from btc_quant.supplemental import _derivative_coverage_status
 
