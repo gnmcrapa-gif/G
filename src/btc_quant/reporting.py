@@ -493,17 +493,20 @@ def render_markdown_report(run: dict, scores: dict) -> str:
              f"7D {_display(oi_history.get('change_7d_pct'), 2)}%; "
              f"30D {_display(oi_history.get('change_30d_pct'), 2)}% "
              f"(ultimo punto {oi_history.get('timestamp_utc', 'n/d')})."),
-            (f"- Funding previsto per il settlement corrente: {_display(okx.get('funding_rate_predicted_current'), 8)}; "
-             f"ultimo settlement: {_display(okx.get('settled_funding_rate'), 8)} "
-             f"(stato {okx.get('funding_settlement_state', 'n/d')}; "
-             f"unità frazione per intervallo)."),
-            (f"- Settlement timestamp: {okx.get('funding_timestamp_utc', 'n/d')}; "
-             f"prossimo funding: {okx.get('next_funding_time_utc', 'n/d')}."),
+            (f"- Funding previsto per il prossimo settlement ({okx.get('funding_timestamp_utc', 'n/d')}): "
+             f"{_display(okx.get('funding_rate_predicted_current'), 8)} "
+             f"(frazione per intervallo)."),
+            (f"- Ultimo funding effettivamente settled: {_display(okx.get('settled_funding_rate'), 8)} "
+             f"al {okx.get('last_settled_funding_time_utc', 'n/d')} "
+             f"(stato {okx.get('funding_settlement_state', 'n/d')})."),
+            f"- Settlement successivo dopo il periodo corrente: {okx.get('next_funding_time_utc', 'n/d')}.",
             f"- Storico funding: {okx.get('funding_history_rows', 0)} settlement acquisiti.",
             (f"- Delta taker futures BTC (buy − sell, barre UTC chiuse): "
              f"1D {_display(taker_windows.get('1d'), 2)} BTC; "
              f"7D {_display(taker_windows.get('7d'), 2)} BTC; "
              f"30D {_display(taker_windows.get('30d'), 2)} BTC."),
+            f"- Copertura delta taker: {taker_summary.get('closed_daily_rows', 0)} barre UTC complete "
+            f"su {okx.get('daily_taker_volume_history_rows', 0)} scaricate.",
             f"- Nota CVD: {taker_summary.get('measurement_note', 'n/d')}",
             "- Liquidazioni: NOT_ACQUIRED; nessuna stima ricavata da endpoint non pertinenti.",
             (f"- Copertura per venue: Binance {venue_coverage.get('binance_futures', 'n/d')}; "
