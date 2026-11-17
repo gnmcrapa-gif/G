@@ -138,7 +138,7 @@ def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
     specs = {
         "premium_index": ("/fapi/v1/premiumIndex", {"symbol": "BTCUSDT"}),
         "open_interest": ("/fapi/v1/openInterest", {"symbol": "BTCUSDT"}),
-        "open_interest_daily_200d": (
+        "open_interest_daily_30d": (
             "/futures/data/openInterestHist",
             {"symbol": "BTCUSDT", "period": "1d", "limit": 30},
         ),
@@ -178,7 +178,7 @@ def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "status": (
             "PASS" if all(key in raw for key in (
-                "premium_index", "open_interest", "open_interest_daily_200d",
+                "premium_index", "open_interest", "open_interest_daily_30d",
                 "taker_buy_sell_daily_30d", "global_long_short_account_ratio_daily_30d",
                 "funding_history",
             ))
@@ -197,7 +197,7 @@ def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
     if isinstance(oi, dict):
         summary["open_interest_btc"] = _float_or_none(oi.get("openInterest"))
         summary["open_interest_timestamp_utc"] = _timestamp_ms(oi.get("time"))
-    oi_hist = raw.get("open_interest_daily_200d", [])
+    oi_hist = raw.get("open_interest_daily_30d", [])
     if isinstance(oi_hist, list) and oi_hist:
         points = sorted(oi_hist, key=lambda row: int(row.get("timestamp", 0)))
         latest = _float_or_none(points[-1].get("sumOpenInterestValue"))
