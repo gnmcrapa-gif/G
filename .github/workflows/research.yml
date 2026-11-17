@@ -50,6 +50,8 @@ jobs:
       - name: Acquire, QA, cross-check, and evaluate
         id: research
         continue-on-error: true
+        env:
+          CRYPTOKEYHOLE_API_KEY: ${{ secrets.CRYPTOKEYHOLE_API_KEY }}
         run: python scripts/run_research.py
       - name: Persist raw data, manifests, reports and append-only ledger
         if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
