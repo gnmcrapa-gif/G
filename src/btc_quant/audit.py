@@ -421,6 +421,7 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
         "status": "WARN",
         "matured_forecasts_by_horizon": prospective_counts,
         "minimum_per_horizon": 200,
+        "sample_gate_met": prospective_ready,
         "strategy_cost_backtest": "NOT_RUN",
         "reason": (
             "No cost-adjusted strategy test is admissible yet: prospective sample gate is not met, "
