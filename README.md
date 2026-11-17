@@ -73,7 +73,7 @@ See [Protocol V5.6](docs/protocol-v5.6.md), [Changelog](CHANGELOG.md), [Protocol
 
 ## Supplemental market context — implementation status
 
-The V5.6 extension is adding timestamped public feeds for live last-trade spot snapshots, Binance/Bybit derivatives, Deribit options, US spot ETF flows and FRED macro/US indices. The daily report will show the actual observation date, retrieval time, quote/unit, source, freshness and any provider delay, plus headline timestamps and source domains. These context feeds do **not** train the current price-only Ridge challenger and do not alter the frozen zero-return champion.
+The V5.6 extension acquires timestamped public feeds for live last-trade spot snapshots, Binance/Bybit derivatives, Deribit options, US spot ETF flows, FRED macro/US indices, hourly spot taker-volume CVD and descriptive official/news headlines. The daily report shows the actual observation date, retrieval time, quote/unit, source, freshness and any provider delay, plus headline timestamps and source domains. These context feeds do **not** train the current price-only Ridge challenger and do not alter the frozen zero-return champion.
 
 Known source limits are explicit:
 - Binance historical open-interest statistics and taker buy/sell ratio endpoints expose only about the latest 30 days; they are not long-history series.
@@ -81,8 +81,10 @@ Known source limits are explicit:
 - The public ETF dataset covers US spot Bitcoin ETFs, not global ETPs, and may lag issuer reporting.
 - The report compares halving cycles on Bitstamp BTC/USD at the same elapsed-session horizon; cycles without the halving-date candle in the source history are marked insufficient, and the comparison is descriptive rather than predictive.
 - Exchange reserves/netflows require verified wallet labels; raw transfers are not exchange flows.
-- A complete market-wide liquidation series, spot/futures CVD, global ETP flows and verified geopolitical/regulatory event feed are not claimed unless a source is actually acquired and QA-checked.
-- FRED macro observations retain their native publication/observation dates; monthly and weekly series are not treated as real-time.
+- Hourly Binance spot CVD is computed from the official public market-data mirror's taker-buy base volume minus inferred taker-sell base volume over 24h/7d/30d. It is hourly aggregated, not tick-level CVD; futures CVD remains unavailable when the USD-M endpoint is blocked.
+- GDELT plus official Federal Reserve, SEC, White House and ECB RSS headlines are descriptive only; keyword matching is heuristic, no sentiment or event-impact score is generated, and CFTC news is not configured.
+- Global ETP flows and complete market-wide liquidation history remain unavailable without verified sources.
+- FRED macro observations retain their native publication/observation dates; monthly and weekly series are not treated as real-time. The 16-series acquisition is bounded to 8 concurrent workers and 12 seconds per series; inaccessible series remain explicit failures.
 
 The report's coverage matrix distinguishes PASS, PARTIAL, STALE, PROXY_ONLY, UNAVAILABLE, NOT_IMPLEMENTED and NOT_RUN. Missing optional feeds never block primary OHLCV research by themselves, but are never represented as present. See [Protocol V5.6](docs/protocol-v5.6.md).
 
