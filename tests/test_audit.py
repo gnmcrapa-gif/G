@@ -114,6 +114,10 @@ def test_pre_report_review_passes_and_records_rotating_review_cycles(tmp_path):
     assert result["rotating_adversarial_lens"] in {
         "outlier_volume", "outlier_close_return", "outlier_intraday_range", "ledger_replay",
     }
+    event = run["anomaly_event_cross_venue_checks"]["outlier_volume"]
+    assert event["binance_usdt_to_bitstamp_usd_close_price_ratio"] == pytest.approx(1.0)
+    assert event["implied_usd_per_usdt_if_btc_prices_were_at_parity"] == pytest.approx(1.0)
+    assert "not an observed USDT/USD exchange rate" in event["quote_basis_caveat"]
 
 
 def test_pre_report_review_blocks_risk_and_raw_hash_tampering(tmp_path):
