@@ -485,8 +485,8 @@ def render_markdown_report(run: dict, scores: dict) -> str:
             "", "### OKX BTC-USDT Perpetual", "",
             f"- Stato: {okx.get('status', 'n/d')}; strumento {okx.get('instrument', 'n/d')}.",
             f"- Snapshot acquisito UTC: {okx.get('retrieved_at_utc', 'n/d')}.",
-            f"- Ultimo prezzo: {_display(okx.get('last_price_usdt'), 2)} USDT "
-            f"(ticker {okx.get('ticker_timestamp_utc', 'n/d')}).",
+            (f"- Ultimo prezzo: {_display(okx.get('last_price_usdt'), 2)} USDT "
+             f"(ticker {okx.get('ticker_timestamp_utc', 'n/d')})."),
             (f"- Volume 24h: {_display(okx.get('volume_24h_base_currency'), 2)} BTC "
              f"({_display(okx.get('volume_24h_contracts'), 2)} contratti)."),
             (f"- Open interest snapshot: {_display(okx.get('open_interest_btc'), 2)} BTC "
