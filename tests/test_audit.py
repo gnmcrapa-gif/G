@@ -103,7 +103,7 @@ def test_pre_report_review_passes_and_records_rotating_review_cycles(tmp_path):
         run, manifests, binance, bitstamp, events, scores,
         now=datetime(2025, 6, 23, 12, tzinfo=UTC), run_id="workflow-100",
     )
-    assert result["status"] == "PASS"
+    assert result["status"] == "PASS", result["blocking_failures"]
     assert result["publication_gate"] == "OPEN"
     assert result["executed_before_report_serialization"] is True
     assert len(result["review_cycles"]) == 7
