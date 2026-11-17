@@ -1,6 +1,12 @@
 import pytest
 
-from btc_quant.reporting import _build_longitudinal_comparison, _build_report_sections
+from btc_quant.reporting import (
+    _build_longitudinal_comparison,
+    _build_report_sections,
+    _market_snapshot,
+    render_markdown_report,
+)
+import pandas as pd
 
 
 def _scores(start="2025-11-17", end="2026-11-16", mae=0.01):
@@ -71,3 +77,49 @@ def test_report_sections_keep_cost_backtest_blocked_without_prospective_sample()
     assert economic["cost_adjusted_strategy_backtest_executed"] is False
     assert len(closing["observed_drivers"]) == 3
     assert closing["single_next_priority_experiment"]
+
+
+
+def test_market_snapshot_adds_7d_30d_and_technical_reference_levels():
+    timestamps = pd.date_range("2026-01-01", periods=250, freq="D", tz="UTC")
+    close = [100.0 + index for index in range(250)]
+    frame = pd.DataFrame({
+        "timestamp": timestamps,
+        "open": close,
+        "high": [value + 2.0 for value in close],
+        "low": [value - 2.0 for value in close],
+        "close": close,
+        "volume": [1000.0] * 250,
+    })
+    snapshot = _market_snapshot(frame, "Binance", "BTCUSDT", "USDT", "2026-09-07T00:00:00+00:00")
+    assert snapshot["close_change_7d_pct"] == pytest.approx((349.0 / 342.0 - 1.0) * 100.0)
+    assert snapshot["close_change_30d_pct"] == pytest.approx((349.0 / 319.0 - 1.0) * 100.0)
+    assert snapshot["sma_200_quote_per_btc"] is not None
+    assert snapshot["high_20d_quote_per_btc"] == 351.0
+    assert snapshot["low_20d_quote_per_btc"] == 328.0
+    assert snapshot["atr_14_quote_per_btc"] == 4.0
+
+
+def test_markdown_report_discloses_stale_and_unavailable_context_sources():
+    report = render_markdown_report({
+        "protocol": "V5.6",
+        "status": "COMPLETE_NOT_PROMOTED",
+        "started_at_utc": "2026-11-17T00:00:00+00:00",
+        "supplemental_data": {
+            "coverage": {
+                "us_spot_etf_flows": {"status": "STALE", "reason": "two sessions behind"},
+                "exchange_flows_and_reserves": {"status": "UNAVAILABLE", "reason": "no wallet labels"},
+            },
+            "spot_live": {"venues": {}},
+        },
+        "steps": [],
+        "market_snapshot": {"venues": []},
+        "ledger": {},
+        "risk": {"mode": "paper_only", "live_trading_enabled": False, "theoretical_exposure_pct": 0},
+        "pre_report_review": {"status": "PASS", "review_cycles": [], "blocking_failures": []},
+        "closing_assessment": {},
+    }, {})
+    assert "us_spot_etf_flows" in report
+    assert "STALE" in report
+    assert "exchange_flows_and_reserves" in report
+    assert "UNAVAILABLE" in report
