@@ -49,6 +49,8 @@ def _market_snapshot(frame, venue: str, symbol: str, quote: str, retrieved_at: s
         ),
         "close_change_7d_pct": change_over_sessions(7),
         "close_change_30d_pct": change_over_sessions(30),
+        "volume_7d_btc": float(frame["volume"].astype(float).tail(7).sum()) if len(frame) >= 7 else None,
+        "volume_30d_btc": float(frame["volume"].astype(float).tail(30).sum()) if len(frame) >= 30 else None,
         "sma_20_quote_per_btc": float(closes.tail(20).mean()) if len(closes) >= 20 else None,
         "sma_50_quote_per_btc": float(closes.tail(50).mean()) if len(closes) >= 50 else None,
         "sma_200_quote_per_btc": float(closes.tail(200).mean()) if len(closes) >= 200 else None,
@@ -56,9 +58,13 @@ def _market_snapshot(frame, venue: str, symbol: str, quote: str, retrieved_at: s
         "low_20d_quote_per_btc": float(lows.tail(20).min()) if len(lows) >= 20 else None,
         "high_50d_quote_per_btc": float(highs.tail(50).max()) if len(highs) >= 50 else None,
         "low_50d_quote_per_btc": float(lows.tail(50).min()) if len(lows) >= 50 else None,
-        "atr_14_quote_per_btc": float(true_range.tail(14).mean()) if len(true_range) >= 14 else None,
+        "atr_14_quote_per_btc": (
+            float(true_range.ewm(alpha=1 / 14, adjust=False, min_periods=14).mean().iloc[-1])
+            if len(true_range) >= 14 else None
+        ),
         "atr_14_pct_of_close": (
-            float(true_range.tail(14).mean()) / float(latest["close"]) * 100.0
+            float(true_range.ewm(alpha=1 / 14, adjust=False, min_periods=14).mean().iloc[-1])
+            / float(latest["close"]) * 100.0
             if len(true_range) >= 14 and float(latest["close"]) > 0 else None
         ),
     }
