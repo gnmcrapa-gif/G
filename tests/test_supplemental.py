@@ -126,10 +126,12 @@ def test_treasury_xml_parser_reads_official_nominal_yield_fields():
       <entry><content><m:properties>
         <d:NEW_DATE>2026-11-17T00:00:00</d:NEW_DATE>
         <d:BC_2YEAR>4.25</d:BC_2YEAR><d:BC_10YEAR>4.50</d:BC_10YEAR>
+        <d:TC_10YEAR>2.10</d:TC_10YEAR>
       </m:properties></content></entry>
     </feed>"""
     assert _parse_treasury_yield_xml(payload, "DGS2") == (date(2026, 11, 17), 4.25)
     assert _parse_treasury_yield_xml(payload, "DGS10") == (date(2026, 11, 17), 4.50)
+    assert _parse_treasury_yield_xml(payload, "DFII10") == (date(2026, 11, 17), 2.10)
 
 
 def test_treasury_xml_parser_rejects_unsupported_series():
