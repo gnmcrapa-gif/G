@@ -28,7 +28,7 @@ Provider terms apply to public endpoints/archives; no separate legal licensing r
 
 ### Latest out-of-sample evaluation
 
-Final holdout: **2025-11-17 through 2026-11-15 UTC**, untouched by training or tuning. Target horizons: 1, 3, 7, 30 days. The evaluation uses a one-daily-bar operational latency buffer so ledger entries are genuinely in the future at issue time. Ridge alpha is now selected across three purged, expanding chronological validation folds; the final holdout remains untouched. The report also includes Newey-West HAC paired absolute-loss comparisons (lag h-1 for overlapping targets), Holm family-wise multiple-testing correction, and ex-ante bull/bear/range diagnostics.
+Fixed-start expanding historical continuity window: **begins 2025-11-17 UTC**, never used for training or tuning; it is previously inspected and not globally unseen. Target horizons: 1, 3, 7, 30 days. The evaluation uses a one-daily-bar operational latency buffer so ledger entries are genuinely in the future at issue time. Ridge alpha is now selected across three purged, expanding chronological validation folds; the final holdout remains untouched. The report also includes Newey-West HAC paired absolute-loss comparisons (lag h-1 for overlapping targets), Holm family-wise multiple-testing correction, and ex-ante bull/bear/range diagnostics.
 
 MAE is in **log-return units**, not percent. The following metrics are the post-merge V5.4 run on the same untouched historical holdout. The holdout was not used for the three-fold alpha tuning.
 
@@ -108,7 +108,7 @@ The repository is public. Do not commit credentials, personal data, exchange acc
 
 - Post-merge run: [daily-research #54 — SUCCESS](https://github.com/gnmcrapa-gif/G/actions/runs/43944304633), 16 November 2026, 19:55:25–19:56:07 UTC.
 - Tests: 25 passed; Ruff: all checks passed.
-- All four source QA checks PASS; latest closed daily candle 2026-11-15 UTC, age 1 UTC calendar day.
+- All four source QA checks PASS; latest closed daily candle 2026-11-16 UTC, age 1 UTC calendar day.
 - All four horizons used three expanding, purged validation folds; selected Ridge alpha was 100 for each.
 - Holm-adjusted paired-loss p-values for Ridge vs zero: 1.000, 0.980, 0.980, 1.000 for 1d/3d/7d/30d. No family-wise significant lift.
 - Ledger is append-only. Run #54 added no new forecast or score event and suppressed four duplicate candidates because four forecasts for the same signal bar were already pending. The pending ledger records are from Ridge challenger 0.3; V5.4's challenger 0.4 will issue only on a new signal bar. No prior record was overwritten.
@@ -119,7 +119,7 @@ The repository is public. Do not commit credentials, personal data, exchange acc
 - Merged to main: [PR #5](https://github.com/gnmcrapa-gif/G/pull/5), merge commit `9b7ba1af745638ee59b78ae0c3d877a32a8c283d`.
 - Final main-branch run: [daily-research #57 — SUCCESS](https://github.com/gnmcrapa-gif/G/actions/runs/43946659530), 16 November 2026, 20:08:54–20:09:40 UTC.
 - Tests: **29 passed**; Ruff: **all checks passed**.
-- Binance and Bitstamp primary QA PASS; Coinbase and Kraken recent cross-checks PASS. All source series end at the 2026-11-15 closed UTC candle.
+- Binance and Bitstamp primary QA PASS; Coinbase and Kraken recent cross-checks PASS. All source series end at the 2026-11-16 closed UTC candle.
 - The historical continuity diagnostic still shows zero-return MAE below Ridge at all four horizons. This is not fresh independent evidence; zero-return remains champion.
 - Prospective ledger: **0 matured SCORE events** at this run; four already-pending forecasts suppressed as duplicates. No calibration or prospective edge claim.
 - Risk: paper-only, live trading disabled, theoretical exposure **0%**.
@@ -127,7 +127,7 @@ The repository is public. Do not commit credentials, personal data, exchange acc
 
 ## V5.5 verified scope
 
-V5.5 adds prospective matured-ledger scoring against the zero, drift and momentum forecasts saved at issuance; p90/p99 and worst-decile error diagnostics; low-sample regime warnings; explicit 0% theoretical exposure/abstention; a structured audit; and an append-only experiment proposal register. The historical 2025-11-17–2026-11-15 holdout is explicitly **not globally unseen** because it was previously inspected under V5.3.1. It is continuity diagnostics only. The next OHLCV feature experiment is registered as PROPOSED_NOT_RUN and is not represented as an achieved improvement.
+V5.5 adds prospective matured-ledger scoring against the zero, drift and momentum forecasts saved at issuance; p90/p99 and worst-decile error diagnostics; low-sample regime warnings; explicit 0% theoretical exposure/abstention; a structured audit; and an append-only experiment proposal register. The fixed-start expanding historical holdout beginning 2025-11-17 UTC is explicitly **not globally unseen** because it was previously inspected under V5.3.1. It remains excluded from training and tuning and is continuity diagnostics only. The next OHLCV feature experiment is registered as PROPOSED_NOT_RUN and is not represented as an achieved improvement.
 
 
 ## V5.5.1 — target timing correction
@@ -151,6 +151,6 @@ The daily research workflow is scheduled for 16:00 UTC. Since the next daily ope
 
 - Separate feature pipeline adds lagged-median volume surprise, robust volume surprise z-score, candle range/body/wicks and close-location features to the price-only feature set.
 - Fixed Ridge alpha = 100; no tuning on the historical holdout.
-- Training labels end before the frozen 2025-11-17 UTC holdout start. The historical continuity holdout is not used for training or tuning.
+- Training labels end before the frozen 2025-11-17 UTC holdout start. The fixed-start expanding historical continuity window is not used for training or tuning.
 - Point forecasts are appended to `ledger/ohlcv_challenger_ledger.csv` and scored only when entry and expiry opens are available.
 - This starts prospective evidence collection; it does not establish predictive lift, calibration, economic value or promotion. At least 200 matured forecasts per horizon plus independent statistical and cost gates remain required.
