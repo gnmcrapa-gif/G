@@ -22,7 +22,7 @@ The review is fail-closed. Missing files, missing provenance, inconsistent times
 - Every downloaded raw object is rechecked before report publication for path existence, exact byte size and SHA-256. The manifest must retain URL, retrieval timestamp, schema/parser version, venue, symbol and quote.
 - Binance archive completeness is checked against expected monthly archive keys and every current-month daily archive key, in addition to OHLCV cadence.
 - Bitstamp pagination accounting reconciles raw page rows, overlap duplicates, parsed rows and at most one excluded still-forming current-day candle.
-- OHLCV invariants, timezone, closed-candle status, duplicate timestamps, daily gaps, freshness, zero-volume frequency and tail diagnostics remain mandatory.
+- OHLCV invariants, timezone, closed-candle status, duplicate timestamps, daily gaps, freshness, zero-volume frequency and tail diagnostics remain mandatory. Volume outliers use a rolling 90-session median/MAD baseline with the current session excluded and at least 60 prior observations; full-history volume z-scores are not used because volume levels are non-stationary.
 - Coinbase and Kraken are recent independent checks where available. Quote-basis differences are disclosed; venue-specific volume levels are never compared as if they were the same market.
 
 ## 3. Anomaly and event review
