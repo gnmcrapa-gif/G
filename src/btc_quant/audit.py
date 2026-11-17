@@ -135,7 +135,7 @@ def run_pre_report_review(
         expected_months = {
             period.strftime("%Y-%m")
             for period in pd.period_range(first_day.strftime("%Y-%m"),
-                                          (last_day - pd.offsets.MonthBegin(1)).strftime("%Y-%m"),
+                                          (last_day.to_period("M") - 1).strftime("%Y-%m"),
                                           freq="M")
         }
         expected_days = {
