@@ -106,7 +106,7 @@ def test_pre_report_review_passes_and_records_rotating_review_cycles(tmp_path):
     assert result["status"] == "PASS"
     assert result["publication_gate"] == "OPEN"
     assert result["executed_before_report_serialization"] is True
-    assert len(result["review_cycles"]) == 6
+    assert len(result["review_cycles"]) == 7
     assert all(cycle["status"] == "PASS" for cycle in result["review_cycles"])
     assert result["rotating_adversarial_lens"] in {
         "outlier_volume", "outlier_close_return", "outlier_intraday_range", "ledger_replay",
