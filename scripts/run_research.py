@@ -76,7 +76,7 @@ def _append_challenger_proposal(
         "data_manifest_sha256": manifest_sha256,
         "split_definition": (
             "Train strictly before 2025-11-17 UTC; fixed alpha=100; fixed-start expanding "
-            "continuity holdout from 2025-11-17 UTC excluded from training 
+            "continuity holdout from 2025-11-17 UTC excluded from training "
             "and tuning; evaluate only new append-only prospective SCORE events."
         ),
         "acceptance_criteria": (
