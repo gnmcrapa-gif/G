@@ -1,6 +1,6 @@
 import pytest
 
-from scripts.run_research import _build_longitudinal_comparison, _build_report_sections
+from btc_quant.reporting import _build_longitudinal_comparison, _build_report_sections
 
 
 def _scores(start="2025-11-17", end="2026-11-16", mae=0.01):
