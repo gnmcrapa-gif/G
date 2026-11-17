@@ -313,6 +313,16 @@ def run_pre_report_review(
         and bool(run.get("closing_assessment", {}).get("single_next_priority_experiment")),
         "Report closes with observed factors, principal limitation, falsifying evidence and exactly one next experiment.")
 
+    longitudinal = run.get("longitudinal_comparison", {})
+    add("longitudinal_comparison_present", "protocol",
+        longitudinal.get("status") in {"NO_PRIOR_REPORT", "COMPARISON_AVAILABLE"}
+        and isinstance(longitudinal.get("comparison_performed"), bool),
+        "Report must compare to the previous persisted run when available, without mixing venues/quotes or comparing different holdout windows.")
+    provenance = run.get("code_provenance", {})
+    add("run_code_provenance", "lineage",
+        bool(provenance.get("commit_sha")) and bool(provenance.get("workflow_run_id")),
+        "Report records the exact code commit and workflow run ID.")
+
     performance = run.get("performance", {})
     measured = [
         performance.get("acquisition_and_qa_seconds"),
