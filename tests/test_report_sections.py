@@ -220,7 +220,9 @@ def test_markdown_report_includes_okx_perpetual_context_and_cvd_limits():
                 "settled_funding_rate": -0.0000069841,
                 "funding_settlement_state": "settled",
                 "funding_timestamp_utc": "2026-11-18T00:00:00+00:00",
+                "last_settled_funding_time_utc": "2026-11-17T16:00:00+00:00",
                 "next_funding_time_utc": "2026-11-18T08:00:00+00:00",
+                "daily_taker_volume_history_rows": 30,
                 "funding_history_rows": 100,
                 "daily_taker_volume_summary": {
                     "cumulative_delta_btc": {"1d": -313.2, "7d": -22127.8, "30d": None},
@@ -248,7 +250,10 @@ def test_markdown_report_includes_okx_perpetual_context_and_cvd_limits():
     }, {})
     assert "### OKX BTC-USDT Perpetual" in report
     assert "31,166.22 BTC" in report
-    assert "Funding previsto per il settlement corrente" in report
+    assert "Funding previsto per il prossimo settlement" in report
+    assert "Ultimo funding effettivamente settled" in report
+    assert "2026-11-17T16:00:00+00:00" in report
+    assert "29 barre UTC complete su 30 scaricate" in report
     assert "30D n/d BTC" in report
     assert "not spot CVD" in report
     assert "Binance FAIL; Bybit FAIL; OKX PASS" in report
