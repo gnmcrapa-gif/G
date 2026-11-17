@@ -1,5 +1,5 @@
 {
-  "started_at_utc": "2026-11-17T21:38:20.606315+00:00",
+  "started_at_utc": "2026-11-17T22:03:24.749003+00:00",
   "status": "COMPLETE_NOT_PROMOTED",
   "protocol": "V5.6",
   "steps": [
@@ -15,7 +15,7 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 21.651,
+        "latest_candle_age_hours": 22.07,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 36285.648526,
@@ -51,7 +51,7 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 21.652,
+        "latest_candle_age_hours": 22.07,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 3154.24801664,
@@ -86,7 +86,7 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-17T21:39:07.505983+00:00",
+      "retrieved_at_utc": "2026-11-17T22:04:12.883677+00:00",
       "parser": "Coinbase candle array parser",
       "parser_version": "0.2",
       "schema": [
@@ -101,10 +101,10 @@
         {
           "source": "Coinbase Exchange candles API",
           "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=2026-01-21T00%3A00%3A00%2B00%3A00&end=2026-11-17T00%3A00%3A00%2B00%3A00",
-          "retrieved_at_utc": "2026-11-17T21:39:07.505940+00:00",
+          "retrieved_at_utc": "2026-11-17T22:04:12.883644+00:00",
           "file": "data/raw/coinbase/coinbase_btcusd_1d_recent.json",
-          "size_bytes": 18462,
-          "sha256": "aa75b9a659126634afff08a0f091aca42d0f6d46882eb7f1765b2e230ed9360d",
+          "size_bytes": 18463,
+          "sha256": "dfd81b355d53c8d34afad57dcda0a99fe8914cb554ae132a685f94c2e378b6b2",
           "venue": "Coinbase",
           "symbol": "BTC-USD",
           "quote_currency": "USD",
@@ -126,7 +126,7 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 21.652,
+        "latest_candle_age_hours": 22.07,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 7277.57349707,
@@ -162,7 +162,7 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-17T21:39:07.748654+00:00",
+      "retrieved_at_utc": "2026-11-17T22:04:13.126534+00:00",
       "parser": "Kraken OHLC parser",
       "parser_version": "0.2",
       "schema": [
@@ -177,10 +177,10 @@
         {
           "source": "Kraken public OHLC API",
           "url": "https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1440",
-          "retrieved_at_utc": "2026-11-17T21:39:07.748291+00:00",
+          "retrieved_at_utc": "2026-11-17T22:04:13.126317+00:00",
           "file": "data/raw/kraken/kraken_btcusd_1d_recent.json",
           "size_bytes": 62328,
-          "sha256": "8fc1b9e10463cdefcbd2ea5f90f74bca1b24e42df0a791707f27ed25101a540a",
+          "sha256": "e69d530315cb4baef123b4484a20c2b2266cc37b64410bfa9f53028119cc1ce5",
           "venue": "Kraken",
           "symbol": "XBT/USD",
           "quote_currency": "USD",
@@ -202,7 +202,7 @@
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 21.652,
+        "latest_candle_age_hours": 22.07,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 1673.7672171250001,
@@ -226,6 +226,55 @@
         "diagnostic_note": "Zero-volume and tail metrics are descriptive QA diagnostics, not automatic rejection thresholds."
       },
       "status": "PASS"
+    },
+    {
+      "step": "supplemental_market_context",
+      "status": "PASS",
+      "coverage": {
+        "spot_ohlcv": {
+          "status": "PASS",
+          "note": "Primary Binance/Bitstamp acquisition is reported separately."
+        },
+        "spot_live_quotes": {
+          "status": "PARTIAL"
+        },
+        "per_exchange_derivatives": {
+          "status": "FAIL",
+          "by_exchange": {
+            "binance_futures": "FAIL",
+            "bybit_futures": "FAIL"
+          }
+        },
+        "options": {
+          "status": "PASS"
+        },
+        "us_spot_etf_flows": {
+          "status": "STALE"
+        },
+        "global_etp_flows": {
+          "status": "UNAVAILABLE",
+          "reason": "This dataset covers US spot ETFs only; global ETPs require a separate source."
+        },
+        "exchange_flows_and_reserves": {
+          "status": "UNAVAILABLE",
+          "reason": "No verifiable exchange-wallet-label dataset is configured; raw blockchain transfers are not exchange netflows."
+        },
+        "liquidations": {
+          "status": "UNAVAILABLE",
+          "reason": "No public, complete cross-exchange liquidation history source is configured."
+        },
+        "macro_and_indices": {
+          "status": "FAIL"
+        },
+        "spot_futures_cvd": {
+          "status": "FAIL",
+          "reason": "Hourly Binance kline taker-buy base volume minus inferred taker-sell base volume for rolling 24h/7d/30d windows; not tick-level order-book delta."
+        },
+        "geopolitical_regulatory_news": {
+          "status": "PARTIAL",
+          "reason": "Headlines and keyword tags are descriptive only; no sentiment, event-impact score or trading signal is inferred."
+        }
+      }
     },
     {
       "step": "walk_forward",
@@ -1346,6 +1395,1177 @@
     "No cost-adjusted strategy PnL, funding, slippage or execution backtest is claimed.",
     "No calibrated probability or live trading claim is permitted."
   ],
+  "supplemental_data": {
+    "retrieved_at_utc": "2026-11-17T22:04:13.145312+00:00",
+    "coverage": {
+      "spot_ohlcv": {
+        "status": "PASS",
+        "note": "Primary Binance/Bitstamp acquisition is reported separately."
+      },
+      "spot_live_quotes": {
+        "status": "PARTIAL"
+      },
+      "per_exchange_derivatives": {
+        "status": "FAIL",
+        "by_exchange": {
+          "binance_futures": "FAIL",
+          "bybit_futures": "FAIL"
+        }
+      },
+      "options": {
+        "status": "PASS"
+      },
+      "us_spot_etf_flows": {
+        "status": "STALE"
+      },
+      "global_etp_flows": {
+        "status": "UNAVAILABLE",
+        "reason": "This dataset covers US spot ETFs only; global ETPs require a separate source."
+      },
+      "exchange_flows_and_reserves": {
+        "status": "UNAVAILABLE",
+        "reason": "No verifiable exchange-wallet-label dataset is configured; raw blockchain transfers are not exchange netflows."
+      },
+      "liquidations": {
+        "status": "UNAVAILABLE",
+        "reason": "No public, complete cross-exchange liquidation history source is configured."
+      },
+      "macro_and_indices": {
+        "status": "FAIL"
+      },
+      "spot_futures_cvd": {
+        "status": "FAIL",
+        "reason": "Hourly Binance kline taker-buy base volume minus inferred taker-sell base volume for rolling 24h/7d/30d windows; not tick-level order-book delta."
+      },
+      "geopolitical_regulatory_news": {
+        "status": "PARTIAL",
+        "reason": "Headlines and keyword tags are descriptive only; no sentiment, event-impact score or trading signal is inferred."
+      }
+    },
+    "spot_live": {
+      "status": "PARTIAL",
+      "retrieved_at_utc": "2026-11-17T22:04:13.448024+00:00",
+      "venues": {
+        "Bitstamp_BTCUSD_USD": {
+          "last_trade_price": 64184.76,
+          "price_change_24h_pct": -1.0031135898084798,
+          "base_volume_24h_btc": 1078.66095401,
+          "last_trade_timestamp_utc": "2026-11-17T22:04:12+00:00",
+          "snapshot_type": "24h ticker last-trade snapshot",
+          "last_trade_age_seconds": 1.448024,
+          "status": "PASS"
+        }
+      },
+      "errors": {
+        "Binance": "HTTPError: 451 Client Error:  for url: https://api.binance.com/api/v3/ticker/24hr?symbol=BTCUSDT"
+      }
+    },
+    "cvd": {
+      "status": "FAIL",
+      "retrieved_at_utc": "2026-11-17T22:04:13.832464+00:00",
+      "markets": {
+        "spot": {
+          "status": "FAIL",
+          "error": "HTTPError: 451 Client Error:  for url: https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=745"
+        },
+        "futures": {
+          "status": "FAIL",
+          "error": "HTTPError: 451 Client Error:  for url: https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=1h&limit=745"
+        }
+      },
+      "errors": {
+        "spot": "HTTPError: 451 Client Error:  for url: https://api.binance.com/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=745",
+        "futures": "HTTPError: 451 Client Error:  for url: https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=1h&limit=745"
+      },
+      "measurement_note": "Hourly Binance kline taker-buy base volume minus inferred taker-sell base volume for rolling 24h/7d/30d windows; not tick-level order-book delta."
+    },
+    "news": {
+      "status": "PARTIAL",
+      "retrieved_at_utc": "2026-11-17T22:04:26.686278+00:00",
+      "window": "7d for GDELT; latest items for official RSS",
+      "articles": [
+        {
+          "title": "Philip R. Lane: The practice and science of monetary policy communication: the ECB experience",
+          "url": "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261117~7f5d3b1a0e.en.pdf",
+          "published_at_utc": "2026-11-17T18:30:00+00:00",
+          "source": "ECB",
+          "snippet": "",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "Quad Leaders\u2019 Summit Joint Press Release",
+          "url": "https://www.whitehouse.gov/briefings-statements/2026/11/quad-leaders-summit-joint-press-release/",
+          "published_at_utc": "2026-11-17T15:20:56+00:00",
+          "source": "White House",
+          "snippet": "On November 17, 2026, \u2014 President Donald J. Trump of the United States, Prime Minister Anthony Albanese of Australia, Prime Minister Narendra Modi of India, and Prime Minister Takaichi Sanae of Japan \u2014 met for a Quad Leaders\u2019 Summit in Manila. This year marks nearly a decade since the Quad was revived and the tenth [\u2026] The post Quad Leaders\u2019 Summit Joint Press Release appeared first on The White House .",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "Joint Statement on an Agreement Between the United States of America and the Kingdom of Thailand on Reciprocal Trade",
+          "url": "https://www.whitehouse.gov/briefings-statements/2026/11/joint-statement-on-an-agreement-between-the-united-states-of-america-and-the-kingdom-of-thailand-on-reciprocal-trade/",
+          "published_at_utc": "2026-11-17T12:43:27+00:00",
+          "source": "White House",
+          "snippet": "On November 17, 2026, in Manila, Philippines, President Donald J. Trump and Prime Minister Anutin Charnvirakul confirmed that the United States of America (\u201cthe United States\u201d) and the Kingdom of Thailand (\u201cThailand\u201d) have reached substantial conclusion in their negotiations for an Agreement Between the United States of America and the Kingdom of Thailand on Reciprocal [\u2026] The post Joint Statement on an Agreement Between the United States of America and the Kingdom of Thailand on Reciprocal Trad",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "Nominations Sent to the Senate",
+          "url": "https://www.whitehouse.gov/presidential-actions/2026/11/nominations-sent-to-the-senate-a864/",
+          "published_at_utc": "2026-11-16T20:50:09+00:00",
+          "source": "White House",
+          "snippet": "NOMINATIONS SENT TO THE SENATE: Kara Frederick, of California, to be Ambassador Extraordinary and Plenipotentiary of the United States of America to the Plurinational State of Bolivia. Eric Matthew Ueland, of Virginia, to be Comptroller General of the United States for a term of fifteen years, vice Eugene Louis Dodaro, term expired. T. Elliot Gaiser, [\u2026] The post Nominations Sent to the Senate appeared first on The White House .",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "President Trump\u2019s Immigration Policies Are Saving American Lives",
+          "url": "https://www.whitehouse.gov/releases/2026/11/president-trumps-immigration-policies-are-saving-american-lives/",
+          "published_at_utc": "2026-11-16T20:40:32+00:00",
+          "source": "White House",
+          "snippet": "Traffic fatalities have fallen to the second-lowest level in American history following President Donald J. Trump\u2019s crackdown on illegal alien truck drivers. That good news joins sharp drops in traffic deaths, overdoses, violent crime, and border fatalities after the largest immigration enforcement surge in modern history \u2014 while Democrats\u2019 open-border policies left chaos, missing kids, [\u2026] The post President Trump\u2019s Immigration Policies Are Saving American Lives appeared first on The White Hous",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "regulatory"
+          ]
+        },
+        {
+          "title": "ICYMI: \u201cTrump border crackdown drives encounters to record October low as zero-release streak hits 18 months\u201d",
+          "url": "https://www.whitehouse.gov/releases/2026/11/icymi-trump-border-crackdown-drives-encounters-to-record-october-low-as-zero-release-streak-hits-18-months/",
+          "published_at_utc": "2026-11-16T20:29:50+00:00",
+          "source": "White House",
+          "snippet": "For 18 straight months, zero illegal aliens have been released into the United States as President Donald J. Trump continues to deliver the most secure border in American history. It\u2019s a direct consequence of restored enforcement, deterrence, and operational control that has reversed years of chaos \u2014 and the numbers aren\u2019t even close. As Fox [\u2026] The post ICYMI: \u201cTrump border crackdown drives encounters to record October low as zero-release streak hits 18 months\u201d appeared first on The White House",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "regulatory"
+          ]
+        },
+        {
+          "title": "Frank Elderson: Smart supervision for small banks",
+          "url": "https://www.ecb.europa.eu//press/inter/date/2026/html/ecb.in261116_1~11dd7f62af.en.html",
+          "published_at_utc": "2026-11-16T13:00:00+00:00",
+          "source": "ECB",
+          "snippet": "",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "Boris Vuj\u010di\u0107: Risks and resilience in the euro area financial system",
+          "url": "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261116~db374b56ab.en.html",
+          "published_at_utc": "2026-11-16T08:30:00+00:00",
+          "source": "ECB",
+          "snippet": "",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "ICYMI: Secretary Duffy\u2019s Full Sunday Circuit Outlines Ground Stop Response and the Path Forward",
+          "url": "https://www.whitehouse.gov/releases/2026/11/icymi-secretary-duffys-full-sunday-circuit-outlines-ground-stop-response-and-the-path-forward/",
+          "published_at_utc": "2026-11-15T21:07:34+00:00",
+          "source": "White House",
+          "snippet": "This morning, Secretary of Transportation Sean Duffy appeared on all five Sunday shows to level with the American people about Friday\u2019s nationwide ground stop. Secretary Duffy laid out the Trump Administration\u2019s decisive actions to isolate the problem and restore the airspace and shared preliminary findings from the investigation. While Democrats shamefully lie and resist finishing [\u2026] The post ICYMI: Secretary Duffy\u2019s Full Sunday Circuit Outlines Ground Stop Response and the Path Forward appear",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "regulatory",
+            "geopolitical"
+          ]
+        },
+        {
+          "title": "ICYMI: After Nationwide Ground Stop, Trump Administration Prioritizes Safety, Calls for Full Modernization Funding",
+          "url": "https://www.whitehouse.gov/releases/2026/11/icymi-after-nationwide-ground-stop-trump-administration-prioritizes-safety-calls-for-full-modernization-funding/",
+          "published_at_utc": "2026-11-14T04:00:00+00:00",
+          "source": "White House",
+          "snippet": "On Friday night, Secretary of Transportation Sean Duffy and Secretary of Homeland Security Markwayne Mullin briefed reporters after a nationwide FAA ground stop caused by instability in the nation\u2019s decades-old air traffic control systems. The failure stemmed from overloaded 1980s-era equipment, with zero evidence of a cyberattack. President Trump has already secured $12.5 billion toward [\u2026] The post ICYMI: After Nationwide Ground Stop, Trump Administration Prioritizes Safety, Calls for Full Mod",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "regulatory",
+            "geopolitical"
+          ]
+        },
+        {
+          "title": "Agencies extend comment period for proposed third-party risk management guidance",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/bcreg20261113a.htm",
+          "published_at_utc": "2026-11-13T21:15:00+00:00",
+          "source": "Federal Reserve",
+          "snippet": "Agencies extend comment period for proposed third-party risk management guidance",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "SEC Proposes Executive and Director Compensation Disclosure Reforms",
+          "url": "https://www.sec.gov/newsroom/press-releases/2026-114-sec-proposes-executive-director-compensation-disclosure-reforms",
+          "published_at_utc": "2026-11-13T16:57:00+00:00",
+          "source": "SEC",
+          "snippet": "The Securities and Exchange Commission today proposed rule amendments to make its executive and director compensation disclosure requirements more principles-based and materiality-driven, providing investors with clearer, more concise, and less complex\u2026",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "regulatory",
+            "crypto"
+          ]
+        },
+        {
+          "title": "Trump Administration Delivers Record-Setting Results Through Executive Action",
+          "url": "https://www.whitehouse.gov/releases/2026/11/trump-administration-delivers-record-setting-results-through-executive-action/",
+          "published_at_utc": "2026-11-13T13:10:00+00:00",
+          "source": "White House",
+          "snippet": "Under President Donald J. Trump\u2019s leadership, the Administration has delivered historic results for the American people in just 21 months through executive action alone. The promise of America has been quickly reignited under the President\u2019s common-sense leadership, making America the hottest nation in the world and reviving the American Dream. Crime has plummeted, merit is [\u2026] The post Trump Administration Delivers Record-Setting Results Through Executive Action appeared first on The White Hous",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "Isabel Schnabel: Made in Europe",
+          "url": "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261113~3883f1f187.en.html",
+          "published_at_utc": "2026-11-13T07:20:00+00:00",
+          "source": "ECB",
+          "snippet": "",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "First Lady Melania Trump Honors America\u2019s Fallen Heroes at the Tomb of The Unknown Soldier",
+          "url": "https://www.whitehouse.gov/briefings-statements/2026/11/first-lady-melania-trump-honors-americas-fallen-heroes-at-the-tomb-of-the-unknown-soldier/",
+          "published_at_utc": "2026-11-12T22:36:37+00:00",
+          "source": "White House",
+          "snippet": "The First Lady of the United States of America, Mrs. Melania Trump, participated in a wreath-laying ceremony at the Tomb of the Unknown Soldier at Arlington National Cemetery on Veterans Day. The First Lady reflected on the experience: \u201cEvery time I visit the Tomb of the Unknown Soldier, I use the surrounding calmness to reflect [\u2026] The post First Lady Melania Trump Honors America\u2019s Fallen Heroes at the Tomb of The Unknown Soldier appeared first on The White House .",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "Nominations Sent to the Senate",
+          "url": "https://www.whitehouse.gov/presidential-actions/2026/11/nominations-sent-to-the-senate-16a6/",
+          "published_at_utc": "2026-11-12T22:04:41+00:00",
+          "source": "White House",
+          "snippet": "NOMINATIONS SENT TO THE SENATE: Nathan Anonick, of Virginia, to be a Commissioner of the Commodity Futures Trading Commission for a term expiring June 19, 2031, vice Rostin Behnam, term expired. Kristin N. Johnson, of Michigan, to be a Member of the Securities and Exchange Commission for a term expiring June 5, 2029, vice Caroline [\u2026] The post Nominations Sent to the Senate appeared first on The White House .",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "regulatory",
+            "crypto"
+          ]
+        },
+        {
+          "title": "\u201cDemocrats Will Help Us\u201d: Caravans March North as Dems Vow to Reopen the Border. President Trump Won\u2019t Let It Happen.",
+          "url": "https://www.whitehouse.gov/releases/2026/11/democrats-will-help-us-caravans-march-north-as-dems-vow-to-reopen-the-border-president-trump-wont-let-it-happen/",
+          "published_at_utc": "2026-11-12T21:46:53+00:00",
+          "source": "White House",
+          "snippet": "Days after the midterms, caravans of illegal aliens are already marching north to the U.S. \u2014 and they\u2019re counting on Democrats to let them in. Why wouldn\u2019t they? Congressional Democrats are vowing to abolish ICE, dismantle DHS, stop deportations, and hand out amnesty while border-state Democrats cut off cooperation on immigration enforcement. It\u2019s the same [\u2026] The post \u201cDemocrats Will Help Us\u201d: Caravans March North as Dems Vow to Reopen the Border. President Trump Won\u2019t Let It Happen. appeared f",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "Presidential Message on National Native American Heritage Month",
+          "url": "https://www.whitehouse.gov/briefings-statements/2026/11/presidential-message-on-national-native-american-heritage-month-39c4/",
+          "published_at_utc": "2026-11-12T21:35:41+00:00",
+          "source": "White House",
+          "snippet": "Alaska Natives and Native Americans are inextricably linked to the history of our Republic and are integral to our glorious future. During National Native American Heritage Month, we honor the sacrifices and the innumerable contributions of tribal communities to the prosperity and success of our great Nation. Native Americans impact communities nationwide with innovation and [\u2026] The post Presidential Message on National Native American Heritage Month appeared first on The White House .",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "Presidential Message on National Military Families Month",
+          "url": "https://www.whitehouse.gov/briefings-statements/2026/11/presidential-message-on-national-military-families-month/",
+          "published_at_utc": "2026-11-12T21:34:51+00:00",
+          "source": "White House",
+          "snippet": "For 250 years, our glorious Republic has been safeguarded by noble and heroic patriots in the United States Armed Forces. Throughout our storied history, these warriors have been sustained by the support, love, strength, and grit provided by their incomparable families. During National Military Families Month, we celebrate the incredible men, women, parents, and children [\u2026] The post Presidential Message on National Military Families Month appeared first on The White House .",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "geopolitical"
+          ]
+        },
+        {
+          "title": "Presidential Message on National Entrepreneurship Month",
+          "url": "https://www.whitehouse.gov/briefings-statements/2026/11/presidential-message-on-national-entrepreneurship-month-bfcb/",
+          "published_at_utc": "2026-11-12T21:33:37+00:00",
+          "source": "White House",
+          "snippet": "The entrepreneurial spirit of America has been forged by the determination of generations who envisioned a Nation where every hardworking citizen can live their glorious American Dream. For over 250 years, entrepreneurs have created the strong foundation that our country has built upon to become the economic powerhouse that we are today. This National Entrepreneurship [\u2026] The post Presidential Message on National Entrepreneurship Month appeared first on The White House .",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "Federal Reserve Board announces pricing, effective January 1, 2027, for payment services the Federal Reserve Banks provide to banks and credit unions, and changes to streamline and adjust their check services",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/other20261112a.htm",
+          "published_at_utc": "2026-11-12T18:30:00+00:00",
+          "source": "Federal Reserve",
+          "snippet": "Federal Reserve Board announces pricing, effective January 1, 2027, for payment services the Federal Reserve Banks provide to banks and credit unions, and changes to streamline and adjust their check services",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "macro_monetary"
+          ]
+        },
+        {
+          "title": "Federal Reserve announces revised tentative schedule of Federal Open Market Committee meetings in 2027",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261112a.htm",
+          "published_at_utc": "2026-11-12T17:45:00+00:00",
+          "source": "Federal Reserve",
+          "snippet": "Federal Reserve announces revised tentative schedule of Federal Open Market Committee meetings in 2027",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "macro_monetary"
+          ]
+        },
+        {
+          "title": "First Lady Melania Trump Honors America\u2019s Elite Soldiers and the Sacrifices of Military Families",
+          "url": "https://www.whitehouse.gov/briefings-statements/2026/11/first-lady-melania-trump-honors-americas-elite-soldiers-and-the-sacrifices-of-military-families/",
+          "published_at_utc": "2026-11-12T17:18:04+00:00",
+          "source": "White House",
+          "snippet": "First Lady Melania Trump visited Fort Rucker, the headquarters U.S. Army Aviation, to honor America\u2019s soldiers and the sacrifices of the military families who support them. \u201cI want to take a moment to say thank you to one very important group of people: the families of America\u2019s military. Your role is profound. While your loved [\u2026] The post First Lady Melania Trump Honors America\u2019s Elite Soldiers and the Sacrifices of Military Families appeared first on The White House .",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "Federal Reserve Board issues enforcement action with former employee of United Community Bank",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/enforcement20261112a.htm",
+          "published_at_utc": "2026-11-12T16:00:00+00:00",
+          "source": "Federal Reserve",
+          "snippet": "Federal Reserve Board issues enforcement action with former employee of United Community Bank",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "macro_monetary"
+          ]
+        },
+        {
+          "title": "Philip R. Lane: The science and practice of monetary policy communication: the ECB experience",
+          "url": "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261110_1~9725b7aa07.en.html",
+          "published_at_utc": "2026-11-10T16:45:00+00:00",
+          "source": "ECB",
+          "snippet": "",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "SEC Announces Enforcement Annual Results for Fiscal Year 2026",
+          "url": "https://www.sec.gov/newsroom/press-releases/2026-113-sec-announces-enforcement-annual-results-fiscal-year-2026",
+          "published_at_utc": "2026-11-10T16:15:35+00:00",
+          "source": "SEC",
+          "snippet": "The Securities and Exchange Commission today provided its enforcement results for the past fiscal year which ended September 30. Throughout the fiscal year, the SEC\u2019s Division of Enforcement remained focused on its fundamental responsibility: protecting\u2026",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "regulatory",
+            "crypto"
+          ]
+        },
+        {
+          "title": "Piero Cipollone: Cash and the digital euro: two sides of the same coin",
+          "url": "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261110~9422461bad.en.html",
+          "published_at_utc": "2026-11-10T14:00:00+00:00",
+          "source": "ECB",
+          "snippet": "",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "Federal Reserve Board announces approval of two applications by Mutual Federal Bancorp, MHC, and MFB Bancorp, Inc.",
+          "url": "https://www.federalreserve.gov/newsevents/pressreleases/orders20261109a.htm",
+          "published_at_utc": "2026-11-09T21:00:00+00:00",
+          "source": "Federal Reserve",
+          "snippet": "Federal Reserve Board announces approval of two applications by Mutual Federal Bancorp, MHC, and MFB Bancorp, Inc.",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "macro_monetary"
+          ]
+        },
+        {
+          "title": "Christine Lagarde: Interview with Yomiuri Shimbun",
+          "url": "https://www.ecb.europa.eu//press/inter/date/2026/html/ecb.in261107~e7b86fc4ce.en.html",
+          "published_at_utc": "2026-11-07T14:00:00+00:00",
+          "source": "ECB",
+          "snippet": "",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        },
+        {
+          "title": "ECB publishes consolidated banking data for end-June 2026",
+          "url": "https://www.ecb.europa.eu//press/pr/date/2026/html/ecb.pr261106~356f2fc73a.en.html",
+          "published_at_utc": "2026-11-06T09:00:00+00:00",
+          "source": "ECB",
+          "snippet": "",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": []
+        }
+      ],
+      "source_status": {
+        "Federal Reserve": {
+          "status": "PASS",
+          "article_count": 20
+        },
+        "SEC": {
+          "status": "PASS",
+          "article_count": 25
+        },
+        "White House": {
+          "status": "PASS",
+          "article_count": 30
+        },
+        "ECB": {
+          "status": "PASS",
+          "article_count": 15
+        },
+        "CFTC": {
+          "status": "UNAVAILABLE",
+          "reason": "CFTC reports its RSS feeds temporarily disabled as of October 2026."
+        },
+        "GDELT": {
+          "status": "FAIL",
+          "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://api.gdeltproject.org/api/v2/doc/doc?query=%28Bitcoin+OR+cryptocurrency+OR+%22digital+assets%22+OR+ETF+OR+SEC+OR+CFTC+OR+Federal+Reserve+OR+FOMC+OR+sanctions+OR+election+OR+tariff+OR+war+OR+conflict%29&mode=ArtList&format=json&maxrecords=50&timespan=7d&sort=DateDesc"
+        }
+      },
+      "errors": {
+        "GDELT": "HTTPError: 429 Client Error: Too Many Requests for url: https://api.gdeltproject.org/api/v2/doc/doc?query=%28Bitcoin+OR+cryptocurrency+OR+%22digital+assets%22+OR+ETF+OR+SEC+OR+CFTC+OR+Federal+Reserve+OR+FOMC+OR+sanctions+OR+election+OR+tariff+OR+war+OR+conflict%29&mode=ArtList&format=json&maxrecords=50&timespan=7d&sort=DateDesc"
+      },
+      "interpretation_limit": "Headlines and keyword tags are descriptive only; no sentiment, event-impact score or trading signal is inferred."
+    },
+    "binance_futures": {
+      "venue": "Binance USD-M Futures",
+      "historical_limits": {
+        "open_interest_statistics_max_lookback_days": 30,
+        "taker_buy_sell_ratio_max_lookback_days": 30,
+        "global_account_ratio_max_lookback_days": 30,
+        "funding_history_limit_records": 1000
+      },
+      "symbol": "BTCUSDT perpetual",
+      "quote_currency": "USDT",
+      "retrieved_at_utc": "2026-11-17T22:04:26.912395+00:00",
+      "status": "FAIL",
+      "errors": {
+        "premium_index": "HTTPError: 451 Client Error:  for url: https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT",
+        "open_interest": "HTTPError: 451 Client Error:  for url: https://fapi.binance.com/fapi/v1/openInterest?symbol=BTCUSDT",
+        "open_interest_daily_30d": "HTTPError: 451 Client Error:  for url: https://fapi.binance.com/futures/data/openInterestHist?symbol=BTCUSDT&period=1d&limit=30",
+        "taker_buy_sell_daily_30d": "HTTPError: 451 Client Error:  for url: https://fapi.binance.com/futures/data/takerlongshortRatio?symbol=BTCUSDT&period=1d&limit=30",
+        "global_long_short_account_ratio_daily_30d": "HTTPError: 451 Client Error:  for url: https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=BTCUSDT&period=1d&limit=30",
+        "funding_history": "HTTPError: 451 Client Error:  for url: https://fapi.binance.com/fapi/v1/fundingRate?symbol=BTCUSDT&limit=1000",
+        "daily_futures_klines": "HTTPError: 451 Client Error:  for url: https://fapi.binance.com/fapi/v1/klines?symbol=BTCUSDT&interval=1d&limit=31"
+      },
+      "liquidations": {
+        "status": "UNAVAILABLE_AUTH_REQUIRED",
+        "reason": "Binance forceOrders is a signed USER_DATA endpoint; no private API credentials are configured."
+      }
+    },
+    "bybit_futures": {
+      "venue": "Bybit Linear",
+      "symbol": "BTCUSDT perpetual",
+      "quote_currency": "USDT",
+      "retrieved_at_utc": "2026-11-17T22:04:27.086148+00:00",
+      "status": "FAIL",
+      "errors": {
+        "ticker": "HTTPError: 403 Client Error: Forbidden for url: https://api.bybit.com/v5/market/tickers?category=linear&symbol=BTCUSDT",
+        "open_interest_daily_200d": "HTTPError: 403 Client Error: Forbidden for url: https://api.bybit.com/v5/market/open-interest?category=linear&symbol=BTCUSDT&intervalTime=1d&limit=200",
+        "global_account_ratio_daily_30d": "HTTPError: 403 Client Error: Forbidden for url: https://api.bybit.com/v5/market/account-ratio?category=linear&symbol=BTCUSDT&period=1d&limit=30",
+        "funding_history": "HTTPError: 403 Client Error: Forbidden for url: https://api.bybit.com/v5/market/funding/history?category=linear&symbol=BTCUSDT&limit=200"
+      }
+    },
+    "deribit_options": {
+      "status": "PASS",
+      "venue": "Deribit",
+      "instrument_scope": "active BTC options",
+      "retrieved_at_utc": "2026-11-17T22:04:30.863518+00:00",
+      "open_interest_unit": "BTC underlying base currency; provider reports an 8-hour delay",
+      "implied_volatility_unit": "percent",
+      "total_call_open_interest_btc": 219694.30000000008,
+      "total_put_open_interest_btc": 169581.6,
+      "put_call_open_interest_ratio": 0.7718980419610338,
+      "total_call_volume_usd_24h": 10439170.959999999,
+      "total_put_volume_usd_24h": 16514280.149999999,
+      "put_call_volume_ratio": 1.5819532234195732,
+      "expiry_term_structure": [
+        {
+          "expiry_date": "2026-11-18",
+          "call_open_interest_btc": 1214.7,
+          "put_open_interest_btc": 1648.6999999999998,
+          "call_volume_usd_24h": 262996.14,
+          "put_volume_usd_24h": 168430.77999999997,
+          "days_to_expiry": 1,
+          "underlying_price_usd": 64168.13,
+          "nearest_atm_instrument": "BTC-18NOV26-64000-C",
+          "nearest_atm_mark_iv_pct": 42.36
+        },
+        {
+          "expiry_date": "2026-11-19",
+          "call_open_interest_btc": 583.8000000000001,
+          "put_open_interest_btc": 626.4,
+          "call_volume_usd_24h": 205621.83,
+          "put_volume_usd_24h": 267337.01,
+          "days_to_expiry": 2,
+          "underlying_price_usd": 64184.75,
+          "nearest_atm_instrument": "BTC-19NOV26-64000-C",
+          "nearest_atm_mark_iv_pct": 50.87
+        },
+        {
+          "expiry_date": "2026-11-20",
+          "call_open_interest_btc": 20457.300000000007,
+          "put_open_interest_btc": 13117.800000000001,
+          "call_volume_usd_24h": 188136.84000000003,
+          "put_volume_usd_24h": 675332.26,
+          "days_to_expiry": 3,
+          "underlying_price_usd": 64191.68,
+          "nearest_atm_instrument": "BTC-20NOV26-64000-P",
+          "nearest_atm_mark_iv_pct": 51.3
+        },
+        {
+          "expiry_date": "2026-11-21",
+          "call_open_interest_btc": 36.50000000000001,
+          "put_open_interest_btc": 28.4,
+          "call_volume_usd_24h": 94025.91999999998,
+          "put_volume_usd_24h": 280656.22,
+          "days_to_expiry": 4,
+          "underlying_price_usd": 64203.53,
+          "nearest_atm_instrument": "BTC-21NOV26-64000-C",
+          "nearest_atm_mark_iv_pct": 50.02
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "call_open_interest_btc": 51172.200000000004,
+          "put_open_interest_btc": 50862.0,
+          "call_volume_usd_24h": 1404782.54,
+          "put_volume_usd_24h": 6335317.57,
+          "days_to_expiry": 10,
+          "underlying_price_usd": 64258.95,
+          "nearest_atm_instrument": "BTC-27NOV26-64000-C",
+          "nearest_atm_mark_iv_pct": 44.86
+        },
+        {
+          "expiry_date": "2026-12-04",
+          "call_open_interest_btc": 4567.6,
+          "put_open_interest_btc": 3318.2999999999997,
+          "call_volume_usd_24h": 1039023.6800000002,
+          "put_volume_usd_24h": 4103531.87,
+          "days_to_expiry": 17,
+          "underlying_price_usd": 64319.27,
+          "nearest_atm_instrument": "BTC-4DEC26-64000-C",
+          "nearest_atm_mark_iv_pct": 43.39
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "call_open_interest_btc": 88434.40000000001,
+          "put_open_interest_btc": 60033.09999999998,
+          "call_volume_usd_24h": 3196331.8599999994,
+          "put_volume_usd_24h": 2224087.84,
+          "days_to_expiry": 38,
+          "underlying_price_usd": 64508.8,
+          "nearest_atm_instrument": "BTC-25DEC26-65000-P",
+          "nearest_atm_mark_iv_pct": 41.54
+        },
+        {
+          "expiry_date": "2027-01-29",
+          "call_open_interest_btc": 6246.200000000001,
+          "put_open_interest_btc": 6806.099999999998,
+          "call_volume_usd_24h": 1608080.4800000007,
+          "put_volume_usd_24h": 906262.1299999999,
+          "days_to_expiry": 73,
+          "underlying_price_usd": 64849.91,
+          "nearest_atm_instrument": "BTC-29JAN27-65000-C",
+          "nearest_atm_mark_iv_pct": 41.2
+        },
+        {
+          "expiry_date": "2027-03-26",
+          "call_open_interest_btc": 28727.600000000002,
+          "put_open_interest_btc": 18660.100000000006,
+          "call_volume_usd_24h": 1489235.12,
+          "put_volume_usd_24h": 822504.11,
+          "days_to_expiry": 129,
+          "underlying_price_usd": 65419.46,
+          "nearest_atm_instrument": "BTC-26MAR27-65000-P",
+          "nearest_atm_mark_iv_pct": 41.33
+        },
+        {
+          "expiry_date": "2027-06-25",
+          "call_open_interest_btc": 11481.800000000005,
+          "put_open_interest_btc": 10075.600000000002,
+          "call_volume_usd_24h": 275398.01000000007,
+          "put_volume_usd_24h": 497968.66,
+          "days_to_expiry": 220,
+          "underlying_price_usd": 66344.72,
+          "nearest_atm_instrument": "BTC-25JUN27-66000-C",
+          "nearest_atm_mark_iv_pct": 41.25
+        },
+        {
+          "expiry_date": "2027-09-24",
+          "call_open_interest_btc": 6772.2,
+          "put_open_interest_btc": 4405.1,
+          "call_volume_usd_24h": 675538.5399999998,
+          "put_volume_usd_24h": 232851.69999999998,
+          "days_to_expiry": 311,
+          "underlying_price_usd": 67300.66,
+          "nearest_atm_instrument": "BTC-24SEP27-68000-C",
+          "nearest_atm_mark_iv_pct": 41.18
+        }
+      ],
+      "top_strikes_by_open_interest": [
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 80000.0,
+          "call_open_interest_btc": 8275.0,
+          "put_open_interest_btc": 3451.6
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 60000.0,
+          "call_open_interest_btc": 784.2,
+          "put_open_interest_btc": 6560.1
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 100000.0,
+          "call_open_interest_btc": 6528.8,
+          "put_open_interest_btc": 299.1
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 70000.0,
+          "call_open_interest_btc": 3368.8,
+          "put_open_interest_btc": 3329.3
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 90000.0,
+          "call_open_interest_btc": 5421.3,
+          "put_open_interest_btc": 646.1
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 40000.0,
+          "call_open_interest_btc": 257.5,
+          "put_open_interest_btc": 5711.7
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 120000.0,
+          "call_open_interest_btc": 5843.5,
+          "put_open_interest_btc": 35.9
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 75000.0,
+          "call_open_interest_btc": 3033.6,
+          "put_open_interest_btc": 2254.5
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 88000.0,
+          "call_open_interest_btc": 4668.9,
+          "put_open_interest_btc": 192.7
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 90000.0,
+          "call_open_interest_btc": 4775.9,
+          "put_open_interest_btc": 18.4
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 63000.0,
+          "call_open_interest_btc": 86.4,
+          "put_open_interest_btc": 4215.4
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 75000.0,
+          "call_open_interest_btc": 1054.6,
+          "put_open_interest_btc": 3099.4
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 68000.0,
+          "call_open_interest_btc": 1077.2,
+          "put_open_interest_btc": 2904.8
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 70000.0,
+          "call_open_interest_btc": 925.9,
+          "put_open_interest_btc": 3041.4
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 65000.0,
+          "call_open_interest_btc": 586.2,
+          "put_open_interest_btc": 3360.8
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 50000.0,
+          "call_open_interest_btc": 0.0,
+          "put_open_interest_btc": 3889.5
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 73000.0,
+          "call_open_interest_btc": 1724.9,
+          "put_open_interest_btc": 2018.7
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 85000.0,
+          "call_open_interest_btc": 2882.6,
+          "put_open_interest_btc": 742.2
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 72000.0,
+          "call_open_interest_btc": 1497.2,
+          "put_open_interest_btc": 2125.2
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 86000.0,
+          "call_open_interest_btc": 3458.5,
+          "put_open_interest_btc": 163.5
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 78000.0,
+          "call_open_interest_btc": 1999.3,
+          "put_open_interest_btc": 1583.5
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 78000.0,
+          "call_open_interest_btc": 2226.2,
+          "put_open_interest_btc": 1353.6
+        },
+        {
+          "expiry_date": "2026-11-20",
+          "strike_usd": 76000.0,
+          "call_open_interest_btc": 3160.2,
+          "put_open_interest_btc": 368.4
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 72000.0,
+          "call_open_interest_btc": 1183.1,
+          "put_open_interest_btc": 2222.0
+        },
+        {
+          "expiry_date": "2026-11-20",
+          "strike_usd": 73000.0,
+          "call_open_interest_btc": 3213.8,
+          "put_open_interest_btc": 188.2
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 30000.0,
+          "call_open_interest_btc": 300.8,
+          "put_open_interest_btc": 3087.2
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 55000.0,
+          "call_open_interest_btc": 80.6,
+          "put_open_interest_btc": 3296.8
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 69000.0,
+          "call_open_interest_btc": 560.8,
+          "put_open_interest_btc": 2769.7
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 77000.0,
+          "call_open_interest_btc": 2555.8,
+          "put_open_interest_btc": 704.1
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 74000.0,
+          "call_open_interest_btc": 964.5,
+          "put_open_interest_btc": 2272.8
+        },
+        {
+          "expiry_date": "2026-11-20",
+          "strike_usd": 74000.0,
+          "call_open_interest_btc": 2574.7,
+          "put_open_interest_btc": 652.8
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 50000.0,
+          "call_open_interest_btc": 259.8,
+          "put_open_interest_btc": 2869.7
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 82000.0,
+          "call_open_interest_btc": 1658.6,
+          "put_open_interest_btc": 1411.5
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 110000.0,
+          "call_open_interest_btc": 2983.5,
+          "put_open_interest_btc": 81.5
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 80000.0,
+          "call_open_interest_btc": 2070.7,
+          "put_open_interest_btc": 896.4
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 85000.0,
+          "call_open_interest_btc": 2619.3,
+          "put_open_interest_btc": 322.3
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 64000.0,
+          "call_open_interest_btc": 204.8,
+          "put_open_interest_btc": 2695.7
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 35000.0,
+          "call_open_interest_btc": 91.9,
+          "put_open_interest_btc": 2725.1
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 58000.0,
+          "call_open_interest_btc": 11.5,
+          "put_open_interest_btc": 2698.2
+        },
+        {
+          "expiry_date": "2027-03-26",
+          "strike_usd": 60000.0,
+          "call_open_interest_btc": 648.5,
+          "put_open_interest_btc": 2027.2
+        }
+      ],
+      "sampled_25d_skew": [
+        {
+          "expiry_date": "2026-11-18",
+          "call_25d_instrument": null,
+          "put_25d_instrument": null,
+          "call_25d_mark_iv_pct": null,
+          "put_25d_mark_iv_pct": null,
+          "put_minus_call_25d_skew_vol_points": null,
+          "greeks_samples": [
+            {
+              "instrument_name": "BTC-18NOV26-54000-P",
+              "expiry_date": "2026-11-18",
+              "option_type": "put",
+              "delta": 0.0,
+              "gamma": 0.0,
+              "mark_iv_pct": 103.65,
+              "ticker_timestamp_utc": "2026-11-17T22:04:27.337000+00:00"
+            },
+            {
+              "instrument_name": "BTC-18NOV26-58000-P",
+              "expiry_date": "2026-11-18",
+              "option_type": "put",
+              "delta": -0.00081,
+              "gamma": 0.0,
+              "mark_iv_pct": 95.68,
+              "ticker_timestamp_utc": "2026-11-17T22:04:27.337000+00:00"
+            },
+            {
+              "instrument_name": "BTC-18NOV26-61000-P",
+              "expiry_date": "2026-11-18",
+              "option_type": "put",
+              "delta": -0.01799,
+              "gamma": 3e-05,
+              "mark_iv_pct": 72.12,
+              "ticker_timestamp_utc": "2026-11-17T22:04:27.337000+00:00"
+            },
+            {
+              "instrument_name": "BTC-18NOV26-67500-C",
+              "expiry_date": "2026-11-18",
+              "option_type": "call",
+              "delta": 0.00983,
+              "gamma": 2e-05,
+              "mark_iv_pct": 64.14,
+              "ticker_timestamp_utc": "2026-11-17T22:04:27.337000+00:00"
+            },
+            {
+              "instrument_name": "BTC-18NOV26-71000-C",
+              "expiry_date": "2026-11-18",
+              "option_type": "call",
+              "delta": 1e-05,
+              "gamma": 0.0,
+              "mark_iv_pct": 71.67,
+              "ticker_timestamp_utc": "2026-11-17T22:04:27.337000+00:00"
+            },
+            {
+              "instrument_name": "BTC-18NOV26-74000-C",
+              "expiry_date": "2026-11-18",
+              "option_type": "call",
+              "delta": 0.0,
+              "gamma": 0.0,
+              "mark_iv_pct": 77.01,
+              "ticker_timestamp_utc": "2026-11-17T22:04:27.337000+00:00"
+            }
+          ]
+        },
+        {
+          "expiry_date": "2026-11-19",
+          "call_25d_instrument": null,
+          "put_25d_instrument": null,
+          "call_25d_mark_iv_pct": null,
+          "put_25d_mark_iv_pct": null,
+          "put_minus_call_25d_skew_vol_points": null,
+          "greeks_samples": [
+            {
+              "instrument_name": "BTC-19NOV26-57000-P",
+              "expiry_date": "2026-11-19",
+              "option_type": "put",
+              "delta": -0.00894,
+              "gamma": 1e-05,
+              "mark_iv_pct": 81.37,
+              "ticker_timestamp_utc": "2026-11-17T22:04:27.337000+00:00"
+            },
+            {
+              "instrument_name": "BTC-19NOV26-58000-P",
+              "expiry_date": "2026-11-19",
+              "option_type": "put",
+              "delta": -0.01702,
+              "gamma": 1e-05,
+              "mark_iv_pct": 77.64,
+              "ticker_timestamp_utc": "2026-11-17T22:04:27.337000+00:00"
+            },
+            {
+              "instrument_name": "BTC-19NOV26-61000-P",
+              "expiry_date": "2026-11-19",
+              "option_type": "put",
+              "delta": -0.09669,
+              "gamma": 7e-05,
+              "mark_iv_pct": 63.76,
+              "ticker_timestamp_utc": "2026-11-17T22:04:27.337000+00:00"
+            },
+            {
+              "instrument_name": "BTC-19NOV26-67500-C",
+              "expiry_date": "2026-11-19",
+              "option_type": "call",
+              "delta": 0.05646,
+              "gamma": 6e-05,
+              "mark_iv_pct": 50.61,
+              "ticker_timestamp_utc": "2026-11-17T22:04:27.337000+00:00"
+            },
+            {
+              "instrument_name": "BTC-19NOV26-71000-C",
+              "expiry_date": "2026-11-19",
+              "option_type": "call",
+              "delta": 0.00817,
+              "gamma": 1e-05,
+              "mark_iv_pct": 66.98,
+              "ticker_timestamp_utc": "2026-11-17T22:04:27.337000+00:00"
+            },
+            {
+              "instrument_name": "BTC-19NOV26-73000-C",
+              "expiry_date": "2026-11-19",
+              "option_type": "call",
+              "delta": 0.00146,
+              "gamma": 0.0,
+              "mark_iv_pct": 69.03,
+              "ticker_timestamp_utc": "2026-11-17T22:04:28.345000+00:00"
+            }
+          ]
+        },
+        {
+          "expiry_date": "2026-11-20",
+          "call_25d_instrument": "BTC-20NOV26-67000-C",
+          "put_25d_instrument": null,
+          "call_25d_mark_iv_pct": 49.93,
+          "put_25d_mark_iv_pct": null,
+          "put_minus_call_25d_skew_vol_points": null,
+          "greeks_samples": [
+            {
+              "instrument_name": "BTC-20NOV26-55000-P",
+              "expiry_date": "2026-11-20",
+              "option_type": "put",
+              "delta": -0.00852,
+              "gamma": 1e-05,
+              "mark_iv_pct": 80.76,
+              "ticker_timestamp_utc": "2026-11-17T22:04:28.345000+00:00"
+            },
+            {
+              "instrument_name": "BTC-20NOV26-58000-P",
+              "expiry_date": "2026-11-20",
+              "option_type": "put",
+              "delta": -0.03594,
+              "gamma": 2e-05,
+              "mark_iv_pct": 70.41,
+              "ticker_timestamp_utc": "2026-11-17T22:04:28.345000+00:00"
+            },
+            {
+              "instrument_name": "BTC-20NOV26-61000-P",
+              "expiry_date": "2026-11-20",
+              "option_type": "put",
+              "delta": -0.14165,
+              "gamma": 7e-05,
+              "mark_iv_pct": 59.8,
+              "ticker_timestamp_utc": "2026-11-17T22:04:28.345000+00:00"
+            },
+            {
+              "instrument_name": "BTC-20NOV26-67000-C",
+              "expiry_date": "2026-11-20",
+              "option_type": "call",
+              "delta": 0.15052,
+              "gamma": 9e-05,
+              "mark_iv_pct": 49.93,
+              "ticker_timestamp_utc": "2026-11-17T22:04:29.352000+00:00"
+            },
+            {
+              "instrument_name": "BTC-20NOV26-71000-C",
+              "expiry_date": "2026-11-20",
+              "option_type": "call",
+              "delta": 0.02454,
+              "gamma": 2e-05,
+              "mark_iv_pct": 62.19,
+              "ticker_timestamp_utc": "2026-11-17T22:04:29.352000+00:00"
+            },
+            {
+              "instrument_name": "BTC-20NOV26-74000-C",
+              "expiry_date": "2026-11-20",
+              "option_type": "call",
+              "delta": 0.00909,
+              "gamma": 1e-05,
+              "mark_iv_pct": 73.1,
+              "ticker_timestamp_utc": "2026-11-17T22:04:29.352000+00:00"
+            }
+          ]
+        },
+        {
+          "expiry_date": "2026-11-21",
+          "call_25d_instrument": "BTC-21NOV26-67000-C",
+          "put_25d_instrument": "BTC-21NOV26-61000-P",
+          "call_25d_mark_iv_pct": 49.1,
+          "put_25d_mark_iv_pct": 57.06,
+          "put_minus_call_25d_skew_vol_points": 7.960000000000001,
+          "greeks_samples": [
+            {
+              "instrument_name": "BTC-21NOV26-57000-P",
+              "expiry_date": "2026-11-21",
+              "option_type": "put",
+              "delta": -0.03443,
+              "gamma": 2e-05,
+              "mark_iv_pct": 68.86,
+              "ticker_timestamp_utc": "2026-11-17T22:04:28.345000+00:00"
+            },
+            {
+              "instrument_name": "BTC-21NOV26-58000-P",
+              "expiry_date": "2026-11-21",
+              "option_type": "put",
+              "delta": -0.05143,
+              "gamma": 3e-05,
+              "mark_iv_pct": 65.65,
+              "ticker_timestamp_utc": "2026-11-17T22:04:29.352000+00:00"
+            },
+            {
+              "instrument_name": "BTC-21NOV26-61000-P",
+              "expiry_date": "2026-11-21",
+              "option_type": "put",
+              "delta": -0.17005,
+              "gamma": 7e-05,
+              "mark_iv_pct": 57.06,
+              "ticker_timestamp_utc": "2026-11-17T22:04:29.352000+00:00"
+            },
+            {
+              "instrument_name": "BTC-21NOV26-67000-C",
+              "expiry_date": "2026-11-21",
+              "option_type": "call",
+              "delta": 0.19067,
+              "gamma": 9e-05,
+              "mark_iv_pct": 49.1,
+              "ticker_timestamp_utc": "2026-11-17T22:04:29.352000+00:00"
+            },
+            {
+              "instrument_name": "BTC-21NOV26-71000-C",
+              "expiry_date": "2026-11-21",
+              "option_type": "call",
+              "delta": 0.03075,
+              "gamma": 2e-05,
+              "mark_iv_pct": 54.9,
+              "ticker_timestamp_utc": "2026-11-17T22:04:29.352000+00:00"
+            },
+            {
+              "instrument_name": "BTC-21NOV26-72000-C",
+              "expiry_date": "2026-11-21",
+              "option_type": "call",
+              "delta": 0.02111,
+              "gamma": 1e-05,
+              "mark_iv_pct": 57.58,
+              "ticker_timestamp_utc": "2026-11-17T22:04:29.352000+00:00"
+            }
+          ]
+        }
+      ],
+      "dealer_gamma_positioning": {
+        "status": "NOT_IDENTIFIABLE",
+        "reason": "Public open interest and option Greeks do not reveal whether dealers are net long or short; no dealer-side sign is inferred."
+      },
+      "ticker_greeks_sample_count": 24,
+      "ticker_greeks_errors": [],
+      "greeks_status": "PASS",
+      "raw_option_instruments": 958,
+      "open_interest_delay_hours": 8
+    },
+    "us_spot_etf_flows": {
+      "source": "The Commoner Bitcoin ETF Tracker by TFTC, tftc.io/bitcoin-etf-flows",
+      "source_url": "https://www.tftc.io/bitcoin-etf-flows/latest.json",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "status": "STALE",
+      "retrieved_at_utc": "2026-11-17T22:04:31.159256+00:00",
+      "updated_through": "2026-11-13",
+      "business_sessions_behind_approx": 2,
+      "latest_session": {
+        "date": "2026-11-13",
+        "netFlowUsd": -185450233.4,
+        "vendorNetFlowUsd": -185450233.4,
+        "totalNetAssetsUsd": 86199738908.25476,
+        "btcCloseUsd": 68844,
+        "perEtfUsd": {
+          "BTC": 0,
+          "ARKB": 0,
+          "BITB": 0,
+          "BRRR": 0,
+          "BTCO": 0,
+          "BTCW": 0,
+          "EZBC": 0,
+          "FBTC": -41919193.4,
+          "GBTC": 0,
+          "HODL": 0,
+          "IBIT": -143531040,
+          "MSBT": 0
+        }
+      },
+      "cumulative_net_flow_usd": 54685771071.435,
+      "last_21_sessions_net_flow_usd": -2327413101.03,
+      "last_30_sessions_net_flow_usd": -3154704110.4300003,
+      "history_rows_available": 730,
+      "history_coverage_start": "2024-01-11",
+      "full_history_error": null,
+      "global_etp_flows": {
+        "status": "UNAVAILABLE",
+        "reason": "This dataset covers US spot ETFs only; global ETPs require a separate source."
+      }
+    },
+    "macro": {
+      "status": "FAIL",
+      "retrieved_at_utc": "2026-11-17T22:12:33.170412+00:00",
+      "series": {},
+      "errors": {
+        "DGS2": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "DGS10": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "DFII10": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "FEDFUNDS": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "CPIAUCSL": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "PCEPILFE": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "UNRATE": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "PAYEMS": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "DTWEXBGS": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "WALCL": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "RRPONTSYD": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "NFCI": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "SP500": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "NASDAQCOM": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "VIXCLS": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)",
+        "M2SL": "ReadTimeout: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)"
+      },
+      "source_note": "FRED observation dates are not release timestamps; monthly/weekly series naturally lag the run date."
+    }
+  },
+  "supplemental_acquisition_seconds": 500.025,
   "cross_checks": [
     {
       "venue": "Coinbase",
@@ -1402,13 +2622,13 @@
     "robust_volume_z": "dimensionless rolling score versus prior 90 completed sessions; minimum 60 sessions"
   },
   "performance": {
-    "acquisition_and_qa_seconds": 47.17,
-    "walk_forward_seconds": 0.196,
-    "pre_report_review_seconds": 0.01,
-    "total_seconds_before_report": 47.412
+    "acquisition_and_qa_seconds": 548.421,
+    "walk_forward_seconds": 0.125,
+    "pre_report_review_seconds": 0.009,
+    "total_seconds_before_report": 548.589
   },
   "market_snapshot": {
-    "as_of_utc": "2026-11-17T21:39:07.776559+00:00",
+    "as_of_utc": "2026-11-17T22:12:33.170448+00:00",
     "warning": "These are last closed daily candles, not live spot quotes; USD and USDT are not converted or combined.",
     "venues": [
       {
@@ -1418,7 +2638,7 @@
         "snapshot_type": "latest_closed_daily_candle_not_realtime_spot",
         "candle_open_timestamp_utc": "2026-11-16T00:00:00+00:00",
         "candle_close_timestamp_utc": "2026-11-17T00:00:00+00:00",
-        "retrieved_at_utc": "2026-11-17T21:39:04.832952+00:00",
+        "retrieved_at_utc": "2026-11-17T22:04:10.675422+00:00",
         "open_quote_per_btc": 65351.05,
         "high_quote_per_btc": 65696.16,
         "low_quote_per_btc": 63905.01,
@@ -1428,7 +2648,20 @@
         "volume_vs_prior_30d_median": 1.502888219875641,
         "intraday_range_pct": 2.74081288670955,
         "prior_close_quote_per_btc": 65351.05,
-        "close_change_1d_pct": -0.7164077700358318
+        "close_change_1d_pct": -0.7164077700358318,
+        "close_change_7d_pct": -13.912380531843516,
+        "close_change_30d_pct": -20.380363289019254,
+        "volume_7d_btc": 161324.20426000003,
+        "volume_30d_btc": 488271.97175,
+        "sma_20_quote_per_btc": 74370.13350000001,
+        "sma_50_quote_per_btc": 79451.9868,
+        "sma_200_quote_per_btc": 72921.15400000001,
+        "high_20d_quote_per_btc": 81971.0,
+        "low_20d_quote_per_btc": 62006.0,
+        "high_50d_quote_per_btc": 87220.0,
+        "low_50d_quote_per_btc": 62006.0,
+        "atr_14_quote_per_btc": 2657.7236224018525,
+        "atr_14_pct_of_close": 4.096186901722831
       },
       {
         "venue": "Bitstamp",
@@ -1437,7 +2670,7 @@
         "snapshot_type": "latest_closed_daily_candle_not_realtime_spot",
         "candle_open_timestamp_utc": "2026-11-16T00:00:00+00:00",
         "candle_close_timestamp_utc": "2026-11-17T00:00:00+00:00",
-        "retrieved_at_utc": "2026-11-17T21:39:07.176591+00:00",
+        "retrieved_at_utc": "2026-11-17T22:04:12.646353+00:00",
         "open_quote_per_btc": 65310.48,
         "high_quote_per_btc": 65609.6,
         "low_quote_per_btc": 63815.27,
@@ -1447,9 +2680,70 @@
         "volume_vs_prior_30d_median": 0.6416716170277847,
         "intraday_range_pct": 2.7473844932697005,
         "prior_close_quote_per_btc": 65312.48,
-        "close_change_1d_pct": -0.7511275027376141
+        "close_change_1d_pct": -0.7511275027376141,
+        "close_change_7d_pct": -13.877224834040492,
+        "close_change_30d_pct": -20.35117687455236,
+        "volume_7d_btc": 12646.16801547,
+        "volume_30d_btc": 49270.361932429994,
+        "sma_20_quote_per_btc": 74264.10899999998,
+        "sma_50_quote_per_btc": 79364.8144,
+        "sma_200_quote_per_btc": 72865.3258,
+        "high_20d_quote_per_btc": 81888.33,
+        "low_20d_quote_per_btc": 61946.62,
+        "high_50d_quote_per_btc": 87219.4,
+        "low_50d_quote_per_btc": 61946.62,
+        "atr_14_quote_per_btc": 2647.074549100296,
+        "atr_14_pct_of_close": 4.0836114786828155
       }
     ]
+  },
+  "cycle_comparison": {
+    "status": "PASS",
+    "source": "Bitstamp BTC/USD daily OHLCV; same venue and quote currency",
+    "latest_closed_session_utc": "2026-11-16T00:00:00+00:00",
+    "current_cycle_elapsed_sessions": 940,
+    "comparison_horizon_days": 940,
+    "cycles": [
+      {
+        "cycle": "2012 cycle",
+        "halving_date": "2012-11-28",
+        "status": "INSUFFICIENT_HISTORY",
+        "first_available_session_utc": "2016-11-19T00:00:00+00:00"
+      },
+      {
+        "cycle": "2016 cycle",
+        "halving_date": "2016-07-09",
+        "status": "INSUFFICIENT_HISTORY",
+        "first_available_session_utc": "2016-11-19T00:00:00+00:00"
+      },
+      {
+        "cycle": "2020 cycle",
+        "halving_date": "2020-05-11",
+        "status": "PASS",
+        "elapsed_sessions": 940,
+        "comparison_target_session_utc": "2022-12-07T00:00:00+00:00",
+        "start_close_usd": 8571.98,
+        "close_at_same_elapsed_horizon_usd": 16836.0,
+        "return_at_same_elapsed_horizon_pct": 96.40736445955311,
+        "maximum_close_return_pct": 688.1376298124821,
+        "days_to_maximum_close": 546,
+        "maximum_close_drawdown_from_peak_pct": -76.66336091416392
+      },
+      {
+        "cycle": "2024 cycle (current)",
+        "halving_date": "2024-04-20",
+        "status": "PASS",
+        "elapsed_sessions": 940,
+        "comparison_target_session_utc": "2026-11-16T00:00:00+00:00",
+        "start_close_usd": 64990.0,
+        "close_at_same_elapsed_horizon_usd": 64821.9,
+        "return_at_same_elapsed_horizon_pct": -0.25865517771964663,
+        "maximum_close_return_pct": 91.91875673180489,
+        "days_to_maximum_close": 534,
+        "maximum_close_drawdown_from_peak_pct": -53.076959463793216
+      }
+    ],
+    "interpretation_limit": "Descriptive comparison at the same elapsed days after halving; sample is small, cycles are structurally different, and this is not a timing forecast."
   },
   "historical_continuity_rows_by_horizon": {
     "1": 362,
@@ -1538,7 +2832,7 @@
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 21.651,
+          "latest_candle_age_hours": 22.07,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
           "volume_median_btc": 36285.648526,
@@ -1573,7 +2867,7 @@
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 21.652,
+          "latest_candle_age_hours": 22.07,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
           "volume_median_btc": 3154.24801664,
@@ -1609,7 +2903,7 @@
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 21.652,
+          "latest_candle_age_hours": 22.07,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
           "volume_median_btc": 7277.57349707,
@@ -1645,7 +2939,7 @@
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 21.652,
+          "latest_candle_age_hours": 22.07,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
           "volume_median_btc": 1673.7672171250001,
@@ -1668,6 +2962,10 @@
           "intraday_range_pct_max": 0.18486593973656315,
           "diagnostic_note": "Zero-volume and tail metrics are descriptive QA diagnostics, not automatic rejection thresholds."
         }
+      },
+      {
+        "statement": "supplemental_market_context: PASS.",
+        "evidence": "stato registrato nel run report"
       },
       {
         "statement": "walk_forward: SCORED_NOT_PROMOTED.",
@@ -1696,6 +2994,133 @@
             "30": 0
           },
           "new_score_events": 0
+        }
+      },
+      {
+        "statement": "Supplemental feed spot_ohlcv: PASS.",
+        "evidence": {
+          "status": "PASS",
+          "note": "Primary Binance/Bitstamp acquisition is reported separately."
+        }
+      },
+      {
+        "statement": "Supplemental feed spot_live_quotes: PARTIAL.",
+        "evidence": {
+          "status": "PARTIAL"
+        }
+      },
+      {
+        "statement": "Supplemental feed per_exchange_derivatives: FAIL.",
+        "evidence": {
+          "status": "FAIL",
+          "by_exchange": {
+            "binance_futures": "FAIL",
+            "bybit_futures": "FAIL"
+          }
+        }
+      },
+      {
+        "statement": "Supplemental feed options: PASS.",
+        "evidence": {
+          "status": "PASS"
+        }
+      },
+      {
+        "statement": "Supplemental feed us_spot_etf_flows: STALE.",
+        "evidence": {
+          "status": "STALE"
+        }
+      },
+      {
+        "statement": "Supplemental feed global_etp_flows: UNAVAILABLE.",
+        "evidence": {
+          "status": "UNAVAILABLE",
+          "reason": "This dataset covers US spot ETFs only; global ETPs require a separate source."
+        }
+      },
+      {
+        "statement": "Supplemental feed exchange_flows_and_reserves: UNAVAILABLE.",
+        "evidence": {
+          "status": "UNAVAILABLE",
+          "reason": "No verifiable exchange-wallet-label dataset is configured; raw blockchain transfers are not exchange netflows."
+        }
+      },
+      {
+        "statement": "Supplemental feed liquidations: UNAVAILABLE.",
+        "evidence": {
+          "status": "UNAVAILABLE",
+          "reason": "No public, complete cross-exchange liquidation history source is configured."
+        }
+      },
+      {
+        "statement": "Supplemental feed macro_and_indices: FAIL.",
+        "evidence": {
+          "status": "FAIL"
+        }
+      },
+      {
+        "statement": "Supplemental feed spot_futures_cvd: FAIL.",
+        "evidence": {
+          "status": "FAIL",
+          "reason": "Hourly Binance kline taker-buy base volume minus inferred taker-sell base volume for rolling 24h/7d/30d windows; not tick-level order-book delta."
+        }
+      },
+      {
+        "statement": "Supplemental feed geopolitical_regulatory_news: PARTIAL.",
+        "evidence": {
+          "status": "PARTIAL",
+          "reason": "Headlines and keyword tags are descriptive only; no sentiment, event-impact score or trading signal is inferred."
+        }
+      },
+      {
+        "statement": "Il confronto dei cicli post-halving \u00e8 descrittivo e usa la stessa venue/quote e lo stesso orizzonte temporale.",
+        "evidence": {
+          "status": "PASS",
+          "source": "Bitstamp BTC/USD daily OHLCV; same venue and quote currency",
+          "latest_closed_session_utc": "2026-11-16T00:00:00+00:00",
+          "current_cycle_elapsed_sessions": 940,
+          "comparison_horizon_days": 940,
+          "cycles": [
+            {
+              "cycle": "2012 cycle",
+              "halving_date": "2012-11-28",
+              "status": "INSUFFICIENT_HISTORY",
+              "first_available_session_utc": "2016-11-19T00:00:00+00:00"
+            },
+            {
+              "cycle": "2016 cycle",
+              "halving_date": "2016-07-09",
+              "status": "INSUFFICIENT_HISTORY",
+              "first_available_session_utc": "2016-11-19T00:00:00+00:00"
+            },
+            {
+              "cycle": "2020 cycle",
+              "halving_date": "2020-05-11",
+              "status": "PASS",
+              "elapsed_sessions": 940,
+              "comparison_target_session_utc": "2022-12-07T00:00:00+00:00",
+              "start_close_usd": 8571.98,
+              "close_at_same_elapsed_horizon_usd": 16836.0,
+              "return_at_same_elapsed_horizon_pct": 96.40736445955311,
+              "maximum_close_return_pct": 688.1376298124821,
+              "days_to_maximum_close": 546,
+              "maximum_close_drawdown_from_peak_pct": -76.66336091416392
+            },
+            {
+              "cycle": "2024 cycle (current)",
+              "halving_date": "2024-04-20",
+              "status": "PASS",
+              "elapsed_sessions": 940,
+              "comparison_target_session_utc": "2026-11-16T00:00:00+00:00",
+              "start_close_usd": 64990.0,
+              "close_at_same_elapsed_horizon_usd": 64821.9,
+              "return_at_same_elapsed_horizon_pct": -0.25865517771964663,
+              "maximum_close_return_pct": 91.91875673180489,
+              "days_to_maximum_close": 534,
+              "maximum_close_drawdown_from_peak_pct": -53.076959463793216
+            }
+          ],
+          "interpretation_limit": "Descriptive comparison at the same elapsed days after halving; sample is small, cycles are structurally different, and this is not a timing forecast."
         }
       }
     ],
@@ -1797,8 +3222,8 @@
   "longitudinal_comparison": {
     "status": "COMPARISON_AVAILABLE",
     "comparison_performed": true,
-    "previous_run_started_at_utc": "2026-11-17T21:29:28.005479+00:00",
-    "previous_run_finished_at_utc": "2026-11-17T21:30:11.168518+00:00",
+    "previous_run_started_at_utc": "2026-11-17T21:38:20.606315+00:00",
+    "previous_run_finished_at_utc": "2026-11-17T21:39:08.018740+00:00",
     "previous_run_status": "COMPLETE_NOT_PROMOTED",
     "current_run_status": "COMPLETE_NOT_PROMOTED",
     "same_venue_price_snapshots": [
@@ -1872,9 +3297,9 @@
     "interpretation_policy": "Compare price snapshots only within identical venue/symbol/quote. Compare MAE only on identical holdout windows; all such historical results remain continuity diagnostics."
   },
   "code_provenance": {
-    "commit_sha": "91d06c403919312288047e21cacb90c4430bb1b8",
+    "commit_sha": "595a80cf3f6d9b043736a2af5f4a236f4cfc53e5",
     "ref": "refs/heads/main",
-    "workflow_run_id": "44181836262",
+    "workflow_run_id": "44186131524",
     "event_name": "push"
   },
   "anomaly_event_cross_venue_checks": {
@@ -2020,46 +3445,46 @@
     }
   },
   "rotating_event_review": {
-    "timestamp_utc": "2020-03-12T00:00:00+00:00",
+    "timestamp_utc": "2020-03-13T00:00:00+00:00",
     "venues": {
       "Binance_BTCUSDT": {
         "status": "PASS",
-        "open": 7934.58,
-        "high": 7966.17,
-        "low": 4410.0,
-        "close": 4800.0,
-        "volume_btc": 261505.608653,
-        "intraday_range_pct": 44.818629341439625,
-        "close_log_return": -0.5026069427414592,
-        "volume_vs_prior_90d_median": 5.083543066164295,
+        "open": 4800.01,
+        "high": 5955.0,
+        "low": 3782.13,
+        "close": 5578.6,
+        "volume_btc": 402201.673764,
+        "intraday_range_pct": 45.268030691602725,
+        "close_log_return": 0.15032193094234547,
+        "volume_vs_prior_90d_median": 7.639212539174264,
         "quote_currency": "USDT"
       },
       "Bitstamp_BTCUSD": {
         "status": "PASS",
-        "open": 7956.29,
-        "high": 7969.9,
-        "low": 4776.59,
-        "close": 4841.67,
-        "volume_btc": 58513.38918903,
-        "intraday_range_pct": 40.13566624645406,
-        "close_log_return": -0.4939694596760823,
-        "volume_vs_prior_90d_median": 10.054439449782079,
+        "open": 4841.67,
+        "high": 5990.35,
+        "low": 3850.0,
+        "close": 5622.74,
+        "volume_btc": 54419.64133553,
+        "intraday_range_pct": 44.20685424657195,
+        "close_log_return": 0.14955938704060256,
+        "volume_vs_prior_90d_median": 9.231324833310927,
         "quote_currency": "USD"
       }
     },
-    "absolute_close_return_difference": 0.008637483065376927,
+    "absolute_close_return_difference": 0.000762543901742907,
     "volume_comparison_policy": "Venue volumes are not expected to match; compare each venue with its own trailing median.",
-    "binance_usdt_to_bitstamp_usd_close_price_ratio": 0.9913934654778207,
-    "implied_usd_per_usdt_if_btc_prices_were_at_parity": 1.00868125,
-    "binance_usdt_to_bitstamp_usd_open_price_ratio": 0.9972713412909786,
+    "binance_usdt_to_bitstamp_usd_close_price_ratio": 0.9921497348267927,
+    "implied_usd_per_usdt_if_btc_prices_were_at_parity": 1.007912379450041,
+    "binance_usdt_to_bitstamp_usd_open_price_ratio": 0.9913955308808737,
     "quote_basis_caveat": "The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged."
   },
   "pre_report_review": {
     "version": "pre-report-review-1.0",
     "executed_before_report_serialization": true,
-    "reviewed_at_utc": "2026-11-17T21:39:08.008309+00:00",
-    "run_id": "44181836262",
-    "rotating_adversarial_lens": "outlier_close_return",
+    "reviewed_at_utc": "2026-11-17T22:12:33.328665+00:00",
+    "run_id": "44186131524",
+    "rotating_adversarial_lens": "outlier_intraday_range",
     "checks": [
       {
         "check_id": "primary_sources_acquired_and_qa",
@@ -2067,6 +3492,13 @@
         "status": "PASS",
         "blocking": true,
         "evidence": "Binance BTCUSDT and Bitstamp BTC/USD must both have successful acquisition and OHLCV QA."
+      },
+      {
+        "check_id": "supplemental_coverage_explicit",
+        "category": "data",
+        "status": "PASS",
+        "blocking": true,
+        "evidence": "required_domains=['exchange_flows_and_reserves', 'geopolitical_regulatory_news', 'global_etp_flows', 'liquidations', 'macro_and_indices', 'options', 'per_exchange_derivatives', 'spot_futures_cvd', 'spot_live_quotes', 'spot_ohlcv', 'us_spot_etf_flows']; reported=['exchange_flows_and_reserves', 'geopolitical_regulatory_news', 'global_etp_flows', 'liquidations', 'macro_and_indices', 'options', 'per_exchange_derivatives', 'spot_futures_cvd', 'spot_live_quotes', 'spot_ohlcv', 'us_spot_etf_flows']; statuses={'spot_ohlcv': 'PASS', 'spot_live_quotes': 'PARTIAL', 'per_exchange_derivatives': 'FAIL', 'options': 'PASS', 'us_spot_etf_flows': 'STALE', 'global_etp_flows': 'UNAVAILABLE', 'exchange_flows_and_reserves': 'UNAVAILABLE', 'liquidations': 'UNAVAILABLE', 'macro_and_indices': 'FAIL', 'spot_futures_cvd': 'FAIL', 'geopolitical_regulatory_news': 'PARTIAL'}"
       },
       {
         "check_id": "rolling_volume_outlier_method",
@@ -2101,7 +3533,7 @@
         "category": "lineage",
         "status": "PASS",
         "blocking": true,
-        "evidence": "verified_objects=133; errors=[]"
+        "evidence": "verified_objects=165; errors=[]"
       },
       {
         "check_id": "raw_manifest_provenance",
@@ -2227,27 +3659,19 @@
         "category": "operations",
         "status": "PASS",
         "blocking": true,
-        "evidence": "acquisition_and_qa_seconds=47.17; walk_forward_seconds=0.196; measured stages must be non-negative and remain within the 120-minute workflow budget."
+        "evidence": "acquisition_and_qa_seconds=548.421; walk_forward_seconds=0.125; measured stages must be non-negative and remain within the 120-minute workflow budget."
       },
       {
-        "check_id": "rotating_red_team_outlier_close_return",
+        "check_id": "rotating_red_team_outlier_intraday_range",
         "category": "red_team",
         "status": "PASS",
         "blocking": false,
-        "evidence": "event=2020-03-12T00:00:00+00:00; screening_thresholds=2% absolute log-return difference and 2% raw quote-price ratio gap; thresholds are WARN-only, not calibrated FX or data rejection rules; context={'timestamp_utc': '2020-03-12T00:00:00+00:00', 'venues': {'Binance_BTCUSDT': {'status': 'PASS', 'open': 7934.58, 'high': 7966.17, 'low': 4410.0, 'close': 4800.0, 'volume_btc': 261505.608653, 'intraday_range_pct': 44.818629341439625, 'close_log_return': -0.5026069427414592, 'volume_vs_prior_90d_median': 5.083543066164295, 'quote_currency': 'USDT'}, 'Bitstamp_BTCUSD': {'status': 'PASS', 'open': 7956.29, 'high': 7969.9, 'low': 4776.59, 'close': 4841.67, 'volume_btc': 58513.38918903, 'intraday_range_pct': 40.13566624645406, 'close_log_return': -0.4939694596760823, 'volume_vs_prior_90d_median': 10.054439449782079, 'quote_currency': 'USD'}}, 'absolute_close_return_difference': 0.008637483065376927, 'volume_comparison_policy': 'Venue volumes are not expected to match; compare each venue with its own trailing median.', 'binance_usdt_to_bitstamp_usd_close_price_ratio': 0.9913934654778207, 'implied_usd_per_usdt_if_btc_prices_were_at_parity': 1.00868125, 'binance_usdt_to_bitstamp_usd_open_price_ratio': 0.9972713412909786, 'quote_basis_caveat': 'The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged.'}"
+        "evidence": "event=2020-03-13T00:00:00+00:00; screening_thresholds=2% absolute log-return difference and 2% raw quote-price ratio gap; thresholds are WARN-only, not calibrated FX or data rejection rules; context={'timestamp_utc': '2020-03-13T00:00:00+00:00', 'venues': {'Binance_BTCUSDT': {'status': 'PASS', 'open': 4800.01, 'high': 5955.0, 'low': 3782.13, 'close': 5578.6, 'volume_btc': 402201.673764, 'intraday_range_pct': 45.268030691602725, 'close_log_return': 0.15032193094234547, 'volume_vs_prior_90d_median': 7.639212539174264, 'quote_currency': 'USDT'}, 'Bitstamp_BTCUSD': {'status': 'PASS', 'open': 4841.67, 'high': 5990.35, 'low': 3850.0, 'close': 5622.74, 'volume_btc': 54419.64133553, 'intraday_range_pct': 44.20685424657195, 'close_log_return': 0.14955938704060256, 'volume_vs_prior_90d_median': 9.231324833310927, 'quote_currency': 'USD'}}, 'absolute_close_return_difference': 0.000762543901742907, 'volume_comparison_policy': 'Venue volumes are not expected to match; compare each venue with its own trailing median.', 'binance_usdt_to_bitstamp_usd_close_price_ratio': 0.9921497348267927, 'implied_usd_per_usdt_if_btc_prices_were_at_parity': 1.007912379450041, 'binance_usdt_to_bitstamp_usd_open_price_ratio': 0.9913955308808737, 'quote_basis_caveat': 'The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged.'}"
       }
     ],
     "review_cycles": [
       {
         "cycle": 1,
-        "review_lens": "data",
-        "status": "PASS",
-        "checks_reviewed": 6,
-        "failures": [],
-        "warnings": []
-      },
-      {
-        "cycle": 2,
         "review_lens": "quant",
         "status": "PASS",
         "checks_reviewed": 5,
@@ -2255,7 +3679,7 @@
         "warnings": []
       },
       {
-        "cycle": 3,
+        "cycle": 2,
         "review_lens": "ledger",
         "status": "PASS",
         "checks_reviewed": 1,
@@ -2263,7 +3687,7 @@
         "warnings": []
       },
       {
-        "cycle": 4,
+        "cycle": 3,
         "review_lens": "risk",
         "status": "PASS",
         "checks_reviewed": 1,
@@ -2271,7 +3695,7 @@
         "warnings": []
       },
       {
-        "cycle": 5,
+        "cycle": 4,
         "review_lens": "operations",
         "status": "PASS",
         "checks_reviewed": 1,
@@ -2279,7 +3703,7 @@
         "warnings": []
       },
       {
-        "cycle": 6,
+        "cycle": 5,
         "review_lens": "red_team",
         "status": "PASS",
         "checks_reviewed": 1,
@@ -2287,10 +3711,18 @@
         "warnings": []
       },
       {
-        "cycle": 7,
+        "cycle": 6,
         "review_lens": "protocol",
         "status": "PASS",
         "checks_reviewed": 5,
+        "failures": [],
+        "warnings": []
+      },
+      {
+        "cycle": 7,
+        "review_lens": "data",
+        "status": "PASS",
+        "checks_reviewed": 7,
         "failures": [],
         "warnings": []
       }
@@ -2312,5 +3744,5 @@
     "event_ids_unique": true,
     "ledger_sha256": "c99e834515c687a6caa48a0c946a1b6d6917ed3fa7139a58006fabe397c2c346"
   },
-  "finished_at_utc": "2026-11-17T21:39:08.018740+00:00"
+  "finished_at_utc": "2026-11-17T22:12:33.338298+00:00"
 }
