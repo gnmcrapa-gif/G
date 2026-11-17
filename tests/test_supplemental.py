@@ -150,7 +150,7 @@ def test_treasury_xml_parser_reads_official_nominal_yield_fields():
 def test_dfii10_fallback_requests_official_real_yield_curve(monkeypatch, tmp_path):
     from datetime import date
 
-    import btc_quant.supplemental as supplemental
+    from btc_quant import supplemental
 
     payload = b"""<?xml version="1.0"?>
     <feed xmlns="http://www.w3.org/2005/Atom" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices">
