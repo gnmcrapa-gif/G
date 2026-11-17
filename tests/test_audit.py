@@ -7,6 +7,7 @@ from btc_quant.audit import (
     AUDIT_LENSES,
     _check_ledger,
     audit_outlier_date,
+    build_observed_drivers,
     verify_binance_archive_coverage,
     verify_bitstamp_page_reconciliation,
     verify_raw_objects,
@@ -149,3 +150,19 @@ def test_ledger_audit_blocks_matured_pending_forecast_without_score():
     )
     assert result["status"] == "BLOCKED"
     assert "matured pending forecast has no SCORE event" in result["issues"][0]["reason"]
+
+
+
+def test_report_observed_drivers_are_fixed_1_7_30_session_facts():
+    close = [100.0 + index for index in range(31)]
+    frame = pd.DataFrame({
+        "timestamp": pd.date_range("2026-10-17", periods=31, freq="D", tz="UTC"),
+        "open": close, "high": [value * 1.01 for value in close],
+        "low": [value * 0.99 for value in close], "close": close,
+        "volume": [100.0] * 30 + [150.0],
+    })
+    result = build_observed_drivers(frame)
+    assert result["status"] == "PASS"
+    assert [row["window_sessions"] for row in result["three_observed_price_drivers"]] == [1, 7, 30]
+    assert result["latest_volume_vs_previous_30_session_median"] == 1.5
+    assert all(row["source"] == "Binance BTCUSDT spot daily OHLCV" for row in result["three_observed_price_drivers"])
