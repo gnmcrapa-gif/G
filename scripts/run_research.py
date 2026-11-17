@@ -32,6 +32,7 @@ from btc_quant.reporting import (
     _build_longitudinal_comparison,
     _build_report_sections,
     _market_snapshot,
+    render_markdown_report,
 )
 from btc_quant.research import cross_check_venues, walk_forward
 from btc_quant.validation import validate_ohlcv
@@ -464,6 +465,9 @@ def main() -> int:
     run.setdefault("performance", {})["total_seconds_before_report"] = round(time.perf_counter() - process_started, 3)
     run["finished_at_utc"] = datetime.now(UTC).isoformat()
     (output_dir / "run_report.json").write_text(json.dumps(run, indent=2), encoding="utf-8")
+    (output_dir / "daily_report.md").write_text(
+        render_markdown_report(run, scores), encoding="utf-8"
+    )
     print(json.dumps(run, indent=2))
     return 0 if run["status"].startswith("COMPLETE") else 2
 
