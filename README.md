@@ -79,6 +79,7 @@ Known source limits are explicit:
 - Binance historical open-interest statistics and taker buy/sell ratio endpoints expose only about the latest 30 days; they are not long-history series.
 - Deribit option open interest is denominated in BTC for options and delayed by 8 hours. Public open interest cannot reveal dealer positioning or the sign of dealer gamma.
 - The public ETF dataset covers US spot Bitcoin ETFs, not global ETPs, and may lag issuer reporting.
+- The report compares halving cycles on Bitstamp BTC/USD at the same elapsed-session horizon; cycles without the halving-date candle in the source history are marked insufficient, and the comparison is descriptive rather than predictive.
 - Exchange reserves/netflows require verified wallet labels; raw transfers are not exchange flows.
 - A complete market-wide liquidation series, spot/futures CVD, global ETP flows and verified geopolitical/regulatory event feed are not claimed unless a source is actually acquired and QA-checked.
 - FRED macro observations retain their native publication/observation dates; monthly and weekly series are not treated as real-time.
