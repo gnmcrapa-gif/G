@@ -508,8 +508,8 @@ def render_markdown_report(run: dict, scores: dict) -> str:
              f"1D {_display(taker_windows.get('1d'), 2)} BTC; "
              f"7D {_display(taker_windows.get('7d'), 2)} BTC; "
              f"30D {_display(taker_windows.get('30d'), 2)} BTC."),
-            f"- Copertura delta taker: {taker_summary.get('closed_daily_rows', 0)} barre UTC complete "
-            f"su {okx.get('daily_taker_volume_history_rows', 0)} scaricate.",
+            (f"- Copertura delta taker: {taker_summary.get('closed_daily_rows', 0)} barre UTC complete "
+             f"su {okx.get('daily_taker_volume_history_rows', 0)} scaricate."),
             f"- Nota CVD: {taker_summary.get('measurement_note', 'n/d')}",
             "- Liquidazioni: NOT_ACQUIRED; nessuna stima ricavata da endpoint non pertinenti.",
             (f"- Copertura per venue: Binance {venue_coverage.get('binance_futures', 'n/d')}; "
