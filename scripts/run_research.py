@@ -185,7 +185,31 @@ def main() -> int:
             if frame is not None:
                 cross_checks.append({"venue": label, **cross_check_venues(binance.tail(len(frame)), frame)})
             run["steps"].append({"step": f"{label.lower()}_recent_cross_check", **record})
+        for check in cross_checks:
+            check["metric_metadata"] = {
+                "primary_series": "Binance spot BTCUSDT / USDT",
+                "secondary_series": (
+                    "Coinbase Exchange BTC-USD / USD" if check.get("venue") == "Coinbase"
+                    else "Kraken XBT/USD / USD"
+                ),
+                "timeframe": "1 daily session",
+                "overlap_start_utc": check.get("overlap_start_utc"),
+                "overlap_end_utc": check.get("overlap_end_utc"),
+                "overlap_rows_unit": "daily observations",
+                "return_correlation_unit": "dimensionless",
+                "absolute_log_basis_unit": "log price-ratio units; USDT/USD not FX-adjusted",
+                "qa_status": check.get("status"),
+            }
         run["cross_checks"] = cross_checks
+        run["numeric_conventions"] = {
+            "price": "quote currency per BTC; USD and USDT kept separate",
+            "volume": "BTC per daily candle",
+            "percentage": "percent unless field explicitly says ratio or log return",
+            "log_return": "natural-log return units",
+            "horizon": "daily sessions",
+            "timestamp": "UTC candle-open timestamp; candle close is next UTC midnight",
+            "robust_volume_z": "dimensionless rolling score versus prior 90 completed sessions; minimum 60 sessions",
+        }
         run["performance"] = {"acquisition_and_qa_seconds": round(time.perf_counter() - stage_started, 3)}
         run["market_snapshot"] = {
             "as_of_utc": datetime.now(UTC).isoformat(),
@@ -206,6 +230,19 @@ def main() -> int:
         manifest_sha256 = hashlib.sha256(json.dumps(object_hashes).encode()).hexdigest()
         research_started = time.perf_counter()
         predictions, scores = walk_forward(binance, min_train_rows=args.min_train_rows)
+        scores["metric_metadata"] = {
+            "source": "Binance spot BTCUSDT",
+            "quote_currency": "USDT",
+            "timeframe": "1 daily session",
+            "target": scores.get("target"),
+            "target_unit": "natural-log return units",
+            "horizon_unit": "daily sessions",
+            "historical_window_start_utc": scores.get("holdout_start_utc"),
+            "historical_window_end_utc": scores.get("holdout_end_utc"),
+            "sample_role": scores.get("holdout_role"),
+            "data_qa_status": "PASS" if binance_qa else "BLOCKED",
+            "calibration_status": "NOT_CALIBRATED",
+        }
         run["performance"]["walk_forward_seconds"] = round(time.perf_counter() - research_started, 3)
         counts = predictions.groupby("horizon").size().to_dict() if len(predictions) else {}
         run["historical_continuity_rows_by_horizon"] = {str(k): int(v) for k, v in counts.items()}
