@@ -1302,6 +1302,134 @@ def _parse_ckh_exchange_ranking(html_payload: bytes) -> dict:
     }
 
 
+def _parse_ckh_liquidations(html_payload: bytes) -> dict:
+    html_text = html_payload.decode("utf-8", errors="replace")
+    parser = _ExchangeTableParser()
+    parser.feed(html_text)
+    clean = re.sub(r"<script\\b.*?</script>|<style\\b.*?</style>", " ", html_text, flags=re.I | re.S)
+    plain = unescape(re.sub(r"<[^>]+>", " ", clean))
+    plain = re.sub(r"\\s+", " ", plain)
+
+    headline = re.search(
+        r"In the 24 hours to ([0-9:]+ UTC on [0-9]{1,2} [A-Za-z]+ [0-9]{4}), "
+        r"CryptoKeyhole counted (\\$[0-9,.]+[KMB]?) of crypto futures liquidations across "
+        r"([0-9]+) coins on [A-Za-z0-9]+ exchanges: (\\$[0-9,.]+[KMB]?) of longs and "
+        r"(\\$[0-9,.]+[KMB]?) of shorts",
+        plain, re.I,
+    )
+    updated = re.search(r"Last update ([0-9]{1,2} [A-Za-z]+ [0-9]{4}), ([0-9:]+ UTC)", plain, re.I)
+    headline_data = {}
+    if headline:
+        headline_time = pd.to_datetime(headline.group(1), format="%H:%M UTC on %d %b %Y", utc=True)
+        headline_data = {
+            "window_end_utc": headline_time.isoformat(),
+            "all_coins_24h_total_usd": _parse_provider_money(headline.group(2)),
+            "coins_covered": int(headline.group(3)),
+            "all_coins_24h_longs_usd": _parse_provider_money(headline.group(4)),
+            "all_coins_24h_shorts_usd": _parse_provider_money(headline.group(5)),
+        }
+    updated_utc = None
+    if updated:
+        try:
+            updated_utc = pd.to_datetime(
+                f"{updated.group(1)} {updated.group(2)}",
+                format="%d %b %Y %H:%M UTC", utc=True,
+            ).isoformat()
+        except (TypeError, ValueError):
+            updated_utc = None
+
+    windows = {}
+    largest_singles = []
+    largest_days = []
+    for index, row in enumerate(parser.rows):
+        header = [cell.lower().strip() for cell in row]
+        if len(header) >= 6 and header[:2] == ["coin", "side"] and header[-1] == "24 hours":
+            current_coin = None
+            for data_row in parser.rows[index + 1:]:
+                if len(data_row) < 6:
+                    continue
+                if data_row[0].lower().strip() in {"time (utc)", "day (utc)", "coin"}:
+                    break
+                coin = data_row[0].strip() or current_coin
+                if data_row[0].strip():
+                    current_coin = data_row[0].strip()
+                side = data_row[1].strip().lower()
+                if not coin or side not in {"longs", "shorts"}:
+                    continue
+                windows.setdefault(coin, {})[side] = {
+                    "1h_usd": _parse_provider_money(data_row[2]),
+                    "4h_usd": _parse_provider_money(data_row[3]),
+                    "12h_usd": _parse_provider_money(data_row[4]),
+                    "24h_usd": _parse_provider_money(data_row[5]),
+                }
+            break
+
+    for index, row in enumerate(parser.rows):
+        header = [cell.lower().strip() for cell in row]
+        if len(header) >= 6 and header[:3] == ["time (utc)", "coin", "side"]:
+            for data_row in parser.rows[index + 1:]:
+                if len(data_row) < 6 or data_row[0].lower().strip() == "day (utc)":
+                    break
+                largest_singles.append({
+                    "time_utc": data_row[0], "coin": data_row[1],
+                    "side": data_row[2], "venue": data_row[3],
+                    "size_usd": _parse_provider_money(data_row[4]),
+                    "price": _parse_provider_money(data_row[5]),
+                })
+            break
+
+    for index, row in enumerate(parser.rows):
+        header = [cell.lower().strip() for cell in row]
+        if len(header) >= 6 and header[:3] == ["day (utc)", "all coins", "longs"]:
+            for data_row in parser.rows[index + 1:]:
+                if len(data_row) < 6:
+                    continue
+                if not re.search(r"\\d{4}", data_row[0]):
+                    break
+                largest_days.append({
+                    "day_utc": data_row[0],
+                    "all_coins_usd": _parse_provider_money(data_row[1]),
+                    "longs_usd": _parse_provider_money(data_row[2]),
+                    "shorts_usd": _parse_provider_money(data_row[3]),
+                    "bitcoin_usd": _parse_provider_money(data_row[4]),
+                    "ethereum_usd": _parse_provider_money(data_row[5]),
+                })
+            break
+
+    btc = windows.get("Bitcoin", {})
+    btc_longs = btc.get("longs", {})
+    btc_shorts = btc.get("shorts", {})
+    exchange_scope = [
+        "Binance", "Bybit", "OKX", "Deribit", "Kraken", "Bitget", "Gate", "HTX",
+    ]
+    return {
+        "status": "PASS" if headline_data and btc_longs.get("24h_usd") is not None and updated_utc else "PARTIAL" if headline_data else "FAIL",
+        **headline_data,
+        "page_updated_at_utc": updated_utc,
+        "bitcoin_24h_longs_usd": btc_longs.get("24h_usd"),
+        "bitcoin_24h_shorts_usd": btc_shorts.get("24h_usd"),
+        "bitcoin_24h_total_usd": (
+            (btc_longs.get("24h_usd") or 0) + (btc_shorts.get("24h_usd") or 0)
+            if btc_longs or btc_shorts else None
+        ),
+        "hourly_windows_by_coin": windows,
+        "largest_single_liquidations": largest_singles[:10],
+        "largest_liquidation_days": largest_days[:10],
+        "exchanges_included": exchange_scope,
+        "exchanges_excluded": [
+            "Hyperliquid", "Bitfinex", "KuCoin", "Crypto.com", "Coinbase Derivatives",
+        ],
+        "coverage_start_date": "2026-10-14",
+        "method": "Public exchange liquidation feeds; long/short values aggregated by fill notional.",
+        "limitations": (
+            "Lower bound, not the entire market: only the eight listed exchanges and 153 covered coins. "
+            "Hyperliquid, Bitfinex, KuCoin, Crypto.com and Coinbase Derivatives are excluded. Binance reports "
+            "at most one liquidation per contract per second; Deribit and Kraken use liquidation-flagged trades "
+            "with a reporting delay; OKX coverage is complete only since 24 Oct 2026."
+        ),
+    }
+
+
 def _ckh_point(point) -> dict | None:
     if isinstance(point, dict):
         stamp = point.get("t", point.get("timestamp", point.get("date")))
