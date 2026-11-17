@@ -344,7 +344,8 @@ def render_markdown_report(run: dict, scores: dict) -> str:
             f"{_display(item.get('close_change_1d_pct'), 3)}% | "
             f"{_display(item.get('close_change_7d_pct'), 3)}% | "
             f"{_display(item.get('close_change_30d_pct'), 3)}% | "
-            f"{_display(item.get('intraday_range_pct'), 3)}% | {_display(item.get('volume_btc'), 2)} |"
+            f"{_display(item.get('intraday_range_pct'), 3)}% | {_display(item.get('volume_btc'), 2)} | "
+            f"{_display(item.get('volume_7d_btc'), 2)} | {_display(item.get('volume_30d_btc'), 2)} |"
         )
     lines += ["", "### Quotazioni spot — ultimo scambio osservato", "",
               "| Venue | Prezzo | Variazione 24h | Volume base 24h | Timestamp ultimo scambio UTC |",
