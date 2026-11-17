@@ -1,5 +1,5 @@
 {
-  "started_at_utc": "2026-11-17T16:55:57.680031+00:00",
+  "started_at_utc": "2026-11-17T19:08:53.894892+00:00",
   "status": "COMPLETE_NOT_PROMOTED",
   "protocol": "V5.5",
   "steps": [
@@ -14,7 +14,23 @@
         "last_timestamp_utc": "2026-11-16T00:00:00+00:00",
         "gap_count": 0,
         "closed_candles_only": "PASS",
-        "latest_age_days": 1
+        "latest_age_days": 1,
+        "latest_candle_age_hours": 19.159,
+        "zero_volume_rows": 0,
+        "zero_volume_pct": 0.0,
+        "volume_median_btc": 36285.648526,
+        "volume_p99_btc": 386126.8690075998,
+        "volume_max_btc": 760705.362783,
+        "volume_robust_z_max": 27.208963143199416,
+        "volume_robust_z_max_timestamp_utc": "2022-11-08T00:00:00+00:00",
+        "volume_max_timestamp_utc": "2022-11-08T00:00:00+00:00",
+        "absolute_close_return_max_timestamp_utc": "2020-03-12T00:00:00+00:00",
+        "intraday_range_pct_max_timestamp_utc": "2020-03-13T00:00:00+00:00",
+        "absolute_close_return_p99": 0.11694178429087611,
+        "absolute_close_return_max": 0.5026069427414583,
+        "intraday_range_pct_p99": 0.19237185006201118,
+        "intraday_range_pct_max": 0.45268030691602723,
+        "diagnostic_note": "Zero-volume and tail metrics are descriptive QA diagnostics, not automatic rejection thresholds."
       }
     },
     {
@@ -28,7 +44,23 @@
         "last_timestamp_utc": "2026-11-16T00:00:00+00:00",
         "gap_count": 0,
         "closed_candles_only": "PASS",
-        "latest_age_days": 1
+        "latest_age_days": 1,
+        "latest_candle_age_hours": 19.16,
+        "zero_volume_rows": 0,
+        "zero_volume_pct": 0.0,
+        "volume_median_btc": 3154.24801664,
+        "volume_p99_btc": 29213.55860212485,
+        "volume_max_btc": 70961.36965826,
+        "volume_robust_z_max": 22.995195613554866,
+        "volume_robust_z_max_timestamp_utc": "2018-02-06T00:00:00+00:00",
+        "volume_max_timestamp_utc": "2018-02-06T00:00:00+00:00",
+        "absolute_close_return_max_timestamp_utc": "2020-03-12T00:00:00+00:00",
+        "intraday_range_pct_max_timestamp_utc": "2020-03-13T00:00:00+00:00",
+        "absolute_close_return_p99": 0.11964439300853298,
+        "absolute_close_return_max": 0.49396945967608197,
+        "intraday_range_pct_p99": 0.18704483474685074,
+        "intraday_range_pct_max": 0.4420685424657195,
+        "diagnostic_note": "Zero-volume and tail metrics are descriptive QA diagnostics, not automatic rejection thresholds."
       }
     },
     {
@@ -42,17 +74,17 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-17T16:56:45.130215+00:00",
+      "retrieved_at_utc": "2026-11-17T19:09:34.648260+00:00",
       "parser": "Coinbase candle array parser",
       "parser_version": "0.2",
       "objects": [
         {
           "source": "Coinbase Exchange candles API",
           "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=2026-01-21T00%3A00%3A00%2B00%3A00&end=2026-11-17T00%3A00%3A00%2B00%3A00",
-          "retrieved_at_utc": "2026-11-17T16:56:45.130160+00:00",
+          "retrieved_at_utc": "2026-11-17T19:09:34.648204+00:00",
           "file": "data/raw/coinbase/coinbase_btcusd_1d_recent.json",
           "size_bytes": 18462,
-          "sha256": "7bb476b974e1b35d19b56a6b97fc0ba9c84a13f62656250c8595ceef3ee71481",
+          "sha256": "d0cec2fe19540f9a19a03e9ab07e2c7f2cf7c92de30e7bc9179a4e06a041296d",
           "venue": "Coinbase",
           "symbol": "BTC-USD",
           "quote_currency": "USD",
@@ -73,7 +105,23 @@
         "last_timestamp_utc": "2026-11-16T00:00:00+00:00",
         "gap_count": 0,
         "closed_candles_only": "PASS",
-        "latest_age_days": 1
+        "latest_age_days": 1,
+        "latest_candle_age_hours": 19.16,
+        "zero_volume_rows": 0,
+        "zero_volume_pct": 0.0,
+        "volume_median_btc": 7277.57349707,
+        "volume_p99_btc": 25565.57779594427,
+        "volume_max_btc": 49371.20579141,
+        "volume_robust_z_max": 10.23825676412563,
+        "volume_robust_z_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
+        "volume_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
+        "absolute_close_return_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
+        "intraday_range_pct_max_timestamp_utc": "2026-02-06T00:00:00+00:00",
+        "absolute_close_return_p99": 0.06899803817327972,
+        "absolute_close_return_max": 0.15062029241072317,
+        "intraday_range_pct_p99": 0.0982022796575952,
+        "intraday_range_pct_max": 0.1864389341450346,
+        "diagnostic_note": "Zero-volume and tail metrics are descriptive QA diagnostics, not automatic rejection thresholds."
       },
       "status": "PASS"
     },
@@ -88,17 +136,17 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-17T16:56:45.167099+00:00",
+      "retrieved_at_utc": "2026-11-17T19:09:34.773688+00:00",
       "parser": "Kraken OHLC parser",
       "parser_version": "0.2",
       "objects": [
         {
           "source": "Kraken public OHLC API",
           "url": "https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1440",
-          "retrieved_at_utc": "2026-11-17T16:56:45.166826+00:00",
+          "retrieved_at_utc": "2026-11-17T19:09:34.773376+00:00",
           "file": "data/raw/kraken/kraken_btcusd_1d_recent.json",
           "size_bytes": 62328,
-          "sha256": "dc7934ca472b96d14a72a3091846b209ba9f8d37b630b64a1c54f09b109fd083",
+          "sha256": "b811d6d7e314cf4b32414f4320e82bd9cc5c52175015702c491ec7bf38902d5e",
           "venue": "Kraken",
           "symbol": "XBT/USD",
           "quote_currency": "USD",
@@ -119,7 +167,23 @@
         "last_timestamp_utc": "2026-11-16T00:00:00+00:00",
         "gap_count": 0,
         "closed_candles_only": "PASS",
-        "latest_age_days": 1
+        "latest_age_days": 1,
+        "latest_candle_age_hours": 19.16,
+        "zero_volume_rows": 0,
+        "zero_volume_pct": 0.0,
+        "volume_median_btc": 1673.7672171250001,
+        "volume_p99_btc": 6441.87900574148,
+        "volume_max_btc": 12178.16328649,
+        "volume_robust_z_max": 10.332163683975802,
+        "volume_robust_z_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
+        "volume_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
+        "absolute_close_return_max_timestamp_utc": "2026-02-05T00:00:00+00:00",
+        "intraday_range_pct_max_timestamp_utc": "2025-10-10T00:00:00+00:00",
+        "absolute_close_return_p99": 0.06856255403997878,
+        "absolute_close_return_max": 0.14976592015252166,
+        "intraday_range_pct_p99": 0.10091557150102462,
+        "intraday_range_pct_max": 0.18486593973656315,
+        "diagnostic_note": "Zero-volume and tail metrics are descriptive QA diagnostics, not automatic rejection thresholds."
       },
       "status": "PASS"
     },
@@ -1214,7 +1278,10 @@
         "training_uses_holdout": false,
         "features": "price-only BTC close returns, rolling volatility and trend",
         "regime_definition": "bull/bear/range from close versus SMA200 and SMA200 20-session slope; ex ante",
-        "target": "log(Open[t+h+2]/Open[t+2]); signal after close t; one daily bar latency; entry future open"
+        "target": "log(Open[t+h+2]/Open[t+2]); signal after close t; one complete daily bar reserved for execution latency; entry at first open not passed at the 16:00 UTC run",
+        "requested_next_open_target": "log(Open[t+h+1]/Open[t+1])",
+        "requested_next_open_target_executable_at_scheduled_run": false,
+        "target_timing_decision": "The scheduled run is 16:00 UTC; Open[t+1] occurs at 00:00 UTC before issuance. The production research target therefore uses entry Open[t+2]. The h+1 target remains available only as a non-executable theoretical diagnostic."
       }
     }
   ],
@@ -1246,12 +1313,13 @@
       "warning": "USDT/USD quote basis is not FX-adjusted; venues remain separate."
     }
   ],
-  "matured_oos_counts_by_horizon": {
+  "historical_continuity_rows_by_horizon": {
     "1": 362,
     "3": 360,
     "7": 356,
     "30": 333
   },
+  "historical_continuity_role": "diagnostic_only_not_prospective_ledger_maturity",
   "probabilistic_claims_allowed": false,
   "prospective_ledger_validation": {
     "source": "append-only prospective forecast ledger; matured SCORE events only",
@@ -1263,10 +1331,10 @@
   "ledger": {
     "invalidations_created": 0,
     "score_events_created": 0,
-    "forecast_events_created": 4,
-    "duplicate_forecasts_suppressed": 0,
-    "events_appended": 4,
-    "existing_events_before_run": 12,
+    "forecast_events_created": 0,
+    "duplicate_forecasts_suppressed": 4,
+    "events_appended": 0,
+    "existing_events_before_run": 16,
     "total_events_after_run": 16,
     "append_only": true
   },
@@ -1315,5 +1383,5 @@
     "next_priority_experiment": "V5.5-OHLCV-001: isolated volume-surprise and candle-geometry challenger; prospective ledger only.",
     "decision": "KEEP_ZERO_RETURN_CHAMPION; RIDGE_CHALLENGER_ONLY; NO_PROMOTION; ABSTAIN_FROM_LIVE_RISK"
   },
-  "finished_at_utc": "2026-11-17T16:56:45.285008+00:00"
+  "finished_at_utc": "2026-11-17T19:09:34.893583+00:00"
 }
