@@ -10,7 +10,7 @@ A full review of the persisted production artifact from daily-research run #54 i
 
 ## Permanent review sequence
 
-The report generator now runs `build_pre_report_review` before serializing `reports/latest/run_report.json`. A report cannot be emitted as complete when a critical pre-report check fails. The risk gate is forced to paper-only and 0% theoretical exposure if the audit blocks or itself raises an exception.
+The report generator now runs `build_pre_report_review` before serializing `reports/latest/run_report.json`. It also emits FACT/INTERPRETATION/HYPOTHESIS/FORECAST sections, a price snapshot, fixed 1/7/30-session observed drivers, pending point forecasts and a closing assessment. A report cannot be emitted as complete when a critical pre-report check fails. The risk gate is forced to paper-only and 0% theoretical exposure if the audit blocks or itself raises an exception.
 
 Every run performs all core checks:
 
@@ -25,10 +25,11 @@ Every run performs all core checks:
 9. Benchmark governance: zero-return champion retained, Ridge challenger not promoted.
 10. Risk fail-safe: paper-only, no live trading, theoretical exposure exactly 0%.
 11. Any forecast whose expiry is already present in the latest validated daily series must have a SCORE event; otherwise the pre-report gate blocks. Invalidated late-entry records remain preserved and are explicitly exempt from the valid-forecast chronology rule.
+12. Prospective sample and economic validity gate: 200 matured forecasts per horizon, documented execution rule and fee/spread/slippage model are required before cost-adjusted strategy claims.
 9. Optional Coinbase/Kraken source availability and explicit warning when unavailable.
 10. Historical outlier cross-check and limitations.
 
-One additional deep-review lens rotates by UTC date through six domains: data provenance/coverage; execution timing; ledger maturity; statistical validation/multiple testing; risk/economic limits; code efficiency/operations. Rotation changes the emphasis, not the baseline: all core checks run every day. The selected lens and evidence are included in the report.
+One additional deep-review lens rotates on every run through six domains: data provenance/coverage; execution timing; ledger maturity; statistical validation/multiple testing; risk/economic limits; code efficiency/operations. The rotation key is the UTC run-start epoch second, so reruns on the same day can inspect a different domain. Rotation changes the emphasis, not the baseline: all core checks run every time. The selected lens and evidence are included in the report.
 
 ## Historical raw-data audit
 
