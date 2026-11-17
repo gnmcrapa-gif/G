@@ -14,7 +14,7 @@ class DataValidationError(ValueError):
 
 
 def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
-                   require_closed: bool = True, now: pd.Timestamp | None = None) -> dict[str, int | str]:
+                   require_closed: bool = True, now: pd.Timestamp | None = None) -> dict[str, int | float | str]:
     """Validate without repairing rows; input timestamps must explicitly be UTC-aware."""
     missing = [column for column in REQUIRED_OHLCV if column not in frame.columns]
     if missing:
@@ -77,12 +77,35 @@ def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
     # expected (age=1 day); two missing daily sessions must block research.
     if latest_age > pd.Timedelta(days=1):
         raise DataValidationError(f"stale daily data; latest candle age={latest_age}")
+
+    close_returns = np.abs(np.diff(np.log(c)))
+    intraday_range_pct = (h - l) / o
+    volume_median = float(np.median(volume))
+    volume_mad = float(np.median(np.abs(volume - volume_median)))
+    robust_volume_z_max = (
+        float(np.max(np.abs(volume - volume_median)) / (1.4826 * volume_mad))
+        if volume_mad > 0 else None
+    )
+    candle_close_utc = ts.max() + pd.Timedelta(days=1)
+    exact_age_hours = max(0.0, (current - candle_close_utc).total_seconds() / 3600.0)
     return {
         "rows": len(frame), "duplicates": 0, "missing_volume": 0,
         "first_timestamp_utc": ts.min().isoformat(),
         "last_timestamp_utc": ts.max().isoformat(),
         "gap_count": 0, "closed_candles_only": "PASS",
         "latest_age_days": int(latest_age / pd.Timedelta(days=1)),
+        "latest_candle_age_hours": round(exact_age_hours, 3),
+        "zero_volume_rows": int(np.count_nonzero(volume == 0)),
+        "zero_volume_pct": float(np.mean(volume == 0) * 100.0),
+        "volume_median_btc": volume_median,
+        "volume_p99_btc": float(np.quantile(volume, 0.99)),
+        "volume_max_btc": float(np.max(volume)),
+        "volume_robust_z_max": robust_volume_z_max,
+        "absolute_close_return_p99": float(np.quantile(close_returns, 0.99)) if len(close_returns) else 0.0,
+        "absolute_close_return_max": float(np.max(close_returns)) if len(close_returns) else 0.0,
+        "intraday_range_pct_p99": float(np.quantile(intraday_range_pct, 0.99)),
+        "intraday_range_pct_max": float(np.max(intraday_range_pct)),
+        "diagnostic_note": "Zero-volume and tail metrics are descriptive QA diagnostics, not automatic rejection thresholds.",
     }
 
 
