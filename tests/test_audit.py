@@ -123,3 +123,29 @@ def test_ledger_audit_blocks_duplicate_event_ids():
     result = _check_ledger([event, event], now)
     assert result["status"] == "BLOCKED"
     assert result["duplicate_event_ids"] == 1
+
+
+
+def test_bitstamp_page_reconciliation_blocks_unexplained_row_loss():
+    result = verify_bitstamp_page_reconciliation({
+        "objects": [{"rows": 1000}] * 4,
+        "duplicates_removed_at_page_boundaries": 349,
+        "rows": 3640,
+    })
+    assert result["status"] == "BLOCKED"
+
+
+def test_ledger_audit_blocks_matured_pending_forecast_without_score():
+    now = datetime(2026, 11, 20, 20, tzinfo=UTC)
+    forecast = {
+        "event_id": "f", "event_type": "FORECAST", "forecast_id": "f",
+        "issued_at_utc": "2026-11-16T19:00:00+00:00",
+        "entry_timestamp_utc": "2026-11-18T00:00:00+00:00",
+        "expiry_timestamp_utc": "2026-11-19T00:00:00+00:00",
+        "forecast": 0.01,
+    }
+    result = _check_ledger(
+        [forecast], now, latest_data_timestamp="2026-11-19T00:00:00+00:00"
+    )
+    assert result["status"] == "BLOCKED"
+    assert "matured pending forecast has no SCORE event" in result["issues"][0]["reason"]
