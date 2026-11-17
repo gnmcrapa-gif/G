@@ -573,12 +573,15 @@ def render_markdown_report(run: dict, scores: dict) -> str:
     macro = supplemental.get("macro", {})
     if macro:
         lines += ["", "## 4. Macro e mercati USA", "",
-                  "| Serie | Osservazione | Valore | Unità | Stato |",
-                  "|---|---|---:|---|---|"]
+                  "| Serie | Periodo osservato | Freschezza fino | Valore | Unità | Stato | Recuperato UTC | Fonte / metodo |",
+                  "|---|---|---|---:|---|---|---|---|"]
         for series_id, item in macro.get("series", {}).items():
             lines.append(
                 f"| {series_id} — {item.get('label')} | {item.get('observation_date')} | "
-                f"{_display(item.get('value'), 4)} | {item.get('unit')} | {item.get('status')} |"
+                f"{item.get('freshness_reference_date', item.get('observation_date'))} | "
+                f"{_display(item.get('value'), 4)} | {item.get('unit')} | {item.get('status')} | "
+                f"{item.get('retrieved_at_utc', macro.get('retrieved_at_utc', 'n/d'))} | "
+                f"{item.get('source_method', item.get('source_url', 'FRED'))} |"
             )
         if macro.get("errors"):
             lines.append("")
