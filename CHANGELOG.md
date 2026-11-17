@@ -1,0 +1,22 @@
+# Changelog
+
+## V5.6 — 2026-11-17 (candidate for main)
+
+- Added mandatory executable pre-report review with seven rotating review cycles and a run-ID-selected red-team lens.
+- Added raw-object SHA-256/size verification, source manifest completeness, Binance monthly/daily archive coverage and Bitstamp pagination accounting.
+- Added rolling 90-session volume surprise diagnostics; withdrew non-stationary full-history volume z-scores.
+- Added cross-venue anomaly context for rolling volume surprise, absolute maximum volume, largest close return and largest candle range; quote-basis gaps are disclosed without silently converting USD/USDT.
+- Added explicit FACT / INTERPRETATION / HYPOTHESIS / FORECAST sections, last-closed-candle snapshots, economic-validation gates, three observed market factors and a single next experiment.
+- Added same-venue/same-quote longitudinal comparison and only compares historical MAE when holdout windows match.
+- Staged ledger events are reviewed before append; pull-request runs do not mutate the persistent ledger.
+- Added legacy one-element-array forecast parsing and scalar serialization so old ledger rows can mature without being lost.
+- Derived validation purge boundaries from the shared execution-entry lag constant.
+- Added runtime budget, exact code provenance and report publication gates.
+- Zero-return champion remains frozen; Ridge remains challenger only; no probabilities or live trading are enabled.
+
+## V5.5.1 — 2026-11-17
+
+- Corrected daily forecast timing for the 16:00 UTC scheduled run: executable entry is Open[t+2], not the already elapsed Open[t+1].
+- Centralized target construction for research and ledger.
+- Distinguished historical continuity rows from prospective matured ledger outcomes.
+- Added initial OHLCV tail and freshness diagnostics.
