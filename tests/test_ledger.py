@@ -1,6 +1,6 @@
-import pytest
 import numpy as np
 import pandas as pd
+import pytest
 
 from btc_quant.ledger import (
     generate_forecast_events,
