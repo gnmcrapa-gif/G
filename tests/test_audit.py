@@ -6,6 +6,7 @@ import pandas as pd
 from btc_quant.audit import (
     AUDIT_LENSES,
     _check_ledger,
+    _check_ohlcv_challenger,
     audit_outlier_date,
     build_observed_drivers,
     select_audit_lens,
@@ -176,3 +177,23 @@ def test_audit_rotation_can_change_between_same_day_reruns():
     assert first[0] != second[0]
     assert first[1] in AUDIT_LENSES
     assert second[1] in AUDIT_LENSES
+
+
+
+def test_ohlcv_challenger_audit_requires_training_cutoff_before_holdout():
+    event = {
+        "event_type": "FORECAST", "forecast_id": "o1",
+        "model_version": "ohlcv-challenger-0.1-fixed-alpha-100",
+        "forecast": 0.01,
+        "notes": (
+            "V5.5-OHLCV-001; fixed alpha=100; "
+            "training_cutoff_utc=2025-10-15T00:00:00+00:00; "
+            "holdout_start_utc=2025-11-16T00:00:00+00:00; "
+            "historical holdout excluded from training and tuning"
+        ),
+    }
+    result = _check_ohlcv_challenger([event], {"ohlcv_challenger": {"status": "PROSPECTIVE_ONLY_ACTIVE"}})
+    assert result["status"] == "PASS"
+    event["notes"] = event["notes"].replace("2025-10-15", "2025-12-15")
+    result = _check_ohlcv_challenger([event], {"ohlcv_challenger": {"status": "PROSPECTIVE_ONLY_ACTIVE"}})
+    assert result["status"] == "BLOCKED"
