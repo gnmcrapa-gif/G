@@ -896,7 +896,7 @@ def _news_keyword_tags(title: str, snippet: str = "") -> list[str]:
     # Match complete words/phrases; avoid accidental substring hits such as SEC in "second".
     return [
         tag for tag, words in groups.items()
-        if any(re.search(r"\\b" + re.escape(word) + r"\\b", text, flags=re.IGNORECASE) for word in words)
+        if any(re.search(r"\b" + re.escape(word) + r"\b", text, flags=re.IGNORECASE) for word in words)
     ]
 
 
