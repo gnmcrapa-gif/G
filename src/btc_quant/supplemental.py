@@ -144,6 +144,96 @@ def _spot_live_snapshot(directory: Path) -> tuple[dict, list[dict]]:
             "venues": summary, "errors": errors}, [manifest]
 
 
+def _summarize_hourly_taker_delta(rows: list) -> dict:
+    now_ms = int(datetime.now(UTC).timestamp() * 1000)
+    closed = sorted(
+        [row for row in rows if int(row[6]) < now_ms],
+        key=lambda row: int(row[0]),
+    )
+    result = {"status": "PASS" if len(closed) >= 168 else "PARTIAL", "closed_hourly_bars": len(closed)}
+    for label, hours in (("24h", 24), ("7d", 168)):
+        window = closed[-hours:]
+        if len(window) < hours:
+            result[label] = {"status": "INSUFFICIENT_BARS", "required_hours": hours, "actual_hours": len(window)}
+            continue
+        total_volume = sum(float(row[5]) for row in window)
+        buy_volume = sum(float(row[9]) for row in window)
+        if buy_volume > total_volume + 1e-8:
+            raise ValueError("taker-buy base volume exceeds total base volume")
+        sell_volume = total_volume - buy_volume
+        delta = buy_volume - sell_volume
+        result[label] = {
+            "status": "PASS",
+            "hours": hours,
+            "start_candle_open_utc": _timestamp_ms(window[0][0]),
+            "end_candle_close_utc": _timestamp_ms(window[-1][6]),
+            "total_volume_btc": total_volume,
+            "taker_buy_volume_btc": buy_volume,
+            "taker_sell_volume_btc": sell_volume,
+            "cumulative_delta_btc": delta,
+            "delta_pct_of_total_volume": delta / total_volume * 100.0 if total_volume else None,
+            "method": "sum(hourly taker-buy base volume minus taker-sell base volume)",
+        }
+    return result
+
+
+def _binance_cvd(directory: Path) -> tuple[dict, list[dict]]:
+    session = requests.Session()
+    session.headers.update({"User-Agent": USER_AGENT})
+    objects, manifests, summaries, errors = [], [], {}, {}
+    sources = (
+        ("spot", "https://api.binance.com/api/v3/klines", "Binance Spot", "BTCUSDT", "USDT"),
+        ("futures", BINANCE_FUTURES + "/fapi/v1/klines", "Binance USD-M Futures", "BTCUSDT", "USDT"),
+    )
+    for market, url, venue, symbol, quote in sources:
+        try:
+            rows, obj = _request_json(
+                session, "GET", url, directory, f"{market}_btc_cvd_1h_7d.json",
+                params={"symbol": symbol, "interval": "1h", "limit": 169},
+                source=f"{venue} hourly taker-volume candles",
+                venue=venue, symbol=symbol, quote=quote,
+            )
+            objects.append(obj)
+            summaries[market] = _summarize_hourly_taker_delta(rows)
+            manifests.append({
+                "source": f"{venue} hourly taker-volume candles",
+                "venue": venue, "symbol": symbol, "quote_currency": quote,
+                "interval": "1h", "timezone": "UTC",
+                "schema_version": "1.0", "source_grade": "A",
+                "retrieved_at_utc": datetime.now(UTC).isoformat(),
+                "parser": "Binance kline taker-buy/sell volume delta parser",
+                "parser_version": "0.3",
+                "schema": ["open_time", "open", "high", "low", "close", "base_volume",
+                           "close_time", "quote_volume", "trade_count", "taker_buy_base_volume",
+                           "taker_buy_quote_volume", "ignore"],
+                "objects": [obj], "status": summaries[market]["status"],
+            })
+        except (requests.RequestException, ValueError, TypeError, IndexError) as exc:
+            errors[market] = f"{type(exc).__name__}: {exc}"
+            summaries[market] = {"status": "FAIL", "error": errors[market]}
+            manifests.append({
+                "source": f"{venue} hourly taker-volume candles",
+                "venue": venue, "symbol": symbol, "quote_currency": quote,
+                "interval": "1h", "timezone": "UTC",
+                "schema_version": "1.0", "source_grade": "A",
+                "retrieved_at_utc": datetime.now(UTC).isoformat(),
+                "parser": "Binance kline taker-buy/sell volume delta parser",
+                "parser_version": "0.3", "schema": [], "objects": [],
+                "status": "FAIL", "error": errors[market],
+            })
+    statuses = [item.get("status") for item in summaries.values()]
+    overall = "PASS" if len(statuses) == 2 and all(s == "PASS" for s in statuses) else (
+        "PARTIAL" if any(s in {"PASS", "PARTIAL"} for s in statuses) else "FAIL"
+    )
+    return {
+        "status": overall,
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "markets": summaries,
+        "errors": errors,
+        "measurement_note": "Hourly Binance kline taker-buy base volume minus inferred taker-sell base volume; not tick-level order-book delta.",
+    }, manifests
+
+
 def _binance_derivatives(directory: Path) -> tuple[dict, dict]:
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
@@ -828,8 +918,8 @@ def empty_supplemental_coverage() -> dict:
         },
         "macro_and_indices": {"status": "NOT_RUN"},
         "spot_futures_cvd": {
-            "status": "PROXY_ONLY",
-            "reason": "Binance futures taker buy/sell ratio is a proxy only; spot CVD and full cumulative trade delta are not acquired.",
+            "status": "NOT_RUN",
+            "reason": "Hourly taker-volume delta has not yet been acquired.",
         },
         "geopolitical_regulatory_news": {
             "status": "NOT_IMPLEMENTED",
@@ -855,6 +945,19 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
     except Exception as exc:  # noqa: BLE001
         summary["spot_live"] = {"status": "FAIL", "error": f"{type(exc).__name__}: {exc}"}
         summary["coverage"]["spot_live_quotes"]["status"] = "FAIL"
+    try:
+        cvd_data, cvd_manifests = _binance_cvd(output_dir / "binance_cvd")
+        summary["cvd"] = cvd_data
+        manifests.extend(cvd_manifests)
+        summary["coverage"]["spot_futures_cvd"] = {
+            "status": cvd_data.get("status", "FAIL"),
+            "reason": cvd_data.get("measurement_note"),
+        }
+    except Exception as exc:  # noqa: BLE001
+        summary["cvd"] = {"status": "FAIL", "error": f"{type(exc).__name__}: {exc}"}
+        summary["coverage"]["spot_futures_cvd"] = {
+            "status": "FAIL", "reason": summary["cvd"]["error"],
+        }
     derivative_statuses = {}
     for name, function, directory in (
         ("binance_futures", _binance_derivatives, output_dir / "binance_futures"),
