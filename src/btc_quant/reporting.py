@@ -204,7 +204,12 @@ def _build_report_sections(run: dict, scores: dict) -> tuple[dict, dict, dict]:
                 "statement": "Il ledger prospettico conteggia esclusivamente eventi SCORE maturati.",
                 "evidence": {"matured_by_horizon": matured, "new_score_events": scored_now},
             },
-        ] + supplemental_facts,
+        ] + supplemental_facts + [
+            {
+                "statement": "Il confronto dei cicli post-halving è descrittivo e usa la stessa venue/quote e lo stesso orizzonte temporale.",
+                "evidence": run.get("cycle_comparison", {}),
+            },
+        ],
         "INTERPRETATION": [
             {
                 "statement": "Zero-return ha la MAE più bassa in tutti gli orizzonti storici confrontati."
@@ -537,9 +542,27 @@ def render_markdown_report(run: dict, scores: dict) -> str:
             lines.append("")
             lines.append(f"Feed macro non acquisiti: {macro['errors']}")
 
+    cycle = run.get("cycle_comparison", {})
+    if cycle:
+        lines += ["", "## 5. Ciclo Bitcoin — confronto post-halving", "",
+                  f"- Stato: {cycle.get('status')}; fonte: {cycle.get('source')}.",
+                  f"- Orizzonte corrente: {cycle.get('current_cycle_elapsed_sessions')} sessioni dal 20 aprile 2024.",
+                  f"- Limite: {cycle.get('interpretation_limit', '')}",
+                  "| Ciclo | Stato | Giorni/sessioni | Rendimento stesso orizzonte | Massimo rendimento | Giorni al picco | Drawdown massimo da picco |",
+                  "|---|---|---:|---:|---:|---:|---:|"]
+        for item in cycle.get("cycles", []):
+            lines.append(
+                f"| {item.get('cycle')} | {item.get('status')} | "
+                f"{item.get('elapsed_sessions', 'n/d')} | "
+                f"{_display(item.get('return_at_same_elapsed_horizon_pct'), 2)}% | "
+                f"{_display(item.get('maximum_close_return_pct'), 2)}% | "
+                f"{item.get('days_to_maximum_close', 'n/d')} | "
+                f"{_display(item.get('maximum_close_drawdown_from_peak_pct'), 2)}% |"
+            )
+
     news = supplemental.get("news", {})
     if news:
-        lines += ["", "## 5. Eventi, regolamentazione e geopolitica — feed descrittivi", "",
+        lines += ["", "## 6. Eventi, regolamentazione e geopolitica — feed descrittivi", "",
                   f"- Stato: {news.get('status')}. {news.get('interpretation_limit', '')}",
                   "| Fonte | Stato | Articoli acquisiti |",
                   "|---|---|---:|"]
@@ -558,7 +581,7 @@ def render_markdown_report(run: dict, scores: dict) -> str:
             )
 
     taxonomy = run.get("report_taxonomy", {})
-    lines += ["", "## 6. Fatti, interpretazioni, ipotesi e previsioni", "",
+    lines += ["", "## 7. Fatti, interpretazioni, ipotesi e previsioni", "",
               "### FATTI"]
     for item in taxonomy.get("FACT", []):
         lines.append(f"- {item.get('statement')}")
@@ -578,7 +601,7 @@ def render_markdown_report(run: dict, scores: dict) -> str:
               f"- Probabilità calibrate pubblicate: {forecast_taxonomy.get('calibrated_probabilities_published', False)}.",
               f"- {forecast_taxonomy.get('qualification', 'Nessuna previsione qualificata disponibile.')}"]
 
-    lines += ["", "## 7. Validazione quantitativa", "",
+    lines += ["", "## 8. Validazione quantitativa", "",
               "Le metriche seguenti sono diagnostiche sul periodo storico già ispezionato; non sono prova prospettica né PnL eseguibile.",
               "", "| Orizzonte | N | Zero MAE | Drift MAE | Momentum MAE | Ridge MAE |",
               "|---:|---:|---:|---:|---:|---:|"]
@@ -591,14 +614,14 @@ def render_markdown_report(run: dict, scores: dict) -> str:
             f"{_display(block.get('ridge', {}).get('mae'), 6)} |"
         )
     ledger = run.get("ledger", {})
-    lines += ["", "## 8. Ledger e rischio", "",
+    lines += ["", "## 9. Ledger e rischio", "",
               f"- Stato ledger: {ledger.get('persistence_status', 'n/d')}; eventi prima/dopo: {ledger.get('existing_events_before_run', 'n/d')} / {ledger.get('total_events_after_run', 'n/d')}.",
               f"- Nuove previsioni: {ledger.get('forecast_events_created', 0)}; duplicate soppresse: {ledger.get('duplicate_forecasts_suppressed', 0)}; score maturati: {ledger.get('score_events_created', 0)}.",
               f"- Campione prospettico: {run.get('prospective_ledger_validation', {}).get('decision', 'n/d')}.",
               f"- Rischio: {run.get('risk', {}).get('mode', 'n/d')}; live trading: {run.get('risk', {}).get('live_trading_enabled', False)}; esposizione teorica: {_display(run.get('risk', {}).get('theoretical_exposure_pct'), 2)}%.",
               "- Champion congelato: zero-return. Ridge è challenger non promosso.",
               "- Nessun PnL economico o probabilità calibrata è dichiarato.",
-              "", "## 9. Revisione critica e conclusione", ""]
+              "", "## 10. Revisione critica e conclusione", ""]
     audit = run.get("pre_report_review", {})
     lines.append(
         f"- Gate pre-report: {audit.get('status', 'n/d')}; cicli completati: "
@@ -614,7 +637,7 @@ def render_markdown_report(run: dict, scores: dict) -> str:
     lines.append(f"- Limite principale: {closing.get('principal_limit', 'n/d')}")
     lines.append(f"- Evidenza che cambierebbe la valutazione: {closing.get('evidence_that_would_change_assessment', 'n/d')}")
     lines.append(f"- Prossimo esperimento: {closing.get('single_next_priority_experiment', 'n/d')}")
-    lines += ["", "## 10. Limiti dichiarati", ""]
+    lines += ["", "## 11. Limiti dichiarati", ""]
     for limitation in run.get("limitations", []):
         lines.append(f"- {limitation}")
     return "\n".join(lines) + "\n"
