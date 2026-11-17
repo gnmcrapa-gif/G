@@ -1387,6 +1387,15 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
     return summary, manifests
 
 
+def _derivative_coverage_status(statuses: dict[str, str]) -> str:
+    """Distinguish a partially responding venue from total derivatives-feed failure."""
+    if len(statuses) == 3 and all(status == "PASS" for status in statuses.values()):
+        return "PASS"
+    if any(status in {"PASS", "PARTIAL"} for status in statuses.values()):
+        return "PARTIAL"
+    return "FAIL"
+
+
 def empty_supplemental_coverage() -> dict:
     """Return explicit not-run states so even blocked reports disclose missing domains."""
     return {
@@ -1507,12 +1516,7 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
             })
     derivative_passes = sum(status == "PASS" for status in derivative_statuses.values())
     summary["coverage"]["per_exchange_derivatives"] = {
-        "status": (
-            "PASS" if len(derivative_statuses) == 3 and derivative_passes == 3
-            else "PARTIAL" if any(
-                status in {"PASS", "PARTIAL"} for status in derivative_statuses.values()
-            ) else "FAIL"
-        ),
+        "status": _derivative_coverage_status(derivative_statuses),
         "by_exchange": derivative_statuses,
     }
     try:
