@@ -1,0 +1,76 @@
+# BTC Quant Desk — permanent pre-report audit and critical review
+
+Date: 2026-11-17
+Protocol revision: V5.6.0
+Branch: `audit/permanent-pre-report-review`
+
+## Why this revision exists
+
+A full review of the persisted production artifact from daily-research run #54 identified a defect that ordinary unit tests had not covered: `_ridge_predict` returns a one-element NumPy array, and the ledger had serialized that array as text such as `[-0.0006588]`. The matured-score path later called `float()` on that string. Once the first forecast matured, this could prevent scoring and block the daily run. New forecasts are now stored as finite scalar floats; the parser accepts the legacy one-element array representation so old append-only records remain scoreable without rewriting history.
+
+## Permanent review sequence
+
+The report generator now runs `build_pre_report_review` before serializing `reports/latest/run_report.json`. A report cannot be emitted as complete when a critical pre-report check fails. The risk gate is forced to paper-only and 0% theoretical exposure if the audit blocks or itself raises an exception.
+
+Every run performs all core checks:
+
+1. Raw-object existence, byte-size and SHA-256 verification for every manifest object.
+2. Binance archive-by-archive completeness: expected monthly archives, expected daily files for the current month, exact row counts, failures, duplicates and total calendar-row reconciliation.
+3. Bitstamp raw-page reconciliation: total raw page rows, explicit overlap duplicates, canonical rows and at most one filtered unclosed current-day row.
+4. UTC target/execution semantics, including an independent synthetic check of the production h+2 open-to-open target.
+5. Historical holdout governance: no training on the reused historical continuity window and no claim that it is globally unseen.
+6. Append-only forecast-ledger integrity: unique event IDs, finite scalar forecasts, legacy singleton-array compatibility, future entry, expiry ordering and score-to-forecast linkage.
+7. Benchmark governance: zero-return champion retained, Ridge challenger not promoted.
+8. Risk fail-safe: paper-only, no live trading, theoretical exposure exactly 0%.
+9. Optional Coinbase/Kraken source availability and explicit warning when unavailable.
+10. Historical outlier cross-check and limitations.
+
+One additional deep-review lens rotates by UTC date through six domains: data provenance/coverage; execution timing; ledger maturity; statistical validation/multiple testing; risk/economic limits; code efficiency/operations. Rotation changes the emphasis, not the baseline: all core checks run every day. The selected lens and evidence are included in the report.
+
+## Historical raw-data audit
+
+The persisted artifact from run #54 contains 133 source objects. Independent local verification of the downloaded artifact found:
+
+- Binance: 127 objects; 111 expected monthly archives from 2017-08 through 2026-10 plus 16 daily archives for 2026-11-01 through 2026-11-16. All expected months/days and row counts were present.
+- Bitstamp: 4 raw JSON pages, 4,000 raw page rows, 349 explicit duplicate rows removed at page boundaries, 3,650 canonical daily rows, and one unclosed current-day row excluded.
+- Coinbase: 1 recent cross-check object, 300 rows.
+- Kraken: 1 recent cross-check object, 720 rows.
+- All 133 raw objects matched both manifest byte size and SHA-256. No missing object or hash mismatch was observed in the artifact.
+
+### 2022-11-08 Binance volume tail
+
+Raw Binance BTCUSDT daily kline for 2022-11-08:
+
+- Open 20,590.67 USDT; high 20,700.88 USDT; low 17,166.83 USDT; close 18,547.23 USDT.
+- Base volume 760,705.362783 BTC.
+
+Raw Bitstamp BTC/USD daily OHLC for the same UTC candle:
+
+- Open 20,591.00 USD; high 20,669.00 USD; low 17,114.00 USD; close 18,550.00 USD.
+- Base volume 12,035.90178845 BTC.
+
+Binance-vs-Bitstamp price differences were approximately -0.0016% open, +0.1542% high, +0.3087% low and -0.0149% close. The price path is corroborated. Binance base volume was about 63.20 times Bitstamp base volume. Venue-specific volume is not interchangeable, so this ratio is not evidence of an erroneous print. Coinbase and Kraken data retrieved in run #54 do not cover 2022-11-08; independent historical volume verification remains unresolved and is explicitly reported as a warning.
+
+## Statistical and prospective status
+
+- The historical 2025-11-16–2026-11-15 holdout remains a continuity diagnostic, not globally unseen evidence.
+- The production target is `log(Open[t+h+2]/Open[t+2])` because the scheduled job runs at 16:00 UTC; h+1 would backdate entry.
+- Zero-return remains the frozen champion. Drift and momentum remain benchmarks. Ridge remains challenger-only.
+- No calibrated probabilities are permitted until at least 200 genuinely matured prospective SCORE events per horizon plus a separate calibration study.
+- The prospective ledger is not backfilled. A forecast only becomes a score after its actual entry and expiry opens exist.
+- No strategy PnL, funding, fee-tier, spread or slippage backtest is claimed. An executable economic backtest remains blocked until a trading rule, execution venue, fee tier and realistic fill assumptions are explicitly specified and prospective predictive value exists.
+- Risk Overlay v1.1 remains paper-only; theoretical exposure 0%; no orders or auto-trading.
+
+## Tests added
+
+- Monthly archive and daily-file completeness, including deliberate missing-month failure.
+- Bitstamp page-row reconciliation.
+- Raw manifest byte-size and SHA-256 verification.
+- Outlier event-date OHLC corroboration versus venue-specific volume caution.
+- Forecast scalar serialization and legacy-array matured scoring.
+- Prospective summary compatibility with old append-only ledger records.
+- Rotating audit-lens uniqueness.
+
+## Release rule
+
+Do not promote a challenger or change the champion based on this audit. Merge only after CI tests and lint pass and the daily-research workflow completes with the mandatory pre-report audit. If the pre-report gate is BLOCKED, the report must say so and theoretical exposure must remain 0%.
