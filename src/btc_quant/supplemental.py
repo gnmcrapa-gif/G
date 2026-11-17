@@ -1357,7 +1357,7 @@ def _parse_fed_h6_m2_html(payload: bytes) -> tuple[date, float, float | None, da
     """Parse the Federal Reserve H.6 Table 1 seasonally adjusted M2 series."""
     html = payload.decode("utf-8", errors="replace")
     release_match = re.search(
-        r"Release Date:\s*([A-Za-z]+\s+\\d{1,2},\s+\\d{4})",
+        r"Release Date:\s*([A-Za-z]+\s+\d{1,2},\s+\d{4})",
         html,
         flags=re.IGNORECASE,
     )
