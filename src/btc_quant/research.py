@@ -143,9 +143,10 @@ def _metric_block(group: pd.DataFrame) -> dict:
     return scores
 
 
-def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095) -> tuple[pd.DataFrame, dict]:
+def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
+                 now: pd.Timestamp | None = None) -> tuple[pd.DataFrame, dict]:
     """Tune on purged pre-holdout folds; keep a fixed-start expanding diagnostic window."""
-    validate_ohlcv(frame)
+    validate_ohlcv(frame, now=now)
     data = frame.sort_values("timestamp").reset_index(drop=True).copy()
     features = make_features(data)
     regimes = _regime_labels(data["close"])
