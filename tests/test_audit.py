@@ -110,6 +110,9 @@ def _review_inputs(tmp_path):
         "metric_metadata": {
             "source": "Binance spot BTCUSDT", "quote_currency": "USDT",
             "target_unit": "natural-log return units", "horizon_unit": "daily sessions",
+            "historical_window_start_utc": "2024-01-01T00:00:00+00:00",
+            "historical_window_end_utc": "2025-06-22T00:00:00+00:00",
+            "sample_role": "historical_continuity_diagnostic_only",
             "data_qa_status": "PASS",
         },
         "requested_next_open_target_executable_at_scheduled_run": False,
