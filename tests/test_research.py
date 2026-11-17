@@ -128,7 +128,7 @@ def test_walk_forward_uses_three_purged_validation_folds():
         "low": np.minimum(open_price, close) * 0.99,
         "close": close, "volume": np.full(n, 100.0),
     })
-    predictions, summary = walk_forward(frame, min_train_rows=100, holdout_rows=365)
+    predictions, summary = walk_forward(frame, min_train_rows=100)
     assert summary["status"] == "SCORED_NOT_PROMOTED"
     for horizon in ("1", "3", "7", "30"):
         assert len(summary["validation_tuning"][horizon]["validation_folds"]) == 3
