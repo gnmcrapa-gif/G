@@ -11,6 +11,18 @@ def _market_snapshot(frame, venue: str, symbol: str, quote: str, retrieved_at: s
     prior_volumes = frame.iloc[-31:-1]["volume"].astype(float)
     prior_30d_median_volume = float(prior_volumes.median()) if not prior_volumes.empty else None
     stamp = pd.Timestamp(latest["timestamp"]).tz_convert("UTC")
+    closes = frame["close"].astype(float)
+    highs = frame["high"].astype(float)
+    lows = frame["low"].astype(float)
+    def change_over_sessions(sessions: int) -> float | None:
+        if len(frame) <= sessions:
+            return None
+        prior = float(closes.iloc[-(sessions + 1)])
+        return (float(latest["close"]) / prior - 1.0) * 100.0 if prior else None
+    previous_close = closes.shift(1)
+    true_range = pd.concat([
+        highs - lows, (highs - previous_close).abs(), (lows - previous_close).abs()
+    ], axis=1).max(axis=1)
     return {
         "venue": venue, "symbol": symbol, "quote_currency": quote,
         "snapshot_type": "latest_closed_daily_candle_not_realtime_spot",
@@ -34,6 +46,20 @@ def _market_snapshot(frame, venue: str, symbol: str, quote: str, retrieved_at: s
         "close_change_1d_pct": (
             (float(latest["close"]) / float(previous["close"]) - 1.0) * 100.0
             if previous is not None else None
+        ),
+        "close_change_7d_pct": change_over_sessions(7),
+        "close_change_30d_pct": change_over_sessions(30),
+        "sma_20_quote_per_btc": float(closes.tail(20).mean()) if len(closes) >= 20 else None,
+        "sma_50_quote_per_btc": float(closes.tail(50).mean()) if len(closes) >= 50 else None,
+        "sma_200_quote_per_btc": float(closes.tail(200).mean()) if len(closes) >= 200 else None,
+        "high_20d_quote_per_btc": float(highs.tail(20).max()) if len(highs) >= 20 else None,
+        "low_20d_quote_per_btc": float(lows.tail(20).min()) if len(lows) >= 20 else None,
+        "high_50d_quote_per_btc": float(highs.tail(50).max()) if len(highs) >= 50 else None,
+        "low_50d_quote_per_btc": float(lows.tail(50).min()) if len(lows) >= 50 else None,
+        "atr_14_quote_per_btc": float(true_range.tail(14).mean()) if len(true_range) >= 14 else None,
+        "atr_14_pct_of_close": (
+            float(true_range.tail(14).mean()) / float(latest["close"]) * 100.0
+            if len(true_range) >= 14 and float(latest["close"]) > 0 else None
         ),
     }
 
