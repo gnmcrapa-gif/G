@@ -807,22 +807,22 @@ def _etf_flows(directory: Path) -> tuple[dict, dict]:
 
 
 FRED_SERIES = {
-    "DGS2": {"label": "US Treasury 2Y yield", "unit": "percent", "max_age_days": 5, "lookback_days": 365},
-    "DGS10": {"label": "US Treasury 10Y yield", "unit": "percent", "max_age_days": 5, "lookback_days": 365},
-    "DFII10": {"label": "US 10Y real yield", "unit": "percent", "max_age_days": 5, "lookback_days": 365},
-    "FEDFUNDS": {"label": "Federal funds effective rate", "unit": "percent", "max_age_days": 45, "lookback_days": 1825},
-    "CPIAUCSL": {"label": "US CPI index", "unit": "index 1982-84=100", "max_age_days": 45, "lookback_days": 1825},
-    "PCEPILFE": {"label": "US core PCE price index", "unit": "index 2017=100", "max_age_days": 45, "lookback_days": 1825},
-    "UNRATE": {"label": "US unemployment rate", "unit": "percent", "max_age_days": 45, "lookback_days": 1825},
-    "PAYEMS": {"label": "US nonfarm payrolls", "unit": "thousands of persons", "max_age_days": 45, "lookback_days": 1825},
-    "DTWEXBGS": {"label": "US broad trade-weighted dollar index (not ICE DXY)", "unit": "index", "max_age_days": 10, "lookback_days": 365},
-    "WALCL": {"label": "Federal Reserve total assets", "unit": "millions of USD", "max_age_days": 14, "lookback_days": 365},
-    "RRPONTSYD": {"label": "Overnight reverse repo take-up", "unit": "billions of USD", "max_age_days": 10, "lookback_days": 365},
-    "NFCI": {"label": "Chicago Fed National Financial Conditions Index", "unit": "index", "max_age_days": 14, "lookback_days": 365},
-    "SP500": {"label": "S&P 500 index", "unit": "index points", "max_age_days": 5, "lookback_days": 365},
-    "NASDAQCOM": {"label": "NASDAQ Composite index", "unit": "index points", "max_age_days": 5, "lookback_days": 365},
-    "VIXCLS": {"label": "CBOE VIX", "unit": "index points", "max_age_days": 5, "lookback_days": 365},
-    "M2SL": {"label": "US M2 money stock", "unit": "billions of USD", "max_age_days": 45, "lookback_days": 1825},
+    "DGS2": {"label": "US Treasury 2Y yield", "unit": "percent", "frequency": "daily", "max_age_days": 5, "lookback_days": 365},
+    "DGS10": {"label": "US Treasury 10Y yield", "unit": "percent", "frequency": "daily", "max_age_days": 5, "lookback_days": 365},
+    "DFII10": {"label": "US 10Y real yield", "unit": "percent", "frequency": "daily", "max_age_days": 5, "lookback_days": 365},
+    "FEDFUNDS": {"label": "Federal funds effective rate", "unit": "percent", "frequency": "monthly", "max_age_days": 45, "lookback_days": 1825},
+    "CPIAUCSL": {"label": "US CPI index", "unit": "index 1982-84=100", "frequency": "monthly", "max_age_days": 45, "lookback_days": 1825},
+    "PCEPILFE": {"label": "US core PCE price index", "unit": "index 2017=100", "frequency": "monthly", "max_age_days": 45, "lookback_days": 1825},
+    "UNRATE": {"label": "US unemployment rate", "unit": "percent", "frequency": "monthly", "max_age_days": 45, "lookback_days": 1825},
+    "PAYEMS": {"label": "US nonfarm payrolls", "unit": "thousands of persons", "frequency": "monthly", "max_age_days": 45, "lookback_days": 1825},
+    "DTWEXBGS": {"label": "US broad trade-weighted dollar index (not ICE DXY)", "unit": "index", "frequency": "daily", "max_age_days": 10, "lookback_days": 365},
+    "WALCL": {"label": "Federal Reserve total assets", "unit": "millions of USD", "frequency": "weekly", "max_age_days": 14, "lookback_days": 365},
+    "RRPONTSYD": {"label": "Overnight reverse repo take-up", "unit": "billions of USD", "frequency": "daily", "max_age_days": 10, "lookback_days": 365},
+    "NFCI": {"label": "Chicago Fed National Financial Conditions Index", "unit": "index", "frequency": "weekly", "max_age_days": 14, "lookback_days": 365},
+    "SP500": {"label": "S&P 500 index", "unit": "index points", "frequency": "daily", "max_age_days": 5, "lookback_days": 365},
+    "NASDAQCOM": {"label": "NASDAQ Composite index", "unit": "index points", "frequency": "daily", "max_age_days": 5, "lookback_days": 365},
+    "VIXCLS": {"label": "CBOE VIX", "unit": "index points", "frequency": "daily", "max_age_days": 5, "lookback_days": 365},
+    "M2SL": {"label": "US M2 money stock", "unit": "billions of USD", "frequency": "monthly", "max_age_days": 45, "lookback_days": 1825},
 }
 
 
@@ -1179,6 +1179,18 @@ BLS_SERIES = {
 }
 
 
+def _freshness_reference_date(observation_date: date, meta: dict) -> date:
+    """Use period end for monthly series so first-of-month labels do not look stale."""
+    if meta.get("frequency") == "monthly":
+        next_month = (
+            date(observation_date.year + 1, 1, 1)
+            if observation_date.month == 12
+            else date(observation_date.year, observation_date.month + 1, 1)
+        )
+        return next_month - timedelta(days=1)
+    return observation_date
+
+
 def _parse_bls_monthly_series(payload: dict, bls_series_id: str) -> tuple[date, float, float | None, list[dict]]:
     """Parse a BLS v1 monthly series, preserving footnotes and latest prior observation."""
     if not isinstance(payload, dict):
@@ -1239,7 +1251,8 @@ def _bls_macro_fallback(series_id: str, meta: dict, directory: Path,
     observation_date, value, previous_value, footnotes = _parse_bls_monthly_series(
         parsed, bls_series_id,
     )
-    age_days = (today - observation_date).days
+    freshness_date = _freshness_reference_date(observation_date, meta)
+    age_days = (today - freshness_date).days
     obj = _save_object(
         directory, f"bls_{series_id.lower()}.json", raw,
         source="US Bureau of Labor Statistics Public Data API v1",
@@ -1251,6 +1264,7 @@ def _bls_macro_fallback(series_id: str, meta: dict, directory: Path,
         "observation_date": observation_date.isoformat(),
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "age_calendar_days": age_days,
+        "freshness_reference_date": freshness_date.isoformat(),
         "status": "PASS" if 0 <= age_days <= meta["max_age_days"] else "STALE",
         "previous_value": previous_value,
         "source_url": "https://www.bls.gov/developers/",
@@ -1309,10 +1323,12 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
                 raise ValueError(f"FRED series {series_id} has no numeric observations")
             last = valid.iloc[-1]
             last_date = date.fromisoformat(str(last[date_col])[:10])
-            age_days = (today - last_date).days
+            freshness_date = _freshness_reference_date(last_date, meta)
+            age_days = (today - freshness_date).days
             observation = {
                 "label": meta["label"], "value": float(last[value_col]),
                 "unit": meta["unit"], "observation_date": last_date.isoformat(),
+                "freshness_reference_date": freshness_date.isoformat(),
                 "retrieved_at_utc": datetime.now(UTC).isoformat(),
                 "age_calendar_days": age_days,
                 "status": "PASS" if age_days <= meta["max_age_days"] else "STALE",
