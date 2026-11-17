@@ -121,7 +121,17 @@ def test_markdown_report_discloses_stale_and_unavailable_context_sources():
         "risk": {"mode": "paper_only", "live_trading_enabled": False, "theoretical_exposure_pct": 0},
         "pre_report_review": {"status": "PASS", "review_cycles": [], "blocking_failures": []},
         "closing_assessment": {},
+        "report_taxonomy": {
+            "FACT": [], "INTERPRETATION": [], "HYPOTHESIS": [],
+            "FORECAST": {
+                "new_point_forecasts_issued_this_run": 4,
+                "new_forecasts_scored_this_run": 0,
+                "calibrated_probabilities_published": False,
+                "qualification": "Point forecast only; not calibrated.",
+            },
+        },
     }, {})
+    assert "Point forecast emessi in questo run: 4." in report
     assert "us_spot_etf_flows" in report
     assert "STALE" in report
     assert "exchange_flows_and_reserves" in report
