@@ -395,6 +395,23 @@ def render_markdown_report(run: dict, scores: dict) -> str:
             if item.get("errors"):
                 lines.append(f"- Errori feed: {item['errors']}")
 
+    cvd = supplemental.get("cvd", {})
+    if cvd:
+        lines += ["", "### CVD orario Binance — delta taker aggregato", "",
+                  f"- Stato: {cvd.get('status')}. {cvd.get('measurement_note', '')}",
+                  "| Mercato | Finestra | Delta BTC | Delta / volume % | Volume BTC | Buy BTC | Sell BTC |",
+                  "|---|---:|---:|---:|---:|---:|---:|"]
+        for market, label in (("spot", "Spot BTCUSDT"), ("futures", "Futures BTCUSDT")):
+            market_data = cvd.get("markets", {}).get(market, {})
+            for horizon in ("24h", "7d", "30d"):
+                item = market_data.get(horizon, {})
+                lines.append(
+                    f"| {label} | {horizon} | {_display(item.get('cumulative_delta_btc'), 2)} | "
+                    f"{_display(item.get('delta_pct_of_total_volume'), 2)}% | "
+                    f"{_display(item.get('total_volume_btc'), 2)} | "
+                    f"{_display(item.get('taker_buy_volume_btc'), 2)} | "
+                    f"{_display(item.get('taker_sell_volume_btc'), 2)} |"
+                )
     options = supplemental.get("deribit_options", {})
     if options:
         lines += ["", "### Opzioni Deribit", "",
