@@ -131,7 +131,7 @@ def run_pre_report_review(
     coverage_complete = expected_context_domains.issubset(context_coverage)
     allowed_context_statuses = {
         "PASS", "PARTIAL", "STALE", "FAIL", "UNAVAILABLE",
-        "PROXY_ONLY", "NOT_IMPLEMENTED",
+        "PROXY_ONLY", "NOT_IMPLEMENTED", "NOT_RUN",
     }
     coverage_statuses_valid = all(
         isinstance(context_coverage.get(name), dict)
