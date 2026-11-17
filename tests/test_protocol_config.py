@@ -15,7 +15,6 @@ def test_project_config_matches_production_protocol_v56():
 
 def test_challenger_proposal_uses_v56_id_and_is_idempotent(tmp_path):
     import csv
-
     import importlib.util
 
     script_path = Path(__file__).parents[1] / "scripts" / "run_research.py"
