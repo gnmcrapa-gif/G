@@ -381,8 +381,8 @@ def _parse_okx_response(payload: dict, endpoint: str) -> list[dict]:
             f"OKX {endpoint} code={code or 'missing'} msg={payload.get('msg', '')}"
         )
     rows = payload.get("data")
-    if not isinstance(rows, list):
-        raise ValueError(f"OKX {endpoint} response has no data array")
+    if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+        raise ValueError(f"OKX {endpoint} response has no valid data array")
     return rows
 
 
@@ -454,7 +454,7 @@ def _okx_derivatives(directory: Path) -> tuple[dict, dict]:
         "quote_currency": "USDT",
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "status": (
-            "PASS" if all(key in raw for key in endpoints)
+            "PASS" if all(bool(raw.get(key)) for key in endpoints)
             else "PARTIAL" if valid_current or history_rows else "FAIL"
         ),
         "last_price_usdt": _float_or_none(ticker.get("last")),
