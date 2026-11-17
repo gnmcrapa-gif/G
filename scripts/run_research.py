@@ -9,6 +9,7 @@ import traceback
 from datetime import UTC, datetime
 from pathlib import Path
 
+from btc_quant.audit import build_pre_report_review
 from btc_quant.acquisition import (
     download_binance_daily,
     download_bitstamp_recent,
@@ -140,8 +141,10 @@ def main() -> int:
     data_dir, output_dir, ledger_path = Path(args.data_dir), Path(args.output_dir), Path(args.ledger)
     output_dir.mkdir(parents=True, exist_ok=True)
     run = {"started_at_utc": datetime.now(UTC).isoformat(), "status": "BLOCKED",
-           "protocol": "V5.5", "steps": [], "limitations": []}
+           "protocol": "V5.6.0", "steps": [], "limitations": []}
     manifests = []
+    binance = None
+    bitstamp = None
     try:
         binance, binance_manifest = download_binance_daily(data_dir / "binance")
         manifests.append(binance_manifest)
@@ -259,10 +262,38 @@ def main() -> int:
             "reason": "No predictive edge and cost-adjusted strategy value have been demonstrated; abstain.",
         }
         run["audit"] = _build_audit(run, prospective)
+        # Mandatory review runs before run_report.json is serialized. It checks
+        # source-object hashes, archive coverage, target timing, holdout hygiene,
+        # ledger invariants, risk gates and a rotating deep-review lens.
+        ledger_events = read_events(ledger_path)
+        review = build_pre_report_review(
+            run, manifests, binance, bitstamp, ledger_events,
+            root=Path.cwd(), now=datetime.now(UTC),
+        )
+        run["pre_report_review"] = review
+        if review["gate"] == "BLOCKED":
+            run["status"] = "BLOCKED"
+            run["risk"]["theoretical_exposure_pct"] = 0.0
+            run["risk"]["reason"] = "Mandatory pre-report audit blocked; abstain."
+        run["audit"]["pre_report_gate"] = review["gate"]
+        run["audit"]["rotating_review_lens"] = review["rotating_review"]["lens"]
+        run["audit"]["decision"] = (
+            "KEEP_ZERO_RETURN_CHAMPION; RIDGE_CHALLENGER_ONLY; NO_PROMOTION; "
+            "ABSTAIN_FROM_LIVE_RISK"
+        )
     except Exception as audit_exc:  # noqa: BLE001 - an audit failure must block confidence
         run["status"] = "BLOCKED"
         run["audit_error"] = f"{type(audit_exc).__name__}: {audit_exc}"
-        run["risk"] = {"live_trading_enabled": False, "theoretical_exposure_pct": 0.0}
+        run["risk"] = {
+            "overlay_version": "1.1", "mode": "paper_only",
+            "live_trading_enabled": False, "theoretical_exposure_pct": 0.0,
+            "reason": "Audit execution failed; fail-closed.",
+        }
+        run["pre_report_review"] = {
+            "execution_order": "BEFORE_REPORT_SERIALIZATION",
+            "gate": "BLOCKED",
+            "error": run["audit_error"],
+        }
     run["finished_at_utc"] = datetime.now(UTC).isoformat()
     (output_dir / "run_report.json").write_text(json.dumps(run, indent=2), encoding="utf-8")
     print(json.dumps(run, indent=2))
