@@ -177,3 +177,34 @@ def test_ridge_rejects_inconsistent_dimensions():
 
     with pytest.raises(ValueError, match="dimensions"):
         _ridge_predict(np.ones((10, 3)), np.ones(9), np.ones((2, 3)))
+
+
+
+def test_historical_holdout_start_does_not_roll_when_new_days_arrive():
+    from btc_quant.research import walk_forward
+
+    n = 1600
+    end = pd.Timestamp.now(tz="UTC").floor("D") - pd.Timedelta(days=6)
+    timestamps = pd.date_range(end=end, periods=n, freq="D")
+    t = np.arange(n, dtype=float)
+    close = 20000.0 * np.exp(np.cumsum(0.0002 + 0.008 * np.sin(t / 17.0)))
+    open_price = close * (1.0 + 0.001 * np.sin(t / 7.0))
+    frame = pd.DataFrame({
+        "timestamp": timestamps, "open": open_price,
+        "high": np.maximum(open_price, close) * 1.01,
+        "low": np.minimum(open_price, close) * 0.99,
+        "close": close, "volume": np.full(n, 100.0),
+    })
+    _, first = walk_forward(frame, min_train_rows=100)
+    extra_t = np.arange(n, n + 5, dtype=float)
+    extra_close = close[-1] * np.exp(np.cumsum(0.0002 + 0.008 * np.sin(extra_t / 17.0)))
+    extra_open = extra_close * (1.0 + 0.001 * np.sin(extra_t / 7.0))
+    extra = pd.DataFrame({
+        "timestamp": pd.date_range(end=end + pd.Timedelta(days=5), periods=5, freq="D"),
+        "open": extra_open, "high": np.maximum(extra_open, extra_close) * 1.01,
+        "low": np.minimum(extra_open, extra_close) * 0.99,
+        "close": extra_close, "volume": np.full(5, 110.0),
+    })
+    _, second = walk_forward(pd.concat([frame, extra], ignore_index=True), min_train_rows=100)
+    assert first["holdout_start_utc"] == second["holdout_start_utc"] == "2025-11-17T00:00:00+00:00"
+    assert second["holdout_rows_current"] == first["holdout_rows_current"] + 5
