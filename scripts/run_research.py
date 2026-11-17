@@ -5,6 +5,7 @@ import csv
 import hashlib
 import json
 import os
+import shutil
 import traceback
 from datetime import UTC, datetime
 from pathlib import Path
@@ -16,6 +17,7 @@ from btc_quant.acquisition import (
     download_kraken_recent,
     write_manifest,
 )
+from btc_quant.audit import build_pre_report_review
 from btc_quant.ledger import (
     append_events,
     generate_forecast_events,
@@ -24,7 +26,8 @@ from btc_quant.ledger import (
     score_matured_events,
     summarize_scored_events,
 )
-from btc_quant.research import cross_check_venues, walk_forward
+from btc_quant.ohlcv_challenger import generate_ohlcv_forecast_events
+from btc_quant.research import HISTORICAL_HOLDOUT_START_UTC, cross_check_venues, walk_forward
 from btc_quant.validation import validate_ohlcv
 
 
@@ -41,21 +44,28 @@ def _safe_optional_acquisition(label, function, directory):
 
 
 
-def _append_challenger_proposal(path: Path) -> None:
-    """Register the next falsifiable experiment once; never imply it has been run."""
+def _append_challenger_proposal(
+    path: Path, *, implemented: bool = False, manifest_sha256: str = ""
+) -> None:
+    """Append immutable proposal/status events for the registered OHLCV experiment."""
     experiment_id = "V5.5-OHLCV-001"
     path.parent.mkdir(parents=True, exist_ok=True)
-    existing = set()
-    if path.exists():
-        with path.open(newline="", encoding="utf-8") as handle:
-            existing = {row.get("experiment_id") for row in csv.DictReader(handle)}
-    if experiment_id in existing:
-        return
     fields = [
         "experiment_id", "created_at_utc", "hypothesis", "change_family",
         "data_manifest_sha256", "split_definition", "acceptance_criteria",
         "result", "decision", "review_notes",
     ]
+    existing_rows = []
+    if path.exists():
+        with path.open(newline="", encoding="utf-8") as handle:
+            existing_rows = [
+                row for row in csv.DictReader(handle)
+                if row.get("experiment_id") == experiment_id
+            ]
+    latest_result = existing_rows[-1].get("result") if existing_rows else None
+    desired_result = "IMPLEMENTED_PROSPECTIVE_ONLY" if implemented else "PROPOSED_NOT_RUN"
+    if latest_result == desired_result or (latest_result == "IMPLEMENTED_PROSPECTIVE_ONLY" and not implemented):
+        return
     row = {
         "experiment_id": experiment_id,
         "created_at_utc": datetime.now(UTC).isoformat(),
@@ -64,19 +74,25 @@ def _append_challenger_proposal(path: Path) -> None:
             "forecast information beyond close-only price features."
         ),
         "change_family": "OHLCV feature engineering; isolated challenger only",
-        "data_manifest_sha256": "",
+        "data_manifest_sha256": manifest_sha256,
         "split_definition": (
-            "Prospective ledger only; do not reuse the V5.3.1/V5.4 historical "
-            "continuity holdout for promotion."
+            "Train strictly before the fixed 2025-11-17 UTC cutoff; fixed alpha=100; fixed-start expanding "
+            "continuity holdout excluded from training "
+            "and tuning; evaluate only new append-only prospective SCORE events."
         ),
         "acceptance_criteria": (
             "At least 200 matured observations per horizon; positive MAE lift "
             "versus zero-return and frozen price-only challenger; HAC/Holm evidence; "
-            "stable regimes; positive net value after 1x/2x/3x realistic costs."
+            "stable regimes; positive net value after documented venue costs."
         ),
-        "result": "PROPOSED_NOT_RUN",
+        "result": desired_result,
         "decision": "NOT_PROMOTED",
-        "review_notes": "Pre-registered hypothesis only; no feature/model result is claimed.",
+        "review_notes": (
+            "Separate prospective ledger is active; forecasts are point estimates only. "
+            "No matured performance, calibration, economic value or promotion is claimed."
+            if implemented else
+            "Pre-registered hypothesis only; implementation is not yet active."
+        ),
     }
     with path.open("a", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields)
@@ -111,12 +127,13 @@ def _build_audit(run: dict, prospective: dict) -> dict:
                 ) else "WARN_OR_BLOCKED")},
             {"component": "historical_holdout", "status": "DIAGNOSTIC_ONLY_NOT_GLOBALLY_UNSEEN"},
             {"component": "prospective_ledger", "status": prospective.get("decision", "INSUFFICIENT_PROSPECTIVE_EVIDENCE")},
+            {"component": "ohlcv_challenger", "status": run.get("ohlcv_challenger", {}).get("status", "NOT_STARTED")},
             {"component": "economic_strategy_validation", "status": "NOT_COMPLETED"},
         ],
         "weakest_component": weakest,
         "three_vulnerabilities": [
-            "The historical 2025-11-16 to 2026-11-15 holdout was previously inspected under V5.3.1; it is not independent prospective evidence.",
-            "The predictive feature set remains price-only; derivatives, ETF flows, order flow, macro and on-chain data are not integrated.",
+            "The fixed-start expanding historical holdout beginning 2025-11-17 UTC was previously inspected under V5.3.1; it is not independent prospective evidence.",
+            "The zero-return champion and price-only Ridge challenger remain unchanged; the OHLCV challenger is prospective-only with no matured lift evidence. Derivatives, ETF flows, order flow, macro and on-chain data are not integrated.",
             "No executable strategy backtest with fees, spread, slippage, funding, turnover and drawdown stress has been completed.",
         ],
         "falsifying_evidence": (
@@ -124,7 +141,7 @@ def _build_audit(run: dict, prospective: dict) -> dict:
             "the zero-return benchmark after multiple-testing control and realistic costs "
             "falsifies the proposed feature/model improvement."
         ),
-        "next_priority_experiment": "V5.5-OHLCV-001: isolated volume-surprise and candle-geometry challenger; prospective ledger only.",
+        "next_priority_experiment": "Monitor V5.5-OHLCV-001 in its separate prospective-only ledger; no promotion until matured sample, statistical and economic gates pass.",
         "decision": "KEEP_ZERO_RETURN_CHAMPION; RIDGE_CHALLENGER_ONLY; NO_PROMOTION; ABSTAIN_FROM_LIVE_RISK",
     }
 
@@ -133,15 +150,59 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--data-dir", default="data/raw")
     parser.add_argument("--output-dir", default="reports/latest")
+    parser.add_argument("--archive-dir", default="reports/archive")
     parser.add_argument("--ledger", default="ledger/forecast_ledger.csv")
+    parser.add_argument("--ohlcv-ledger", default="ledger/ohlcv_challenger_ledger.csv")
     parser.add_argument("--challenger-log", default="ledger/challenger_log.csv")
     parser.add_argument("--min-train-rows", type=int, default=1095)
     args = parser.parse_args()
     data_dir, output_dir, ledger_path = Path(args.data_dir), Path(args.output_dir), Path(args.ledger)
+    archive_dir = Path(args.archive_dir)
+    ohlcv_ledger_path = Path(args.ohlcv_ledger)
     output_dir.mkdir(parents=True, exist_ok=True)
+    previous_report = None
+    previous_manifest = None
+    previous_report_archive = None
+    previous_manifest_archive = None
+    previous_report_archive_error = None
+    prior_path = output_dir / "run_report.json"
+    if prior_path.is_file():
+        try:
+            previous_report = json.loads(prior_path.read_text(encoding="utf-8"))
+            archive_dir.mkdir(parents=True, exist_ok=True)
+            archive_name = f"run_{datetime.now(UTC).strftime('%Y%m%dT%H%M%S%fZ')}.json"
+            previous_report_archive = archive_dir / archive_name
+            shutil.copy2(prior_path, previous_report_archive)
+            previous_manifest_path = output_dir / "data_manifest.json"
+            if previous_manifest_path.is_file():
+                previous_manifest = json.loads(previous_manifest_path.read_text(encoding="utf-8"))
+                previous_manifest_archive = archive_dir / archive_name.replace("run_", "manifest_")
+                shutil.copy2(previous_manifest_path, previous_manifest_archive)
+        except Exception as archive_exc:  # noqa: BLE001 - preserve run and disclose archive failure
+            previous_report_archive = None
+            previous_report_archive_error = f"{type(archive_exc).__name__}: {archive_exc}"
     run = {"started_at_utc": datetime.now(UTC).isoformat(), "status": "BLOCKED",
-           "protocol": "V5.5", "steps": [], "limitations": []}
+           "protocol": "V5.6.0", "steps": [], "limitations": []}
+    run["code_commit"] = os.environ.get("GITHUB_SHA", "local-uncommitted")
+    run["changelog"] = {
+        "protocol": "V5.6.0",
+        "code_commit": run["code_commit"],
+        "changes": [
+            "mandatory pre-report audit with six rotating deep-review lenses",
+            "fixed-start expanding historical holdout; no rolling n-365 cutoff",
+            "scalar forecast serialization and legacy append-only array parsing",
+            "isolated prospective OHLCV challenger with separate ledger",
+            "archive-by-archive source completeness and raw SHA-256 verification",
+            "red-team checks, archived longitudinal comparison and observed 1/7/30-session drivers",
+        ],
+    }
     manifests = []
+    run["previous_report_archive"] = None if previous_report_archive is None else str(previous_report_archive)
+    run["previous_manifest_archive"] = None if previous_manifest_archive is None else str(previous_manifest_archive)
+    if prior_path.is_file() and previous_report_archive is None:
+        run["limitations"].append(f"Previous report archive failed; longitudinal comparison may be incomplete: {previous_report_archive_error}")
+    binance = None
+    bitstamp = None
     try:
         binance, binance_manifest = download_binance_daily(data_dir / "binance")
         manifests.append(binance_manifest)
@@ -172,6 +233,7 @@ def main() -> int:
             for item in source.get("objects", []) if item.get("sha256")
         )
         manifest_sha256 = hashlib.sha256(json.dumps(object_hashes).encode()).hexdigest()
+        run["data_manifest_sha256"] = manifest_sha256
         predictions, scores = walk_forward(binance, min_train_rows=args.min_train_rows)
         counts = predictions.groupby("horizon").size().to_dict() if len(predictions) else {}
         run["historical_continuity_rows_by_horizon"] = {str(k): int(v) for k, v in counts.items()}
@@ -227,6 +289,101 @@ def main() -> int:
                          "events_appended": appended, "existing_events_before_run": len(previous_events),
                          "total_events_after_run": len(all_ledger_events),
                          "append_only": True}
+
+        try:
+            # Isolated OHLCV challenger: separate append-only ledger, fixed alpha,
+            # and training labels ending strictly before the historical continuity holdout.
+            ohlcv_previous = read_events(ohlcv_ledger_path)
+            ohlcv_invalidations = invalidate_late_forecasts(ohlcv_previous)
+            ohlcv_scores = score_matured_events(ohlcv_previous + ohlcv_invalidations, binance)
+            ohlcv_candidates = generate_ohlcv_forecast_events(
+                binance, manifest_sha256, os.environ.get("GITHUB_SHA", "local-uncommitted"),
+                min_train_rows=args.min_train_rows,
+            ) if scores.get("status") == "SCORED_NOT_PROMOTED" else []
+            ohlcv_scored_ids = {
+                row.get("forecast_id") for row in ohlcv_previous + ohlcv_scores
+                if row.get("event_type") == "SCORE"
+            }
+            ohlcv_invalidated_ids = {
+                row.get("forecast_id") for row in ohlcv_previous + ohlcv_invalidations
+                if row.get("event_type") == "INVALIDATION"
+            }
+            ohlcv_pending_keys = {
+                (row.get("signal_timestamp_utc"), int(row.get("horizon")))
+                for row in ohlcv_previous
+                if row.get("event_type") == "FORECAST"
+                and row.get("forecast_id") not in ohlcv_scored_ids | ohlcv_invalidated_ids
+            }
+            ohlcv_before_dedupe = len(ohlcv_candidates)
+            ohlcv_forecasts = [
+                row for row in ohlcv_candidates
+                if (row["signal_timestamp_utc"], int(row["horizon"])) not in ohlcv_pending_keys
+            ]
+            ohlcv_duplicates = ohlcv_before_dedupe - len(ohlcv_forecasts)
+            ohlcv_appended = append_events(
+                ohlcv_ledger_path, ohlcv_invalidations + ohlcv_scores + ohlcv_forecasts
+            )
+            ohlcv_all_events = ohlcv_previous + ohlcv_invalidations + ohlcv_scores + ohlcv_forecasts
+            ohlcv_summary = summarize_scored_events(
+                ohlcv_previous + ohlcv_invalidations + ohlcv_scores
+            )
+            for horizon_block in ohlcv_summary.get("by_horizon", {}).values():
+                model_metrics = horizon_block.get("models", {})
+                if "ridge" in model_metrics:
+                    model_metrics["ohlcv_challenger"] = model_metrics.pop("ridge")
+            ohlcv_pending = sum(
+                row.get("event_type") == "FORECAST"
+                and row.get("forecast_id") not in ohlcv_scored_ids | ohlcv_invalidated_ids
+                for row in ohlcv_all_events
+            )
+            run["ohlcv_challenger"] = {
+                "experiment_id": "V5.5-OHLCV-001",
+                "status": "PROSPECTIVE_ONLY_ACTIVE" if ohlcv_pending or ohlcv_forecasts else "BLOCKED_INSUFFICIENT_PREHOLDOUT_HISTORY",
+                "model_version": "ohlcv-challenger-0.1-fixed-alpha-100",
+                "features": [
+                    "price-only lagged returns and volatility",
+                    "30-session lagged-median log-volume surprise",
+                    "30-session robust volume surprise z-score",
+                    "candle range, body, upper wick, lower wick and close location",
+                ],
+                "training_policy": {
+                    "holdout_start_utc": HISTORICAL_HOLDOUT_START_UTC.isoformat(),
+                    "training_labels_end_before_holdout": True,
+                    "holdout_used_for_training_or_tuning": False,
+                    "alpha": 100.0,
+                    "alpha_tuning": "NONE_FIXED_PRE_REGISTERED",
+                },
+                "prospective_validation": ohlcv_summary,
+                "ledger": {
+                    "existing_events_before_run": len(ohlcv_previous),
+                    "invalidations_created": len(ohlcv_invalidations),
+                    "score_events_created": len(ohlcv_scores),
+                    "forecast_events_created": len(ohlcv_forecasts),
+                    "duplicate_forecasts_suppressed": ohlcv_duplicates,
+                    "events_appended": ohlcv_appended,
+                    "total_events_after_run": len(ohlcv_all_events),
+                    "pending_forecasts": ohlcv_pending,
+                    "append_only": True,
+                },
+                "promotion": "NOT_PROMOTED; require at least 200 matured forecasts per horizon, HAC/Holm comparisons and documented cost-adjusted economic evidence.",
+            }
+
+        except Exception as challenger_exc:  # noqa: BLE001 - challenger is isolated from core report
+            run["ohlcv_challenger"] = {
+                "experiment_id": "V5.5-OHLCV-001",
+                "status": "BLOCKED_CHALLENGER_ONLY",
+                "error": f"{type(challenger_exc).__name__}: {challenger_exc}",
+                "promotion": "NOT_PROMOTED",
+            }
+            run["limitations"].append(
+                "OHLCV challenger failed independently; core price-only research remains separate and challenger exposure is zero."
+            )
+        run["steps"].append({
+            "step": "ohlcv_challenger",
+            "status": run.get("ohlcv_challenger", {}).get("status", "BLOCKED_CHALLENGER_ONLY"),
+            "forecast_events": run.get("ohlcv_challenger", {}).get("ledger", {}).get("forecast_events_created", 0),
+            "score_events": run.get("ohlcv_challenger", {}).get("ledger", {}).get("score_events_created", 0),
+        })
         run["steps"].append({"step": "walk_forward", "status": scores["status"],
                              "oos_rows": len(predictions), "scores": scores})
         required_pass = all(step["status"] == "PASS" for step in run["steps"]
@@ -240,6 +397,9 @@ def main() -> int:
         run["limitations"].append("The reused historical holdout is continuity diagnostics only, not independent prospective evidence.")
         run["limitations"].append("No cost-adjusted strategy PnL, funding, slippage or execution backtest is claimed.")
         run["limitations"].append("No calibrated probability or live trading claim is permitted.")
+        run["limitations"].append("No derivatives, ETF/ETP, options, on-chain or macro time series were acquired or integrated in this run; no claim is made from them.")
+        run["limitations"].append("No strategy-level cost backtest is admissible until prospective predictive evidence and a documented execution rule, venue fee tier, spread and slippage model exist.")
+        run["limitations"].append("The OHLCV challenger is active in a separate prospective-only ledger; no matured performance or promotion is claimed.")
     except Exception as exc:  # noqa: BLE001 - write a durable failure report for diagnosis
         run["status"] = "BLOCKED"
         run["error"] = f"{type(exc).__name__}: {exc}"
@@ -247,7 +407,11 @@ def main() -> int:
         run["limitations"].append("No model claim or positive exposure is permitted when acquisition, QA, or evaluation is blocked.")
         write_manifest(manifests, output_dir / "data_manifest.json")
     try:
-        _append_challenger_proposal(Path(args.challenger_log))
+        _append_challenger_proposal(
+            Path(args.challenger_log),
+            implemented=run.get("ohlcv_challenger", {}).get("status") == "PROSPECTIVE_ONLY_ACTIVE",
+            manifest_sha256=run.get("data_manifest_sha256", ""),
+        )
         prospective = run.get("prospective_ledger_validation", {
             "decision": "INSUFFICIENT_PROSPECTIVE_EVIDENCE", "by_horizon": {}
         })
@@ -259,10 +423,41 @@ def main() -> int:
             "reason": "No predictive edge and cost-adjusted strategy value have been demonstrated; abstain.",
         }
         run["audit"] = _build_audit(run, prospective)
+        # Mandatory review runs before run_report.json is serialized. It checks
+        # source-object hashes, archive coverage, target timing, holdout hygiene,
+        # ledger invariants, risk gates and a rotating deep-review lens.
+        ledger_events = read_events(ledger_path) + read_events(ohlcv_ledger_path)
+        review = build_pre_report_review(
+            run, manifests, binance, bitstamp, ledger_events,
+            root=Path.cwd(), now=datetime.now(UTC), previous_report=previous_report,
+            previous_manifest=previous_manifest,
+        )
+        run["pre_report_review"] = review
+        if review["gate"] == "BLOCKED":
+            run["status"] = "BLOCKED"
+            run["risk"]["theoretical_exposure_pct"] = 0.0
+            run["risk"]["reason"] = "Mandatory pre-report audit blocked; abstain."
+        run["audit"]["reliability_status"] = run["status"]
+        run["audit"]["pre_report_gate"] = review["gate"]
+        run["audit"]["rotating_review_lens"] = review["rotating_review"]["lens"]
+        run["audit"]["decision"] = (
+            "KEEP_ZERO_RETURN_CHAMPION; RIDGE_CHALLENGER_ONLY; OHLCV_PROSPECTIVE_ONLY; NO_PROMOTION; "
+            "ABSTAIN_FROM_LIVE_RISK"
+        )
     except Exception as audit_exc:  # noqa: BLE001 - an audit failure must block confidence
         run["status"] = "BLOCKED"
         run["audit_error"] = f"{type(audit_exc).__name__}: {audit_exc}"
-        run["risk"] = {"live_trading_enabled": False, "theoretical_exposure_pct": 0.0}
+        run["risk"] = {
+            "overlay_version": "1.1", "mode": "paper_only",
+            "live_trading_enabled": False, "theoretical_exposure_pct": 0.0,
+            "reason": "Audit execution failed; fail-closed.",
+        }
+        run["audit"] = {"reliability_status": "BLOCKED", "decision": "ABSTAIN_FROM_LIVE_RISK"}
+        run["pre_report_review"] = {
+            "execution_order": "BEFORE_REPORT_SERIALIZATION",
+            "gate": "BLOCKED",
+            "error": run["audit_error"],
+        }
     run["finished_at_utc"] = datetime.now(UTC).isoformat()
     (output_dir / "run_report.json").write_text(json.dumps(run, indent=2), encoding="utf-8")
     print(json.dumps(run, indent=2))

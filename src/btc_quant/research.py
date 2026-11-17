@@ -9,6 +9,7 @@ import pandas as pd
 from .validation import EXECUTION_ENTRY_LAG_SESSIONS, forward_open_log_return, validate_ohlcv
 
 HORIZONS = (1, 3, 7, 30)
+HISTORICAL_HOLDOUT_START_UTC = pd.Timestamp("2025-11-17T00:00:00Z")
 RIDGE_ALPHAS = (0.1, 1.0, 10.0, 100.0)
 MODELS = ("zero", "drift", "momentum", "ridge")
 
@@ -143,15 +144,16 @@ def _metric_block(group: pd.DataFrame) -> dict:
 
 
 def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
-                 holdout_rows: int = 365) -> tuple[pd.DataFrame, dict]:
-    """Tune on purged folds; score the historical holdout as a continuity diagnostic."""
-    validate_ohlcv(frame)
+                 now: pd.Timestamp | None = None) -> tuple[pd.DataFrame, dict]:
+    """Tune on purged pre-holdout folds; keep a fixed-start expanding diagnostic window."""
+    validate_ohlcv(frame, now=now)
     data = frame.sort_values("timestamp").reset_index(drop=True).copy()
     features = make_features(data)
     regimes = _regime_labels(data["close"])
     n = len(data)
-    holdout_start = n - holdout_rows
-    if holdout_start <= min_train_rows + 100:
+    holdout_start = int(data["timestamp"].searchsorted(HISTORICAL_HOLDOUT_START_UTC, side="left"))
+    holdout_rows = n - holdout_start
+    if holdout_start <= min_train_rows + 100 or holdout_rows < 200:
         return pd.DataFrame(), {
             "status": "BLOCKED", "reason": "insufficient pre-holdout history",
             "rows": n, "holdout_rows": holdout_rows,
@@ -234,6 +236,7 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
         tuning[str(horizon)] = {
             "selected_alpha": selected_alpha, "validation_mae_by_alpha": alpha_scores,
             "validation_folds": fold_counts, "final_train_rows": len(final_train_idx),
+            "final_train_end_utc": data.timestamp.iloc[final_train_idx[-1]].isoformat(),
             "final_holdout_rows": len(holdout_idx),
         }
 
@@ -242,15 +245,18 @@ def walk_forward(frame: pd.DataFrame, min_train_rows: int = 1095,
     summary.update({
         "validation_tuning": tuning,
         "validation_method": "three purged expanding chronological folds; alpha chosen by weighted mean MAE",
-        "holdout_start_utc": data.timestamp.iloc[holdout_start].isoformat(),
+        "holdout_start_utc": HISTORICAL_HOLDOUT_START_UTC.isoformat(),
+        "holdout_rows_current": int(holdout_rows),
+        "holdout_definition": "fixed_start_expanding_diagnostic_never_used_for_training_or_tuning",
         "holdout_end_utc": data.timestamp.iloc[-1].isoformat(),
         "holdout_is_untouched": False,
         "holdout_training_and_tuning_excluded_in_this_run": True,
         "holdout_globally_unseen": False,
         "holdout_role": "historical_continuity_diagnostic_only",
         "holdout_reuse_disclosure": (
-            "This date range was previously evaluated under V5.3.1; it is not a fresh "
-            "independent holdout and cannot establish prospective model edge."
+            "The fixed-start diagnostic window was previously evaluated under V5.3.1; it expands "
+            "as new observations arrive, remains excluded from all training/tuning, and is not a "
+            "fresh independent holdout or evidence of prospective model edge."
         ),
         "training_uses_holdout": False,
         "features": "price-only BTC close returns, rolling volatility and trend",

@@ -31,3 +31,26 @@ def test_raw_manifest_records_schema_grade_and_terms(tmp_path):
     assert record["source_grade"] == "B"
     assert "provider terms apply" in record["license_terms_note"]
     assert record["size_bytes"] == 2
+
+
+
+def test_raw_snapshots_are_immutable_when_provider_revises_same_filename(tmp_path):
+    first = _save_raw(
+        tmp_path, "same.json", b"first",
+        "https://example.invalid/same", "Test source", "Venue", "BTC-USD", "USD",
+    )
+    second = _save_raw(
+        tmp_path, "same.json", b"second",
+        "https://example.invalid/same", "Test source", "Venue", "BTC-USD", "USD",
+    )
+    repeated = _save_raw(
+        tmp_path, "same.json", b"second",
+        "https://example.invalid/same", "Test source", "Venue", "BTC-USD", "USD",
+    )
+    first_path = tmp_path / first["file"]
+    second_path = tmp_path / second["file"]
+    assert first_path.read_bytes() == b"first"
+    assert second_path.read_bytes() == b"second"
+    assert first["file"] != second["file"]
+    assert second["file"] == repeated["file"]
+    assert second["content_addressed"] is True
