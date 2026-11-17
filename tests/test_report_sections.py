@@ -43,7 +43,7 @@ def test_longitudinal_comparison_only_compares_same_venue_quote_and_window():
     result = _build_longitudinal_comparison(previous, current, _scores())
     assert result["status"] == "COMPARISON_AVAILABLE"
     assert result["historical_benchmark_comparison"]["status"] == "COMPARABLE_SAME_HISTORICAL_CONTINUITY_WINDOW"
-    assert result["historical_benchmark_comparison"]["zero_return"]["1"]["difference_log_return_units"] == pytest.approx(0.0)
+    assert result["historical_benchmark_comparison"]["zero_return_mae"]["1"]["difference_log_return_units"] == pytest.approx(0.0)
     assert result["same_venue_price_snapshots"][0]["close_change_since_previous_report_pct"] == pytest.approx(1000.0 / 65000.0 * 100.0)
     assert result["same_venue_price_snapshots"][1]["status"] == "NOT_COMPARABLE_NO_MATCHING_PRIOR_SNAPSHOT"
     assert result["prospective_matured_counts"]["1"] == {"previous_matured": 0, "current_matured": 2}
