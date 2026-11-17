@@ -13,7 +13,7 @@ The review is executable code, not a narrative assertion. Its checks and evidenc
 - blocking failures, warnings, publication gate and final decision;
 - one rotating adversarial lens selected from volume outlier, close-return outlier, intraday-range outlier and ledger replay. The lens is keyed by GitHub run ID; all mandatory invariants still run on every execution.
 
-The review is fail-closed. Missing files, missing provenance, inconsistent timestamps, failed primary QA, target mismatch, leaked holdout, orphan/duplicate ledger events, or any nonzero/live risk state block publication. Optional Coinbase/Kraken outages are disclosed as WARN, not misrepresented as a successful cross-check.
+The review is fail-closed. Missing files, missing provenance, inconsistent timestamps, failed primary QA, target mismatch, leaked holdout, orphan/duplicate ledger events, or any nonzero/live risk state block publication. Optional Coinbase/Kraken outages are disclosed as WARN, not misrepresented as a successful cross-check. New forecast, score and invalidation events are staged in memory for review; the append-only ledger and challenger proposal register are written only after the pre-report gate passes. A failed review therefore cannot persist a new forecast event.
 
 ## 2. Data lineage and archive completeness
 
