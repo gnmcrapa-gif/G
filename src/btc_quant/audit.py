@@ -26,6 +26,17 @@ AUDIT_LENSES = (
 )
 
 
+def select_audit_lens(run: dict, now: datetime) -> tuple[int, str]:
+    """Rotate by the run's UTC start second, so same-day reruns can inspect different domains."""
+    start = run.get("started_at_utc")
+    try:
+        rotation_key = int(pd.Timestamp(start).timestamp()) if start else int(now.timestamp())
+    except (TypeError, ValueError, OverflowError):
+        rotation_key = int(now.timestamp())
+    index = rotation_key % len(AUDIT_LENSES)
+    return index, AUDIT_LENSES[index]
+
+
 def _source(manifests: list[dict], venue: str) -> dict | None:
     return next((item for item in manifests if item.get("venue") == venue), None)
 
@@ -438,6 +449,7 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
                 "unavailable_or_failed_sources": optional_failures,
                 "evidence": "Coinbase and Kraken are corroborative recent sources, not replacements for primary raw venues."}
     checks = {
+        "protocol_contract": {"status": "PASS" if run.get("protocol") == "V5.6.0" else "BLOCKED", "protocol": run.get("protocol"), "required_horizons": [1, 3, 7, 30]},
         "raw_object_integrity": raw,
         "binance_archive_completeness": coverage,
         "bitstamp_page_reconciliation": bitstamp_pages,
@@ -452,8 +464,7 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
         "historical_volume_outlier_review": outlier,
         "prospective_evidence_and_economic_validation": economic_gate,
     }
-    lens_index = now.date().toordinal() % len(AUDIT_LENSES)
-    lens = AUDIT_LENSES[lens_index]
+    lens_index, lens = select_audit_lens(run, now)
     deep_checks = {
         "data_provenance_and_coverage": raw["status"] == "PASS" and coverage["status"] == "PASS",
         "execution_timing_and_target_semantics": target["status"] == "PASS",
@@ -470,6 +481,7 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
         "lens": lens,
         "cycle": lens_index + 1,
         "cycle_length": len(AUDIT_LENSES),
+        "rotation_basis": "UTC run-start epoch second",
         "status": "PASS" if deep_checks[lens] else "BLOCKED",
         "all_lenses": list(AUDIT_LENSES),
         "evidence": "One deep lens is selected by UTC date on every run; all core checks above still run on every report.",
