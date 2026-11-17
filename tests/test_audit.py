@@ -67,6 +67,18 @@ def _review_inputs(tmp_path):
         "probabilistic_claims_allowed": False,
         "prospective_ledger_validation": {"probability_calibration_claim_allowed": False},
         "risk": {"mode": "paper_only", "live_trading_enabled": False, "theoretical_exposure_pct": 0.0},
+        "report_taxonomy": {
+            "FACT": [], "INTERPRETATION": [], "HYPOTHESIS": [], "FORECAST": {},
+        },
+        "economic_validation": {
+            "cost_adjusted_strategy_backtest_executed": False,
+            "historical_holdout_used_for_economic_promotion": False,
+        },
+        "closing_assessment": {
+            "principal_limit": "insufficient prospective evidence",
+            "evidence_that_would_change_assessment": "prospective lift and calibration",
+            "single_next_priority_experiment": "prospective challenger",
+        },
     }
     metrics = {
         str(h): {model: {"n": 250} for model in ("zero", "drift", "momentum", "ridge")}
