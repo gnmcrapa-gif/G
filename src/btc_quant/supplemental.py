@@ -1583,6 +1583,26 @@ def acquire_supplemental(output_dir: Path) -> tuple[dict, list[dict]]:
         summary["coverage"]["geopolitical_regulatory_news"] = {
             "status": "FAIL", "reason": summary["news"]["error"],
         }
+    try:
+        ckh_data, ckh_manifests = _cryptokeyhole_context(output_dir / "cryptokeyhole")
+        summary["cryptokeyhole"] = ckh_data
+        manifests.extend(ckh_manifests)
+        summary["coverage"]["exchange_flows_and_reserves"] = {
+            "status": ckh_data.get("exchange_flows_and_reserves_status", "UNAVAILABLE"),
+            "reason": ckh_data.get("exchange_labeling_limits"),
+        }
+        summary["coverage"]["liquidations"] = {
+            "status": ckh_data.get("liquidations_snapshot_status", "UNAVAILABLE"),
+            "reason": ckh_data.get("liquidations_snapshot_note"),
+        }
+    except Exception as exc:  # noqa: BLE001
+        summary["cryptokeyhole"] = {"status": "FAIL", "error": f"{type(exc).__name__}: {exc}"}
+        summary["coverage"]["exchange_flows_and_reserves"] = {
+            "status": "UNAVAILABLE", "reason": summary["cryptokeyhole"]["error"],
+        }
+        summary["coverage"]["liquidations"] = {
+            "status": "UNAVAILABLE", "reason": summary["cryptokeyhole"]["error"],
+        }
     derivative_statuses = {}
     for name, function, directory in (
         ("binance_futures", _binance_derivatives, output_dir / "binance_futures"),
