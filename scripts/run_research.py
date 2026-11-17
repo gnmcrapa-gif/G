@@ -407,7 +407,8 @@ def main() -> int:
                          "events_proposed": len(pending_events), "events_appended": 0,
                          "persistence_status": "PENDING_PRE_REPORT_REVIEW",
                          "existing_events_before_run": len(previous_events),
-                         "total_events_after_run": len(all_ledger_events),
+                         "total_events_proposed": len(all_ledger_events),
+                         "total_events_after_run": len(previous_events),
                          "append_only": True}
         run["steps"].append({"step": "walk_forward", "status": scores["status"],
                              "oos_rows": len(predictions), "scores": scores})
@@ -467,6 +468,9 @@ def main() -> int:
                 appended = append_events(ledger_path, pending_events)
                 if "ledger" in run:
                     run["ledger"]["events_appended"] = appended
+                    run["ledger"]["total_events_after_run"] = (
+                        run["ledger"]["existing_events_before_run"] + appended
+                    )
                     run["ledger"]["persistence_status"] = "PASS"
             except Exception as persistence_exc:  # noqa: BLE001 - persistence failure blocks the run
                 run["status"] = "BLOCKED"
