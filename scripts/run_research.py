@@ -183,6 +183,19 @@ def main() -> int:
             previous_report_archive_error = f"{type(archive_exc).__name__}: {archive_exc}"
     run = {"started_at_utc": datetime.now(UTC).isoformat(), "status": "BLOCKED",
            "protocol": "V5.6.0", "steps": [], "limitations": []}
+    run["code_commit"] = os.environ.get("GITHUB_SHA", "local-uncommitted")
+    run["changelog"] = {
+        "protocol": "V5.6.0",
+        "code_commit": run["code_commit"],
+        "changes": [
+            "mandatory pre-report audit with six rotating deep-review lenses",
+            "fixed-start expanding historical holdout; no rolling n-365 cutoff",
+            "scalar forecast serialization and legacy append-only array parsing",
+            "isolated prospective OHLCV challenger with separate ledger",
+            "archive-by-archive source completeness and raw SHA-256 verification",
+            "red-team checks, archived longitudinal comparison and observed 1/7/30-session drivers",
+        ],
+    }
     manifests = []
     run["previous_report_archive"] = None if previous_report_archive is None else str(previous_report_archive)
     run["previous_manifest_archive"] = None if previous_manifest_archive is None else str(previous_manifest_archive)
