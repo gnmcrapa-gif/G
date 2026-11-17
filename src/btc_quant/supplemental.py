@@ -1669,6 +1669,54 @@ def _cryptokeyhole_context(directory: Path) -> tuple[dict, list[dict]]:
             "status": "FAIL", "error": summary["exchange_daily_ranking"]["error"],
         })
 
+    liquidation_page_obj = None
+    try:
+        liquidation_url = "https://cryptokeyhole.com/crypto-liquidations/"
+        liquidation_response = session.get(liquidation_url, timeout=30)
+        liquidation_response.raise_for_status()
+        liquidation_raw = liquidation_response.content
+        liquidation_page_obj = _save_object(
+            directory, "crypto_liquidations_today.html", liquidation_raw,
+            source="CryptoKeyhole Crypto Liquidations Today",
+            url=liquidation_response.url, venue="Eight liquidation-reporting exchanges",
+            symbol="market-wide and BTC long/short 24h liquidations",
+            quote="USD", source_grade="B",
+        )
+        objects.append(liquidation_page_obj)
+        liquidation_data = _parse_ckh_liquidations(liquidation_raw)
+        liquidation_data["source_url"] = liquidation_response.url
+        liquidation_data["retrieved_at_utc"] = liquidation_page_obj["retrieved_at_utc"]
+        summary["liquidations_page"] = liquidation_data
+        manifests.append({
+            "source": "CryptoKeyhole Crypto Liquidations Today",
+            "venue": "Eight liquidation-reporting exchanges",
+            "symbol": "market-wide and BTC long/short 24h liquidations",
+            "quote_currency": "USD", "interval": "rolling 24h plus 1h/4h/12h",
+            "timezone": "UTC", "schema_version": "1.0", "source_grade": "B",
+            "retrieved_at_utc": liquidation_page_obj["retrieved_at_utc"],
+            "parser": "CryptoKeyhole liquidation page table/parser", "parser_version": "0.3",
+            "schema": ["all_coins_24h_total_usd", "bitcoin_24h_longs_usd",
+                       "bitcoin_24h_shorts_usd", "hourly_windows_by_coin",
+                       "largest_single_liquidations", "largest_liquidation_days"],
+            "objects": [liquidation_page_obj], "status": liquidation_data.get("status", "FAIL"),
+        })
+    except (requests.RequestException, ValueError) as exc:
+        summary["liquidations_page"] = {
+            "status": "FAIL", "error": f"{type(exc).__name__}: {exc}",
+        }
+        manifests.append({
+            "source": "CryptoKeyhole Crypto Liquidations Today",
+            "venue": "Eight liquidation-reporting exchanges",
+            "symbol": "market-wide and BTC long/short 24h liquidations",
+            "quote_currency": "USD", "interval": "rolling 24h plus 1h/4h/12h",
+            "timezone": "UTC", "schema_version": "1.0", "source_grade": "B",
+            "retrieved_at_utc": datetime.now(UTC).isoformat(),
+            "parser": "CryptoKeyhole liquidation page table/parser", "parser_version": "0.3",
+            "schema": ["raw HTML retained; parser failed"] if liquidation_page_obj else [],
+            "objects": [liquidation_page_obj] if liquidation_page_obj else [],
+            "status": "FAIL", "error": summary["liquidations_page"]["error"],
+        })
+
     netflow = summary["series"].get("exchange_netflow_btc", {})
     balance = summary["series"].get("exchange_balance_btc", {})
     exchange_statuses = [netflow.get("status"), balance.get("status")]
@@ -1686,11 +1734,14 @@ def _cryptokeyhole_context(directory: Path) -> tuple[dict, list[dict]]:
         "and per-exchange detail require higher plans. Customer deposit addresses and unlabeled wallets remain incomplete. "
         "Do not infer total exchange reserves or solvency."
     )
+    page_liquidations_status = summary.get("liquidations_page", {}).get("status")
     summary["liquidations_snapshot_status"] = (
-        "PARTIAL" if _contains_liquidation_data(move) else "UNAVAILABLE"
+        "PARTIAL" if page_liquidations_status in {"PASS", "PARTIAL"} or _contains_liquidation_data(move)
+        else "UNAVAILABLE"
     )
     summary["liquidations_snapshot_note"] = (
-        "Latest-move event context only; not a complete market-wide 24h liquidation time series."
+        summary.get("liquidations_page", {}).get("limitations")
+        or "Latest-move event context only; no complete market-wide 24h liquidation series."
     )
     successful = sum(status == "PASS" for status in summary["source_status"].values())
     summary["status"] = "PASS" if successful == len(endpoints) else "PARTIAL" if successful else "FAIL"
