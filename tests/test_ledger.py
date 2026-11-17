@@ -35,6 +35,7 @@ def test_forecast_ledger_uses_validation_selected_alpha_by_horizon():
         assert f"alpha={alpha:g}" in event["notes"]
         assert pd.Timestamp(event["entry_timestamp_utc"]) > pd.Timestamp(event["issued_at_utc"])
         assert event["target"] == "log(Open[t+h+2]/Open[t+2])"
+        assert pd.Timestamp(event["entry_timestamp_utc"]) == pd.Timestamp(event["signal_timestamp_utc"]) + pd.Timedelta(days=2)
 
 
 def test_late_forecast_is_invalidated_not_deleted():
