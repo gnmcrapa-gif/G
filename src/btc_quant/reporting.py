@@ -606,7 +606,7 @@ def render_markdown_report(run: dict, scores: dict) -> str:
         lines.append(f"- Liquidazioni: {ckh.get('liquidations_snapshot_status', 'UNAVAILABLE')} — {ckh.get('liquidations_snapshot_note', 'serie completa non disponibile')}")
         ranking = ckh.get("exchange_daily_ranking", {})
         if ranking:
-            lines += ["", f"- Ranking exchange multi-asset: ultimo giorno completo {ranking.get('latest_complete_day_utc')}; pagina aggiornata {ranking.get('page_updated_at_utc')}.",
+            lines += ["", f"- Ranking exchange multi-asset: ultimo giorno completo {ranking.get('latest_complete_day_utc')}; pagina aggiornata {ranking.get('page_updated_at_utc')}; fonte: {ranking.get('source_url')}.",
                       "| Exchange | Netflow giornaliero USD | Netflow 7d USD | Asset inclusi |",
                       "|---|---:|---:|---|"]
             for row in ranking.get("exchanges", []):
