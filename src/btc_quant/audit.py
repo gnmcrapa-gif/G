@@ -230,7 +230,7 @@ def build_market_snapshot(binance: pd.DataFrame | None, bitstamp: pd.DataFrame |
     return output
 
 
-def build_observed_drivers(frame: pd.DataFrame | None) -> dict:
+def build_observed_drivers(frame: pd.DataFrame | None, retrieved_at_utc: str | None = None) -> dict:
     """Describe fixed 1/7/30-session price windows without directional alert language."""
     if frame is None or len(frame) < 31:
         return {"status": "WARN", "reason": "At least 31 validated daily rows are required."}
@@ -248,6 +248,7 @@ def build_observed_drivers(frame: pd.DataFrame | None) -> dict:
             "close_to_close_return_pct": value,
             "source": "Binance BTCUSDT spot daily OHLCV",
             "quote_currency": "USDT",
+            "retrieved_at_utc": retrieved_at_utc,
             "qa": "PASS",
         })
     previous_volume = pd.to_numeric(data["volume"].iloc[-31:-1], errors="raise").astype(float)
@@ -264,6 +265,8 @@ def build_observed_drivers(frame: pd.DataFrame | None) -> dict:
         "latest_candle_timestamp_utc": latest.isoformat(),
         "volume_window": "30 completed sessions immediately preceding the latest candle",
         "source": "Binance BTCUSDT spot daily OHLCV",
+        "retrieved_at_utc": retrieved_at_utc,
+        "qa": "PASS",
         "note": "Descriptive facts only; no directional alert or probability is implied.",
     }
 
@@ -476,7 +479,9 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
         "evidence": "Zero-return remains the champion; Ridge is not promoted.",
     }
     outlier = audit_outlier_date(binance, bitstamp)
-    observed_drivers = build_observed_drivers(binance)
+    observed_drivers = build_observed_drivers(
+        binance, None if binance_manifest is None else binance_manifest.get("retrieved_at_utc")
+    )
     prospective = run.get("prospective_ledger_validation", {}).get("by_horizon", {})
     prospective_counts = {str(key): int(value.get("n", 0)) for key, value in prospective.items()}
     prospective_ready = len(prospective_counts) == 4 and all(value >= 200 for value in prospective_counts.values())
