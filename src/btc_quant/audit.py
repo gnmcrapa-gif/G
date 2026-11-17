@@ -378,6 +378,45 @@ def _check_ledger(events: list[dict], now: datetime, latest_data_timestamp=None)
     }
 
 
+def _check_ohlcv_challenger(events: list[dict], run: dict) -> dict:
+    forecasts = [
+        row for row in events
+        if row.get("event_type") == "FORECAST"
+        and str(row.get("model_version", "")).startswith("ohlcv-challenger-")
+    ]
+    issues = []
+    for row in forecasts:
+        notes = row.get("notes", "")
+        try:
+            cutoff_text = notes.split("training_cutoff_utc=")[1].split(";")[0]
+            holdout_text = notes.split("holdout_start_utc=")[1].split(";")[0]
+            cutoff = pd.Timestamp(cutoff_text)
+            holdout = pd.Timestamp(holdout_text)
+            if cutoff.tzinfo is None or holdout.tzinfo is None or cutoff >= holdout:
+                raise ValueError("training cutoff is not strictly before holdout")
+            if "fixed alpha=100" not in notes or "historical holdout excluded from training and tuning" not in notes:
+                raise ValueError("fixed-alpha or holdout-exclusion provenance missing")
+            _forecast_to_float(row.get("forecast"))
+        except (IndexError, TypeError, ValueError) as exc:
+            issues.append({"forecast_id": row.get("forecast_id"), "reason": str(exc)})
+    state = run.get("ohlcv_challenger", {}).get("status")
+    if issues:
+        status = "BLOCKED"
+    elif forecasts:
+        status = "PASS"
+    else:
+        status = "WARN"
+    return {
+        "status": status,
+        "registered_experiment": "V5.5-OHLCV-001",
+        "forecast_events_found": len(forecasts),
+        "challenger_run_status": state,
+        "training_cutoff_before_holdout": not issues,
+        "issues": issues,
+        "evidence": "Separate append-only ledger; fixed alpha; every forecast records a training cutoff strictly before the frozen historical holdout.",
+    }
+
+
 def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFrame | None,
                             bitstamp: pd.DataFrame | None, events: list[dict],
                             root: Path = Path("."), now: datetime | None = None) -> dict:
@@ -428,9 +467,12 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
     prospective = run.get("prospective_ledger_validation", {}).get("by_horizon", {})
     prospective_counts = {str(key): int(value.get("n", 0)) for key, value in prospective.items()}
     prospective_ready = len(prospective_counts) == 4 and all(value >= 200 for value in prospective_counts.values())
+    ohlcv_summary = run.get("ohlcv_challenger", {}).get("prospective_validation", {})
+    ohlcv_counts = {str(key): int(value.get("n", 0)) for key, value in ohlcv_summary.get("by_horizon", {}).items()}
     economic_gate = {
         "status": "WARN",
         "matured_forecasts_by_horizon": prospective_counts,
+        "ohlcv_challenger_matured_by_horizon": ohlcv_counts,
         "minimum_per_horizon": 200,
         "sample_gate_met": prospective_ready,
         "strategy_cost_backtest": "NOT_RUN",
@@ -445,6 +487,7 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
         if step.get("step") in {"coinbase_recent_cross_check", "kraken_recent_cross_check"}
         and step.get("status") != "PASS"
     ]
+    ohlcv_check = _check_ohlcv_challenger(events, run)
     optional = {"status": "WARN" if optional_failures else "PASS",
                 "unavailable_or_failed_sources": optional_failures,
                 "evidence": "Coinbase and Kraken are corroborative recent sources, not replacements for primary raw venues."}
@@ -462,6 +505,7 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
         "venue_quote_separation": {"status": "PASS" if binance_manifest and bitstamp_manifest and binance_manifest.get("quote_currency") == "USDT" and bitstamp_manifest.get("quote_currency") == "USD" else "BLOCKED", "binance_quote": None if binance_manifest is None else binance_manifest.get("quote_currency"), "bitstamp_quote": None if bitstamp_manifest is None else bitstamp_manifest.get("quote_currency"), "evidence": "USDT and USD series remain separate; no implicit FX conversion or volume pooling."},
         "run_status_consistency": {"status": "PASS" if run.get("status") == "BLOCKED" or (run.get("status") == "COMPLETE_NOT_PROMOTED" and all(next((step.get("status") for step in run.get("steps", []) if step.get("step") == key), None) == expected for key, expected in (("binance_acquisition_and_qa", "PASS"), ("bitstamp_acquisition_and_qa", "PASS"), ("walk_forward", "SCORED_NOT_PROMOTED")))) else "BLOCKED", "run_status": run.get("status"), "evidence": "A completed report requires both primary QA passes and a scored-but-not-promoted research result."},
         "historical_volume_outlier_review": outlier,
+        "ohlcv_challenger_holdout_isolation": ohlcv_check,
         "prospective_evidence_and_economic_validation": economic_gate,
     }
     lens_index, lens = select_audit_lens(run, now)
@@ -516,8 +560,8 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
             },
             "HYPOTHESIS": {
                 "experiment": "V5.5-OHLCV-001",
-                "status": "PROPOSED_NOT_RUN",
-                "claim": "Normalized volume surprise and candle geometry may add predictive information; this remains untested.",
+                "status": run.get("ohlcv_challenger", {}).get("status", "NOT_STARTED"),
+                "claim": "Normalized volume surprise and candle geometry are being tested only through new prospective ledger forecasts; no performance or promotion is claimed.",
             },
             "FORECAST": {
                 "type": "prospective point forecasts only; no calibrated probabilities",
@@ -528,6 +572,6 @@ def build_pre_report_review(run: dict, manifests: list[dict], binance: pd.DataFr
             "three_observed_drivers": observed_drivers.get("three_observed_price_drivers", []),
             "principal_limit": "No horizon has 200 matured prospective SCORE events; the historical holdout is continuity-only and the 2022-11-08 Binance volume has no independent historical venue confirmation.",
             "evidence_that_would_change_assessment": "At least 200 matured prospective forecasts per horizon, positive lift versus zero-return under HAC/Holm control, separate calibration evidence, stable regime diagnostics and positive net value using documented venue fees/spread/slippage.",
-            "single_next_experiment": "V5.5-OHLCV-001: pre-registered volume-surprise and candle-geometry challenger, prospective ledger only; do not use the historical continuity holdout for promotion.",
+            "single_next_experiment": "Monitor V5.5-OHLCV-001 prospective forecasts until matured sample gates are met; do not use the historical continuity holdout for promotion.",
         },
     }
