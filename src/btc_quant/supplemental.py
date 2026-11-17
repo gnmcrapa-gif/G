@@ -1176,7 +1176,15 @@ def _global_etp_weekly(directory: Path) -> tuple[dict, list[dict]]:
                 })
     history.sort(key=lambda row: row["report_week"], reverse=True)
     four_weeks = history[:4]
-    complete_four = len(four_weeks) == 4 and all(
+    week_mondays = []
+    for row in four_weeks:
+        year_text, week_text = row["report_week"].split("-W")
+        week_mondays.append(date.fromisocalendar(int(year_text), int(week_text), 1))
+    consecutive_four = len(week_mondays) == 4 and all(
+        (week_mondays[index - 1] - week_mondays[index]).days == 7
+        for index in range(1, len(week_mondays))
+    )
+    complete_four = consecutive_four and all(
         row.get("global_bitcoin_etp_weekly_flow_usd_mn") is not None for row in four_weeks
     )
     summary = {
@@ -1186,6 +1194,7 @@ def _global_etp_weekly(directory: Path) -> tuple[dict, list[dict]]:
         "source": "Bitwise Europe Weekly Crypto Market Compass; data subject to publisher revision",
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "weekly_history": history,
+        "last_four_weeks_consecutive": consecutive_four,
         "last_four_weeks_global_crypto_etp_flow_usd_mn": (
             sum(row["global_crypto_etp_weekly_flow_usd_mn"] for row in four_weeks)
             if complete_four and all(row.get("global_crypto_etp_weekly_flow_usd_mn") is not None for row in four_weeks)
