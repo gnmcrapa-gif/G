@@ -2,6 +2,7 @@ import pandas as pd
 import pytest
 
 from btc_quant.reporting import (
+    _build_halving_cycle_comparison,
     _build_longitudinal_comparison,
     _build_report_sections,
     _market_snapshot,
@@ -125,3 +126,27 @@ def test_markdown_report_discloses_stale_and_unavailable_context_sources():
     assert "STALE" in report
     assert "exchange_flows_and_reserves" in report
     assert "UNAVAILABLE" in report
+
+
+
+def test_halving_cycle_comparison_uses_same_elapsed_horizon_and_marks_missing_history():
+    timestamps = pd.date_range("2020-05-11", "2026-11-16", freq="D", tz="UTC")
+    close = [100.0 + index for index in range(len(timestamps))]
+    frame = pd.DataFrame({
+        "timestamp": timestamps,
+        "open": close,
+        "high": [value + 2.0 for value in close],
+        "low": [value - 2.0 for value in close],
+        "close": close,
+        "volume": [1000.0] * len(close),
+    })
+    result = _build_halving_cycle_comparison(frame)
+    cycles = {item["cycle"]: item for item in result["cycles"]}
+    assert result["status"] == "PASS"
+    assert cycles["2012 cycle"]["status"] == "INSUFFICIENT_HISTORY"
+    assert cycles["2016 cycle"]["status"] == "INSUFFICIENT_HISTORY"
+    assert cycles["2020 cycle"]["status"] == "PASS"
+    assert cycles["2024 cycle (current)"]["status"] == "PASS"
+    assert cycles["2020 cycle"]["elapsed_sessions"] == result["current_cycle_elapsed_sessions"]
+    assert cycles["2024 cycle (current)"]["elapsed_sessions"] == result["current_cycle_elapsed_sessions"]
+    assert "not a timing forecast" in result["interpretation_limit"]
