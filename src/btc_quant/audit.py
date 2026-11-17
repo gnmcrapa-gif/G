@@ -505,14 +505,19 @@ def build_longitudinal_comparison(
     previous_prospective = previous_report.get("prospective_ledger_validation", {}).get("by_horizon", {})
     current_ohlcv = run.get("ohlcv_challenger", {}).get("prospective_validation", {}).get("by_horizon", {})
     previous_ohlcv = previous_report.get("ohlcv_challenger", {}).get("prospective_validation", {}).get("by_horizon", {})
+    holdout_cutoff_unchanged = previous_scores.get("holdout_start_utc") == current_scores.get("holdout_start_utc")
+    comparison_status = (
+        "PASS" if previous_manifest is not None and holdout_cutoff_unchanged
+        else "WARN_HOLDOUT_DEFINITION_OR_MANIFEST_CHANGED"
+    )
     return {
-        "status": "PASS" if previous_manifest is not None else "WARN_PREVIOUS_MANIFEST_MISSING",
+        "status": comparison_status,
         "comparison_available": True,
         "previous_run_started_at_utc": previous_report.get("started_at_utc"),
         "current_run_started_at_utc": run.get("started_at_utc"),
         "previous_holdout_start_utc": previous_scores.get("holdout_start_utc"),
         "current_holdout_start_utc": current_scores.get("holdout_start_utc"),
-        "holdout_cutoff_unchanged": previous_scores.get("holdout_start_utc") == current_scores.get("holdout_start_utc"),
+        "holdout_cutoff_unchanged": holdout_cutoff_unchanged,
         "holdout_comparison_role": "CONTINUITY_ONLY_NOT_INDEPENDENT_OOS",
         "historical_metric_changes": metric_changes,
         "previous_primary_source_rows": source_rows(previous_sources),
