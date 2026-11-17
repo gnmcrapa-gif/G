@@ -1202,6 +1202,238 @@ def _global_etp_weekly(directory: Path) -> tuple[dict, list[dict]]:
     return summary, manifests
 
 
+def _ckh_point(point) -> dict | None:
+    if isinstance(point, dict):
+        stamp = point.get("t", point.get("timestamp", point.get("date")))
+        value = point.get("v", point.get("value"))
+        finality = point.get("finality", point.get("status"))
+    elif isinstance(point, (list, tuple)) and len(point) >= 2:
+        stamp, value = point[0], point[1]
+        finality = point[2] if len(point) > 2 else None
+    else:
+        return None
+    if stamp is None or value is None:
+        return None
+    try:
+        if isinstance(stamp, (int, float)):
+            unit = "ms" if stamp > 10**12 else "s"
+            timestamp = pd.to_datetime(stamp, unit=unit, utc=True).isoformat()
+        else:
+            timestamp = pd.to_datetime(stamp, utc=True).isoformat()
+        numeric_value = float(value)
+    except (TypeError, ValueError, OverflowError):
+        return None
+    if not math.isfinite(numeric_value):
+        return None
+    return {"timestamp_utc": timestamp, "value": numeric_value, "finality": finality}
+
+
+def _ckh_series_summary(payload: dict, preview_header: str | None) -> dict:
+    container = payload.get("series") if isinstance(payload.get("series"), dict) else payload
+    points = container.get("points", []) if isinstance(container, dict) else []
+    state = str(payload.get("state", payload.get("status", ""))).lower()
+    if preview_header or state in {"locked", "preview", "preview_only"}:
+        return {
+            "status": "PREVIEW_ONLY",
+            "preview_header": preview_header,
+            "state": state,
+            "reason": "Provider access metadata marks this response as a fixed preview; no preview values are used as current data.",
+        }
+    parsed = [item for item in (_ckh_point(point) for point in points) if item]
+    finals = [item for item in parsed if str(item.get("finality") or "final").lower() == "final"]
+    if not finals:
+        return {
+            "status": "UNAVAILABLE",
+            "reason": "No final numeric observations were returned by the provider.",
+            "points_received": len(points),
+        }
+    finals.sort(key=lambda item: item["timestamp_utc"])
+    latest = finals[-1]
+    age_days = (datetime.now(UTC) - pd.Timestamp(latest["timestamp_utc"]).to_pydatetime()).total_seconds() / 86400
+    return {
+        "status": "PASS" if 0 <= age_days <= 2 else "STALE",
+        "metric": container.get("metric", payload.get("metric")),
+        "name": container.get("name", payload.get("name")),
+        "unit": container.get("unit", payload.get("unit")),
+        "source": container.get("source", payload.get("source")),
+        "method": container.get("method", payload.get("method")),
+        "plan": container.get("plan", payload.get("plan")),
+        "latest_final": latest,
+        "age_days": age_days,
+        "observations": len(finals),
+        "coverage": container.get("coverage", payload.get("coverage")),
+        "revision": container.get("revision", payload.get("revision")),
+    }
+
+
+def _contains_liquidation_data(value) -> bool:
+    if isinstance(value, dict):
+        for key, child in value.items():
+            if "liquidat" in str(key).lower() and child not in (None, "", [], {}):
+                return True
+            if _contains_liquidation_data(child):
+                return True
+    elif isinstance(value, list):
+        return any(_contains_liquidation_data(item) for item in value)
+    return False
+
+
+def _cryptokeyhole_context(directory: Path) -> tuple[dict, list[dict]]:
+    session = requests.Session()
+    session.headers.update({"User-Agent": USER_AGENT})
+    base = "https://cryptokeyhole.com/api/v1"
+    objects, manifests, errors = [], [], {}
+    summary = {
+        "source": "CryptoKeyhole public API",
+        "attribution": "CryptoKeyhole; free chart data under CC BY 4.0 where applicable",
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "status": "PARTIAL",
+        "series": {},
+        "source_status": {},
+    }
+
+    endpoints = (
+        ("provider_status", "/status", None, "provider_status.json"),
+        ("fear_and_greed", "/fear-and-greed", {"coin": "btc", "limit": 30}, "fear_and_greed_btc.json"),
+        ("leverage_gauge", "/leverage", {"asset": "BTC"}, "leverage_gauge_btc.json"),
+        ("latest_move", "/moves/latest", {"asset": "BTC"}, "latest_move_btc.json"),
+    )
+    payloads = {}
+    for key, path, params, filename in endpoints:
+        obj = None
+        try:
+            response = session.get(base + path, params=params, timeout=30)
+            response.raise_for_status()
+            raw = response.content
+            obj = _save_object(
+                directory, filename, raw, source=f"CryptoKeyhole API {path}",
+                url=response.url, venue="CryptoKeyhole", symbol=key,
+                quote="provider-native", source_grade="B",
+            )
+            objects.append(obj)
+            payload = response.json()
+            payloads[key] = payload
+            summary["source_status"][key] = "PASS"
+            manifests.append({
+                "source": f"CryptoKeyhole API {path}", "venue": "CryptoKeyhole",
+                "symbol": key, "quote_currency": "provider-native",
+                "interval": "current snapshot" if key != "fear_and_greed" else "daily history",
+                "timezone": "provider timestamp normalized to UTC",
+                "schema_version": "1.0", "source_grade": "B",
+                "retrieved_at_utc": obj["retrieved_at_utc"],
+                "parser": "CryptoKeyhole public JSON parser", "parser_version": "0.3",
+                "schema": ["provider JSON; raw response retained"],
+                "objects": [obj], "status": "PASS",
+            })
+        except (requests.RequestException, ValueError) as exc:
+            errors[key] = f"{type(exc).__name__}: {exc}"
+            summary["source_status"][key] = "FAIL"
+            manifests.append({
+                "source": f"CryptoKeyhole API {path}", "venue": "CryptoKeyhole",
+                "symbol": key, "quote_currency": "provider-native",
+                "interval": "snapshot", "timezone": "UTC",
+                "schema_version": "1.0", "source_grade": "B",
+                "retrieved_at_utc": datetime.now(UTC).isoformat(),
+                "parser": "CryptoKeyhole public JSON parser", "parser_version": "0.3",
+                "schema": ["raw JSON retained; parse failed"] if obj else [],
+                "objects": [obj] if obj else [], "status": "FAIL",
+                "error": errors[key],
+            })
+
+    fear = payloads.get("fear_and_greed", {})
+    summary["fear_and_greed"] = fear
+    leverage = payloads.get("leverage_gauge", {})
+    summary["leverage_gauge"] = leverage
+    move = payloads.get("latest_move", {})
+    summary["latest_move"] = move
+    summary["provider_status"] = payloads.get("provider_status", {})
+
+    for metric_key, metric_id in (
+        ("exchange_netflow_btc", "ckh.ExchangeNetflowVolumeBTC"),
+        ("exchange_balance_btc", "ckh.ExchangeBalanceBTC"),
+    ):
+        obj = None
+        try:
+            response = session.get(
+                base + "/series",
+                params={"metric": metric_id, "interval": "24h", "limit": 20000},
+                timeout=30,
+            )
+            response.raise_for_status()
+            raw = response.content
+            obj = _save_object(
+                directory, f"{metric_key}.json", raw,
+                source=f"CryptoKeyhole series {metric_id}", url=response.url,
+                venue="Labeled exchange wallets", symbol=metric_id,
+                quote="BTC", source_grade="B",
+            )
+            objects.append(obj)
+            payload = response.json()
+            parsed = _ckh_series_summary(payload, response.headers.get("X-CKH-Preview"))
+            parsed["metric_id"] = metric_id
+            summary["series"][metric_key] = parsed
+            manifests.append({
+                "source": f"CryptoKeyhole series {metric_id}",
+                "venue": "Labeled exchange wallets", "symbol": metric_id,
+                "quote_currency": "BTC", "interval": "24h",
+                "timezone": "provider UTC finality", "schema_version": "1.0",
+                "source_grade": "B", "retrieved_at_utc": obj["retrieved_at_utc"],
+                "parser": "CryptoKeyhole series finality parser", "parser_version": "0.3",
+                "schema": ["t", "v", "finality", "source", "method", "coverage"],
+                "objects": [obj], "status": parsed.get("status", "FAIL"),
+            })
+        except (requests.RequestException, ValueError, TypeError) as exc:
+            errors[metric_key] = f"{type(exc).__name__}: {exc}"
+            summary["series"][metric_key] = {
+                "status": "UNAVAILABLE", "reason": errors[metric_key],
+            }
+            manifests.append({
+                "source": f"CryptoKeyhole series {metric_id}",
+                "venue": "Labeled exchange wallets", "symbol": metric_id,
+                "quote_currency": "BTC", "interval": "24h",
+                "timezone": "provider UTC finality", "schema_version": "1.0",
+                "source_grade": "B", "retrieved_at_utc": datetime.now(UTC).isoformat(),
+                "parser": "CryptoKeyhole series finality parser", "parser_version": "0.3",
+                "schema": ["provider series JSON"], "objects": [obj] if obj else [],
+                "status": "FAIL", "error": errors[metric_key],
+            })
+
+    netflow = summary["series"].get("exchange_netflow_btc", {})
+    balance = summary["series"].get("exchange_balance_btc", {})
+    exchange_statuses = [netflow.get("status"), balance.get("status")]
+    if all(status == "PASS" for status in exchange_statuses):
+        summary["exchange_flows_and_reserves_status"] = "PASS"
+    elif any(status in {"PASS", "STALE"} for status in exchange_statuses):
+        summary["exchange_flows_and_reserves_status"] = "PARTIAL"
+    else:
+        summary["exchange_flows_and_reserves_status"] = "UNAVAILABLE"
+    summary["exchange_labeling_limits"] = (
+        "CryptoKeyhole wallet labels are a lower-bound view: only disclosed/identified exchange wallet clusters are counted; "
+        "coverage varies by exchange and snapshot age, customer deposit addresses may be incomplete, and transfers between "
+        "covered exchanges are not equivalent to external netflows. Do not infer total exchange reserves or solvency."
+    )
+    summary["liquidations_snapshot_status"] = (
+        "PARTIAL" if _contains_liquidation_data(move) else "UNAVAILABLE"
+    )
+    summary["liquidations_snapshot_note"] = (
+        "Latest-move event context only; not a complete market-wide 24h liquidation time series."
+    )
+    successful = sum(status == "PASS" for status in summary["source_status"].values())
+    summary["status"] = "PASS" if successful == len(endpoints) else "PARTIAL" if successful else "FAIL"
+    summary["errors"] = errors
+    manifests.append({
+        "source": "CryptoKeyhole public API", "venue": "CryptoKeyhole",
+        "symbol": "BTC sentiment/leverage/move and exchange-wallet series",
+        "quote_currency": "provider-native", "interval": "snapshot plus daily series",
+        "timezone": "UTC", "schema_version": "1.0", "source_grade": "B",
+        "retrieved_at_utc": summary["retrieved_at_utc"],
+        "parser": "CryptoKeyhole public context parser", "parser_version": "0.3",
+        "schema": ["fear-and-greed", "leverage", "latest-move", "exchange netflow", "exchange balance"],
+        "objects": objects, "status": summary["status"],
+    })
+    return summary, manifests
+
+
 def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
     session = requests.Session()
     session.headers.update({"User-Agent": USER_AGENT})
