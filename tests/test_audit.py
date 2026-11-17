@@ -144,6 +144,9 @@ def test_ledger_audit_blocks_matured_pending_forecast_without_score():
     forecast = {
         "event_id": "f", "event_type": "FORECAST", "forecast_id": "f",
         "issued_at_utc": "2026-11-16T19:00:00+00:00",
+        "signal_timestamp_utc": "2026-11-16T00:00:00+00:00",
+        "feature_cutoff_utc": "2026-11-17T00:00:00+00:00",
+        "target": "log(Open[t+h+2]/Open[t+2])", "horizon": 1,
         "entry_timestamp_utc": "2026-11-18T00:00:00+00:00",
         "expiry_timestamp_utc": "2026-11-19T00:00:00+00:00",
         "forecast": 0.01,
