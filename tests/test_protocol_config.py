@@ -16,11 +16,16 @@ def test_project_config_matches_production_protocol_v56():
 def test_challenger_proposal_uses_v56_id_and_is_idempotent(tmp_path):
     import csv
 
-    from scripts.run_research import _append_challenger_proposal
+    import importlib.util
+
+    script_path = Path(__file__).parents[1] / "scripts" / "run_research.py"
+    spec = importlib.util.spec_from_file_location("btc_quant_run_research_test", script_path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
 
     path = tmp_path / "challenger_log.csv"
-    _append_challenger_proposal(path)
-    _append_challenger_proposal(path)
+    module._append_challenger_proposal(path)
+    module._append_challenger_proposal(path)
     with path.open(newline="", encoding="utf-8") as handle:
         rows = list(csv.DictReader(handle))
     assert len(rows) == 1
