@@ -52,7 +52,7 @@ Zero-return has the lowest MAE at all four horizons. Ridge is worse than zero on
 ## Protocol and review gates
 
 - **V5.5.1 (main production baseline):** corrected target/execution timing. The daily run executes at 16:00 UTC; `Open[t+1]` has already passed, so the production target is `log(Open[t+h+2]/Open[t+2])`. The h+1 target is theoretical, not executable at scheduled issuance.
-- **V5.6 (proposed in this branch):** mandatory executable pre-report review gate, raw-object hash/size verification, Binance monthly/daily archive completeness, Bitstamp pagination reconciliation, cross-venue anomaly-event review, last-closed-candle snapshot, runtime diagnostics, and rotating adversarial review cycles. Any blocking failure forces BLOCKED and 0% theoretical exposure before report serialization. New ledger events are staged in memory and appended only after the pre-report gate passes.
+- **V5.6 (proposed in this branch):** mandatory executable pre-report review gate, raw-object hash/size verification, Binance monthly/daily archive completeness, Bitstamp pagination reconciliation, cross-venue anomaly-event review, last-closed-candle snapshot, runtime diagnostics, and rotating adversarial review cycles. Any blocking failure forces BLOCKED and 0% theoretical exposure before report serialization. New ledger events are staged in memory and appended only after the pre-report gate passes; PR runs are read-only and skip persistent ledger writes.
 
 See [Protocol V5.6](docs/protocol-v5.6.md), [Protocol V5.5](docs/protocol-v5.5.md), and [target/execution timing audit](docs/target-alignment-audit-2026-11-17.md).
 
