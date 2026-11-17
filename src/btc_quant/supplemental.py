@@ -871,14 +871,33 @@ def _parse_rss_articles(payload: bytes, source: str) -> list[dict]:
 
 
 def _news_keyword_tags(title: str, snippet: str = "") -> list[str]:
-    text = f"{title} {snippet}".lower()
+    text = f"{title} {snippet}"
     groups = {
-        "regulatory": ("sec", "cftc", "regulation", "regulatory", "legislation", "court", "mica", "law"),
-        "macro_monetary": ("federal reserve", "fomc", "inflation", "cpi", "treasury", "yield", "interest rate", "payroll"),
-        "geopolitical": ("war", "sanctions", "election", "tariff", "conflict", "ceasefire", "ukraine", "iran", "israel", "russia"),
-        "crypto": ("bitcoin", "crypto", "digital asset", "etf", "exchange"),
+        "regulatory": (
+            "SEC", "CFTC", "regulation", "regulatory", "legislation",
+            "legislative", "court", "MiCA", "rulemaking", "rule",
+        ),
+        "macro_monetary": (
+            "Federal Reserve", "FOMC", "inflation", "CPI", "Treasury",
+            "yield", "interest rate", "payroll", "monetary policy",
+            "central bank", "ECB", "Bank of Japan", "BOJ", "PCE",
+            "employment report",
+        ),
+        "geopolitical": (
+            "war", "sanctions", "election", "tariff", "conflict",
+            "ceasefire", "Ukraine", "Iran", "Israel", "Russia",
+            "invasion", "military strike", "blockade",
+        ),
+        "crypto": (
+            "Bitcoin", "BTC", "cryptocurrency", "crypto", "digital asset",
+            "spot ETF", "ETF", "crypto exchange",
+        ),
     }
-    return [tag for tag, words in groups.items() if any(word in text for word in words)]
+    # Match complete words/phrases; avoid accidental substring hits such as SEC in "second".
+    return [
+        tag for tag, words in groups.items()
+        if any(re.search(r"\\b" + re.escape(word) + r"\\b", text, flags=re.IGNORECASE) for word in words)
+    ]
 
 
 def _news_context(directory: Path) -> tuple[dict, list[dict]]:
@@ -1009,7 +1028,13 @@ def _news_context(directory: Path) -> tuple[dict, list[dict]]:
         key = article.get("url") or article.get("title")
         if key and article.get("title"):
             article["keyword_tags"] = _news_keyword_tags(article["title"], article.get("snippet", ""))
-            deduped[key] = article
+            # Keep only headlines relevant to BTC/crypto, monetary policy, regulation or geopolitics.
+            if article["keyword_tags"]:
+                deduped[key] = article
+    for source_name, source_item in source_status.items():
+        source_item["relevant_article_count"] = sum(
+            article.get("source") == source_name for article in deduped.values()
+        )
     final_articles = sorted(
         deduped.values(),
         key=lambda row: row.get("published_at_utc") or row.get("seen_at_utc") or "",
