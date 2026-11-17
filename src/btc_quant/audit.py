@@ -350,7 +350,7 @@ def run_pre_report_review(
         )
 
     # Four explicit review cycles. The deep-review order rotates to avoid a single fixed audit sequence.
-    categories = ["protocol", "data", "quant", "ledger", "risk", "red_team"]
+    categories = ["protocol", "data", "quant", "ledger", "risk", "operations", "red_team"]
     rotation = lens_index % len(categories)
     ordered = categories[rotation:] + categories[:rotation]
     cycles = []
