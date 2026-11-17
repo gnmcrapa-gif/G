@@ -42,21 +42,28 @@ def _safe_optional_acquisition(label, function, directory):
 
 
 
-def _append_challenger_proposal(path: Path) -> None:
-    """Register the next falsifiable experiment once; never imply it has been run."""
+def _append_challenger_proposal(
+    path: Path, *, implemented: bool = False, manifest_sha256: str = ""
+) -> None:
+    """Append immutable proposal/status events for the registered OHLCV experiment."""
     experiment_id = "V5.5-OHLCV-001"
     path.parent.mkdir(parents=True, exist_ok=True)
-    existing = set()
-    if path.exists():
-        with path.open(newline="", encoding="utf-8") as handle:
-            existing = {row.get("experiment_id") for row in csv.DictReader(handle)}
-    if experiment_id in existing:
-        return
     fields = [
         "experiment_id", "created_at_utc", "hypothesis", "change_family",
         "data_manifest_sha256", "split_definition", "acceptance_criteria",
         "result", "decision", "review_notes",
     ]
+    existing_rows = []
+    if path.exists():
+        with path.open(newline="", encoding="utf-8") as handle:
+            existing_rows = [
+                row for row in csv.DictReader(handle)
+                if row.get("experiment_id") == experiment_id
+            ]
+    latest_result = existing_rows[-1].get("result") if existing_rows else None
+    desired_result = "IMPLEMENTED_PROSPECTIVE_ONLY" if implemented else "PROPOSED_NOT_RUN"
+    if latest_result == desired_result or (latest_result == "IMPLEMENTED_PROSPECTIVE_ONLY" and not implemented):
+        return
     row = {
         "experiment_id": experiment_id,
         "created_at_utc": datetime.now(UTC).isoformat(),
@@ -65,19 +72,25 @@ def _append_challenger_proposal(path: Path) -> None:
             "forecast information beyond close-only price features."
         ),
         "change_family": "OHLCV feature engineering; isolated challenger only",
-        "data_manifest_sha256": "",
+        "data_manifest_sha256": manifest_sha256,
         "split_definition": (
-            "Prospective ledger only; do not reuse the V5.3.1/V5.4 historical "
-            "continuity holdout for promotion."
+            "Train strictly before 2025-11-16 UTC; fixed alpha=100; historical "
+            "2025-11-16 to 2026-11-15 continuity holdout excluded from training "
+            "and tuning; evaluate only new append-only prospective SCORE events."
         ),
         "acceptance_criteria": (
             "At least 200 matured observations per horizon; positive MAE lift "
             "versus zero-return and frozen price-only challenger; HAC/Holm evidence; "
-            "stable regimes; positive net value after 1x/2x/3x realistic costs."
+            "stable regimes; positive net value after documented venue costs."
         ),
-        "result": "PROPOSED_NOT_RUN",
+        "result": desired_result,
         "decision": "NOT_PROMOTED",
-        "review_notes": "Pre-registered hypothesis only; no feature/model result is claimed.",
+        "review_notes": (
+            "Separate prospective ledger is active; forecasts are point estimates only. "
+            "No matured performance, calibration, economic value or promotion is claimed."
+            if implemented else
+            "Pre-registered hypothesis only; implementation is not yet active."
+        ),
     }
     with path.open("a", newline="", encoding="utf-8") as handle:
         writer = csv.DictWriter(handle, fieldnames=fields)
