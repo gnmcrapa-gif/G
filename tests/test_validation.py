@@ -97,3 +97,15 @@ def test_non_utc_timestamps_are_rejected():
 def test_two_day_stale_data_are_rejected():
     with pytest.raises(DataValidationError, match="stale daily data"):
         validate_ohlcv(sample_frame(), now=pd.Timestamp("2024-01-05T12:00:00Z"))
+
+
+def test_qa_reports_zero_volume_tail_and_exact_freshness_diagnostics():
+    frame = sample_frame()
+    frame.loc[1, "volume"] = 0.0
+    result = validate_ohlcv(frame, now=pd.Timestamp("2024-01-04T12:00:00Z"))
+    assert result["zero_volume_rows"] == 1
+    assert result["zero_volume_pct"] == pytest.approx(100.0 / 3.0)
+    assert result["volume_median_btc"] == pytest.approx(10.0)
+    assert result["latest_candle_age_hours"] == pytest.approx(12.0)
+    assert result["absolute_close_return_max"] > 0
+    assert "not automatic rejection" in result["diagnostic_note"]
