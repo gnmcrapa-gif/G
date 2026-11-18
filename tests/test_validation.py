@@ -132,3 +132,12 @@ def test_rolling_volume_robust_z_flags_current_spike_against_prior_sessions():
     assert result["volume_robust_z_max_timestamp_utc"] == timestamps[-1].isoformat()
     assert result["volume_robust_z_max"] > 10
     assert result["volume_robust_z_scope"].startswith("current volume versus median")
+
+
+def test_frozen_acquisition_time_prevents_midnight_rollover_false_stale():
+    frame = sample_frame().iloc[:2].copy()
+    acquired_at = pd.Timestamp("2024-01-03T23:59:00Z")
+    result = validate_ohlcv(frame, now=acquired_at)
+    assert result["latest_age_days"] == 1
+    with pytest.raises(DataValidationError, match="stale daily data"):
+        validate_ohlcv(frame, now=pd.Timestamp("2024-01-04T00:00:01Z"))
