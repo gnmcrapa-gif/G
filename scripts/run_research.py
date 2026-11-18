@@ -39,10 +39,10 @@ from btc_quant.supplemental import acquire_supplemental, empty_supplemental_cove
 from btc_quant.validation import validate_ohlcv
 
 
-def _safe_optional_acquisition(label, function, directory):
+def _safe_optional_acquisition(label, function, directory, *, now=None):
     try:
         frame, manifest = function(directory)
-        qa = validate_ohlcv(frame)
+        qa = validate_ohlcv(frame, now=now)
         return frame, {**manifest, "qa": {"status": "PASS", **qa}, "status": "PASS"}
     except Exception as exc:  # noqa: BLE001 - record each independent source failure
         return None, {"source": label, "status": "FAIL",
@@ -161,8 +161,9 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001 - preserve and disclose prior-report read failures
             previous_report_error = f"{type(exc).__name__}: {exc}"
     process_started = time.perf_counter()
+    run_as_of_utc = datetime.now(UTC)
     stage_started = process_started
-    run = {"started_at_utc": datetime.now(UTC).isoformat(), "status": "BLOCKED",
+    run = {"started_at_utc": run_as_of_utc.isoformat(), "data_as_of_utc": run_as_of_utc.isoformat(), "status": "BLOCKED",
            "protocol": "V5.6", "steps": [], "limitations": [],
            "supplemental_data": {"coverage": empty_supplemental_coverage()}}
     manifests = []
@@ -173,11 +174,11 @@ def main() -> int:
     try:
         binance, binance_manifest = download_binance_daily(data_dir / "binance")
         manifests.append(binance_manifest)
-        binance_qa = validate_ohlcv(binance)
+        binance_qa = validate_ohlcv(binance, now=run_as_of_utc)
         run["steps"].append({"step": "binance_acquisition_and_qa", "status": "PASS", "qa": binance_qa})
         bitstamp, bitstamp_manifest = download_bitstamp_recent(data_dir / "bitstamp")
         manifests.append(bitstamp_manifest)
-        bitstamp_qa = validate_ohlcv(bitstamp)
+        bitstamp_qa = validate_ohlcv(bitstamp, now=run_as_of_utc)
         run["steps"].append({"step": "bitstamp_acquisition_and_qa", "status": "PASS", "qa": bitstamp_qa})
         optional = [
             ("Coinbase", download_coinbase_recent, data_dir / "coinbase"),
@@ -185,7 +186,7 @@ def main() -> int:
         ]
         cross_checks = []
         for label, function, directory in optional:
-            frame, record = _safe_optional_acquisition(label, function, directory)
+            frame, record = _safe_optional_acquisition(label, function, directory, now=run_as_of_utc)
             manifests.append(record)
             if frame is not None:
                 cross_checks.append({"venue": label, **cross_check_venues(binance.tail(len(frame)), frame)})
@@ -252,7 +253,7 @@ def main() -> int:
         )
         manifest_sha256 = hashlib.sha256(json.dumps(object_hashes).encode()).hexdigest()
         research_started = time.perf_counter()
-        predictions, scores = walk_forward(binance, min_train_rows=args.min_train_rows)
+        predictions, scores = walk_forward(binance, min_train_rows=args.min_train_rows, now=run_as_of_utc)
         scores["metric_metadata"] = {
             "source": "Binance spot BTCUSDT",
             "quote_currency": "USDT",
@@ -373,7 +374,7 @@ def main() -> int:
         review_started = time.perf_counter()
         run["pre_report_review"] = run_pre_report_review(
             run, manifests, binance, bitstamp, all_ledger_events, scores,
-            now=datetime.now(UTC), run_id=os.environ.get("GITHUB_RUN_ID",
+            now=run_as_of_utc, run_id=os.environ.get("GITHUB_RUN_ID",
             os.environ.get("GITHUB_RUN_ATTEMPT", run["started_at_utc"])),
         )
         run["performance"]["pre_report_review_seconds"] = round(time.perf_counter() - review_started, 3)
