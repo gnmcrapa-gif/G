@@ -177,6 +177,8 @@ def run_pre_report_review(
             monthly_seen.add(month_match.group(1))
         if "/daily/" in url and day_match:
             daily_seen.add(day_match.group(1))
+        if obj.get("source_type") == "daily_rest_fallback" and obj.get("data_date_utc"):
+            daily_seen.add(str(obj["data_date_utc"]))
     archive_coverage_ok = False
     if binance is not None and not binance.empty:
         first_day = pd.Timestamp(binance["timestamp"].min())
@@ -199,7 +201,7 @@ def run_pre_report_review(
         archive_coverage_ok = expected_months.issubset(monthly_seen) and expected_days.issubset(daily_seen)
     add("binance_archive_month_day_completeness", "lineage", archive_coverage_ok,
         f"monthly_archives={len(monthly_seen)}; daily_current_month_objects={len(daily_seen)}; "
-        "expected month/day archive keys derived from parsed first/last UTC timestamps.")
+        "expected monthly archive keys plus current-month daily archive or official REST fallback dates derived from parsed UTC timestamps.")
 
     bitstamp_raw_rows = sum(int(obj.get("rows", 0)) for obj in bitstamp_meta.get("objects", []))
     bitstamp_duplicates = int(bitstamp_meta.get("duplicates_removed_at_page_boundaries", -1))
