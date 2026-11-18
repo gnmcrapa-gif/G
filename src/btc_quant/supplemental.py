@@ -1,9 +1,9 @@
 """Optional, timestamped BTC market-context feeds; no context feed trains the model yet."""
 from __future__ import annotations
 
+from concurrent.futures import ThreadPoolExecutor
 import hashlib
 import io
-from concurrent.futures import ThreadPoolExecutor
 import math
 import re
 import xml.etree.ElementTree as ET
