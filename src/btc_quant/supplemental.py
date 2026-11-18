@@ -841,7 +841,7 @@ def _deribit_options(directory: Path) -> tuple[dict, dict]:
         if not underlying:
             continue
         selected = []
-        for side, targets in (("P", (0.97, 0.98, 0.99)), ("C", (1.01, 1.02, 1.03)):
+        for side, targets in (("P", (0.97, 0.98, 0.99)), ("C", (1.01, 1.02, 1.03))):
             candidates = [row for row in options if row["option_type"] == side]
             for target in targets:
                 if candidates:
