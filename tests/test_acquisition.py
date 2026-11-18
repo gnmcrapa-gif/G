@@ -1,6 +1,8 @@
 import io
 import zipfile
 
+import pytest
+
 from btc_quant.acquisition import _parse_binance_zip, _save_raw
 
 
