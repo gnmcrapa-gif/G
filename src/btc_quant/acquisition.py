@@ -73,10 +73,12 @@ def _parse_binance_zip(payload: bytes) -> pd.DataFrame:
     return frame
 
 
-def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1)) -> tuple[pd.DataFrame, dict]:
+def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1),
+                           now: datetime | None = None) -> tuple[pd.DataFrame, dict]:
     """Acquire monthly archives plus completed daily files through yesterday UTC."""
     output_dir.mkdir(parents=True, exist_ok=True)
-    today = datetime.now(UTC).date()
+    now = now or datetime.now(UTC)
+    today = now.date()
     current_month = date(today.year, today.month, 1)
     frames, objects, failures = [], [], []
     session = requests.Session()
@@ -142,10 +144,11 @@ def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1)) -> 
     return data, manifest
 
 
-def download_bitstamp_recent(output_dir: Path, days: int = 3650) -> tuple[pd.DataFrame, dict]:
+def download_bitstamp_recent(output_dir: Path, days: int = 3650,
+                             now: datetime | None = None) -> tuple[pd.DataFrame, dict]:
     """Acquire Bitstamp daily OHLCV and preserve each original JSON response."""
     output_dir.mkdir(parents=True, exist_ok=True)
-    now = datetime.now(UTC)
+    now = now or datetime.now(UTC)
     end_ts = int(now.timestamp())
     cursor = end_ts - days * 86400
     rows, objects, failures = [], [], []
@@ -212,10 +215,12 @@ def download_bitstamp_recent(output_dir: Path, days: int = 3650) -> tuple[pd.Dat
     return frame, manifest
 
 
-def download_coinbase_recent(output_dir: Path, limit_days: int = 300) -> tuple[pd.DataFrame, dict]:
+def download_coinbase_recent(output_dir: Path, limit_days: int = 300,
+                             now: datetime | None = None) -> tuple[pd.DataFrame, dict]:
     """Recent Coinbase BTC-USD candles (API cap 300); preserve source JSON."""
     url = "https://api.exchange.coinbase.com/products/BTC-USD/candles"
-    end = datetime.now(UTC).replace(hour=0, minute=0, second=0, microsecond=0)
+    now = now or datetime.now(UTC)
+    end = now.replace(hour=0, minute=0, second=0, microsecond=0)
     start = end - timedelta(days=limit_days)
     response = requests.get(url, params={"granularity": 86400, "start": start.isoformat(),
                                          "end": end.isoformat()},
@@ -245,8 +250,9 @@ def download_coinbase_recent(output_dir: Path, limit_days: int = 300) -> tuple[p
                    "last_timestamp": frame.timestamp.max().isoformat()}
 
 
-def download_kraken_recent(output_dir: Path) -> tuple[pd.DataFrame, dict]:
+def download_kraken_recent(output_dir: Path, now: datetime | None = None) -> tuple[pd.DataFrame, dict]:
     """Recent Kraken XBT/USD OHLC (public endpoint maximum 720 rows)."""
+    now = now or datetime.now(UTC)
     url = "https://api.kraken.com/0/public/OHLC"
     response = requests.get(url, params={"pair": "XBTUSD", "interval": 1440},
                             headers={"User-Agent": USER_AGENT}, timeout=45)
@@ -264,7 +270,7 @@ def download_kraken_recent(output_dir: Path) -> tuple[pd.DataFrame, dict]:
     for col in ["open", "high", "low", "close", "volume"]:
         frame[col] = pd.to_numeric(frame[col], errors="coerce")
     frame = frame[["timestamp", "open", "high", "low", "close", "volume"]]
-    frame = frame[frame.timestamp < pd.Timestamp(datetime.now(UTC).date(), tz="UTC")]
+    frame = frame[frame.timestamp < pd.Timestamp(now.date(), tz="UTC")]
     obj = _save_raw(output_dir, "kraken_btcusd_1d_recent.json", raw, response.url,
                     "Kraken public OHLC API", "Kraken", "XBT/USD", "USD", source_grade="B")
     return frame.sort_values("timestamp").reset_index(drop=True), {
