@@ -163,9 +163,20 @@ def main() -> int:
     process_started = time.perf_counter()
     run_as_of_utc = datetime.now(UTC)
     stage_started = process_started
-    run = {"started_at_utc": run_as_of_utc.isoformat(), "data_as_of_utc": run_as_of_utc.isoformat(), "status": "BLOCKED",
+    run = {"started_at_utc": run_as_of_utc.isoformat(), "data_as_of_utc": run_as_of_utc.isoformat(),
+           "run_id": os.environ.get("GITHUB_RUN_ID", "local"), "status": "RUNNING",
            "protocol": "V5.6", "steps": [], "limitations": [],
            "supplemental_data": {"coverage": empty_supplemental_coverage()}}
+    # Preserve the previous report in memory for longitudinal comparison, but
+    # remove stale run outputs before acquisition so an interrupted workflow
+    # can never upload a previous run as if it belonged to this run.
+    for stale_name in ("daily_report.md", "data_manifest.json", "scores.json", "oos_predictions.csv"):
+        stale_path = output_dir / stale_name
+        if stale_path.exists():
+            stale_path.unlink()
+    (output_dir / "run_report.json").write_text(
+        json.dumps(run, indent=2), encoding="utf-8"
+    )
     manifests = []
     binance = bitstamp = None
     scores = {}
