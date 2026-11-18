@@ -122,7 +122,7 @@ jobs:
           print(f"REMOTE_PERSISTENCE_VERIFIED files={len(required)} raw_objects={checked} ledger_events={len(rows)} ledger_sha256={ledger_sha}")
           PY
       - name: Upload diagnostic artifact
-        if: always()
+        if: always() && (steps.research.outcome == 'success' || steps.research.outcome == 'failure' || steps.research.outcome == 'cancelled')
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
           name: btc-quant-run-${{ github.run_id }}
