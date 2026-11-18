@@ -190,11 +190,14 @@ def main() -> int:
         ]
         for label, function, directory in primary_sources:
             frame = None
+            qa = None
             try:
                 frame, manifest = function(directory, now=run_as_of_utc)
                 manifests.append(manifest)
                 try:
-                    qa = validate_ohlcv(frame, now=run_as_of_utc)
+                    qa = validate_ohlcv(frame, now=run_as_of_utc, allow_stale=True)
+                    if qa.get("freshness_status") != "PASS":
+                        raise DataValidationError(qa.get("freshness_error") or "stale daily data")
                     manifest["qa"] = {"status": "PASS", **qa}
                     manifest["status"] = "PASS"
                     if label == "Binance":
@@ -206,11 +209,11 @@ def main() -> int:
                 except Exception as exc:  # noqa: BLE001 - retain source data and continue diagnostics
                     message = f"{label}: {type(exc).__name__}: {exc}"
                     primary_errors.append(message)
-                    manifest["qa"] = {"status": "FAIL", "error": message}
+                    manifest["qa"] = {"status": "FAIL", "error": message, **(qa or {})}
                     manifest["status"] = "FAIL"
                     run["steps"].append({
                         "step": f"{label.lower()}_acquisition_and_qa",
-                        "status": "FAIL", "error": message,
+                        "status": "FAIL", "error": message, "qa": qa or {},
                     })
             except Exception as exc:  # noqa: BLE001 - independent primary source acquisition
                 message = f"{label}: {type(exc).__name__}: {exc}"
