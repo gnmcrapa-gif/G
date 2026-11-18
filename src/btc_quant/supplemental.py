@@ -834,6 +834,7 @@ def _deribit_options(directory: Path) -> tuple[dict, dict]:
     ticker_rows = []
     ticker_errors = []
     selected_expiries = [row["expiry_date"] for row in expiry_rows if row["days_to_expiry"] >= 0][:4]
+    ticker_tasks = []
     for expiry in selected_expiries:
         options = [row for row in parsed_rows if row["expiry_date"] == expiry]
         underlying = next((_float_or_none(row.get("underlying_price")) for row in options
@@ -847,33 +848,46 @@ def _deribit_options(directory: Path) -> tuple[dict, dict]:
                 if candidates:
                     selected.append(min(candidates, key=lambda row: abs(row["strike"] / underlying - target)))
         unique = {row["instrument_name"]: row for row in selected}
-        for instrument in unique:
-            try:
-                ticker_payload, ticker_obj = _request_json(
-                    session, "POST", DERIBIT_API + "/public/ticker", directory,
-                    f"ticker_{instrument.replace('-', '_')}.json",
-                    body={"jsonrpc": "2.0", "id": 2, "method": "public/ticker",
-                          "params": {"instrument_name": instrument}},
-                    source="Deribit public options ticker/Greeks",
-                    venue="Deribit Options", symbol=instrument, quote="BTC/USD",
-                )
-                objects.append(ticker_obj)
-                ticker = ticker_payload.get("result", {})
-                greeks = ticker.get("greeks") or {}
-                ticker_rows.append({
-                    "instrument_name": instrument, "expiry_date": expiry,
-                    "option_type": "call" if instrument.endswith("-C") else "put",
-                    "delta": _float_or_none(greeks.get("delta")),
-                    "gamma": _float_or_none(greeks.get("gamma")),
-                    "mark_iv_pct": _float_or_none(ticker.get("mark_iv")),
-                    "ticker_timestamp_utc": _timestamp_ms(ticker.get("timestamp")),
-                })
-            except (requests.RequestException, ValueError, RuntimeError, KeyError, TypeError) as exc:
-                ticker_errors.append({
-                    "instrument_name": instrument,
-                    "error": f"{type(exc).__name__}: {exc}",
-                })
-                continue
+        ticker_tasks.extend((expiry, instrument) for instrument in sorted(unique))
+
+    def fetch_ticker(task):
+        expiry, instrument = task
+        worker_session = requests.Session()
+        worker_session.headers.update({"User-Agent": USER_AGENT})
+        try:
+            return expiry, instrument, *_request_json(
+                worker_session, "POST", DERIBIT_API + "/public/ticker", directory,
+                f"ticker_{instrument.replace('-', '_')}.json",
+                body={"jsonrpc": "2.0", "id": 2, "method": "public/ticker",
+                      "params": {"instrument_name": instrument}},
+                source="Deribit public options ticker/Greeks",
+                venue="Deribit Options", symbol=instrument, quote="BTC/USD",
+            ), None
+        except (requests.RequestException, ValueError, RuntimeError, KeyError, TypeError) as exc:
+            return expiry, instrument, None, None, f"{type(exc).__name__}: {exc}"
+        finally:
+            worker_session.close()
+
+    # Bound concurrency to four requests; collect in task order for reproducible artifacts.
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        ticker_results = list(pool.map(fetch_ticker, ticker_tasks))
+
+    for expiry, instrument, ticker_payload, ticker_obj, error in ticker_results:
+        if error:
+            ticker_errors.append({"instrument_name": instrument, "error": error})
+            continue
+        objects.append(ticker_obj)
+        ticker = ticker_payload.get("result", {})
+        greeks = ticker.get("greeks") or {}
+        ticker_rows.append({
+            "instrument_name": instrument, "expiry_date": expiry,
+            "option_type": "call" if instrument.endswith("-C") else "put",
+            "delta": _float_or_none(greeks.get("delta")),
+            "gamma": _float_or_none(greeks.get("gamma")),
+            "mark_iv_pct": _float_or_none(ticker.get("mark_iv")),
+            "ticker_timestamp_utc": _timestamp_ms(ticker.get("timestamp")),
+        })
 
     skew_by_expiry = []
     for expiry in selected_expiries:
