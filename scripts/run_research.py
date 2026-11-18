@@ -36,7 +36,7 @@ from btc_quant.reporting import (
 )
 from btc_quant.research import cross_check_venues, walk_forward
 from btc_quant.supplemental import acquire_supplemental, empty_supplemental_coverage
-from btc_quant.validation import validate_ohlcv
+from btc_quant.validation import DataValidationError, validate_ohlcv
 
 
 def _safe_optional_acquisition(label, function, directory, *, now=None):
@@ -172,24 +172,68 @@ def main() -> int:
     all_ledger_events = []
     pending_events = []
     try:
-        binance, binance_manifest = download_binance_daily(data_dir / "binance")
-        manifests.append(binance_manifest)
-        binance_qa = validate_ohlcv(binance, now=run_as_of_utc)
-        run["steps"].append({"step": "binance_acquisition_and_qa", "status": "PASS", "qa": binance_qa})
-        bitstamp, bitstamp_manifest = download_bitstamp_recent(data_dir / "bitstamp")
-        manifests.append(bitstamp_manifest)
-        bitstamp_qa = validate_ohlcv(bitstamp, now=run_as_of_utc)
-        run["steps"].append({"step": "bitstamp_acquisition_and_qa", "status": "PASS", "qa": bitstamp_qa})
+        primary_errors = []
+        primary_sources = [
+            ("Binance", download_binance_daily, data_dir / "binance"),
+            ("Bitstamp", download_bitstamp_recent, data_dir / "bitstamp"),
+        ]
+        for label, function, directory in primary_sources:
+            frame = None
+            try:
+                frame, manifest = function(directory)
+                manifests.append(manifest)
+                try:
+                    qa = validate_ohlcv(frame, now=run_as_of_utc)
+                    manifest["qa"] = {"status": "PASS", **qa}
+                    manifest["status"] = "PASS"
+                    run["steps"].append({
+                        "step": f"{label.lower()}_acquisition_and_qa",
+                        "status": "PASS", "qa": qa,
+                    })
+                except Exception as exc:  # noqa: BLE001 - retain source data and continue diagnostics
+                    message = f"{label}: {type(exc).__name__}: {exc}"
+                    primary_errors.append(message)
+                    manifest["qa"] = {"status": "FAIL", "error": message}
+                    manifest["status"] = "FAIL"
+                    run["steps"].append({
+                        "step": f"{label.lower()}_acquisition_and_qa",
+                        "status": "FAIL", "error": message,
+                    })
+            except Exception as exc:  # noqa: BLE001 - independent primary source acquisition
+                message = f"{label}: {type(exc).__name__}: {exc}"
+                primary_errors.append(message)
+                manifest = {
+                    "source": f"{label} public spot OHLCV",
+                    "venue": label,
+                    "status": "FAIL",
+                    "attempted_at_utc": datetime.now(UTC).isoformat(),
+                    "error": message,
+                }
+                manifests.append(manifest)
+                run["steps"].append({
+                    "step": f"{label.lower()}_acquisition_and_qa",
+                    "status": "FAIL", "error": message,
+                })
+            if label == "Binance":
+                binance, binance_manifest = frame, manifest
+            else:
+                bitstamp, bitstamp_manifest = frame, manifest
+
         optional = [
             ("Coinbase", download_coinbase_recent, data_dir / "coinbase"),
             ("Kraken", download_kraken_recent, data_dir / "kraken"),
         ]
         cross_checks = []
         for label, function, directory in optional:
-            frame, record = _safe_optional_acquisition(label, function, directory, now=run_as_of_utc)
+            frame, record = _safe_optional_acquisition(
+                label, function, directory, now=run_as_of_utc
+            )
             manifests.append(record)
-            if frame is not None:
-                cross_checks.append({"venue": label, **cross_check_venues(binance.tail(len(frame)), frame)})
+            if frame is not None and binance is not None:
+                cross_checks.append({
+                    "venue": label,
+                    **cross_check_venues(binance.tail(len(frame)), frame),
+                })
             run["steps"].append({"step": f"{label.lower()}_recent_cross_check", **record})
         for check in cross_checks:
             check["metric_metadata"] = {
@@ -233,18 +277,33 @@ def main() -> int:
             "timestamp": "UTC candle-open timestamp; candle close is next UTC midnight",
             "robust_volume_z": "dimensionless rolling score versus prior 90 completed sessions; minimum 60 sessions",
         }
-        run["performance"] = {"acquisition_and_qa_seconds": round(time.perf_counter() - stage_started, 3)}
-        run["market_snapshot"] = {
-            "as_of_utc": datetime.now(UTC).isoformat(),
-            "warning": "These are last closed daily candles, not live spot quotes; USD and USDT are not converted or combined.",
-            "venues": [
-                _market_snapshot(binance, "Binance", "BTCUSDT", "USDT", binance_manifest["retrieved_at_utc"]),
-                _market_snapshot(bitstamp, "Bitstamp", "BTC/USD", "USD", bitstamp_manifest["retrieved_at_utc"]),
-            ],
+        run["performance"] = {
+            "acquisition_and_qa_seconds": round(time.perf_counter() - stage_started, 3)
         }
-        run["cycle_comparison"] = _build_halving_cycle_comparison(bitstamp)
-        manifest_path = output_dir / "data_manifest.json"
-        write_manifest(manifests, manifest_path)
+        if binance is not None and bitstamp is not None:
+            run["market_snapshot"] = {
+                "as_of_utc": run_as_of_utc.isoformat(),
+                "warning": "These are last closed daily candles, not live spot quotes; USD and USDT are not converted or combined.",
+                "venues": [
+                    _market_snapshot(
+                        binance, "Binance", "BTCUSDT", "USDT",
+                        binance_manifest.get("retrieved_at_utc", run_as_of_utc.isoformat()),
+                    ),
+                    _market_snapshot(
+                        bitstamp, "Bitstamp", "BTC/USD", "USD",
+                        bitstamp_manifest.get("retrieved_at_utc", run_as_of_utc.isoformat()),
+                    ),
+                ],
+            }
+        if bitstamp is not None:
+            run["cycle_comparison"] = _build_halving_cycle_comparison(bitstamp)
+        write_manifest(manifests, output_dir / "data_manifest.json")
+        if primary_errors:
+            run["primary_data_errors"] = primary_errors
+            raise DataValidationError(
+                "Primary market data blocked after independent acquisition: "
+                + " | ".join(primary_errors)
+            )
         # The model consumes Binance BTCUSDT only. Keep the forecast idempotency
         # hash tied to model inputs, not dynamic optional cross-check payloads.
         object_hashes = sorted(
