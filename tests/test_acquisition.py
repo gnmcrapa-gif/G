@@ -31,3 +31,40 @@ def test_raw_manifest_records_schema_grade_and_terms(tmp_path):
     assert record["source_grade"] == "B"
     assert "provider terms apply" in record["license_terms_note"]
     assert record["size_bytes"] == 2
+
+
+def test_binance_daily_window_uses_frozen_utc_asof(monkeypatch, tmp_path):
+    from datetime import UTC, date, datetime
+
+    import pandas as pd
+    import btc_quant.acquisition as acquisition
+
+    requested = []
+    class Response:
+        def __init__(self, status_code):
+            self.status_code = status_code
+            self.content = b"test-zip"
+        def raise_for_status(self):
+            return None
+
+    class Session:
+        def __init__(self):
+            self.headers = {}
+        def get(self, url, timeout):
+            requested.append(url)
+            return Response(200 if "BTCUSDT-1d-2026-11-17.zip" in url else 404)
+
+    monkeypatch.setattr(acquisition.requests, "Session", Session)
+    monkeypatch.setattr(acquisition, "_parse_binance_zip", lambda payload: pd.DataFrame({
+        "timestamp": [pd.Timestamp("2026-11-17T00:00:00Z")],
+        "open": [100.0], "high": [102.0], "low": [99.0],
+        "close": [101.0], "volume": [10.0],
+    }))
+    frame, manifest = acquisition.download_binance_daily(
+        tmp_path, start=date(2026, 11, 1),
+        now=datetime(2026, 11, 18, 0, 6, tzinfo=UTC),
+    )
+    assert any("BTCUSDT-1d-2026-11-17.zip" in url for url in requested)
+    assert not any("BTCUSDT-1d-2026-11-18.zip" in url for url in requested)
+    assert frame.iloc[-1]["timestamp"] == pd.Timestamp("2026-11-17T00:00:00Z")
+    assert manifest["last_timestamp"] == "2026-11-17T00:00:00+00:00"
