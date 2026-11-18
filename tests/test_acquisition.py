@@ -102,3 +102,82 @@ def test_bitstamp_window_uses_frozen_utc_asof(monkeypatch, tmp_path):
     frame, manifest = acquisition.download_bitstamp_recent(tmp_path, days=1, now=as_of)
     assert frame.iloc[-1]["timestamp"] == pd.Timestamp("2026-11-17T00:00:00Z")
     assert manifest["last_timestamp"] == "2026-11-17T00:00:00+00:00"
+
+
+def test_binance_missing_daily_archive_uses_official_spot_rest_fallback(monkeypatch, tmp_path):
+    from datetime import UTC, date, datetime
+
+    import pandas as pd
+    from btc_quant import acquisition
+
+    as_of = datetime(2026, 11, 18, 0, 6, tzinfo=UTC)
+    timestamp_ms = int(datetime(2026, 11, 17, 0, 0, tzinfo=UTC).timestamp() * 1000)
+    requested = []
+    class Response:
+        def __init__(self, status_code, url, payload=None):
+            import json
+            self.status_code = status_code
+            self.url = url
+            self._payload = payload
+            self.content = json.dumps(payload).encode() if payload is not None else b""
+        def raise_for_status(self):
+            if self.status_code >= 400:
+                raise RuntimeError(f"HTTP {self.status_code}")
+        def json(self):
+            return self._payload
+
+    class Session:
+        def __init__(self):
+            self.headers = {}
+        def get(self, url, timeout, params=None):
+            requested.append((url, params))
+            if url.endswith("BTCUSDT-1d-2026-11-17.zip"):
+                return Response(404, url)
+            return Response(200, url, [[timestamp_ms, "100", "102", "99", "101", "10"]])
+
+    monkeypatch.setattr(acquisition.requests, "Session", Session)
+    frame, manifest = acquisition.download_binance_daily(
+        tmp_path, start=date(2026, 11, 17), now=as_of
+    )
+    assert len(requested) == 2
+    assert "BTCUSDT-1d-2026-11-17.zip" in requested[0][0]
+    assert requested[1][0] == "https://data-api.binance.vision/api/v3/klines"
+    assert requested[1][1]["startTime"] == timestamp_ms
+    assert frame.iloc[-1]["timestamp"] == pd.Timestamp("2026-11-17T00:00:00Z")
+    fallback = next(obj for obj in manifest["objects"] if obj.get("source_type") == "daily_rest_fallback")
+    assert fallback["data_date_utc"] == "2026-11-17"
+    assert fallback["sha256"]
+
+
+def test_binance_rest_fallback_respects_official_endpoint_access_block(monkeypatch, tmp_path):
+    from datetime import UTC, date, datetime
+
+    import btc_quant.acquisition as acquisition
+
+    requested = []
+    class Response:
+        def __init__(self, status_code, url):
+            self.status_code = status_code
+            self.url = url
+            self.content = b""
+        def raise_for_status(self):
+            if self.status_code >= 400:
+                raise RuntimeError(f"HTTP {self.status_code}")
+
+    class Session:
+        def __init__(self):
+            self.headers = {}
+        def get(self, url, timeout, params=None):
+            requested.append(url)
+            return Response(404 if url.endswith("BTCUSDT-1d-2026-11-17.zip") else 451, url)
+
+    monkeypatch.setattr(acquisition.requests, "Session", Session)
+    with pytest.raises(RuntimeError, match="No Binance data acquired"):
+        acquisition.download_binance_daily(
+            tmp_path, start=date(2026, 11, 17),
+            now=datetime(2026, 11, 18, 0, 6, tzinfo=UTC),
+        )
+    assert requested == [
+        requested[0], "https://data-api.binance.vision/api/v3/klines"
+    ]
+    assert all("binance.com" in url or "binance.vision" in url for url in requested)
