@@ -2,6 +2,7 @@ import pytest
 
 from btc_quant.supplemental import (
     FRED_SERIES,
+    _deribit_options,
     _find_etf_sessions,
     _float_or_none,
     _news_keyword_tags,
@@ -248,3 +249,63 @@ def test_fred_session_retries_transient_http_failures_with_bounded_policy():
     assert retry.status_forcelist == (429, 500, 502, 503, 504)
     assert retry.allowed_methods == frozenset({"GET"})
     session.close()
+
+
+def test_deribit_greeks_sampling_is_bounded_parallel_and_deterministic(monkeypatch, tmp_path):
+    from datetime import UTC, datetime, timedelta
+    import threading
+    import time
+
+    import btc_quant.supplemental as supplemental
+
+    today = datetime.now(UTC).date()
+    rows = []
+    for offset in range(2, 6):
+        expiry = (today + timedelta(days=offset)).strftime("%d%b%y").upper()
+        for strike, side in ((85000, "P"), (90000, "P"), (95000, "P"),
+                             (105000, "C"), (110000, "C"), (115000, "C")):
+            rows.append({
+                "instrument_name": f"BTC-{expiry}-{strike}-{side}",
+                "open_interest": 10.0, "volume_usd": 1000.0,
+                "underlying_price": 100000.0,
+            })
+
+    active = 0
+    max_active = 0
+    lock = threading.Lock()
+
+    class FakeSession:
+        def __init__(self):
+            self.headers = {}
+        def close(self):
+            return None
+
+    def fake_request_json(session, method, url, directory, filename, *, params=None,
+                          body=None, source, venue, symbol, quote):
+        nonlocal active, max_active
+        if body["method"] == "public/get_book_summary_by_currency":
+            return {"result": rows}, {"file": filename, "sha256": "book"}
+        instrument = body["params"]["instrument_name"]
+        with lock:
+            active += 1
+            max_active = max(max_active, active)
+        time.sleep(0.02)
+        with lock:
+            active -= 1
+        delta = 0.25 if instrument.endswith("-C") else -0.25
+        return {
+            "result": {
+                "greeks": {"delta": delta, "gamma": 0.0001},
+                "mark_iv": 60.0, "timestamp": 1794950400000,
+            }
+        }, {"file": filename, "sha256": instrument}
+
+    monkeypatch.setattr(supplemental.requests, "Session", FakeSession)
+    monkeypatch.setattr(supplemental, "_request_json", fake_request_json)
+    summary, manifest = _deribit_options(tmp_path)
+    assert summary["ticker_greeks_sample_count"] == 24
+    assert summary["greeks_status"] == "PASS"
+    assert len(summary["sampled_25d_skew"]) == 4
+    assert all(row["put_minus_call_25d_skew_vol_points"] == 0 for row in summary["sampled_25d_skew"])
+    assert 1 < max_active <= 4
+    assert len(manifest["objects"]) == 25
