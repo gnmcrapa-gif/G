@@ -104,12 +104,14 @@ def run_pre_report_review(
     current = now or datetime.now(UTC)
     checks: list[dict] = []
 
-    def add(check_id: str, category: str, passed: bool, evidence: str,
+    def add(check_id: str, category: str, passed: bool | str, evidence: str,
             *, blocking: bool = True) -> None:
+        status = passed if isinstance(passed, str) else (
+            "PASS" if passed else ("FAIL" if blocking else "WARN")
+        )
         checks.append({
             "check_id": check_id, "category": category,
-            "status": "PASS" if passed else ("FAIL" if blocking else "WARN"),
-            "blocking": blocking, "evidence": evidence,
+            "status": status, "blocking": blocking, "evidence": evidence,
         })
 
     steps = {item.get("step"): item for item in run.get("steps", [])}
@@ -266,48 +268,59 @@ def run_pre_report_review(
         blocking=False,
     )
 
-    timing_ok = (
-        scores.get("target", "").startswith("log(Open[t+h+2]/Open[t+2])")
-        and scores.get("requested_next_open_target_executable_at_scheduled_run") is False
-        and scores.get("training_uses_holdout") is False
-    )
-    add("target_execution_and_no_leakage", "quant",
-        timing_ok,
-        "Production entry uses the first future daily open; target and training/holdout separation are explicit.")
-    holdout_ok = (
-        scores.get("holdout_globally_unseen") is False
-        and scores.get("holdout_role") == "historical_continuity_diagnostic_only"
-        and scores.get("holdout_training_and_tuning_excluded_in_this_run") is True
-    )
-    add("holdout_honest_label", "quant", holdout_ok,
-        "Previously inspected history is labelled continuity diagnostic, not globally unseen evidence.")
-
-    metric_blocks = scores.get("holdout_metrics", {})
-    benchmark_ok = all(
-        all(model in metric_blocks.get(str(h), {}) for model in ("zero", "drift", "momentum", "ridge"))
-        and metric_blocks[str(h)]["zero"].get("n", 0) > 0
-        for h in (1, 3, 7, 30)
-    )
-    add("benchmark_completeness", "quant", benchmark_ok,
-        "Zero-return, drift, momentum and Ridge must be compared at every declared horizon.")
-
-    metric_metadata = scores.get("metric_metadata", {})
-    conventions = run.get("numeric_conventions", {})
-    units_ok = (
-        metric_metadata.get("source") == "Binance spot BTCUSDT"
-        and metric_metadata.get("quote_currency") == "USDT"
-        and metric_metadata.get("target_unit") == "natural-log return units"
-        and metric_metadata.get("horizon_unit") == "daily sessions"
-        and metric_metadata.get("historical_window_start_utc")
-        and metric_metadata.get("historical_window_end_utc")
-        and metric_metadata.get("sample_role")
-        and metric_metadata.get("data_qa_status") == "PASS"
-        and all(key in conventions for key in (
-            "price", "volume", "percentage", "log_return", "horizon", "timestamp"
-        ))
-    )
-    add("numeric_units_and_source_provenance", "protocol", units_ok,
-        "Forecast/benchmark metrics must declare source, quote, units, horizon, UTC window, holdout role and QA.")
+    has_forecast_scores = scores.get("status") == "SCORED_NOT_PROMOTED" and bool(scores.get("holdout_metrics"))
+    if not has_forecast_scores:
+        not_run_evidence = (
+            "Walk-forward/score gates were not run because primary data freshness failed closed; no forecasts or metrics were published. "
+            + str(run.get("walk_forward_skipped_reason", "No forecast score output."))
+        )
+        for check_id, category, evidence in (
+            ("target_execution_and_no_leakage", "quant", "Execution/target checks require a produced forecast set."),
+            ("holdout_honest_label", "quant", "Holdout checks require a produced forecast set."),
+            ("benchmark_completeness", "quant", "Benchmark checks require a produced forecast set."),
+            ("numeric_units_and_source_provenance", "protocol", "Forecast metric metadata is absent because no forecasts were produced."),
+        ):
+            add(check_id, category, "NOT_APPLICABLE", f"{evidence} {not_run_evidence}", blocking=False)
+    else:
+        timing_ok = (
+            scores.get("target", "").startswith("log(Open[t+h+2]/Open[t+2])")
+            and scores.get("requested_next_open_target_executable_at_scheduled_run") is False
+            and scores.get("training_uses_holdout") is False
+        )
+        add("target_execution_and_no_leakage", "quant", timing_ok,
+            "Production entry uses the first future daily open; target and training/holdout separation are explicit.")
+        holdout_ok = (
+            scores.get("holdout_globally_unseen") is False
+            and scores.get("holdout_role") == "historical_continuity_diagnostic_only"
+            and scores.get("holdout_training_and_tuning_excluded_in_this_run") is True
+        )
+        add("holdout_honest_label", "quant", holdout_ok,
+            "Previously inspected history is labelled continuity diagnostic, not globally unseen evidence.")
+        metric_blocks = scores.get("holdout_metrics", {})
+        benchmark_ok = all(
+            all(model in metric_blocks.get(str(h), {}) for model in ("zero", "drift", "momentum", "ridge"))
+            and metric_blocks[str(h)]["zero"].get("n", 0) > 0
+            for h in (1, 3, 7, 30)
+        )
+        add("benchmark_completeness", "quant", benchmark_ok,
+            "Zero-return, drift, momentum and Ridge must be compared at every declared horizon.")
+        metric_metadata = scores.get("metric_metadata", {})
+        conventions = run.get("numeric_conventions", {})
+        units_ok = (
+            metric_metadata.get("source") == "Binance spot BTCUSDT"
+            and metric_metadata.get("quote_currency") == "USDT"
+            and metric_metadata.get("target_unit") == "natural-log return units"
+            and metric_metadata.get("horizon_unit") == "daily sessions"
+            and metric_metadata.get("historical_window_start_utc")
+            and metric_metadata.get("historical_window_end_utc")
+            and metric_metadata.get("sample_role")
+            and metric_metadata.get("data_qa_status") == "PASS"
+            and all(key in conventions for key in (
+                "price", "volume", "percentage", "log_return", "horizon", "timestamp"
+            ))
+        )
+        add("numeric_units_and_source_provenance", "protocol", units_ok,
+            "Forecast/benchmark metrics must declare source, quote, units, horizon, UTC window, holdout role and QA.")
     crosscheck_metadata_ok = all(
         item.get("metric_metadata", {}).get("overlap_start_utc")
         and item.get("metric_metadata", {}).get("overlap_end_utc")
