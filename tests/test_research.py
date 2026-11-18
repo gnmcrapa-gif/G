@@ -174,3 +174,23 @@ def test_ridge_rejects_inconsistent_dimensions():
 
     with pytest.raises(ValueError, match="dimensions"):
         _ridge_predict(np.ones((10, 3)), np.ones(9), np.ones((2, 3)))
+
+
+def test_walk_forward_uses_frozen_as_of_across_utc_midnight():
+    from btc_quant.research import walk_forward
+
+    n = 1600
+    acquired_at = pd.Timestamp("2024-05-20T23:59:00Z")
+    end = pd.Timestamp("2024-05-19T00:00:00Z")
+    timestamps = pd.date_range(end=end, periods=n, freq="D")
+    t = np.arange(n, dtype=float)
+    close = 20000.0 * np.exp(np.cumsum(0.0002 + 0.008 * np.sin(t / 17.0)))
+    open_price = close * (1.0 + 0.001 * np.sin(t / 7.0))
+    frame = pd.DataFrame({
+        "timestamp": timestamps, "open": open_price,
+        "high": np.maximum(open_price, close) * 1.01,
+        "low": np.minimum(open_price, close) * 0.99,
+        "close": close, "volume": np.full(n, 100.0),
+    })
+    _, summary = walk_forward(frame, min_train_rows=100, holdout_rows=365, now=acquired_at)
+    assert summary["status"] == "SCORED_NOT_PROMOTED"
