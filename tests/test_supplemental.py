@@ -252,9 +252,9 @@ def test_fred_session_retries_transient_http_failures_with_bounded_policy():
 
 
 def test_deribit_greeks_sampling_is_bounded_parallel_and_deterministic(monkeypatch, tmp_path):
-    from datetime import UTC, datetime, timedelta
     import threading
     import time
+    from datetime import UTC, datetime, timedelta
 
     import btc_quant.supplemental as supplemental
 
