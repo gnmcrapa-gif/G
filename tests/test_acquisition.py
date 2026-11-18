@@ -155,7 +155,7 @@ def test_binance_missing_daily_archive_uses_official_spot_rest_fallback(monkeypa
 def test_binance_rest_fallback_respects_official_endpoint_access_block(monkeypatch, tmp_path):
     from datetime import UTC, date, datetime
 
-    import btc_quant.acquisition as acquisition
+    from btc_quant import acquisition
 
     requested = []
     class Response:
