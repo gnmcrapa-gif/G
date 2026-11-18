@@ -1494,7 +1494,7 @@ BLS_SERIES = {
 
 
 def _freshness_reference_date(observation_date: date, meta: dict) -> date:
-    """Use period end for monthly series so first-of-month labels do not look stale."""
+    """Use monthly observation-period end; this is not a publication or release date."""
     if meta.get("frequency") == "monthly":
         next_month = (
             date(observation_date.year + 1, 1, 1)
