@@ -121,6 +121,7 @@ def _review_inputs(tmp_path):
         for h in (1, 3, 7, 30)
     }
     scores = {
+        "status": "SCORED_NOT_PROMOTED",
         "target": "log(Open[t+h+2]/Open[t+2]); signal after close t",
         "metric_metadata": {
             "source": "Binance spot BTCUSDT", "quote_currency": "USDT",
