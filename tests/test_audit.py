@@ -215,3 +215,30 @@ def test_pre_report_review_blocks_missing_or_unclassified_context_domains(tmp_pa
     )
     assert result["status"] == "FAIL"
     assert "supplemental_coverage_explicit" in result["blocking_failures"]
+
+
+def test_stale_primary_blocks_but_unrun_quant_checks_are_not_applicable(tmp_path):
+    run, manifests, binance, bitstamp, events, _ = _review_inputs(tmp_path)
+    run["steps"][0]["status"] = "FAIL"
+    run["steps"][0]["error"] = "stale daily data"
+    run["steps"][1]["status"] = "PASS"
+    run["walk_forward_skipped_reason"] = "Primary freshness gate failed; walk-forward not executed."
+    run["performance"]["walk_forward_seconds"] = None
+    scores = {"status": "BLOCKED", "reason": "primary data stale"}
+    result = run_pre_report_review(
+        run, manifests, binance, bitstamp, events, scores,
+        now=datetime(2025, 6, 24, 12, tzinfo=UTC), run_id="stale-primary",
+    )
+    checks = {item["check_id"]: item for item in result["checks"]}
+    assert result["status"] == "FAIL"
+    assert "primary_sources_acquired_and_qa" in result["blocking_failures"]
+    assert "primary_data_freshness" in result["blocking_failures"]
+    assert checks["rolling_volume_outlier_method"]["status"] == "PASS"
+    for check_id in (
+        "target_execution_and_no_leakage", "holdout_honest_label",
+        "benchmark_completeness", "numeric_units_and_source_provenance",
+    ):
+        assert checks[check_id]["status"] == "NOT_APPLICABLE"
+        assert checks[check_id]["blocking"] is False
+    assert checks["runtime_efficiency_budget"]["status"] == "PASS"
+    assert checks["probability_claim_guard"]["status"] == "PASS"
