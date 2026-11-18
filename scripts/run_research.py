@@ -165,6 +165,8 @@ def main() -> int:
     stage_started = process_started
     run = {"started_at_utc": run_as_of_utc.isoformat(), "data_as_of_utc": run_as_of_utc.isoformat(),
            "run_id": os.environ.get("GITHUB_RUN_ID", "local"), "status": "RUNNING",
+           "probabilistic_claims_allowed": False,
+           "prospective_ledger_validation": {"probability_calibration_claim_allowed": False},
            "protocol": "V5.6", "steps": [], "limitations": [],
            "supplemental_data": {"coverage": empty_supplemental_coverage()}}
     # Preserve the previous report in memory for longitudinal comparison, but
@@ -316,6 +318,9 @@ def main() -> int:
         write_manifest(manifests, output_dir / "data_manifest.json")
         if primary_errors:
             run["primary_data_errors"] = primary_errors
+            run["walk_forward_skipped_reason"] = (
+                "Walk-forward not executed because primary OHLCV freshness/QA did not pass."
+            )
             raise DataValidationError(
                 "Primary market data blocked after independent acquisition: "
                 + " | ".join(primary_errors)
@@ -343,6 +348,10 @@ def main() -> int:
             "calibration_status": "NOT_CALIBRATED",
         }
         run["performance"]["walk_forward_seconds"] = round(time.perf_counter() - research_started, 3)
+        if scores.get("status") != "SCORED_NOT_PROMOTED":
+            run["walk_forward_skipped_reason"] = scores.get(
+                "reason", "Walk-forward returned no scored forecast set."
+            )
         counts = predictions.groupby("horizon").size().to_dict() if len(predictions) else {}
         run["historical_continuity_rows_by_horizon"] = {str(k): int(v) for k, v in counts.items()}
         run["historical_continuity_role"] = "diagnostic_only_not_prospective_ledger_maturity"
