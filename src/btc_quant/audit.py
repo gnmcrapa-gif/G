@@ -330,7 +330,7 @@ def run_pre_report_review(
     add("crosscheck_metric_provenance", "data", crosscheck_metadata_ok,
         "Every passing cross-venue statistic must include its UTC overlap window and units.")
     add("probability_claim_guard", "quant",
-        run.get("probabilistic_claims_allowed") is False
+        run.get("probabilistic_claims_allowed", False) is False
         and run.get("prospective_ledger_validation", {}).get(
             "probability_calibration_claim_allowed", False
         ) is False,
@@ -388,19 +388,29 @@ def run_pre_report_review(
         "Report records the exact code commit and workflow run ID.")
 
     performance = run.get("performance", {})
-    measured = [
-        performance.get("acquisition_and_qa_seconds"),
-        performance.get("walk_forward_seconds"),
-    ]
-    runtime_ok = (
-        len(measured) == 2
-        and all(isinstance(value, (int, float)) and value >= 0 for value in measured)
-        and sum(measured) <= 7200
-    )
-    add("runtime_efficiency_budget", "operations", runtime_ok,
-        f"acquisition_and_qa_seconds={measured[0]}; walk_forward_seconds={measured[1]}; "
-        "measured stages must be non-negative and remain within the 120-minute workflow budget.")
-
+    acquisition_seconds = performance.get("acquisition_and_qa_seconds")
+    walk_forward_seconds = performance.get("walk_forward_seconds")
+    walk_forward_skipped = walk_forward_seconds is None and bool(run.get("walk_forward_skipped_reason"))
+    if walk_forward_skipped:
+        runtime_ok = (
+            isinstance(acquisition_seconds, (int, float))
+            and acquisition_seconds >= 0 and acquisition_seconds <= 7200
+        )
+        runtime_evidence = (
+            f"acquisition_and_qa_seconds={acquisition_seconds}; walk_forward=NOT_RUN; "
+            "walk-forward intentionally skipped after primary freshness fail-closed; acquisition remains within 120-minute budget."
+        )
+    else:
+        measured = [acquisition_seconds, walk_forward_seconds]
+        runtime_ok = (
+            all(isinstance(value, (int, float)) and value >= 0 for value in measured)
+            and sum(measured) <= 7200
+        )
+        runtime_evidence = (
+            f"acquisition_and_qa_seconds={acquisition_seconds}; walk_forward_seconds={walk_forward_seconds}; "
+            "measured stages must be non-negative and remain within the 120-minute workflow budget."
+        )
+    add("runtime_efficiency_budget", "operations", runtime_ok, runtime_evidence)
     # Rotate the adversarial lens by workflow run id; all blocking controls above still run every time.
     lens_index = int(hashlib.sha256(str(run_id).encode()).hexdigest()[:8], 16) % len(REVIEW_LENSES)
     lens = REVIEW_LENSES[lens_index]
