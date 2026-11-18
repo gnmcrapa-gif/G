@@ -1579,10 +1579,15 @@ def _bls_macro_fallback(series_id: str, meta: dict, directory: Path,
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "age_calendar_days": age_days,
         "freshness_reference_date": freshness_date.isoformat(),
+        "freshness_basis": "observation_period_end_not_publication_date",
+        "publication_date": None,
         "status": "PASS" if 0 <= age_days <= meta["max_age_days"] else "STALE",
         "previous_value": previous_value,
         "source_url": response.url,
-        "source_method": "official BLS monthly series API v1; independent of FRED transport",
+        "source_method": (
+            "official BLS monthly series API v1; independent of FRED transport; "
+            "freshness uses observation-period end, not publication date (not supplied by BLS payload)"
+        ),
         "bls_series_id": bls_series_id,
         "footnotes": footnotes,
     }
