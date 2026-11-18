@@ -332,9 +332,9 @@ def run_pre_report_review(
     add("crosscheck_metric_provenance", "data", crosscheck_metadata_ok,
         "Every passing cross-venue statistic must include its UTC overlap window and units.")
     add("probability_claim_guard", "quant",
-        run.get("probabilistic_claims_allowed", False) is False
+        run.get("probabilistic_claims_allowed") is False
         and run.get("prospective_ledger_validation", {}).get(
-            "probability_calibration_claim_allowed", False
+            "probability_calibration_claim_allowed"
         ) is False,
         "No calibrated probabilities without at least 200 matured prospective forecasts per horizon and a separate calibration study.")
 
