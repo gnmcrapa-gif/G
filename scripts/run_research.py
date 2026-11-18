@@ -41,7 +41,7 @@ from btc_quant.validation import DataValidationError, validate_ohlcv
 
 def _safe_optional_acquisition(label, function, directory, *, now=None):
     try:
-        frame, manifest = function(directory)
+        frame, manifest = function(directory, now=now)
         qa = validate_ohlcv(frame, now=now)
         return frame, {**manifest, "qa": {"status": "PASS", **qa}, "status": "PASS"}
     except Exception as exc:  # noqa: BLE001 - record each independent source failure
@@ -191,7 +191,7 @@ def main() -> int:
         for label, function, directory in primary_sources:
             frame = None
             try:
-                frame, manifest = function(directory)
+                frame, manifest = function(directory, now=run_as_of_utc)
                 manifests.append(manifest)
                 try:
                     qa = validate_ohlcv(frame, now=run_as_of_utc)
