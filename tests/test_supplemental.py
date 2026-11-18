@@ -327,6 +327,9 @@ def test_bls_cpi_fallback_uses_official_v1_api_and_month_end_freshness(monkeypat
     assert captured["json"]["seriesid"] == ["CUSR0000SA0"]
     assert observation["observation_date"] == "2026-10-01"
     assert observation["freshness_reference_date"] == "2026-10-31"
+    assert observation["freshness_basis"] == "observation_period_end_not_publication_date"
+    assert observation["publication_date"] is None
+    assert "not publication date" in observation["source_method"]
     assert observation["age_calendar_days"] == 18
     assert observation["status"] == "PASS"
     assert observation["source_url"] == "https://api.bls.gov/publicAPI/v1/timeseries/data/"
