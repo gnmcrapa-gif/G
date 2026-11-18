@@ -186,6 +186,10 @@ def main() -> int:
                     qa = validate_ohlcv(frame, now=run_as_of_utc)
                     manifest["qa"] = {"status": "PASS", **qa}
                     manifest["status"] = "PASS"
+                    if label == "Binance":
+                        binance_qa = qa
+                    else:
+                        bitstamp_qa = qa
                     run["steps"].append({
                         "step": f"{label.lower()}_acquisition_and_qa",
                         "status": "PASS", "qa": qa,
