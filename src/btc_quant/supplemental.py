@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import io
+from concurrent.futures import ThreadPoolExecutor
 import math
 import re
 import xml.etree.ElementTree as ET
@@ -830,8 +831,8 @@ def _deribit_options(directory: Path) -> tuple[dict, dict]:
     )[:40]
 
     # Query Greeks only for a bounded set of near-ATM contracts in the nearest four expiries.
-    ticker_rows = []
-    ticker_errors = []
+    # Use a small bounded pool with one isolated session per worker; map preserves request order.
+    ticker_requests = []
     selected_expiries = [row["expiry_date"] for row in expiry_rows if row["days_to_expiry"] >= 0][:4]
     for expiry in selected_expiries:
         options = [row for row in parsed_rows if row["expiry_date"] == expiry]
@@ -846,34 +847,51 @@ def _deribit_options(directory: Path) -> tuple[dict, dict]:
                 if candidates:
                     selected.append(min(candidates, key=lambda row: abs(row["strike"] / underlying - target)))
         unique = {row["instrument_name"]: row for row in selected}
-        for instrument in unique:
-            try:
-                ticker_payload, ticker_obj = _request_json(
-                    session, "POST", DERIBIT_API + "/public/ticker", directory,
-                    f"ticker_{instrument.replace('-', '_')}.json",
-                    body={"jsonrpc": "2.0", "id": 2, "method": "public/ticker",
-                          "params": {"instrument_name": instrument}},
-                    source="Deribit public options ticker/Greeks",
-                    venue="Deribit Options", symbol=instrument, quote="BTC/USD",
-                )
-                objects.append(ticker_obj)
-                ticker = ticker_payload.get("result", {})
-                greeks = ticker.get("greeks") or {}
-                ticker_rows.append({
-                    "instrument_name": instrument, "expiry_date": expiry,
-                    "option_type": "call" if instrument.endswith("-C") else "put",
-                    "delta": _float_or_none(greeks.get("delta")),
-                    "gamma": _float_or_none(greeks.get("gamma")),
-                    "mark_iv_pct": _float_or_none(ticker.get("mark_iv")),
-                    "ticker_timestamp_utc": _timestamp_ms(ticker.get("timestamp")),
-                })
-            except (requests.RequestException, ValueError, RuntimeError, KeyError, TypeError) as exc:
-                ticker_errors.append({
-                    "instrument_name": instrument,
-                    "error": f"{type(exc).__name__}: {exc}",
-                })
-                continue
+        ticker_requests.extend((expiry, instrument) for instrument in unique)
 
+    def fetch_ticker(item: tuple[str, str]) -> tuple[dict | None, dict | None, dict | None]:
+        expiry, instrument = item
+        ticker_session = requests.Session()
+        ticker_session.headers.update({"User-Agent": USER_AGENT})
+        try:
+            ticker_payload, ticker_obj = _request_json(
+                ticker_session, "POST", DERIBIT_API + "/public/ticker", directory,
+                f"ticker_{instrument.replace('-', '_')}.json",
+                body={"jsonrpc": "2.0", "id": 2, "method": "public/ticker",
+                      "params": {"instrument_name": instrument}},
+                source="Deribit public options ticker/Greeks",
+                venue="Deribit Options", symbol=instrument, quote="BTC/USD",
+            )
+            ticker = ticker_payload.get("result", {})
+            greeks = ticker.get("greeks") or {}
+            row = {
+                "instrument_name": instrument, "expiry_date": expiry,
+                "option_type": "call" if instrument.endswith("-C") else "put",
+                "delta": _float_or_none(greeks.get("delta")),
+                "gamma": _float_or_none(greeks.get("gamma")),
+                "mark_iv_pct": _float_or_none(ticker.get("mark_iv")),
+                "ticker_timestamp_utc": _timestamp_ms(ticker.get("timestamp")),
+            }
+            return row, ticker_obj, None
+        except (requests.RequestException, ValueError, RuntimeError, KeyError, TypeError) as exc:
+            return None, None, {
+                "instrument_name": instrument,
+                "error": f"{type(exc).__name__}: {exc}",
+            }
+        finally:
+            ticker_session.close()
+
+    ticker_rows = []
+    ticker_errors = []
+    with ThreadPoolExecutor(max_workers=4, thread_name_prefix="deribit-greeks") as executor:
+        ticker_results = list(executor.map(fetch_ticker, ticker_requests))
+    for ticker_row, ticker_obj, ticker_error in ticker_results:
+        if ticker_row is not None:
+            ticker_rows.append(ticker_row)
+        if ticker_obj is not None:
+            objects.append(ticker_obj)
+        if ticker_error is not None:
+            ticker_errors.append(ticker_error)
     skew_by_expiry = []
     for expiry in selected_expiries:
         candidates = [row for row in ticker_rows if row["expiry_date"] == expiry and row["delta"] is not None]
