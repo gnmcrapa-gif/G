@@ -68,3 +68,35 @@ def test_binance_daily_window_uses_frozen_utc_asof(monkeypatch, tmp_path):
     assert not any("BTCUSDT-1d-2026-11-18.zip" in url for url in requested)
     assert frame.iloc[-1]["timestamp"] == pd.Timestamp("2026-11-17T00:00:00Z")
     assert manifest["last_timestamp"] == "2026-11-17T00:00:00+00:00"
+
+
+def test_bitstamp_window_uses_frozen_utc_asof(monkeypatch, tmp_path):
+    from datetime import UTC, datetime
+
+    import pandas as pd
+    from btc_quant import acquisition
+
+    as_of = datetime(2026, 11, 18, 0, 6, tzinfo=UTC)
+    candle_ts = int(datetime(2026, 11, 17, 0, 0, tzinfo=UTC).timestamp())
+    class Response:
+        content = b"bitstamp-json"
+        url = "https://www.bitstamp.net/api/v2/ohlc/btcusd/"
+        def raise_for_status(self):
+            return None
+        def json(self):
+            return {"data": {"ohlc": [{
+                "timestamp": str(candle_ts), "open": "100", "high": "102",
+                "low": "99", "close": "101", "volume": "10",
+            }]}}
+
+    class Session:
+        def __init__(self):
+            self.headers = {}
+        def get(self, url, params, timeout):
+            assert params["end"] == int(as_of.timestamp())
+            return Response()
+
+    monkeypatch.setattr(acquisition.requests, "Session", Session)
+    frame, manifest = acquisition.download_bitstamp_recent(tmp_path, days=1, now=as_of)
+    assert frame.iloc[-1]["timestamp"] == pd.Timestamp("2026-11-17T00:00:00Z")
+    assert manifest["last_timestamp"] == "2026-11-17T00:00:00+00:00"
