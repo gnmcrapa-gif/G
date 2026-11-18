@@ -108,6 +108,7 @@ def test_binance_missing_daily_archive_uses_official_spot_rest_fallback(monkeypa
     from datetime import UTC, date, datetime
 
     import pandas as pd
+
     from btc_quant import acquisition
 
     as_of = datetime(2026, 11, 18, 0, 6, tzinfo=UTC)
@@ -177,7 +178,6 @@ def test_binance_rest_fallback_respects_official_endpoint_access_block(monkeypat
             tmp_path, start=date(2026, 11, 17),
             now=datetime(2026, 11, 18, 0, 6, tzinfo=UTC),
         )
-    assert requested == [
-        requested[0], "https://data-api.binance.vision/api/v3/klines"
-    ]
+    assert len(requested) == 2
+    assert requested[1] == "https://data-api.binance.vision/api/v3/klines"
     assert all("binance.com" in url or "binance.vision" in url for url in requested)
