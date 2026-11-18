@@ -131,6 +131,9 @@ jobs:
             data/raw/
           if-no-files-found: warn
           retention-days: 90
-      - name: Fail run when research is blocked
-        if: steps.research.outcome == 'failure'
+      - name: Keep blocked PR research as diagnostic only
+        if: steps.research.outcome == 'failure' && github.event_name == 'pull_request'
+        run: echo "::warning::Research is BLOCKED for this PR run; diagnostic artifact is retained. Freshness and promotion gates are not waived."
+      - name: Fail scheduled or manual research when blocked
+        if: steps.research.outcome == 'failure' && github.event_name != 'pull_request'
         run: exit 1
