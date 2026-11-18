@@ -73,6 +73,22 @@ def _parse_binance_zip(payload: bytes) -> pd.DataFrame:
     return frame
 
 
+def _parse_binance_klines(payload: list) -> pd.DataFrame:
+    """Parse official Binance Spot REST klines into the canonical OHLCV schema."""
+    if not isinstance(payload, list) or not payload:
+        raise ValueError("Binance Spot REST kline response is empty or malformed")
+    frame = pd.DataFrame(payload)
+    if frame.shape[1] < 6:
+        raise ValueError(f"expected at least 6 REST kline columns, got {frame.shape[1]}")
+    frame = frame.iloc[:, :6].copy()
+    frame.columns = ["timestamp", "open", "high", "low", "close", "volume"]
+    frame["timestamp"] = pd.to_datetime(
+        pd.to_numeric(frame["timestamp"], errors="raise"), unit="ms", utc=True
+    )
+    for column in ("open", "high", "low", "close", "volume"):
+        frame[column] = pd.to_numeric(frame[column], errors="coerce")
+    return frame
+
 def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1),
                            now: datetime | None = None) -> tuple[pd.DataFrame, dict]:
     """Acquire monthly archives plus completed daily files through yesterday UTC."""
@@ -103,7 +119,7 @@ def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1),
             objects[-1]["rows"] = len(frame)
         except Exception as exc:  # noqa: BLE001 - source failures belong in manifest
             failures.append({"url": url, "error": f"{type(exc).__name__}: {exc}"})
-    day = current_month
+    day = max(current_month, start)
     yesterday = today - timedelta(days=1)
     while day <= yesterday:
         name = f"BTCUSDT-1d-{day.isoformat()}.zip"
@@ -112,6 +128,38 @@ def download_binance_daily(output_dir: Path, start: date = date(2017, 8, 1),
             response = session.get(url, timeout=45)
             if response.status_code == 404:
                 failures.append({"url": url, "status": 404, "reason": "daily_archive_not_yet_available"})
+                # Use only Binance official public Spot REST market-data mirror as a bounded fallback.
+                # HTTP blocks (451/403), empty payloads or timeouts remain failures; no bypass is attempted.
+                api_url = "https://data-api.binance.vision/api/v3/klines"
+                day_start_ms = int(datetime.combine(day, datetime.min.time(), tzinfo=UTC).timestamp() * 1000)
+                try:
+                    api_response = session.get(
+                        api_url,
+                        params={"symbol": "BTCUSDT", "interval": "1d",
+                                "startTime": day_start_ms, "endTime": day_start_ms + 86_400_000 - 1,
+                                "limit": 2},
+                        timeout=20,
+                    )
+                    api_response.raise_for_status()
+                    frame = _parse_binance_klines(api_response.json())
+                    frame = frame[frame["timestamp"].dt.date == day].reset_index(drop=True)
+                    if frame.empty:
+                        raise ValueError(f"REST fallback returned no closed candle for {day}")
+                    frames.append(frame)
+                    rest_name = f"BTCUSDT-1d-{day.isoformat()}-rest.json"
+                    objects.append(_save_raw(
+                        output_dir, rest_name, api_response.content, api_response.url,
+                        "Binance official Spot REST daily kline fallback", "Binance",
+                        "BTCUSDT", "USDT", source_grade="A",
+                    ))
+                    objects[-1]["rows"] = len(frame)
+                    objects[-1]["data_date_utc"] = day.isoformat()
+                    objects[-1]["source_type"] = "daily_rest_fallback"
+                except Exception as fallback_exc:  # noqa: BLE001 - preserve explicit blocked/unavailable reason
+                    failures.append({
+                        "url": api_url, "data_date_utc": day.isoformat(),
+                        "error": f"official REST fallback failed: {type(fallback_exc).__name__}: {fallback_exc}",
+                    })
             else:
                 response.raise_for_status()
                 frame = _parse_binance_zip(response.content)
