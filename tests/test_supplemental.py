@@ -256,7 +256,7 @@ def test_deribit_greeks_sampling_is_bounded_parallel_and_deterministic(monkeypat
     import time
     from datetime import UTC, datetime, timedelta
 
-    import btc_quant.supplemental as supplemental
+    from btc_quant import supplemental
 
     today = datetime.now(UTC).date()
     rows = []
