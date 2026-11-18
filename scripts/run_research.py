@@ -188,8 +188,6 @@ def main() -> int:
                     manifest["status"] = "PASS"
                     if label == "Binance":
                         binance_qa = qa
-                    else:
-                        bitstamp_qa = qa
                     run["steps"].append({
                         "step": f"{label.lower()}_acquisition_and_qa",
                         "status": "PASS", "qa": qa,
