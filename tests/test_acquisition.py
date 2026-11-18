@@ -37,6 +37,7 @@ def test_binance_daily_window_uses_frozen_utc_asof(monkeypatch, tmp_path):
     from datetime import UTC, date, datetime
 
     import pandas as pd
+
     from btc_quant import acquisition
 
     requested = []
