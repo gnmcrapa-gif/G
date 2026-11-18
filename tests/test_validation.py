@@ -141,3 +141,16 @@ def test_frozen_acquisition_time_prevents_midnight_rollover_false_stale():
     assert result["latest_age_days"] == 1
     with pytest.raises(DataValidationError, match="stale daily data"):
         validate_ohlcv(frame, now=pd.Timestamp("2024-01-04T00:00:01Z"))
+
+
+def test_stale_feed_can_return_full_qa_without_passing_freshness():
+    frame = sample_frame()
+    result = validate_ohlcv(
+        frame, now=pd.Timestamp("2024-01-05T12:00:00Z"), allow_stale=True
+    )
+    assert result["freshness_status"] == "FAIL"
+    assert result["freshness_error"].startswith("stale daily data")
+    assert result["volume_robust_z_window_sessions"] == 90
+    assert result["volume_robust_z_min_history_sessions"] == 60
+    with pytest.raises(DataValidationError, match="stale daily data"):
+        validate_ohlcv(frame, now=pd.Timestamp("2024-01-05T12:00:00Z"))
