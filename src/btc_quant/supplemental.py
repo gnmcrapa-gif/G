@@ -9,6 +9,7 @@ import xml.etree.ElementTree as ET
 from datetime import UTC, date, datetime, timedelta
 from email.utils import parsedate_to_datetime
 from html import unescape
+from html.parser import HTMLParser
 from pathlib import Path
 
 import pandas as pd
@@ -833,6 +834,7 @@ def _deribit_options(directory: Path) -> tuple[dict, dict]:
     ticker_rows = []
     ticker_errors = []
     selected_expiries = [row["expiry_date"] for row in expiry_rows if row["days_to_expiry"] >= 0][:4]
+    ticker_tasks = []
     for expiry in selected_expiries:
         options = [row for row in parsed_rows if row["expiry_date"] == expiry]
         underlying = next((_float_or_none(row.get("underlying_price")) for row in options
@@ -840,39 +842,52 @@ def _deribit_options(directory: Path) -> tuple[dict, dict]:
         if not underlying:
             continue
         selected = []
-        for side, targets in (("P", (0.85, 0.90, 0.95)), ("C", (1.05, 1.10, 1.15))):
+        for side, targets in (("P", (0.97, 0.98, 0.99)), ("C", (1.01, 1.02, 1.03))):
             candidates = [row for row in options if row["option_type"] == side]
             for target in targets:
                 if candidates:
                     selected.append(min(candidates, key=lambda row: abs(row["strike"] / underlying - target)))
         unique = {row["instrument_name"]: row for row in selected}
-        for instrument in unique:
-            try:
-                ticker_payload, ticker_obj = _request_json(
-                    session, "POST", DERIBIT_API + "/public/ticker", directory,
-                    f"ticker_{instrument.replace('-', '_')}.json",
-                    body={"jsonrpc": "2.0", "id": 2, "method": "public/ticker",
-                          "params": {"instrument_name": instrument}},
-                    source="Deribit public options ticker/Greeks",
-                    venue="Deribit Options", symbol=instrument, quote="BTC/USD",
-                )
-                objects.append(ticker_obj)
-                ticker = ticker_payload.get("result", {})
-                greeks = ticker.get("greeks") or {}
-                ticker_rows.append({
-                    "instrument_name": instrument, "expiry_date": expiry,
-                    "option_type": "call" if instrument.endswith("-C") else "put",
-                    "delta": _float_or_none(greeks.get("delta")),
-                    "gamma": _float_or_none(greeks.get("gamma")),
-                    "mark_iv_pct": _float_or_none(ticker.get("mark_iv")),
-                    "ticker_timestamp_utc": _timestamp_ms(ticker.get("timestamp")),
-                })
-            except (requests.RequestException, ValueError, RuntimeError, KeyError, TypeError) as exc:
-                ticker_errors.append({
-                    "instrument_name": instrument,
-                    "error": f"{type(exc).__name__}: {exc}",
-                })
-                continue
+        ticker_tasks.extend((expiry, instrument) for instrument in sorted(unique))
+
+    def fetch_ticker(task):
+        expiry, instrument = task
+        worker_session = requests.Session()
+        worker_session.headers.update({"User-Agent": USER_AGENT})
+        try:
+            return expiry, instrument, *_request_json(
+                worker_session, "POST", DERIBIT_API + "/public/ticker", directory,
+                f"ticker_{instrument.replace('-', '_')}.json",
+                body={"jsonrpc": "2.0", "id": 2, "method": "public/ticker",
+                      "params": {"instrument_name": instrument}},
+                source="Deribit public options ticker/Greeks",
+                venue="Deribit Options", symbol=instrument, quote="BTC/USD",
+            ), None
+        except (requests.RequestException, ValueError, RuntimeError, KeyError, TypeError) as exc:
+            return expiry, instrument, None, None, f"{type(exc).__name__}: {exc}"
+        finally:
+            worker_session.close()
+
+    # Bound concurrency to four requests; collect in task order for reproducible artifacts.
+    from concurrent.futures import ThreadPoolExecutor
+    with ThreadPoolExecutor(max_workers=4) as pool:
+        ticker_results = list(pool.map(fetch_ticker, ticker_tasks))
+
+    for expiry, instrument, ticker_payload, ticker_obj, error in ticker_results:
+        if error:
+            ticker_errors.append({"instrument_name": instrument, "error": error})
+            continue
+        objects.append(ticker_obj)
+        ticker = ticker_payload.get("result", {})
+        greeks = ticker.get("greeks") or {}
+        ticker_rows.append({
+            "instrument_name": instrument, "expiry_date": expiry,
+            "option_type": "call" if instrument.endswith("-C") else "put",
+            "delta": _float_or_none(greeks.get("delta")),
+            "gamma": _float_or_none(greeks.get("gamma")),
+            "mark_iv_pct": _float_or_none(ticker.get("mark_iv")),
+            "ticker_timestamp_utc": _timestamp_ms(ticker.get("timestamp")),
+        })
 
     skew_by_expiry = []
     for expiry in selected_expiries:
@@ -1054,22 +1069,22 @@ def _etf_flows(directory: Path) -> tuple[dict, dict]:
 
 
 FRED_SERIES = {
-    "DGS2": {"label": "US Treasury 2Y yield", "unit": "percent", "max_age_days": 5, "lookback_days": 365},
-    "DGS10": {"label": "US Treasury 10Y yield", "unit": "percent", "max_age_days": 5, "lookback_days": 365},
-    "DFII10": {"label": "US 10Y real yield", "unit": "percent", "max_age_days": 5, "lookback_days": 365},
-    "FEDFUNDS": {"label": "Federal funds effective rate", "unit": "percent", "max_age_days": 45, "lookback_days": 1825},
-    "CPIAUCSL": {"label": "US CPI index", "unit": "index 1982-84=100", "max_age_days": 45, "lookback_days": 1825},
-    "PCEPILFE": {"label": "US core PCE price index", "unit": "index 2017=100", "max_age_days": 45, "lookback_days": 1825},
-    "UNRATE": {"label": "US unemployment rate", "unit": "percent", "max_age_days": 45, "lookback_days": 1825},
-    "PAYEMS": {"label": "US nonfarm payrolls", "unit": "thousands of persons", "max_age_days": 45, "lookback_days": 1825},
-    "DTWEXBGS": {"label": "US broad trade-weighted dollar index (not ICE DXY)", "unit": "index", "max_age_days": 10, "lookback_days": 365},
-    "WALCL": {"label": "Federal Reserve total assets", "unit": "millions of USD", "max_age_days": 14, "lookback_days": 365},
-    "RRPONTSYD": {"label": "Overnight reverse repo take-up", "unit": "billions of USD", "max_age_days": 10, "lookback_days": 365},
-    "NFCI": {"label": "Chicago Fed National Financial Conditions Index", "unit": "index", "max_age_days": 14, "lookback_days": 365},
-    "SP500": {"label": "S&P 500 index", "unit": "index points", "max_age_days": 5, "lookback_days": 365},
-    "NASDAQCOM": {"label": "NASDAQ Composite index", "unit": "index points", "max_age_days": 5, "lookback_days": 365},
-    "VIXCLS": {"label": "CBOE VIX", "unit": "index points", "max_age_days": 5, "lookback_days": 365},
-    "M2SL": {"label": "US M2 money stock", "unit": "billions of USD", "max_age_days": 45, "lookback_days": 1825},
+    "DGS2": {"label": "US Treasury 2Y yield", "unit": "percent", "frequency": "daily", "max_age_days": 5, "lookback_days": 365},
+    "DGS10": {"label": "US Treasury 10Y yield", "unit": "percent", "frequency": "daily", "max_age_days": 5, "lookback_days": 365},
+    "DFII10": {"label": "US 10Y real yield", "unit": "percent", "frequency": "daily", "max_age_days": 5, "lookback_days": 365},
+    "FEDFUNDS": {"label": "Federal funds effective rate", "unit": "percent", "frequency": "monthly", "max_age_days": 45, "lookback_days": 1825},
+    "CPIAUCSL": {"label": "US CPI index", "unit": "index 1982-84=100", "frequency": "monthly", "max_age_days": 45, "lookback_days": 1825},
+    "PCEPILFE": {"label": "US core PCE price index", "unit": "index 2017=100", "frequency": "monthly", "max_age_days": 45, "lookback_days": 1825},
+    "UNRATE": {"label": "US unemployment rate", "unit": "percent", "frequency": "monthly", "max_age_days": 45, "lookback_days": 1825},
+    "PAYEMS": {"label": "US nonfarm payrolls", "unit": "thousands of persons", "frequency": "monthly", "max_age_days": 45, "lookback_days": 1825},
+    "DTWEXBGS": {"label": "US broad trade-weighted dollar index (not ICE DXY)", "unit": "index", "frequency": "daily", "max_age_days": 10, "lookback_days": 365},
+    "WALCL": {"label": "Federal Reserve total assets", "unit": "millions of USD", "frequency": "weekly", "max_age_days": 14, "lookback_days": 365},
+    "RRPONTSYD": {"label": "Overnight reverse repo take-up", "unit": "billions of USD", "frequency": "daily", "max_age_days": 10, "lookback_days": 365},
+    "NFCI": {"label": "Chicago Fed National Financial Conditions Index", "unit": "index", "frequency": "weekly", "max_age_days": 14, "lookback_days": 365},
+    "SP500": {"label": "S&P 500 index", "unit": "index points", "frequency": "daily", "max_age_days": 5, "lookback_days": 365},
+    "NASDAQCOM": {"label": "NASDAQ Composite index", "unit": "index points", "frequency": "daily", "max_age_days": 5, "lookback_days": 365},
+    "VIXCLS": {"label": "CBOE VIX", "unit": "index points", "frequency": "daily", "max_age_days": 5, "lookback_days": 365},
+    "M2SL": {"label": "US M2 money stock", "unit": "billions of USD", "frequency": "monthly", "max_age_days": 45, "lookback_days": 1825},
 }
 
 
@@ -1330,8 +1345,12 @@ def _configure_fred_session(session: requests.Session) -> requests.Session:
 
 
 def _parse_treasury_yield_xml(payload: bytes, series_id: str) -> tuple[date, float]:
-    """Parse the official Treasury OData feed for nominal 2Y/10Y par yields."""
-    field_by_series = {"DGS2": "BC_2YEAR", "DGS10": "BC_10YEAR"}
+    """Parse official Treasury nominal or real 10Y/2Y par-yield OData observations."""
+    field_by_series = {
+        "DGS2": "BC_2YEAR",
+        "DGS10": "BC_10YEAR",
+        "DFII10": "TC_10YEAR",
+    }
     if series_id not in field_by_series:
         raise ValueError(f"No Treasury fallback configured for {series_id}")
     root = ET.fromstring(payload)
@@ -1357,13 +1376,22 @@ def _parse_treasury_yield_xml(payload: bytes, series_id: str) -> tuple[date, flo
 
 def _treasury_yield_fallback(series_id: str, meta: dict, directory: Path,
                              today: date) -> tuple[dict, dict]:
-    """Fetch nominal 2Y/10Y yields directly from the US Treasury official XML feed."""
-    if series_id not in {"DGS2", "DGS10"}:
+    """Fetch official Treasury nominal yields or 10Y real yield as FRED fallbacks."""
+    if series_id not in {"DGS2", "DGS10", "DFII10"}:
         raise ValueError(f"No independent public fallback configured for {series_id}")
+    data_key = (
+        "daily_treasury_real_yield_curve" if series_id == "DFII10"
+        else "daily_treasury_yield_curve"
+    )
+    source_label = (
+        "US Department of the Treasury official daily par real yield curve"
+        if series_id == "DFII10"
+        else "US Department of the Treasury official daily par yield curve"
+    )
     url = "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml"
     response = requests.get(
         url,
-        params={"data": "daily_treasury_yield_curve", "field_tdr_date_value": str(today.year)},
+        params={"data": data_key, "field_tdr_date_value": str(today.year)},
         headers={"User-Agent": USER_AGENT},
         timeout=(8, 20),
     )
@@ -1373,7 +1401,7 @@ def _treasury_yield_fallback(series_id: str, meta: dict, directory: Path,
     age_days = (today - observation_date).days
     obj = _save_object(
         directory, f"treasury_{series_id.lower()}_yield_curve.xml", raw,
-        source="US Department of the Treasury official daily par yield curve",
+        source=source_label,
         url=response.url, venue="United States Treasury", symbol=series_id,
         quote="percent", source_grade="A",
     )
@@ -1384,18 +1412,22 @@ def _treasury_yield_fallback(series_id: str, meta: dict, directory: Path,
         "age_calendar_days": age_days,
         "status": "PASS" if 0 <= age_days <= meta["max_age_days"] else "STALE",
         "previous_value": None,
-        "source_url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates",
-        "source_method": "official Treasury daily par yield curve; independent of FRED transport",
+        "source_url": response.url,
+        "source_method": (
+            "official Treasury daily par real yield curve; independent of FRED transport"
+            if series_id == "DFII10"
+            else "official Treasury daily par yield curve; independent of FRED transport"
+        ),
     }
     manifest = {
-        "source": "US Department of the Treasury official daily par yield curve",
+        "source": source_label,
         "venue": "United States Treasury", "symbol": series_id,
         "quote_currency": "percent", "interval": "daily",
         "timezone": "Treasury observation date",
         "schema_version": "1.0", "source_grade": "A",
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "parser": "Treasury OData XML parser", "parser_version": "1.0",
-        "schema": ["NEW_DATE", "BC_2YEAR", "BC_10YEAR"],
+        "schema": ["NEW_DATE", {"DGS2": "BC_2YEAR", "DGS10": "BC_10YEAR", "DFII10": "TC_10YEAR"}[series_id]],
         "objects": [obj], "status": observation["status"],
         "fallback_for": "FRED transport failure",
     }
@@ -1451,7 +1483,7 @@ def _cboe_vix_fallback(series_id: str, meta: dict, directory: Path,
         "age_calendar_days": age_days,
         "status": "PASS" if 0 <= age_days <= meta["max_age_days"] else "STALE",
         "previous_value": None,
-        "source_url": url,
+        "source_url": response.url,
         "source_method": "Cboe official historical daily VIX close; independent of FRED transport",
     }
     manifest = {
@@ -1462,6 +1494,258 @@ def _cboe_vix_fallback(series_id: str, meta: dict, directory: Path,
         "retrieved_at_utc": datetime.now(UTC).isoformat(),
         "parser": "Cboe VIX history CSV parser", "parser_version": "1.0",
         "schema": ["DATE", "OPEN", "HIGH", "LOW", "CLOSE"],
+        "objects": [obj], "status": observation["status"],
+        "fallback_for": "FRED transport failure",
+    }
+    return observation, manifest
+
+
+BLS_SERIES = {
+    "CPIAUCSL": "CUSR0000SA0",
+    "UNRATE": "LNS14000000",
+    "PAYEMS": "CES0000000001",
+}
+
+
+def _freshness_reference_date(observation_date: date, meta: dict) -> date:
+    """Use monthly observation-period end; this is not a publication or release date."""
+    if meta.get("frequency") == "monthly":
+        next_month = (
+            date(observation_date.year + 1, 1, 1)
+            if observation_date.month == 12
+            else date(observation_date.year, observation_date.month + 1, 1)
+        )
+        return next_month - timedelta(days=1)
+    return observation_date
+
+
+def _parse_bls_monthly_series(payload: dict, bls_series_id: str) -> tuple[date, float, float | None, list[dict]]:
+    """Parse a BLS v1 monthly series, preserving footnotes and latest prior observation."""
+    if not isinstance(payload, dict):
+        raise TypeError("BLS response is not a JSON object")
+    if payload.get("status") != "REQUEST_SUCCEEDED":
+        raise RuntimeError(f"BLS API status={payload.get('status')}: {payload.get('message')}")
+    series_rows = payload.get("Results", {}).get("series", [])
+    match = next(
+        (item for item in series_rows if item.get("seriesID") == bls_series_id),
+        None,
+    )
+    if match is None:
+        raise ValueError(f"BLS response missing series {bls_series_id}")
+    valid = []
+    for row in match.get("data", []):
+        period = str(row.get("period", ""))
+        if not re.fullmatch(r"M(?:0[1-9]|1[0-2])", period):
+            continue
+        value = _float_or_none(row.get("value"))
+        if value is None:
+            continue
+        year = int(row["year"])
+        month = int(period[1:])
+        footnotes = [
+            item for item in row.get("footnotes", [])
+            if item.get("code") or item.get("text")
+        ]
+        valid.append((date(year, month, 1), value, footnotes))
+    valid.sort(key=lambda item: item[0])
+    if not valid:
+        raise ValueError(f"BLS series {bls_series_id} has no valid monthly observations")
+    latest = valid[-1]
+    previous = valid[-2][1] if len(valid) > 1 else None
+    return latest[0], latest[1], previous, latest[2]
+
+
+def _bls_macro_fallback(series_id: str, meta: dict, directory: Path,
+                        today: date) -> tuple[dict, dict]:
+    """Fetch CPI, unemployment and payroll series from the official BLS API v1."""
+    if series_id not in BLS_SERIES:
+        raise ValueError(f"No BLS fallback configured for {series_id}")
+    bls_series_id = BLS_SERIES[series_id]
+    years = max(1, math.ceil(meta["lookback_days"] / 365))
+    start_year = max(2010, today.year - years)
+    url = "https://api.bls.gov/publicAPI/v1/timeseries/data/"
+    payload = {
+        "seriesid": [bls_series_id],
+        "startyear": str(start_year),
+        "endyear": str(today.year),
+    }
+    response = requests.post(
+        url, json=payload, headers={"User-Agent": USER_AGENT},
+        timeout=(8, 20),
+    )
+    response.raise_for_status()
+    raw = response.content
+    parsed = response.json()
+    observation_date, value, previous_value, footnotes = _parse_bls_monthly_series(
+        parsed, bls_series_id,
+    )
+    freshness_date = _freshness_reference_date(observation_date, meta)
+    age_days = (today - freshness_date).days
+    obj = _save_object(
+        directory, f"bls_{series_id.lower()}.json", raw,
+        source="US Bureau of Labor Statistics Public Data API v1",
+        url=response.url, venue="United States Bureau of Labor Statistics",
+        symbol=bls_series_id, quote=meta["unit"], source_grade="A",
+    )
+    observation = {
+        "label": meta["label"], "value": value, "unit": meta["unit"],
+        "observation_date": observation_date.isoformat(),
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "age_calendar_days": age_days,
+        "freshness_reference_date": freshness_date.isoformat(),
+        "freshness_basis": "observation_period_end_not_publication_date",
+        "publication_date": None,
+        "status": "PASS" if 0 <= age_days <= meta["max_age_days"] else "STALE",
+        "previous_value": previous_value,
+        "source_url": response.url,
+        "source_method": (
+            "official BLS monthly series API v1; independent of FRED transport; "
+            "freshness uses observation-period end, not publication date (not supplied by BLS payload)"
+        ),
+        "bls_series_id": bls_series_id,
+        "footnotes": footnotes,
+    }
+    manifest = {
+        "source": "US Bureau of Labor Statistics Public Data API v1",
+        "venue": "United States Bureau of Labor Statistics",
+        "symbol": bls_series_id, "quote_currency": meta["unit"],
+        "interval": "monthly", "timezone": "BLS observation month",
+        "schema_version": "1.0", "source_grade": "A",
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "parser": "BLS v1 monthly series parser", "parser_version": "1.0",
+        "schema": ["year", "period", "periodName", "value", "footnotes"],
+        "objects": [obj], "status": observation["status"],
+        "fallback_for": "FRED transport failure",
+    }
+    return observation, manifest
+
+
+def _parse_fed_h6_m2_html(payload: bytes) -> tuple[date, float, float | None, date]:
+    """Parse the Federal Reserve H.6 Table 1 seasonally adjusted M2 series."""
+    html = payload.decode("utf-8", errors="replace")
+    release_match = re.search(
+        r"Release Date:\s*([A-Za-z]+\s+\d{1,2},\s+\d{4})",
+        html,
+        flags=re.IGNORECASE,
+    )
+    if release_match is None:
+        raise ValueError("Federal Reserve H.6 page has no release date")
+    release_date = datetime.strptime(release_match.group(1), "%B %d, %Y").date()
+
+    class _H6TableParser(HTMLParser):
+        def __init__(self):
+            super().__init__(convert_charrefs=True)
+            self.tables = []
+            self.table = None
+            self.row = None
+            self.cell = None
+
+        def handle_starttag(self, tag, attrs):
+            if tag == "table":
+                self.table = []
+            elif tag == "tr" and self.table is not None:
+                self.row = []
+            elif tag in {"th", "td"} and self.row is not None:
+                self.cell = []
+
+        def handle_data(self, data):
+            if self.cell is not None:
+                self.cell.append(data)
+
+        def handle_endtag(self, tag):
+            if tag in {"th", "td"} and self.cell is not None and self.row is not None:
+                self.row.append(" ".join(" ".join(self.cell).split()))
+                self.cell = None
+            elif tag == "tr" and self.row is not None and self.table is not None:
+                if self.row:
+                    self.table.append(self.row)
+                self.row = None
+            elif tag == "table" and self.table is not None:
+                self.tables.append(self.table)
+                self.table = None
+
+    table_parser = _H6TableParser()
+    table_parser.feed(html)
+    month_map = {
+        "jan": 1, "january": 1, "feb": 2, "february": 2,
+        "mar": 3, "march": 3, "apr": 4, "april": 4,
+        "may": 5, "jun": 6, "june": 6, "jul": 7, "july": 7,
+        "aug": 8, "august": 8, "sep": 9, "sept": 9, "september": 9,
+        "oct": 10, "october": 10, "nov": 11, "november": 11,
+        "dec": 12, "december": 12,
+    }
+    observations = []
+    for table in table_parser.tables:
+        cells = [cell.lower() for row in table for cell in row]
+        if not (
+            any("seasonally adjusted" in cell for cell in cells)
+            and any("not seasonally adjusted" in cell for cell in cells)
+            and any(cell.strip().startswith("m2") for cell in cells)
+        ):
+            continue
+        for row in table:
+            if len(row) < 3:
+                continue
+            parts = row[0].replace(".", "").split()
+            if len(parts) != 2 or parts[0].lower() not in month_map:
+                continue
+            value = _float_or_none(row[2].replace(",", "").strip())
+            if value is None:
+                continue
+            observations.append((
+                date(int(parts[1]), month_map[parts[0].lower()], 1),
+                value,
+            ))
+        if observations:
+            break
+    observations.sort(key=lambda item: item[0])
+    if not observations:
+        raise ValueError("Federal Reserve H.6 Table 1 has no valid M2 observations")
+    latest = observations[-1]
+    previous = observations[-2][1] if len(observations) > 1 else None
+    return latest[0], latest[1], previous, release_date
+
+
+
+def _fed_h6_m2_fallback(meta: dict, directory: Path,
+                        today: date) -> tuple[dict, dict]:
+    """Fetch seasonally adjusted M2 from the official Federal Reserve H.6 release."""
+    url = "https://www.federalreserve.gov/releases/h6/current/default.htm"
+    response = requests.get(url, headers={"User-Agent": USER_AGENT}, timeout=(8, 20))
+    response.raise_for_status()
+    raw = response.content
+    observation_date, value, previous_value, release_date = _parse_fed_h6_m2_html(raw)
+    age_days = (today - release_date).days
+    obj = _save_object(
+        directory, "federal_reserve_h6_m2.html", raw,
+        source="Federal Reserve Board H.6 Money Stock Measures, Table 1",
+        url=response.url, venue="Federal Reserve Board", symbol="M2",
+        quote="billions of USD, seasonally adjusted", source_grade="A",
+    )
+    observation = {
+        "label": meta["label"], "value": value, "unit": meta["unit"],
+        "observation_date": observation_date.isoformat(),
+        "freshness_reference_date": release_date.isoformat(),
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "age_calendar_days": age_days,
+        "status": "PASS" if 0 <= age_days <= meta["max_age_days"] else "STALE",
+        "previous_value": previous_value,
+        "source_url": response.url,
+        "source_method": (
+            "official Federal Reserve H.6 Table 1 seasonally adjusted M2; "
+            f"release dated {release_date.isoformat()}"
+        ),
+    }
+    manifest = {
+        "source": "Federal Reserve Board H.6 Money Stock Measures",
+        "venue": "Federal Reserve Board", "symbol": "M2",
+        "quote_currency": "billions of USD, seasonally adjusted",
+        "interval": "monthly", "timezone": "observation month",
+        "schema_version": "1.0", "source_grade": "A",
+        "retrieved_at_utc": datetime.now(UTC).isoformat(),
+        "release_date": release_date.isoformat(),
+        "parser": "Federal Reserve H.6 Table 1 HTML parser", "parser_version": "1.0",
+        "schema": ["Release Date", "Table 1", "Date", "Seasonally adjusted M2"],
         "objects": [obj], "status": observation["status"],
         "fallback_for": "FRED transport failure",
     }
@@ -1504,13 +1788,15 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
                 raise ValueError(f"FRED series {series_id} has no numeric observations")
             last = valid.iloc[-1]
             last_date = date.fromisoformat(str(last[date_col])[:10])
-            age_days = (today - last_date).days
+            freshness_date = _freshness_reference_date(last_date, meta)
+            age_days = (today - freshness_date).days
             observation = {
                 "label": meta["label"], "value": float(last[value_col]),
                 "unit": meta["unit"], "observation_date": last_date.isoformat(),
+                "freshness_reference_date": freshness_date.isoformat(),
                 "retrieved_at_utc": datetime.now(UTC).isoformat(),
                 "age_calendar_days": age_days,
-                "status": "PASS" if age_days <= meta["max_age_days"] else "STALE",
+                "status": "PASS" if 0 <= age_days <= meta["max_age_days"] else "STALE",
                 "previous_value": float(valid.iloc[-2][value_col]) if len(valid) > 1 else None,
                 "source_url": f"https://fred.stlouisfed.org/series/{series_id}",
             }
@@ -1528,7 +1814,7 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
             return series_id, observation, manifest, None
         except Exception as exc:  # noqa: BLE001 - preserve independent series failures
             fred_error = f"{type(exc).__name__}: {exc}"
-            if series_id in {"DGS2", "DGS10"}:
+            if series_id in {"DGS2", "DGS10", "DFII10"}:
                 try:
                     fallback_observation, fallback_manifest = _treasury_yield_fallback(
                         series_id, meta, directory, today,
@@ -1550,6 +1836,30 @@ def _fred_macro(directory: Path) -> tuple[dict, list[dict]]:
                 except Exception as fallback_exc:  # noqa: BLE001
                     error = (
                         f"FRED failed ({fred_error}); Cboe fallback failed "
+                        f"({type(fallback_exc).__name__}: {fallback_exc})"
+                    )
+            elif series_id in BLS_SERIES:
+                try:
+                    fallback_observation, fallback_manifest = _bls_macro_fallback(
+                        series_id, meta, directory, today,
+                    )
+                    fallback_manifest["fred_primary_error"] = fred_error
+                    return series_id, fallback_observation, fallback_manifest, None
+                except Exception as fallback_exc:  # noqa: BLE001
+                    error = (
+                        f"FRED failed ({fred_error}); BLS fallback failed "
+                        f"({type(fallback_exc).__name__}: {fallback_exc})"
+                    )
+            elif series_id == "M2SL":
+                try:
+                    fallback_observation, fallback_manifest = _fed_h6_m2_fallback(
+                        meta, directory, today,
+                    )
+                    fallback_manifest["fred_primary_error"] = fred_error
+                    return series_id, fallback_observation, fallback_manifest, None
+                except Exception as fallback_exc:  # noqa: BLE001
+                    error = (
+                        f"FRED failed ({fred_error}); Federal Reserve H.6 fallback failed "
                         f"({type(fallback_exc).__name__}: {fallback_exc})"
                     )
             else:

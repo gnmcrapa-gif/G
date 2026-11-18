@@ -36,13 +36,13 @@ from btc_quant.reporting import (
 )
 from btc_quant.research import cross_check_venues, walk_forward
 from btc_quant.supplemental import acquire_supplemental, empty_supplemental_coverage
-from btc_quant.validation import validate_ohlcv
+from btc_quant.validation import DataValidationError, validate_ohlcv
 
 
-def _safe_optional_acquisition(label, function, directory):
+def _safe_optional_acquisition(label, function, directory, *, now=None):
     try:
-        frame, manifest = function(directory)
-        qa = validate_ohlcv(frame)
+        frame, manifest = function(directory, now=now)
+        qa = validate_ohlcv(frame, now=now)
         return frame, {**manifest, "qa": {"status": "PASS", **qa}, "status": "PASS"}
     except Exception as exc:  # noqa: BLE001 - record each independent source failure
         return None, {"source": label, "status": "FAIL",
@@ -161,34 +161,97 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001 - preserve and disclose prior-report read failures
             previous_report_error = f"{type(exc).__name__}: {exc}"
     process_started = time.perf_counter()
+    run_as_of_utc = datetime.now(UTC)
     stage_started = process_started
-    run = {"started_at_utc": datetime.now(UTC).isoformat(), "status": "BLOCKED",
+    run = {"started_at_utc": run_as_of_utc.isoformat(), "data_as_of_utc": run_as_of_utc.isoformat(),
+           "run_id": os.environ.get("GITHUB_RUN_ID", "local"), "status": "RUNNING",
+           "probabilistic_claims_allowed": False,
+           "prospective_ledger_validation": {"probability_calibration_claim_allowed": False},
            "protocol": "V5.6", "steps": [], "limitations": [],
            "supplemental_data": {"coverage": empty_supplemental_coverage()}}
+    # Preserve the previous report in memory for longitudinal comparison, but
+    # remove stale run outputs before acquisition so an interrupted workflow
+    # can never upload a previous run as if it belonged to this run.
+    for stale_name in ("daily_report.md", "data_manifest.json", "scores.json", "oos_predictions.csv"):
+        stale_path = output_dir / stale_name
+        if stale_path.exists():
+            stale_path.unlink()
+    (output_dir / "run_report.json").write_text(
+        json.dumps(run, indent=2), encoding="utf-8"
+    )
     manifests = []
     binance = bitstamp = None
     scores = {}
     all_ledger_events = []
     pending_events = []
     try:
-        binance, binance_manifest = download_binance_daily(data_dir / "binance")
-        manifests.append(binance_manifest)
-        binance_qa = validate_ohlcv(binance)
-        run["steps"].append({"step": "binance_acquisition_and_qa", "status": "PASS", "qa": binance_qa})
-        bitstamp, bitstamp_manifest = download_bitstamp_recent(data_dir / "bitstamp")
-        manifests.append(bitstamp_manifest)
-        bitstamp_qa = validate_ohlcv(bitstamp)
-        run["steps"].append({"step": "bitstamp_acquisition_and_qa", "status": "PASS", "qa": bitstamp_qa})
+        primary_errors = []
+        primary_sources = [
+            ("Binance", download_binance_daily, data_dir / "binance"),
+            ("Bitstamp", download_bitstamp_recent, data_dir / "bitstamp"),
+        ]
+        for label, function, directory in primary_sources:
+            frame = None
+            qa = None
+            try:
+                frame, manifest = function(directory, now=run_as_of_utc)
+                manifests.append(manifest)
+                try:
+                    qa = validate_ohlcv(frame, now=run_as_of_utc, allow_stale=True)
+                    if qa.get("freshness_status") != "PASS":
+                        raise DataValidationError(qa.get("freshness_error") or "stale daily data")
+                    manifest["qa"] = {"status": "PASS", **qa}
+                    manifest["status"] = "PASS"
+                    if label == "Binance":
+                        binance_qa = qa
+                    run["steps"].append({
+                        "step": f"{label.lower()}_acquisition_and_qa",
+                        "status": "PASS", "qa": qa,
+                    })
+                except Exception as exc:  # noqa: BLE001 - retain source data and continue diagnostics
+                    message = f"{label}: {type(exc).__name__}: {exc}"
+                    primary_errors.append(message)
+                    manifest["qa"] = {"status": "FAIL", "error": message, **(qa or {})}
+                    manifest["status"] = "FAIL"
+                    run["steps"].append({
+                        "step": f"{label.lower()}_acquisition_and_qa",
+                        "status": "FAIL", "error": message, "qa": qa or {},
+                    })
+            except Exception as exc:  # noqa: BLE001 - independent primary source acquisition
+                message = f"{label}: {type(exc).__name__}: {exc}"
+                primary_errors.append(message)
+                manifest = {
+                    "source": f"{label} public spot OHLCV",
+                    "venue": label,
+                    "status": "FAIL",
+                    "attempted_at_utc": datetime.now(UTC).isoformat(),
+                    "error": message,
+                }
+                manifests.append(manifest)
+                run["steps"].append({
+                    "step": f"{label.lower()}_acquisition_and_qa",
+                    "status": "FAIL", "error": message,
+                })
+            if label == "Binance":
+                binance, binance_manifest = frame, manifest
+            else:
+                bitstamp, bitstamp_manifest = frame, manifest
+
         optional = [
             ("Coinbase", download_coinbase_recent, data_dir / "coinbase"),
             ("Kraken", download_kraken_recent, data_dir / "kraken"),
         ]
         cross_checks = []
         for label, function, directory in optional:
-            frame, record = _safe_optional_acquisition(label, function, directory)
+            frame, record = _safe_optional_acquisition(
+                label, function, directory, now=run_as_of_utc
+            )
             manifests.append(record)
-            if frame is not None:
-                cross_checks.append({"venue": label, **cross_check_venues(binance.tail(len(frame)), frame)})
+            if frame is not None and binance is not None:
+                cross_checks.append({
+                    "venue": label,
+                    **cross_check_venues(binance.tail(len(frame)), frame),
+                })
             run["steps"].append({"step": f"{label.lower()}_recent_cross_check", **record})
         for check in cross_checks:
             check["metric_metadata"] = {
@@ -232,18 +295,36 @@ def main() -> int:
             "timestamp": "UTC candle-open timestamp; candle close is next UTC midnight",
             "robust_volume_z": "dimensionless rolling score versus prior 90 completed sessions; minimum 60 sessions",
         }
-        run["performance"] = {"acquisition_and_qa_seconds": round(time.perf_counter() - stage_started, 3)}
-        run["market_snapshot"] = {
-            "as_of_utc": datetime.now(UTC).isoformat(),
-            "warning": "These are last closed daily candles, not live spot quotes; USD and USDT are not converted or combined.",
-            "venues": [
-                _market_snapshot(binance, "Binance", "BTCUSDT", "USDT", binance_manifest["retrieved_at_utc"]),
-                _market_snapshot(bitstamp, "Bitstamp", "BTC/USD", "USD", bitstamp_manifest["retrieved_at_utc"]),
-            ],
+        run["performance"] = {
+            "acquisition_and_qa_seconds": round(time.perf_counter() - stage_started, 3)
         }
-        run["cycle_comparison"] = _build_halving_cycle_comparison(bitstamp)
-        manifest_path = output_dir / "data_manifest.json"
-        write_manifest(manifests, manifest_path)
+        if binance is not None and bitstamp is not None:
+            run["market_snapshot"] = {
+                "as_of_utc": run_as_of_utc.isoformat(),
+                "warning": "These are last closed daily candles, not live spot quotes; USD and USDT are not converted or combined.",
+                "venues": [
+                    _market_snapshot(
+                        binance, "Binance", "BTCUSDT", "USDT",
+                        binance_manifest.get("retrieved_at_utc", run_as_of_utc.isoformat()),
+                    ),
+                    _market_snapshot(
+                        bitstamp, "Bitstamp", "BTC/USD", "USD",
+                        bitstamp_manifest.get("retrieved_at_utc", run_as_of_utc.isoformat()),
+                    ),
+                ],
+            }
+        if bitstamp is not None:
+            run["cycle_comparison"] = _build_halving_cycle_comparison(bitstamp)
+        write_manifest(manifests, output_dir / "data_manifest.json")
+        if primary_errors:
+            run["primary_data_errors"] = primary_errors
+            run["walk_forward_skipped_reason"] = (
+                "Walk-forward not executed because primary OHLCV freshness/QA did not pass."
+            )
+            raise DataValidationError(
+                "Primary market data blocked after independent acquisition: "
+                + " | ".join(primary_errors)
+            )
         # The model consumes Binance BTCUSDT only. Keep the forecast idempotency
         # hash tied to model inputs, not dynamic optional cross-check payloads.
         object_hashes = sorted(
@@ -252,7 +333,7 @@ def main() -> int:
         )
         manifest_sha256 = hashlib.sha256(json.dumps(object_hashes).encode()).hexdigest()
         research_started = time.perf_counter()
-        predictions, scores = walk_forward(binance, min_train_rows=args.min_train_rows)
+        predictions, scores = walk_forward(binance, min_train_rows=args.min_train_rows, now=run_as_of_utc)
         scores["metric_metadata"] = {
             "source": "Binance spot BTCUSDT",
             "quote_currency": "USDT",
@@ -267,6 +348,10 @@ def main() -> int:
             "calibration_status": "NOT_CALIBRATED",
         }
         run["performance"]["walk_forward_seconds"] = round(time.perf_counter() - research_started, 3)
+        if scores.get("status") != "SCORED_NOT_PROMOTED":
+            run["walk_forward_skipped_reason"] = scores.get(
+                "reason", "Walk-forward returned no scored forecast set."
+            )
         counts = predictions.groupby("horizon").size().to_dict() if len(predictions) else {}
         run["historical_continuity_rows_by_horizon"] = {str(k): int(v) for k, v in counts.items()}
         run["historical_continuity_role"] = "diagnostic_only_not_prospective_ledger_maturity"
@@ -373,7 +458,7 @@ def main() -> int:
         review_started = time.perf_counter()
         run["pre_report_review"] = run_pre_report_review(
             run, manifests, binance, bitstamp, all_ledger_events, scores,
-            now=datetime.now(UTC), run_id=os.environ.get("GITHUB_RUN_ID",
+            now=run_as_of_utc, run_id=os.environ.get("GITHUB_RUN_ID",
             os.environ.get("GITHUB_RUN_ATTEMPT", run["started_at_utc"])),
         )
         run["performance"]["pre_report_review_seconds"] = round(time.perf_counter() - review_started, 3)
