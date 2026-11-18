@@ -75,6 +75,7 @@ def test_bitstamp_window_uses_frozen_utc_asof(monkeypatch, tmp_path):
     from datetime import UTC, datetime
 
     import pandas as pd
+
     from btc_quant import acquisition
 
     as_of = datetime(2026, 11, 18, 0, 6, tzinfo=UTC)
