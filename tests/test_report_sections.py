@@ -64,6 +64,7 @@ def test_longitudinal_comparison_refuses_different_holdout_windows():
 
 def test_report_sections_keep_cost_backtest_blocked_without_prospective_sample():
     run = {
+        "protocol": "V5.6",
         "steps": [],
         "prospective_ledger_validation": {"by_horizon": {}},
         "ledger": {"forecast_events_created": 0, "score_events_created": 0},
@@ -77,6 +78,8 @@ def test_report_sections_keep_cost_backtest_blocked_without_prospective_sample()
     assert economic["status"] == "BLOCKED_INSUFFICIENT_PROSPECTIVE_EVIDENCE"
     assert economic["cost_adjusted_strategy_backtest_executed"] is False
     assert len(closing["observed_drivers"]) == 3
+    assert taxonomy["HYPOTHESIS"][0]["experiment_id"] == "V5.6-OHLCV-001"
+    assert closing["single_next_priority_experiment"].startswith("V5.6-OHLCV-001:")
     assert closing["single_next_priority_experiment"]
 
 
