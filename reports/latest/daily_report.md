@@ -2,10 +2,10 @@
 
 - Protocollo: **V5.6**
 - Stato: **COMPLETE_NOT_PROMOTED**
-- Avvio UTC: 2026-11-19T16:57:00.544083+00:00
-- Fine UTC: 2026-11-19T17:02:02.380816+00:00
-- Commit: `b95c9b699670646b65de016c3323f9dd141f995b`
-- Workflow run: 44571746154
+- Avvio UTC: 2026-11-19T18:42:39.924912+00:00
+- Fine UTC: 2026-11-19T18:47:56.083993+00:00
+- Commit: `9c79c41e885dacd8bf8928ec8363609d80944f96`
+- Workflow run: 44590617265
 
 > I valori di mercato sono distinti tra osservazioni live, snapshot e candele chiuse. USD e USDT non sono convertiti né uniti.
 
@@ -31,7 +31,7 @@
 
 | Venue | Stato | Prezzo | Variazione 24h | Volume base 24h | Timestamp ultimo scambio UTC | Età sec |
 |---|---|---:|---:|---:|---|---:|
-| Bitstamp_BTCUSD_USD | PASS | 62,804.61 | -0.275% | 1,071.10 BTC | 2026-11-19T16:57:42+00:00 | 0.6 |
+| Bitstamp_BTCUSD_USD | PASS | 63,009.72 | 0.051% | 1,131.51 BTC | 2026-11-19T18:43:37+00:00 | 1.8 |
 
 ### Livelli tecnici descrittivi — non segnali
 
@@ -87,12 +87,12 @@
 ### OKX BTC-USDT Perpetual
 
 - Stato: PASS; strumento BTC-USDT-SWAP.
-- Snapshot acquisito UTC: 2026-11-19T16:57:57.802640+00:00.
-- Ultimo prezzo: 62,802.90 USDT (ticker 2026-11-19T16:57:55.665000+00:00).
-- Volume 24h: 120,578.41 BTC (12,057,841.35 contratti).
-- Open interest snapshot: 33,117.12 BTC (2,081,546,458 USD; snapshot 2026-11-19T16:57:56.941000+00:00).
-- OI storico giornaliero UTC: 1D 0.32%; 7D -10.80%; 30D 12.55% (ultimo punto 2026-11-19T00:00:00+00:00).
-- Funding previsto per il prossimo settlement (2026-11-20T00:00:00+00:00): 0.00002045 (frazione per intervallo).
+- Snapshot acquisito UTC: 2026-11-19T18:43:52.003506+00:00.
+- Ultimo prezzo: 63,029.80 USDT (ticker 2026-11-19T18:43:49.673000+00:00).
+- Volume 24h: 130,324.33 BTC (13,032,432.78 contratti).
+- Open interest snapshot: 32,383.64 BTC (2,041,513,260 USD; snapshot 2026-11-19T18:43:51.030000+00:00).
+- OI storico giornaliero UTC: 1D -1.72%; 7D -12.61%; 30D 10.26% (ultimo punto 2026-11-19T00:00:00+00:00).
+- Funding previsto per il prossimo settlement (2026-11-20T00:00:00+00:00): 0.00006594 (frazione per intervallo).
 - Ultimo funding effettivamente settled: -0.00001786 al 2026-11-19T16:00:00+00:00 (stato settled).
 - Settlement successivo dopo il periodo corrente: 2026-11-20T08:00:00+00:00.
 - Storico funding: 100 settlement acquisiti.
@@ -107,9 +107,9 @@
 - Stato: PARTIAL. Hourly Binance kline taker-buy base volume minus inferred taker-sell base volume for rolling 24h/7d/30d windows; not tick-level order-book delta.
 | Mercato | Finestra | Delta BTC | Delta / volume % | Volume BTC | Buy BTC | Sell BTC |
 |---|---:|---:|---:|---:|---:|---:|
-| Spot BTCUSDT | 24h | 183.46 | 0.99% | 18,486.96 | 9,335.21 | 9,151.75 |
-| Spot BTCUSDT | 7d | -2,555.05 | -1.46% | 175,545.82 | 86,495.39 | 89,050.44 |
-| Spot BTCUSDT | 30d | 4,548.44 | 0.89% | 512,105.30 | 258,326.87 | 253,778.43 |
+| Spot BTCUSDT | 24h | -109.63 | -0.62% | 17,551.77 | 8,721.07 | 8,830.70 |
+| Spot BTCUSDT | 7d | -2,782.69 | -1.58% | 176,186.73 | 86,702.02 | 89,484.71 |
+| Spot BTCUSDT | 30d | 4,309.95 | 0.84% | 513,808.20 | 259,059.07 | 254,749.13 |
 | Futures BTCUSDT | 24h | n/d | n/d% | n/d | n/d | n/d |
 | Futures BTCUSDT | 7d | n/d | n/d% | n/d | n/d | n/d |
 | Futures BTCUSDT | 30d | n/d | n/d% | n/d | n/d | n/d |
@@ -117,31 +117,31 @@
 ### Opzioni Deribit
 
 - Stato: PARTIAL; open interest con ritardo provider di 8 ore.
-- OI call/put: 227,452.7000 / 178,798.8000 BTC.
-- Put/call OI: 0.7861.
-- Put/call volume USD 24h: 3.0905.
+- OI call/put: 227,739.4000 / 179,692.4000 BTC.
+- Put/call OI: 0.7890.
+- Put/call volume USD 24h: 3.1525.
 
 | Scadenza | DTE | ATM IV % | OI call BTC | OI put BTC |
 |---|---:|---:|---:|---:|
-| 2026-11-20 | 1 | 51.03 | 21,656.10 | 13,315.60 |
-| 2026-11-21 | 2 | 48.68 | 626.00 | 1,077.10 |
-| 2026-11-22 | 3 | 42.31 | 247.40 | 125.80 |
-| 2026-11-23 | 4 | 41.25 | 1.70 | 4.80 |
-| 2026-11-27 | 8 | 44.00 | 53,403.70 | 51,798.10 |
-| 2026-12-04 | 15 | 44.27 | 5,284.30 | 9,828.10 |
-| 2026-12-11 | 22 | 44.48 | 0.00 | 2.00 |
-| 2026-12-25 | 36 | 43.25 | 89,511.00 | 61,090.30 |
-| 2027-01-29 | 71 | 42.79 | 8,010.10 | 7,826.60 |
-| 2027-03-26 | 127 | 42.43 | 29,193.10 | 19,224.40 |
-| 2027-06-25 | 218 | 42.31 | 12,010.00 | 10,035.20 |
-| 2027-09-24 | 309 | 42.04 | 7,509.30 | 4,470.80 |
+| 2026-11-20 | 1 | 49.68 | 21,661.60 | 13,360.30 |
+| 2026-11-21 | 2 | 48.61 | 774.10 | 1,090.90 |
+| 2026-11-22 | 3 | 42.12 | 250.30 | 126.00 |
+| 2026-11-23 | 4 | 40.66 | 11.50 | 9.90 |
+| 2026-11-27 | 8 | 43.70 | 53,407.20 | 51,895.50 |
+| 2026-12-04 | 15 | 44.02 | 5,289.20 | 9,717.50 |
+| 2026-12-11 | 22 | 44.51 | 8.70 | 557.50 |
+| 2026-12-25 | 36 | 43.06 | 89,523.60 | 61,195.00 |
+| 2027-01-29 | 71 | 42.23 | 8,016.10 | 7,868.70 |
+| 2027-03-26 | 127 | 42.46 | 29,277.30 | 19,365.10 |
+| 2027-06-25 | 218 | 42.31 | 12,010.40 | 10,035.20 |
+| 2027-09-24 | 309 | 42.15 | 7,509.40 | 4,470.80 |
 
 | Scadenza | 25Δ put IV % | 25Δ call IV % | Put-call skew vol points |
 |---|---:|---:|---:|
 | 2026-11-20 | n/d | n/d | n/d |
 | 2026-11-21 | n/d | n/d | n/d |
 | 2026-11-22 | n/d | n/d | n/d |
-| 2026-11-23 | 49.59 | n/d | n/d |
+| 2026-11-23 | 49.90 | n/d | n/d |
 - Gamma/dealer positioning: NOT_IDENTIFIABLE; Public open interest and option Greeks do not reveal whether dealers are net long or short; no dealer-side sign is inferred.
 
 ### ETF spot Bitcoin USA
@@ -158,9 +158,9 @@
 
 | Serie | Periodo osservato | Freschezza fino | Valore | Unità | Stato | Recuperato UTC | Fonte / metodo |
 |---|---|---|---:|---|---|---|---|
-| DGS2 — US Treasury 2Y yield | 2026-11-18 | 2026-11-18 | 4.8000 | percent | PASS | 2026-11-19T16:59:01.587133+00:00 | official Treasury daily par yield curve; independent of FRED transport |
-| DGS10 — US Treasury 10Y yield | 2026-11-18 | 2026-11-18 | 5.0700 | percent | PASS | 2026-11-19T16:59:01.560562+00:00 | official Treasury daily par yield curve; independent of FRED transport |
-| VIXCLS — CBOE VIX | 2026-11-18 | 2026-11-18 | 24.5600 | index points | PASS | 2026-11-19T17:02:02.226307+00:00 | Cboe official historical daily VIX close; independent of FRED transport |
+| DGS2 — US Treasury 2Y yield | 2026-11-18 | 2026-11-18 | 4.8000 | percent | PASS | 2026-11-19T18:44:55.316414+00:00 | official Treasury daily par yield curve; independent of FRED transport |
+| DGS10 — US Treasury 10Y yield | 2026-11-18 | 2026-11-18 | 5.0700 | percent | PASS | 2026-11-19T18:44:55.296867+00:00 | official Treasury daily par yield curve; independent of FRED transport |
+| VIXCLS — CBOE VIX | 2026-11-18 | 2026-11-18 | 24.5600 | index points | PASS | 2026-11-19T18:47:55.750210+00:00 | Cboe official historical daily VIX close; independent of FRED transport |
 
 Feed macro non acquisiti: {'DFII10': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DFII10&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'FEDFUNDS': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=FEDFUNDS&cosd=2021-11-20&coed=2026-11-19 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'CPIAUCSL': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=CPIAUCSL&cosd=2021-11-20&coed=2026-11-19 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'PCEPILFE': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=PCEPILFE&cosd=2021-11-20&coed=2026-11-19 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'UNRATE': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=UNRATE&cosd=2021-11-20&coed=2026-11-19 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'PAYEMS': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=PAYEMS&cosd=2021-11-20&coed=2026-11-19 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'DTWEXBGS': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DTWEXBGS&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'WALCL': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=WALCL&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'RRPONTSYD': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=RRPONTSYD&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'NFCI': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=NFCI&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'SP500': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=SP500&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'NASDAQCOM': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=NASDAQCOM&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))', 'M2SL': 'ConnectionError: HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=M2SL&cosd=2021-11-20&coed=2026-11-19 (Caused by ReadTimeoutError("HTTPSConnectionPool(host=\'fred.stlouisfed.org\', port=443): Read timed out. (read timeout=30)"))'}
 
@@ -227,10 +227,10 @@ Feed macro non acquisiti: {'DFII10': 'ConnectionError: HTTPSConnectionPool(host=
 - Zero-return ha la MAE più bassa in tutti gli orizzonti storici confrontati.
 - Ridge resta challenger non promosso; nessuna conclusione economica è autorizzata.
 ### IPOTESI
-- Volume normalizzato e geometria delle candele potrebbero aggiungere informazione oltre le feature price-only. — stato: PROPOSED_NOT_RUN; esperimento: V5.5-OHLCV-001.
+- Volume normalizzato e geometria delle candele potrebbero aggiungere informazione oltre le feature price-only. — stato: PROPOSED_NOT_RUN; esperimento: V5.6-OHLCV-001.
 ### FORECAST
-- Point forecast emessi in questo run: 4.
-- Forecast maturati/scorati in questo run: 1.
+- Point forecast emessi in questo run: 0.
+- Forecast maturati/scorati in questo run: 0.
 - Probabilità calibrate pubblicate: False.
 - Eventuali valori nel ledger sono point forecast sperimentali; non sono probabilità calibrate né segnali operativi.
 
@@ -247,8 +247,8 @@ Le metriche seguenti sono diagnostiche sul periodo storico già ispezionato; non
 
 ## 9. Ledger e rischio
 
-- Stato ledger: VERIFIED_IN_WORKSPACE_PENDING_WORKFLOW_COMMIT; eventi prima/dopo: 20 / 25.
-- Nuove previsioni: 4; duplicate soppresse: 0; score maturati: 1.
+- Stato ledger: VERIFIED_IN_WORKSPACE_PENDING_WORKFLOW_COMMIT; eventi prima/dopo: 25 / 25.
+- Nuove previsioni: 0; duplicate soppresse: 4; score maturati: 0.
 - Campione prospettico: INSUFFICIENT_PROSPECTIVE_EVIDENCE.
 - Rischio: paper_only; live trading: False; esposizione teorica: 0.00%.
 - Champion congelato: zero-return. Ridge è challenger non promosso.
@@ -262,7 +262,7 @@ Le metriche seguenti sono diagnostiche sul periodo storico già ispezionato; non
 - Fattore osservato: Volume rispetto alla mediana precedente = 1.2042 multiplo (Binance spot BTCUSDT, 2026-11-18T00:00:00+00:00).
 - Limite principale: Assenza di evidenza prospettica maturata e di validazione economica eseguibile; il holdout storico è solo diagnostico.
 - Evidenza che cambierebbe la valutazione: Un campione prospettico indipendente, almeno 200 osservazioni maturate per orizzonte, lift stabile contro zero-return/drift dopo HAC-Holm, calibrazione verificata e valore netto positivo dopo costi documentati e stress 1x/2x/3x.
-- Prossimo esperimento: V5.5-OHLCV-001: challenger volume-surprise/candle-geometry, registrato prima del test e valutato esclusivamente sul ledger prospettico.
+- Prossimo esperimento: V5.6-OHLCV-001: challenger volume-surprise/candle-geometry, registrato prima del test e valutato esclusivamente sul ledger prospettico.
 
 ## 11. Limiti dichiarati
 
