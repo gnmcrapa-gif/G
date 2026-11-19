@@ -146,6 +146,7 @@ def _build_halving_cycle_comparison(frame) -> dict:
 
 
 def _build_report_sections(run: dict, scores: dict) -> tuple[dict, dict, dict]:
+    experiment_id = f"{run.get('protocol', 'V5.6')}-OHLCV-001"
     metrics = scores.get("holdout_metrics", {})
     horizons = sorted(metrics, key=lambda value: int(value))
     zero_wins = [
@@ -228,7 +229,7 @@ def _build_report_sections(run: dict, scores: dict) -> tuple[dict, dict, dict]:
         ],
         "HYPOTHESIS": [
             {
-                "experiment_id": "V5.5-OHLCV-001",
+                "experiment_id": experiment_id,
                 "statement": "Volume normalizzato e geometria delle candele potrebbero aggiungere informazione oltre le feature price-only.",
                 "status": "PROPOSED_NOT_RUN",
                 "evaluation_scope": "solo ledger prospettico; holdout storico escluso",
@@ -275,7 +276,7 @@ def _build_report_sections(run: dict, scores: dict) -> tuple[dict, dict, dict]:
             "positivo dopo costi documentati e stress 1x/2x/3x."
         ),
         "single_next_priority_experiment": (
-            "V5.5-OHLCV-001: challenger volume-surprise/candle-geometry, registrato prima del test "
+            f"{experiment_id}: challenger volume-surprise/candle-geometry, registrato prima del test "
             "e valutato esclusivamente sul ledger prospettico."
         ),
     }
