@@ -1,5 +1,9 @@
 # Changelog
 
+## [Unreleased] — report consistency
+
+- Derive the reported OHLCV challenger ID from the active protocol version; add a regression assertion so the hypothesis taxonomy and closing experiment reference cannot drift from the registered V5.6 experiment.
+
 ## V5.6 — 2026-11-17 (candidate for main)
 
 - Added mandatory executable pre-report review with seven rotating review cycles and a run-ID-selected red-team lens.
