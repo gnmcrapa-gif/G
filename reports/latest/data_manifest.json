@@ -1,5 +1,5 @@
 {
-  "generated_at_utc": "2026-11-19T18:47:55.758986+00:00",
+  "generated_at_utc": "2026-11-20T16:57:50.336032+00:00",
   "sources": [
     {
       "source": "Binance Vision",
@@ -11,7 +11,7 @@
       "schema_version": "1.0",
       "source_grade": "A",
       "license_terms_note": "Public endpoint/archive; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-19T18:43:36.414342+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:27.742276+00:00",
       "parser": "pandas CSV + zipfile",
       "parser_version": "btc-quant-acquisition-0.2",
       "schema": [
@@ -26,7 +26,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2017-08.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:40.202363+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:49.369964+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2017-08.zip",
           "size_bytes": 1150,
           "sha256": "c92970f74893163b848f117a37fa5e7110ee1d800c0d9ada949940fccccfdd2f",
@@ -41,7 +41,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2017-09.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:40.385686+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:49.496101+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2017-09.zip",
           "size_bytes": 2213,
           "sha256": "c4bc3912fdb4b2c2de57080b58e4912e2e3b1a95c92319f6b93b6fe433a7d8b0",
@@ -56,7 +56,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2017-10.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:40.861365+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:49.816856+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2017-10.zip",
           "size_bytes": 2253,
           "sha256": "30aefbcc8dda4810360a7973e51e48dc610369e266dd6e4f0e55a58a31324e8d",
@@ -71,7 +71,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2017-11.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:41.338175+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:50.127257+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2017-11.zip",
           "size_bytes": 2252,
           "sha256": "4e434af9451501eb144826ca919cfcfea8a21de47257c47edd18f8d68fa362f5",
@@ -86,7 +86,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2017-12.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:41.803032+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:50.447074+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2017-12.zip",
           "size_bytes": 2291,
           "sha256": "45bf1c515b1108668b6bf10f7af323585f30cdf68e096cb71e6e3bb6aa0e9cb4",
@@ -101,7 +101,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2018-01.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:42.265112+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:50.759925+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2018-01.zip",
           "size_bytes": 2201,
           "sha256": "0e4810cc35a40c0ed0314dbffd9ae0fae7b14721a46a493d686120556e1a1f75",
@@ -116,7 +116,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2018-02.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:42.732016+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:50.894167+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2018-02.zip",
           "size_bytes": 1992,
           "sha256": "037b2a4846cde6fb748aeb556e9dd84d964c1418097b979a2a4063fa3e9321e3",
@@ -131,7 +131,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2018-03.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:43.203642+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:51.211977+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2018-03.zip",
           "size_bytes": 2149,
           "sha256": "b950843522c5933b14bd41786b735ff329d8bc9ad9f1044b396fc0f2b4502b3a",
@@ -146,7 +146,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2018-04.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:43.667471+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:51.522363+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2018-04.zip",
           "size_bytes": 2095,
           "sha256": "4c785201412d4e19acdb00095f1eca6512694bd4a009eb025fdf320a3d17a799",
@@ -161,7 +161,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2018-05.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:43.847358+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:51.828389+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2018-05.zip",
           "size_bytes": 2158,
           "sha256": "5fe73fb39b58af85095e9426e4b48438a30f2c8aa30662cafe4036437ba431fe",
@@ -176,7 +176,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2018-06.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:44.322934+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:52.140733+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2018-06.zip",
           "size_bytes": 2099,
           "sha256": "9cd929f61b53ef27850b51824f3ae9bfbd32500398f60c8248d2502c8cc272d6",
@@ -191,7 +191,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2018-07.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:44.782286+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:52.464384+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2018-07.zip",
           "size_bytes": 2157,
           "sha256": "d1a387dc6b141c2b651fc591247923c4aba79d04e604d9b9ac898c4484a323f6",
@@ -206,7 +206,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2018-08.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:45.259231+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:52.777616+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2018-08.zip",
           "size_bytes": 2163,
           "sha256": "dc7607655efcc6a6abeaa012c2b9c25b49f1bcd44662978ce679402fbfb91494",
@@ -221,7 +221,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2018-09.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:45.731774+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:53.088786+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2018-09.zip",
           "size_bytes": 2084,
           "sha256": "67306134323d0bdd11fe31af648552083d9f850a1689fcd8078bde392b5f0ec0",
@@ -236,7 +236,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2018-10.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:46.190085+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:53.398775+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2018-10.zip",
           "size_bytes": 2113,
           "sha256": "50483687294e6aa225ded362010a0cd6deef013c36413f2b15ebe887ae8324bd",
@@ -251,7 +251,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2018-11.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:46.664435+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:53.718214+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2018-11.zip",
           "size_bytes": 2115,
           "sha256": "1765dea3f7e23349d6c5f225b9c0b8a5bb11c924bc8847d53b8965769cf83013",
@@ -266,7 +266,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2018-12.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:47.137012+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:54.032024+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2018-12.zip",
           "size_bytes": 2160,
           "sha256": "5fccaa5d3e0fd00ba8592d5c3dce5bf64b41ae3f24c8b309e9329f1582417dfc",
@@ -281,7 +281,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2019-01.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:47.601520+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:54.344331+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2019-01.zip",
           "size_bytes": 2149,
           "sha256": "445904985d35f847c5c0cb4dc582c10e07967aaa6a424ee30373194b2f815519",
@@ -296,7 +296,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2019-02.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:48.073659+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:54.651786+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2019-02.zip",
           "size_bytes": 1955,
           "sha256": "9bcdcbc003cce89ba5917367cd617bdd5abf17e427e4f7625b62f9ab9cc7439c",
@@ -311,7 +311,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2019-03.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:48.535401+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:54.965073+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2019-03.zip",
           "size_bytes": 2119,
           "sha256": "385bd09eea4a950b5a509cc2dac8812b5945d4b7edc180a26e43287a5812a7b4",
@@ -326,7 +326,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2019-04.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:49.015369+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:55.273286+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2019-04.zip",
           "size_bytes": 2074,
           "sha256": "73774cf609ff32f08ca86e999f72aa6451cf76aaf55dc51a4c7922f20c805bd3",
@@ -341,7 +341,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2019-05.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:49.484694+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:55.586259+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2019-05.zip",
           "size_bytes": 2190,
           "sha256": "924f9b192e6817ebc627581d826b1272747e1d36e2725a805e616558a231919e",
@@ -356,7 +356,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2019-06.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:49.945609+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:55.891344+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2019-06.zip",
           "size_bytes": 2147,
           "sha256": "a027352795179a3255ecf05cf3be4f8030e836deee0dc6a5f14ebdc173b345e2",
@@ -371,7 +371,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2019-07.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:50.121134+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:56.197427+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2019-07.zip",
           "size_bytes": 2217,
           "sha256": "52afd0bad5ac94a8cfec04d8922e2ec19806783c3a905d4e1149246561c4a331",
@@ -386,7 +386,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2019-08.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:50.588870+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:56.325592+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2019-08.zip",
           "size_bytes": 2212,
           "sha256": "b33dc2c6b606598d8daa5db45d60b568b42d2d4ec33b8f4cd9303da1ee6a58c4",
@@ -401,7 +401,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2019-09.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:51.066815+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:56.457519+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2019-09.zip",
           "size_bytes": 2120,
           "sha256": "9d1d72fb97ea4324615b096af10a78c0511ba99569e729e483acd983fd2d0677",
@@ -416,7 +416,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2019-10.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:51.529296+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:56.778537+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2019-10.zip",
           "size_bytes": 2184,
           "sha256": "f117e45966cefc57a57ba5c9296bee5b989b125b145bca5459da7201c7191db7",
@@ -431,7 +431,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2019-11.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:51.707715+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:57.085790+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2019-11.zip",
           "size_bytes": 2123,
           "sha256": "d8e85503c78a4e8a0289046607f3a9e2b304d511812167ad97b3be82923df39e",
@@ -446,7 +446,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2019-12.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:52.174079+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:57.212167+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2019-12.zip",
           "size_bytes": 2168,
           "sha256": "1d0cf3ae0ab25953a733b51cc84c21b4685089ed86f278ad9fc7ea3acdd4be17",
@@ -461,7 +461,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2020-01.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:52.637700+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:57.524453+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2020-01.zip",
           "size_bytes": 2192,
           "sha256": "b77d84cc335299783f64e6ef845ffbab6cc6198a2c396cc1c2c6f8dd1a9db5a5",
@@ -476,7 +476,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2020-02.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:53.113527+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:57.846719+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2020-02.zip",
           "size_bytes": 2045,
           "sha256": "808ebfc66e77113d4d5f4ead3a5e0eab4404b62548fa786b07830a4d73972152",
@@ -491,7 +491,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2020-03.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:53.594815+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:58.161308+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2020-03.zip",
           "size_bytes": 2222,
           "sha256": "26a062af0efb4dbba71fa3db7a041629ee7cc4cf636ed13a98bf90f8fe0e1d0d",
@@ -506,7 +506,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2020-04.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:54.065225+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:58.477099+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2020-04.zip",
           "size_bytes": 2126,
           "sha256": "bf4674f7aaf5baafea9e1d73c95344558b381dfe0c117110a156a0d64d8d5cf5",
@@ -521,7 +521,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2020-05.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:54.538385+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:58.787873+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2020-05.zip",
           "size_bytes": 2183,
           "sha256": "7ae5d56d12ce599fbceac80ae04bde51c7421b39f22f924f1f46a53e560a1f75",
@@ -536,7 +536,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2020-06.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:55.003480+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:59.101369+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2020-06.zip",
           "size_bytes": 2103,
           "sha256": "19e9ffb7c77e0b8c7bc17d6c47fdc52eb50fcb61ac8d94d32b9c13eb17c700d6",
@@ -551,7 +551,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2020-07.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:55.478904+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:59.432538+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2020-07.zip",
           "size_bytes": 2174,
           "sha256": "76fab627ce54ba1457c63e3906e2afd3162cf053283709672fb3eb676b3dde3b",
@@ -566,7 +566,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2020-08.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:55.951884+00:00",
+          "retrieved_at_utc": "2026-11-20T16:52:59.749064+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2020-08.zip",
           "size_bytes": 2197,
           "sha256": "ff20895a43680f991fa26ee2c9b34376c17487404d57a22f088af8c7ed1fd9ec",
@@ -581,7 +581,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2020-09.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:56.128751+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:00.058762+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2020-09.zip",
           "size_bytes": 2148,
           "sha256": "d6f9590a181d58a992e6a3ce2346a4dbc96ecf5310c12df66c57be4818bfc28a",
@@ -596,7 +596,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2020-10.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:56.604254+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:00.375762+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2020-10.zip",
           "size_bytes": 2210,
           "sha256": "e240ecb14f1120af34290ed9c7e8937e7cd8a80f0d0bbc88a924f7e520e78cec",
@@ -611,7 +611,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2020-11.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:57.056748+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:00.694659+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2020-11.zip",
           "size_bytes": 2161,
           "sha256": "4a7b8bd36409c7ae92916489621e298d750e5dda7be5b7389dc814dffb16a29e",
@@ -626,7 +626,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2020-12.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:57.536400+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:01.004574+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2020-12.zip",
           "size_bytes": 2231,
           "sha256": "77e2c7fa9a940828b3f36f7212f6def777acfc1402d173bdfad958d2e37ea469",
@@ -641,7 +641,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2021-01.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:58.013400+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:01.313965+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2021-01.zip",
           "size_bytes": 2295,
           "sha256": "6ff53d94f600e2a208882bfd5c00e2133cff8f07e57b7f373af29f85f86e0284",
@@ -656,7 +656,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2021-02.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:58.475470+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:01.431748+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2021-02.zip",
           "size_bytes": 2103,
           "sha256": "f18254dc4a70f396494be83a6081cfafd1935aaef42aef5a12f18b0244edeb27",
@@ -671,7 +671,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2021-03.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:58.954044+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:01.745965+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2021-03.zip",
           "size_bytes": 2282,
           "sha256": "f43e48b5efc8e0b06e0520b91aad4e5668844c766933c0c5cf403115dba03303",
@@ -686,7 +686,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2021-04.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:59.411117+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:02.065963+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2021-04.zip",
           "size_bytes": 2189,
           "sha256": "3dd852f06608173dec98b7210f6a38728ef221f08717b362b4f3f09436e0a5fe",
@@ -701,7 +701,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2021-05.zip",
-          "retrieved_at_utc": "2026-11-19T18:42:59.880777+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:02.380925+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2021-05.zip",
           "size_bytes": 2283,
           "sha256": "3122e1ebaa1376937d479964563dced19f850636a700bb7cb97d7872ea8c8f28",
@@ -716,7 +716,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2021-06.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:00.349582+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:02.693835+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2021-06.zip",
           "size_bytes": 2204,
           "sha256": "9875e11e890f75ef6eb0188ef7f952e5c0ba6919bd6d72d3da4d6847b84c5ccf",
@@ -731,7 +731,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2021-07.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:00.819847+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:03.012532+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2021-07.zip",
           "size_bytes": 2264,
           "sha256": "636f588a6abb568f977aea3ae798f34ced4135f2f96fbc1493a2f9ab54a844eb",
@@ -746,7 +746,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2021-08.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:01.286054+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:03.325402+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2021-08.zip",
           "size_bytes": 2246,
           "sha256": "68612e3fb74c184f97e4d3b2e061dd3743156401a6813ab897014b0b35caedd7",
@@ -761,7 +761,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2021-09.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:01.463534+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:03.454608+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2021-09.zip",
           "size_bytes": 2156,
           "sha256": "9f6535a0fe8a417b0909d230e4a02f6a9933eb23c770f54c9f6bf140e8d02257",
@@ -776,7 +776,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2021-10.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:01.925485+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:03.779144+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2021-10.zip",
           "size_bytes": 2210,
           "sha256": "ba50ff3dab5726ca8b9fa26065fe3a8f612aed4baa978ecdd9d39647cd108684",
@@ -791,7 +791,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2021-11.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:02.104667+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:04.094251+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2021-11.zip",
           "size_bytes": 2166,
           "sha256": "64162d8ec11458e9d02f49d8569e47765517852bcf0a908cd4d71211e3912e62",
@@ -806,7 +806,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2021-12.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:02.589333+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:04.409547+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2021-12.zip",
           "size_bytes": 2196,
           "sha256": "6231b57d3a3b71fb76a1a34078a01a01275a59870857bf60408ccd3ba4618e75",
@@ -821,7 +821,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2022-01.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:03.062761+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:04.726033+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2022-01.zip",
           "size_bytes": 2183,
           "sha256": "a4a2e0432a8f0b42e2da71ac26599b2e6385b579ca4feba692a95cb897decdcd",
@@ -836,7 +836,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2022-02.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:03.533238+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:04.856599+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2022-02.zip",
           "size_bytes": 2011,
           "sha256": "faffa5eadb9ebf0b32742773777596d0dbf3f282e94a16dd05cf1eb7b53a3763",
@@ -851,7 +851,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2022-03.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:03.713175+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:04.984956+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2022-03.zip",
           "size_bytes": 2206,
           "sha256": "452129b478585b18931f728f89daed9d2a19d4824b932af7a099366efd4db639",
@@ -866,7 +866,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2022-04.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:04.180488+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:05.114815+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2022-04.zip",
           "size_bytes": 2117,
           "sha256": "70413f67212d012ebfd600a6ebf20c03a9c8311bf764ab6d21d1bfd2d21d1b19",
@@ -881,7 +881,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2022-05.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:04.638924+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:05.423595+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2022-05.zip",
           "size_bytes": 2212,
           "sha256": "53eee1be2d5b461dabc67645ad706610b0465d8bbacd5f9cd99fc790c68f18f5",
@@ -896,7 +896,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2022-06.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:04.821542+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:05.734757+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2022-06.zip",
           "size_bytes": 2169,
           "sha256": "dd5047ce33c16231bcb01f534951a709937bbfe0c0667c61f20f188cf9b94de4",
@@ -911,7 +911,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2022-07.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:05.292360+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:06.047887+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2022-07.zip",
           "size_bytes": 2245,
           "sha256": "216567f1a8bc1dbeaada097f7eddff12dafde177c16b26507c762a613a57eb5f",
@@ -926,7 +926,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2022-08.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:05.766864+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:06.365886+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2022-08.zip",
           "size_bytes": 2237,
           "sha256": "fc8bd69e95141afb6f83c5a4450c3f6b49c4a1cb16e42d90eb960c3ffa9e766e",
@@ -941,7 +941,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2022-09.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:05.947483+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:06.674234+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2022-09.zip",
           "size_bytes": 2213,
           "sha256": "68a8357e23277ebd98842fd88d492b012d53dd578b5061cafb8c070c440b235e",
@@ -956,7 +956,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2022-10.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:06.416302+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:06.981018+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2022-10.zip",
           "size_bytes": 2219,
           "sha256": "5b086535cba596ef1b465f247a26385b4ccfd12673a76f225e2dd9e00dddadfd",
@@ -971,7 +971,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2022-11.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:06.888997+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:07.288905+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2022-11.zip",
           "size_bytes": 2191,
           "sha256": "142202b226078f54342c4a1d74c8c6081a98c655d7d6f6fba06314f9c101e2d9",
@@ -986,7 +986,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2022-12.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:07.346590+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:07.603241+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2022-12.zip",
           "size_bytes": 2222,
           "sha256": "aff24746afa9a3dbd355dd3462bcef80e59e96ed9aa55f79007532f9e07991bf",
@@ -1001,7 +1001,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2023-01.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:07.803398+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:07.908558+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2023-01.zip",
           "size_bytes": 2250,
           "sha256": "a9fd53b75add7cc42fb4779a545811606260f79810f3826215d6ebecda11bb36",
@@ -1016,7 +1016,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2023-02.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:08.274102+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:08.220668+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2023-02.zip",
           "size_bytes": 2072,
           "sha256": "13df1e3633f15be3eeba4768d0cc323ef221191002657b53936a6d0fb5e6556f",
@@ -1031,7 +1031,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2023-03.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:08.740419+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:08.530914+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2023-03.zip",
           "size_bytes": 2265,
           "sha256": "1cb1209700ec74fa4592048de2e4ea4a38ab2bd622dfe03f1d6195c249501381",
@@ -1046,7 +1046,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2023-04.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:09.204977+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:08.845065+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2023-04.zip",
           "size_bytes": 2108,
           "sha256": "999e86be73731ebc347c6ada94abceb5e291b65e7f1b4df2ce390af1aa2a4a08",
@@ -1061,7 +1061,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2023-05.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:09.670288+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:09.164324+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2023-05.zip",
           "size_bytes": 2168,
           "sha256": "c343e4689784c29f83d25147a096dd44b6ae5c1063c909f8adda82b56414469d",
@@ -1076,7 +1076,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2023-06.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:10.130695+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:09.484637+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2023-06.zip",
           "size_bytes": 2099,
           "sha256": "634919565c55a29729543d730927ca4b547c0e52d118a38de730f37fdd7617ef",
@@ -1091,7 +1091,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2023-07.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:10.596993+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:09.794238+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2023-07.zip",
           "size_bytes": 2132,
           "sha256": "32363d37de02e6ad8d334ac332c685f8cdf5684733a9f2cfbca40e15e591396b",
@@ -1106,7 +1106,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2023-08.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:11.073102+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:10.106696+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2023-08.zip",
           "size_bytes": 2160,
           "sha256": "8c5e47bfe3f0b0273534379e8ba5c93e69c84d67e8b9a03f293d6621bead2a5f",
@@ -1121,7 +1121,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2023-09.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:11.549447+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:10.426730+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2023-09.zip",
           "size_bytes": 2080,
           "sha256": "2fe68ecad48d6927a9280d89700e991cb6481dc2767698c785f2b2d1c0b14744",
@@ -1136,7 +1136,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2023-10.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:11.726330+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:10.738512+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2023-10.zip",
           "size_bytes": 2154,
           "sha256": "358b83bf0c2a5d5390a4bc4d4ae14fa9df0f56139642ad996c0df0f7bc712400",
@@ -1151,7 +1151,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2023-11.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:12.197450+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:11.054027+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2023-11.zip",
           "size_bytes": 2102,
           "sha256": "fac9823cac7bf56a3a6038c3b79417e949b00c172939e62000451c8c25edd7c1",
@@ -1166,7 +1166,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2023-12.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:12.667068+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:11.371011+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2023-12.zip",
           "size_bytes": 2177,
           "sha256": "056dad65795c9264ef90ee668a4c245e8fec73ebcbb272d28f5596c389913979",
@@ -1181,7 +1181,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2024-01.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:13.120359+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:11.681824+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2024-01.zip",
           "size_bytes": 2190,
           "sha256": "474c1ce6fbb09e42cfc7231fee249aecc58af2fb5918570ffeba37998926b4a4",
@@ -1196,7 +1196,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2024-02.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:13.589891+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:11.999134+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2024-02.zip",
           "size_bytes": 2053,
           "sha256": "4dae0b3d6b8ea59e39e6493b7964040c52459ea7b0a50b9c2793dcbfae53800d",
@@ -1211,7 +1211,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2024-03.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:14.058193+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:12.315591+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2024-03.zip",
           "size_bytes": 2224,
           "sha256": "f7cd4fcafe79d1fac0c830d5fe152f7b3b9100e7c97e40352188766388af0ae0",
@@ -1226,7 +1226,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2024-04.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:14.528464+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:12.624915+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2024-04.zip",
           "size_bytes": 2141,
           "sha256": "b4a8542c33e5251fb53f8a3352dd4e6f3cde4ac25f2c24935db8089aa1a2c3a0",
@@ -1241,7 +1241,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2024-05.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:15.004291+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:12.936880+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2024-05.zip",
           "size_bytes": 2185,
           "sha256": "0175f696039b9e30f06c6398d218c99e577661ac30424869c648fe9770507248",
@@ -1256,7 +1256,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2024-06.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:15.470525+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:13.340837+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2024-06.zip",
           "size_bytes": 2095,
           "sha256": "8a0f6416c2a83cfa15ba26c688d716fdafe35bb1748dd244f0550e8b2f7e38f7",
@@ -1271,7 +1271,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2024-07.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:15.939065+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:13.663945+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2024-07.zip",
           "size_bytes": 2203,
           "sha256": "9a2963ef6541b4d7630eff8df7b2eaee48ece33180af03c34b0bf92675692899",
@@ -1286,7 +1286,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2024-08.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:16.411960+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:13.973234+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2024-08.zip",
           "size_bytes": 2190,
           "sha256": "df41fe3260920b85da86855b4880f34618982e689081317d3d63b9b3bbcb1d53",
@@ -1301,7 +1301,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2024-09.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:16.885705+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:14.295923+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2024-09.zip",
           "size_bytes": 2106,
           "sha256": "89e459b2a8f4b138dc742d9358c0084fcabf719d40468e156c3149a3635f3359",
@@ -1316,7 +1316,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2024-10.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:17.353907+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:14.602650+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2024-10.zip",
           "size_bytes": 2203,
           "sha256": "d442a5f158d45d9ff7b1584b35023a4161cf915a3857f5e71a2a2e6aa68c69c5",
@@ -1331,7 +1331,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2024-11.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:17.812924+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:14.920796+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2024-11.zip",
           "size_bytes": 2157,
           "sha256": "b197219d9e8b5e933226e1cd24fe2b7bfc3a2e8a3e74e6f7dc08a48f314da8c3",
@@ -1346,7 +1346,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2024-12.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:18.275071+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:15.228149+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2024-12.zip",
           "size_bytes": 2218,
           "sha256": "82ec90210f492694b9d01722f97f579108ee787968b8485b53d736ea735700da",
@@ -1361,7 +1361,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2025-01.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:18.753138+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:15.538028+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2025-01.zip",
           "size_bytes": 2254,
           "sha256": "3a3eb1b723d944deb4dbef5ae361bbe39340a17fe987fe22e397ef03dca268d2",
@@ -1376,7 +1376,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2025-02.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:19.217606+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:15.856917+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2025-02.zip",
           "size_bytes": 2039,
           "sha256": "27cfde08c9eb8e3801fb049e3be351a3e50ab46abd8553c24023fa98ea5e919e",
@@ -1391,7 +1391,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2025-03.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:19.669766+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:16.165206+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2025-03.zip",
           "size_bytes": 2249,
           "sha256": "5874e405f55c46f040de1a8ea9daae583dc12b5bcaef6078b21aae9c627cedcc",
@@ -1406,7 +1406,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2025-04.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:19.848067+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:16.475908+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2025-04.zip",
           "size_bytes": 2165,
           "sha256": "8068a571425857cb0f5f71f75e733d3bc1e731362a09f84f835bbea6e087aeb2",
@@ -1421,7 +1421,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2025-05.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:20.319467+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:16.784232+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2025-05.zip",
           "size_bytes": 2253,
           "sha256": "2b87aa0c63641ba1e954855bcfed96d7fc4eb21efe7936f354ff74e8e06cfcea",
@@ -1436,7 +1436,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2025-06.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:20.781856+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:17.100269+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2025-06.zip",
           "size_bytes": 2170,
           "sha256": "dc4bbe2c75f04372b909febe8e6b379b053f88423d78cdb3ad8b0be3a66d6ede",
@@ -1451,7 +1451,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2025-07.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:21.245670+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:17.413431+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2025-07.zip",
           "size_bytes": 2232,
           "sha256": "1ea64a346f6be0aaf455eb1ce107e6d38367164d97d0dd3719b9f9bb239796f4",
@@ -1466,7 +1466,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2025-08.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:21.712771+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:17.728326+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2025-08.zip",
           "size_bytes": 2237,
           "sha256": "6720b573210cfbb98765f4a0de6826033d203fda42a6c8364455144b703ceace",
@@ -1481,7 +1481,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2025-09.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:22.184363+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:18.038693+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2025-09.zip",
           "size_bytes": 2154,
           "sha256": "9934e6d98a90139039bb070a90ba409ff1832ad80116920adcf088090ce4c996",
@@ -1496,7 +1496,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2025-10.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:22.660160+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:18.354152+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2025-10.zip",
           "size_bytes": 2262,
           "sha256": "3597639a18f343c768e374157e8bd08dd046bb33693495ff4e13380abac1260e",
@@ -1511,7 +1511,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2025-11.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:23.132519+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:18.659446+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2025-11.zip",
           "size_bytes": 2185,
           "sha256": "9eded1225f9e3f3d4f127fad46111eb403553c1125cf6d11995e69d91d037290",
@@ -1526,7 +1526,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2025-12.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:23.595402+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:18.973153+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2025-12.zip",
           "size_bytes": 2230,
           "sha256": "b12a106198f3be3ba5916195f75c1c6d34d8e5302ab77b8fd7c4b1b58b6144f4",
@@ -1541,7 +1541,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2026-01.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:24.058823+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:19.293056+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-01.zip",
           "size_bytes": 2237,
           "sha256": "b7775ddec3ddd3edafc6ad5abcc94d6ab8b8f063a0911d8a3f3daae6a8bbad2e",
@@ -1556,7 +1556,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2026-02.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:24.523612+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:19.616197+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-02.zip",
           "size_bytes": 2030,
           "sha256": "f8806308002477a1a28d6cc55ec9ea7bd91bfd4b44c04500d9fc4aec50fd9464",
@@ -1571,7 +1571,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2026-03.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:25.005809+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:19.934655+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-03.zip",
           "size_bytes": 2242,
           "sha256": "b81fb1942f9653564f355e3bd62dc06e0552d1c64bc966f7dce5a9c1f8780c47",
@@ -1586,7 +1586,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2026-04.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:25.469133+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:20.060958+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-04.zip",
           "size_bytes": 2151,
           "sha256": "1f7da05da9f9a8f30945bde41872ca649c61d6e6e324e916f4c3cbafa0a9276a",
@@ -1601,7 +1601,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2026-05.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:25.948377+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:20.371904+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-05.zip",
           "size_bytes": 2223,
           "sha256": "978936e8f1f80b570248f8d4478d6fe08d94b98bc1c7d372feb27573ff466cde",
@@ -1616,7 +1616,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2026-06.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:26.130470+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:20.686664+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-06.zip",
           "size_bytes": 2144,
           "sha256": "7020d4d850a875b93f0b0fa6df4a4c36ab615273e2ab03f9e896852330dad77e",
@@ -1631,7 +1631,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2026-07.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:26.608017+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:21.006489+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-07.zip",
           "size_bytes": 2193,
           "sha256": "74ddc3e39aae9445b9f9dae00d53fe2ce6ff503ee469417e207a8f5970bad11a",
@@ -1646,7 +1646,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2026-08.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:27.064616+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:21.321133+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-08.zip",
           "size_bytes": 2185,
           "sha256": "fd8374a811ac7d3f4144d9c857c4f10796402c178316a25ed0c2f0ca6e16a8c1",
@@ -1661,7 +1661,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2026-09.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:27.531892+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:21.632102+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-09.zip",
           "size_bytes": 2112,
           "sha256": "4944279ced64d3b1822c7c535043f2bbf41bc97d9000b8d857753352c1949769",
@@ -1676,7 +1676,7 @@
         {
           "source": "Binance Vision spot monthly klines",
           "url": "https://data.binance.vision/data/spot/monthly/klines/BTCUSDT/1d/BTCUSDT-1d-2026-10.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:27.989450+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:21.944746+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-10.zip",
           "size_bytes": 2224,
           "sha256": "be8a089a8c5902915ed13abdf7a5ce78f7cc4c4b8e0ed0c0b489f7bcf6eb08e8",
@@ -1691,7 +1691,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-01.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:28.460633+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:22.262558+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-01.zip",
           "size_bytes": 238,
           "sha256": "bfc7d044879be162227ffb14ba5fd19c331e9841ccda7231bba3701b4c2007bb",
@@ -1706,7 +1706,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-02.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:28.922109+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:22.581778+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-02.zip",
           "size_bytes": 238,
           "sha256": "f73b0307d47eb3c464f10cf811459c6efb72bb765b668303aafceaa4cfa21b2e",
@@ -1721,7 +1721,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-03.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:29.395688+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:22.898979+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-03.zip",
           "size_bytes": 238,
           "sha256": "d1e1049df6c129f78e96ba2bbe4331a6d4782e569ed84e07c200197570544291",
@@ -1736,7 +1736,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-04.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:29.863747+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:23.207191+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-04.zip",
           "size_bytes": 241,
           "sha256": "d24ddd8c6972be827ba03ed6cdfb4f405866aff043380d2b6f8c8a3705b88e5f",
@@ -1751,7 +1751,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-05.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:30.322354+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:23.520811+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-05.zip",
           "size_bytes": 239,
           "sha256": "61e9475166d6be180bbd5bf93da0ab9260a0341d2998bca097bc25d4d8013eb1",
@@ -1766,7 +1766,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-06.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:30.812703+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:23.840274+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-06.zip",
           "size_bytes": 238,
           "sha256": "e2a8665c9c1d13e91918794fb61d2b6034f9789a5f04b3c0a1974d8a9e132e82",
@@ -1781,7 +1781,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-07.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:31.280095+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:24.152554+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-07.zip",
           "size_bytes": 237,
           "sha256": "c32707827be4890f03df0889196796cb35c0675bfaad8fef1527f9c74db7703a",
@@ -1796,7 +1796,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-08.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:31.742210+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:24.476601+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-08.zip",
           "size_bytes": 239,
           "sha256": "1d54ab523a09d455453175aeef9fe1cc9377947b1d7b8887423649244fe9d469",
@@ -1811,7 +1811,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-09.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:32.195580+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:24.786055+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-09.zip",
           "size_bytes": 240,
           "sha256": "3e145f957d0f4495e6678db8da458107eb8d775a3fae84f14dab0b55612cec6a",
@@ -1826,7 +1826,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-10.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:32.660769+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:25.101012+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-10.zip",
           "size_bytes": 239,
           "sha256": "8da3d069c2b0761f99e59c602382277bd1d2064655bcacf6de003e2376a55002",
@@ -1841,7 +1841,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-11.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:33.134247+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:25.410076+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-11.zip",
           "size_bytes": 239,
           "sha256": "22ca716fa0b1fc80aa8b3bef3879cd0532364ef8180f58019b2ccc989f297a41",
@@ -1856,7 +1856,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-12.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:33.596143+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:25.531778+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-12.zip",
           "size_bytes": 238,
           "sha256": "fd53a05f0aa1b5986ceda02583e83785fc5987f9d4024bc4b4dfeb2ea9d9f1f4",
@@ -1871,7 +1871,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-13.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:34.071570+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:25.835539+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-13.zip",
           "size_bytes": 239,
           "sha256": "36ce0fae15cd18a08592ff111e03c31ac2fba184fd32682cf5c4448557974a6b",
@@ -1886,7 +1886,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-14.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:34.541672+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:26.140156+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-14.zip",
           "size_bytes": 238,
           "sha256": "460e900a1c6360558308a2e7b1f7f5bef1b38afe446806db6473dae9fb0d017f",
@@ -1901,7 +1901,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-15.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:35.002349+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:26.465439+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-15.zip",
           "size_bytes": 239,
           "sha256": "ae21404f7ba7e0e1a3e2025938f664b0c40c3b29742a2e6cb1889fc67c25dad3",
@@ -1916,7 +1916,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-16.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:35.478140+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:26.784060+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-16.zip",
           "size_bytes": 241,
           "sha256": "1d10e69bf59d24cf9f4a39f356d762575a4bfda298fc957ebaf43aabe8414211",
@@ -1931,7 +1931,7 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-17.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:35.956093+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:27.102461+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-17.zip",
           "size_bytes": 238,
           "sha256": "e420b8e7e36421cb00f557527740938421178433d0fa9daf588e0e43a34aa012",
@@ -1946,10 +1946,25 @@
         {
           "source": "Binance Vision spot daily klines",
           "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-18.zip",
-          "retrieved_at_utc": "2026-11-19T18:43:36.408535+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:27.418917+00:00",
           "file": "data/raw/binance/BTCUSDT-1d-2026-11-18.zip",
           "size_bytes": 237,
           "sha256": "11c69e645af3100c08a9fbcdf78c3849b83cbf97c2bd20605fe055a561cfe1e9",
+          "venue": "Binance",
+          "symbol": "BTCUSDT",
+          "quote_currency": "USDT",
+          "schema_version": "1.0",
+          "source_grade": "A",
+          "license_terms_note": "Public endpoint/archive; provider terms apply; legal review not performed.",
+          "rows": 1
+        },
+        {
+          "source": "Binance Vision spot daily klines",
+          "url": "https://data.binance.vision/data/spot/daily/klines/BTCUSDT/1d/BTCUSDT-1d-2026-11-19.zip",
+          "retrieved_at_utc": "2026-11-20T16:53:27.737510+00:00",
+          "file": "data/raw/binance/BTCUSDT-1d-2026-11-19.zip",
+          "size_bytes": 239,
+          "sha256": "cdf3a7e285ea452f3153ea19f9731885231dc2f64f3acd7bc1ea9041229dcaf2",
           "venue": "Binance",
           "symbol": "BTCUSDT",
           "quote_currency": "USDT",
@@ -1962,8 +1977,8 @@
       "failures": [],
       "duplicates_removed": 0,
       "first_timestamp": "2017-08-17T00:00:00+00:00",
-      "last_timestamp": "2026-11-18T00:00:00+00:00",
-      "rows": 3381
+      "last_timestamp": "2026-11-19T00:00:00+00:00",
+      "rows": 3382
     },
     {
       "source": "Bitstamp public OHLC API",
@@ -1975,7 +1990,7 @@
       "schema_version": "1.0",
       "source_grade": "A",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-19T18:43:38.170700+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:30.931593+00:00",
       "parser": "requests JSON + pandas",
       "parser_version": "btc-quant-acquisition-0.2",
       "schema": [
@@ -1989,11 +2004,11 @@
       "objects": [
         {
           "source": "Bitstamp public OHLC API",
-          "url": "https://www.bitstamp.net/api/v2/ohlc/btcusd/?step=86400&limit=1000&start=1479753816&end=1566067416",
-          "retrieved_at_utc": "2026-11-19T18:43:37.055002+00:00",
+          "url": "https://www.bitstamp.net/api/v2/ohlc/btcusd/?step=86400&limit=1000&start=1479833607&end=1566147207",
+          "retrieved_at_utc": "2026-11-20T16:53:29.071803+00:00",
           "file": "data/raw/bitstamp/raw/bitstamp_ohlc_000.json",
-          "size_bytes": 132671,
-          "sha256": "6d884a13ff2dbf715e5e58d20c819da9497b8128be8fd0207586b8f2b3310db0",
+          "size_bytes": 132679,
+          "sha256": "148f63f93e08d9248a6e2c03e0440dfd54f7cc569a7dbbadd1abb98739470610",
           "venue": "Bitstamp",
           "symbol": "BTC/USD",
           "quote_currency": "USD",
@@ -2004,11 +2019,11 @@
         },
         {
           "source": "Bitstamp public OHLC API",
-          "url": "https://www.bitstamp.net/api/v2/ohlc/btcusd/?step=86400&limit=1000&start=1566000001&end=1652313601",
-          "retrieved_at_utc": "2026-11-19T18:43:37.386306+00:00",
+          "url": "https://www.bitstamp.net/api/v2/ohlc/btcusd/?step=86400&limit=1000&start=1566086401&end=1652400001",
+          "retrieved_at_utc": "2026-11-20T16:53:29.658677+00:00",
           "file": "data/raw/bitstamp/raw/bitstamp_ohlc_001.json",
-          "size_bytes": 134923,
-          "sha256": "2ce21cfd1129986aaf660b2df45674a8936075404b6240e76764890d2a451e39",
+          "size_bytes": 134924,
+          "sha256": "9211a8b96b5302e2ce6275d61136901c18ebb01e5bca2959bf5f2f46375ce7f4",
           "venue": "Bitstamp",
           "symbol": "BTC/USD",
           "quote_currency": "USD",
@@ -2019,11 +2034,11 @@
         },
         {
           "source": "Bitstamp public OHLC API",
-          "url": "https://www.bitstamp.net/api/v2/ohlc/btcusd/?step=86400&limit=1000&start=1652313601&end=1738627201",
-          "retrieved_at_utc": "2026-11-19T18:43:37.809966+00:00",
+          "url": "https://www.bitstamp.net/api/v2/ohlc/btcusd/?step=86400&limit=1000&start=1652400001&end=1738713601",
+          "retrieved_at_utc": "2026-11-20T16:53:30.227188+00:00",
           "file": "data/raw/bitstamp/raw/bitstamp_ohlc_002.json",
-          "size_bytes": 135966,
-          "sha256": "0e9fcf8c76096f36786ba113a1a344b049d0fe1830bed5fa99e96a33d340c0cb",
+          "size_bytes": 135965,
+          "sha256": "f9bd36b5d8ad700641971be1b0cfe7a37cbcf34df5653f5cb407971bc1e0c0df",
           "venue": "Bitstamp",
           "symbol": "BTC/USD",
           "quote_currency": "USD",
@@ -2034,11 +2049,11 @@
         },
         {
           "source": "Bitstamp public OHLC API",
-          "url": "https://www.bitstamp.net/api/v2/ohlc/btcusd/?step=86400&limit=1000&start=1738627201&end=1795113816",
-          "retrieved_at_utc": "2026-11-19T18:43:38.157756+00:00",
+          "url": "https://www.bitstamp.net/api/v2/ohlc/btcusd/?step=86400&limit=1000&start=1738713601&end=1795193607",
+          "retrieved_at_utc": "2026-11-20T16:53:30.921890+00:00",
           "file": "data/raw/bitstamp/raw/bitstamp_ohlc_003.json",
-          "size_bytes": 136653,
-          "sha256": "9bf25a08f9694992133fad08fccb131dc88dfdbf52ea6e9baad4bc0e729f68b5",
+          "size_bytes": 136655,
+          "sha256": "85c9480c5241330f6f83765e68d9e76369961e72f40e9ea0d24b6e9b00631eb6",
           "venue": "Bitstamp",
           "symbol": "BTC/USD",
           "quote_currency": "USD",
@@ -2051,8 +2066,8 @@
       "failures": [],
       "duplicates_removed_at_page_boundaries": 349,
       "rows": 3650,
-      "first_timestamp": "2016-11-21T00:00:00+00:00",
-      "last_timestamp": "2026-11-18T00:00:00+00:00"
+      "first_timestamp": "2016-11-22T00:00:00+00:00",
+      "last_timestamp": "2026-11-19T00:00:00+00:00"
     },
     {
       "source": "Coinbase Exchange candles API",
@@ -2064,7 +2079,7 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-19T18:43:38.441603+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:31.175580+00:00",
       "parser": "Coinbase candle array parser",
       "parser_version": "0.2",
       "schema": [
@@ -2078,11 +2093,11 @@
       "objects": [
         {
           "source": "Coinbase Exchange candles API",
-          "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=2026-01-23T00%3A00%3A00%2B00%3A00&end=2026-11-19T00%3A00%3A00%2B00%3A00",
-          "retrieved_at_utc": "2026-11-19T18:43:38.441544+00:00",
+          "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=2026-01-24T00%3A00%3A00%2B00%3A00&end=2026-11-20T00%3A00%3A00%2B00%3A00",
+          "retrieved_at_utc": "2026-11-20T16:53:31.175533+00:00",
           "file": "data/raw/coinbase/coinbase_btcusd_1d_recent.json",
-          "size_bytes": 18466,
-          "sha256": "49ed20e8dda28cc4fc6b6d831f3ac60d7576df9d35119a2e82c0aace5a58dab0",
+          "size_bytes": 18467,
+          "sha256": "92291af6bb79e2e7c97716ba171dd9f90d184190762c51b0d4558878d7dc3bf4",
           "venue": "Coinbase",
           "symbol": "BTC-USD",
           "quote_currency": "USD",
@@ -2092,19 +2107,19 @@
         }
       ],
       "rows": 300,
-      "first_timestamp": "2026-01-23T00:00:00+00:00",
-      "last_timestamp": "2026-11-18T00:00:00+00:00",
+      "first_timestamp": "2026-01-24T00:00:00+00:00",
+      "last_timestamp": "2026-11-19T00:00:00+00:00",
       "qa": {
         "status": "PASS",
         "rows": 300,
         "duplicates": 0,
         "missing_volume": 0,
-        "first_timestamp_utc": "2026-01-23T00:00:00+00:00",
-        "last_timestamp_utc": "2026-11-18T00:00:00+00:00",
+        "first_timestamp_utc": "2026-01-24T00:00:00+00:00",
+        "last_timestamp_utc": "2026-11-19T00:00:00+00:00",
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 18.727,
+        "latest_candle_age_hours": 16.892,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 7280.989629025,
@@ -2139,7 +2154,7 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-19T18:43:38.633164+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:31.261344+00:00",
       "parser": "Kraken OHLC parser",
       "parser_version": "0.2",
       "schema": [
@@ -2154,10 +2169,10 @@
         {
           "source": "Kraken public OHLC API",
           "url": "https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1440",
-          "retrieved_at_utc": "2026-11-19T18:43:38.632859+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:31.261041+00:00",
           "file": "data/raw/kraken/kraken_btcusd_1d_recent.json",
-          "size_bytes": 62329,
-          "sha256": "2e3336323fb79dc456d5b588d5e3be3a1de618a0cf001a88f4f52db715f1bd91",
+          "size_bytes": 62331,
+          "sha256": "8057d46dce26ecb39233fa3109e1e3e2017f54430d5dcd3f34a651ba20955636",
           "venue": "Kraken",
           "symbol": "XBT/USD",
           "quote_currency": "USD",
@@ -2167,19 +2182,19 @@
         }
       ],
       "rows": 720,
-      "first_timestamp": "2024-11-29T00:00:00+00:00",
-      "last_timestamp": "2026-11-18T00:00:00+00:00",
+      "first_timestamp": "2024-11-30T00:00:00+00:00",
+      "last_timestamp": "2026-11-19T00:00:00+00:00",
       "qa": {
         "status": "PASS",
         "rows": 720,
         "duplicates": 0,
         "missing_volume": 0,
-        "first_timestamp_utc": "2024-11-29T00:00:00+00:00",
-        "last_timestamp_utc": "2026-11-18T00:00:00+00:00",
+        "first_timestamp_utc": "2024-11-30T00:00:00+00:00",
+        "last_timestamp_utc": "2026-11-19T00:00:00+00:00",
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 18.727,
+        "latest_candle_age_hours": 16.892,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 1682.66823213,
@@ -2213,7 +2228,7 @@
       "timezone": "UTC",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:43:38.767321+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:31.361338+00:00",
       "parser": "BTC Quant Desk spot ticker parser",
       "parser_version": "0.3",
       "schema": [
@@ -2223,10 +2238,10 @@
         {
           "source": "Bitstamp public spot ticker",
           "url": "https://www.bitstamp.net/api/v2/ticker/btcusd/",
-          "retrieved_at_utc": "2026-11-19T18:43:38.766956+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:31.360839+00:00",
           "file": "data/raw/supplemental/spot_live/bitstamp_btcusd_ticker_24h.json",
           "size_bytes": 256,
-          "sha256": "6e20637ca4303afb707f159e7f40186bc9197751d26d4e95fe3f489a384c70f1",
+          "sha256": "8c614b29f367fb5d2f3cb0b3c008af132ac325a7c8d6066961d3277d03b97e24",
           "venue": "Bitstamp",
           "symbol": "BTC/USD",
           "quote_currency": "USD",
@@ -2249,7 +2264,7 @@
       "timezone": "UTC",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:43:39.808061+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:31.981571+00:00",
       "parser": "Binance kline taker-buy/sell volume delta parser",
       "parser_version": "0.3",
       "schema": [
@@ -2270,10 +2285,10 @@
         {
           "source": "Binance Spot public market-data mirror hourly taker-volume candles",
           "url": "https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=745",
-          "retrieved_at_utc": "2026-11-19T18:43:39.806700+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:31.980369+00:00",
           "file": "data/raw/supplemental/binance_cvd/spot_btc_cvd_1h_30d.json",
-          "size_bytes": 133104,
-          "sha256": "baab8bae52ebaf5970fe8ac7f077964c8567d7bec8a34c387f6e6a8d6650d6d3",
+          "size_bytes": 133126,
+          "sha256": "26e22c1bb8344849d349021592112713059842ebb9b77c492dafbe6df0f8aabf",
           "venue": "Binance Spot public market-data mirror",
           "symbol": "BTCUSDT",
           "quote_currency": "USDT",
@@ -2293,7 +2308,7 @@
       "timezone": "UTC",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:43:39.971686+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:32.031807+00:00",
       "parser": "Binance kline taker-buy/sell volume delta parser",
       "parser_version": "0.3",
       "schema": [],
@@ -2310,7 +2325,7 @@
       "timezone": "publisher date normalized to UTC",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:43:40.018439+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:32.120619+00:00",
       "parser": "ElementTree RSS/Atom parser",
       "parser_version": "0.3",
       "schema": [
@@ -2323,10 +2338,10 @@
         {
           "source": "Federal Reserve official RSS feed",
           "url": "https://www.federalreserve.gov/feeds/press_all.xml",
-          "retrieved_at_utc": "2026-11-19T18:43:40.017789+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:32.120002+00:00",
           "file": "data/raw/supplemental/news/rss_federal_reserve.xml",
-          "size_bytes": 14593,
-          "sha256": "e06ed627f6fa071162b75adb70e830b2f5c343a52b30aa0e345055023dd3aaf5",
+          "size_bytes": 14520,
+          "sha256": "01abb19d2cf3e4e5b23a5fe65ef0b3f1feb46225aff1bc8ddc6c40984e587a9d",
           "venue": "Federal Reserve",
           "symbol": "official releases",
           "quote_currency": "not_applicable",
@@ -2346,7 +2361,7 @@
       "timezone": "publisher date normalized to UTC",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:43:40.076538+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:32.289882+00:00",
       "parser": "ElementTree RSS/Atom parser",
       "parser_version": "0.3",
       "schema": [
@@ -2359,10 +2374,10 @@
         {
           "source": "SEC official RSS feed",
           "url": "https://www.sec.gov/news/pressreleases.rss",
-          "retrieved_at_utc": "2026-11-19T18:43:40.075759+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:32.289228+00:00",
           "file": "data/raw/supplemental/news/rss_sec.xml",
-          "size_bytes": 18611,
-          "sha256": "3128dead3ed56ac660a21eb79471dfbb9dab7bb486435164008f54ec4132336b",
+          "size_bytes": 18680,
+          "sha256": "8e19ddafa4d677f5103b5ab3eaaa0a3797451e591a7215b03f87b4434db024f2",
           "venue": "SEC",
           "symbol": "official releases",
           "quote_currency": "not_applicable",
@@ -2382,7 +2397,7 @@
       "timezone": "publisher date normalized to UTC",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:43:40.108765+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:32.383611+00:00",
       "parser": "ElementTree RSS/Atom parser",
       "parser_version": "0.3",
       "schema": [
@@ -2395,10 +2410,10 @@
         {
           "source": "White House official RSS feed",
           "url": "https://www.whitehouse.gov/news/feed/",
-          "retrieved_at_utc": "2026-11-19T18:43:40.104824+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:32.380163+00:00",
           "file": "data/raw/supplemental/news/rss_white_house.xml",
-          "size_bytes": 458783,
-          "sha256": "07858886cd3dfb596cc218d9f58f2bed97b86f395153434223b8ed3cad1a3d2c",
+          "size_bytes": 462598,
+          "sha256": "14e9326e81d0ab8c6ea852f369fd96183197f3f89443ca904c9991a02f10ab69",
           "venue": "White House",
           "symbol": "official releases",
           "quote_currency": "not_applicable",
@@ -2418,7 +2433,7 @@
       "timezone": "publisher date normalized to UTC",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:43:40.403958+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:32.888315+00:00",
       "parser": "ElementTree RSS/Atom parser",
       "parser_version": "0.3",
       "schema": [
@@ -2431,10 +2446,10 @@
         {
           "source": "ECB official RSS feed",
           "url": "https://www.ecb.europa.eu/rss/press.html",
-          "retrieved_at_utc": "2026-11-19T18:43:40.403578+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:32.888001+00:00",
           "file": "data/raw/supplemental/news/rss_ecb.xml",
-          "size_bytes": 5787,
-          "sha256": "f4b9d850524794809ff27ab53590f88cdf06bb1d9c5cef9f6bf9731b43c3e187",
+          "size_bytes": 5783,
+          "sha256": "6b3a5ddee3fcab48800464dcdb23e0ee57da0e6d62cdbff94f2419c4e47627cb",
           "venue": "ECB",
           "symbol": "official releases",
           "quote_currency": "not_applicable",
@@ -2454,7 +2469,7 @@
       "timezone": "GDELT seendate UTC",
       "schema_version": "1.0",
       "source_grade": "C",
-      "retrieved_at_utc": "2026-11-19T18:43:50.406790+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:44.206265+00:00",
       "parser": "GDELT DOC JSON parser",
       "parser_version": "0.3",
       "schema": [],
@@ -2471,7 +2486,7 @@
       "timezone": "UTC",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:43:50.498286+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:44.295534+00:00",
       "parser": "BTC Quant Desk JSON market-data parser",
       "parser_version": "0.3",
       "schema": [
@@ -2498,7 +2513,7 @@
       "timezone": "UTC",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:43:50.580058+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:44.371124+00:00",
       "parser": "BTC Quant Desk Bybit V5 parser",
       "parser_version": "0.3",
       "schema": [
@@ -2522,7 +2537,7 @@
       "timezone": "UTC",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:43:52.003506+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:45.171677+00:00",
       "parser": "OKX V5 REST envelope and BTC perpetual parser",
       "parser_version": "1.0",
       "schema": [
@@ -2537,10 +2552,10 @@
         {
           "source": "OKX V5 public market data",
           "url": "https://www.okx.com/api/v5/market/ticker?instId=BTC-USDT-SWAP",
-          "retrieved_at_utc": "2026-11-19T18:43:50.926530+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:44.542045+00:00",
           "file": "data/raw/supplemental/okx_swap/okx_ticker.json",
-          "size_bytes": 342,
-          "sha256": "cc4b8b039cd3690607cc490469efe2912cab820bb0a8871a5c1c9dc2f80319f4",
+          "size_bytes": 343,
+          "sha256": "4f6b6f52a7c465cc27a9a50994638046d781182d61225d31e58071ee2e42f413",
           "venue": "OKX",
           "symbol": "BTC-USDT-SWAP",
           "quote_currency": "USDT",
@@ -2551,10 +2566,10 @@
         {
           "source": "OKX V5 public market data",
           "url": "https://www.okx.com/api/v5/public/open-interest?instType=SWAP&instId=BTC-USDT-SWAP",
-          "retrieved_at_utc": "2026-11-19T18:43:51.129061+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:44.659812+00:00",
           "file": "data/raw/supplemental/okx_swap/okx_open_interest.json",
-          "size_bytes": 188,
-          "sha256": "54611094f819032d0dc860edad660dc729a68efcc4ef6a918645bfc9c0f2969a",
+          "size_bytes": 187,
+          "sha256": "73363306a597c12d0e8d9ed45e198261765d3b1f12f61e755bded6581143b79f",
           "venue": "OKX",
           "symbol": "BTC-USDT-SWAP",
           "quote_currency": "USDT",
@@ -2565,10 +2580,10 @@
         {
           "source": "OKX V5 public market data",
           "url": "https://www.okx.com/api/v5/public/funding-rate?instId=BTC-USDT-SWAP",
-          "retrieved_at_utc": "2026-11-19T18:43:51.312930+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:44.779679+00:00",
           "file": "data/raw/supplemental/okx_swap/okx_funding_current.json",
-          "size_bytes": 525,
-          "sha256": "f4134a5f44f3390d48b8cf9598873b98f3b2f037de066490df4a74afec36f8f4",
+          "size_bytes": 524,
+          "sha256": "7f140ff46fff2f3d0cdf04982986463d6879d2b8c4558cc08bac5bbc4305fbc8",
           "venue": "OKX",
           "symbol": "BTC-USDT-SWAP",
           "quote_currency": "USDT",
@@ -2579,10 +2594,10 @@
         {
           "source": "OKX V5 public market data",
           "url": "https://www.okx.com/api/v5/public/funding-rate-history?instId=BTC-USDT-SWAP&limit=100",
-          "retrieved_at_utc": "2026-11-19T18:43:51.503121+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:44.903875+00:00",
           "file": "data/raw/supplemental/okx_swap/okx_funding_history.json",
-          "size_bytes": 19076,
-          "sha256": "b5f1e226e6a9c1b18740366b9b4ce62d2add18710b49e4ca357c63941c9bf7d9",
+          "size_bytes": 19078,
+          "sha256": "266fbb8cf99f3258506b39e1e22ba28c8ab09cd0c7eeac22457fee380f7653e5",
           "venue": "OKX",
           "symbol": "BTC-USDT-SWAP",
           "quote_currency": "USDT",
@@ -2593,10 +2608,10 @@
         {
           "source": "OKX V5 public market data",
           "url": "https://www.okx.com/api/v5/rubik/stat/contracts/open-interest-history?instId=BTC-USDT-SWAP&period=1Dutc&limit=100",
-          "retrieved_at_utc": "2026-11-19T18:43:51.757684+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:45.032152+00:00",
           "file": "data/raw/supplemental/okx_swap/okx_open_interest_history.json",
-          "size_bytes": 8957,
-          "sha256": "f163a80090bcbaed94bc4163825cae02b19a80ef867e484a05568573574e3a8b",
+          "size_bytes": 8956,
+          "sha256": "8ff2ac07ac33f7528463baf19f5a120ee8daf6c7383ede6af0e302cbcb1dda82",
           "venue": "OKX",
           "symbol": "BTC-USDT-SWAP",
           "quote_currency": "USDT",
@@ -2607,10 +2622,10 @@
         {
           "source": "OKX V5 public market data",
           "url": "https://www.okx.com/api/v5/rubik/stat/taker-volume-contract?instId=BTC-USDT-SWAP&period=1Dutc&unit=0&limit=30",
-          "retrieved_at_utc": "2026-11-19T18:43:51.987664+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:45.164446+00:00",
           "file": "data/raw/supplemental/okx_swap/okx_taker_volume_daily.json",
-          "size_bytes": 2064,
-          "sha256": "fcad4bc7c620f9640c0b4a194542f5a6cfb228b6e8e184a138bb106fb7be980d",
+          "size_bytes": 2065,
+          "sha256": "fe964058b0744b75a527f3a0f337f2cabe034e5d2b8ad57d28d907e036bcae50",
           "venue": "OKX",
           "symbol": "BTC-USDT-SWAP",
           "quote_currency": "USDT",
@@ -2631,7 +2646,7 @@
       "timezone": "UTC",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:43:54.215047+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:48.915121+00:00",
       "parser": "Deribit JSON-RPC chain and ticker parser",
       "parser_version": "0.3",
       "schema": [
@@ -2647,10 +2662,10 @@
         {
           "source": "Deribit public options market data",
           "url": "https://www.deribit.com/api/v2/public/get_book_summary_by_currency",
-          "retrieved_at_utc": "2026-11-19T18:43:52.207772+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:45.435434+00:00",
           "file": "data/raw/supplemental/deribit_options/btc_options_book_summary.json",
-          "size_bytes": 528609,
-          "sha256": "ba83462daca4d2686aa7a6b391f3129b3497d2854487d108933c89831acc0851",
+          "size_bytes": 531642,
+          "sha256": "006736154998c1ee8cb5810ced1c5fdf4dc767849b5c21b177f14170b8007f14",
           "venue": "Deribit Options",
           "symbol": "BTC options",
           "quote_currency": "BTC/USD",
@@ -2661,12 +2676,12 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:52.300656+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_20NOV26_54000_P.json",
-          "size_bytes": 868,
-          "sha256": "8282c137d95a21793fff0e67507fe5b04067926f0fcb34a236f47b14bea5243c",
+          "retrieved_at_utc": "2026-11-20T16:53:45.611315+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_21NOV26_56000_P.json",
+          "size_bytes": 851,
+          "sha256": "31409b08fc77ca74716c59f0660ff1fca362e5c09470701f35402e722f08791c",
           "venue": "Deribit Options",
-          "symbol": "BTC-20NOV26-54000-P",
+          "symbol": "BTC-21NOV26-56000-P",
           "quote_currency": "BTC/USD",
           "schema_version": "1.0",
           "source_grade": "B",
@@ -2675,12 +2690,12 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:52.386812+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_20NOV26_57000_P.json",
-          "size_bytes": 888,
-          "sha256": "b0755cf424b446ab88dfbdf2d00afa560be4c535cffdef0005312f81569e9a5a",
+          "retrieved_at_utc": "2026-11-20T16:53:45.794017+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_21NOV26_62500_C.json",
+          "size_bytes": 890,
+          "sha256": "e66a47c0e0f29517c373353c8f2fc7fdd45441fddd2d5b4ecf05daa67d8ace19",
           "venue": "Deribit Options",
-          "symbol": "BTC-20NOV26-57000-P",
+          "symbol": "BTC-21NOV26-62500-C",
           "quote_currency": "BTC/USD",
           "schema_version": "1.0",
           "source_grade": "B",
@@ -2689,12 +2704,12 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:52.474886+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_20NOV26_60000_P.json",
-          "size_bytes": 889,
-          "sha256": "6148695008ffe6ed8b058000aa55ce241a4a445205115c44e879e24a758fda65",
+          "retrieved_at_utc": "2026-11-20T16:53:45.989768+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_21NOV26_65500_C.json",
+          "size_bytes": 874,
+          "sha256": "4e8481008f0f5ef6cf16b52cf5eb0745680a922f1bbe05776572fcfcaaadf2ad",
           "venue": "Deribit Options",
-          "symbol": "BTC-20NOV26-60000-P",
+          "symbol": "BTC-21NOV26-65500-C",
           "quote_currency": "BTC/USD",
           "schema_version": "1.0",
           "source_grade": "B",
@@ -2703,12 +2718,12 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:52.558526+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_20NOV26_66000_C.json",
-          "size_bytes": 883,
-          "sha256": "e26920ffe32027eed11ead303752c0df86bf8d20276acdba2a14c11c3c3d3a97",
+          "retrieved_at_utc": "2026-11-20T16:53:46.171101+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_21NOV26_68000_C.json",
+          "size_bytes": 866,
+          "sha256": "badc3b49223702c40268397c42c2790d64719e15dfe2fa22f35e5c6f6ce05535",
           "venue": "Deribit Options",
-          "symbol": "BTC-20NOV26-66000-C",
+          "symbol": "BTC-21NOV26-68000-C",
           "quote_currency": "BTC/USD",
           "schema_version": "1.0",
           "source_grade": "B",
@@ -2717,12 +2732,12 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:52.648771+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_20NOV26_69000_C.json",
-          "size_bytes": 872,
-          "sha256": "788298d2ac3c97700563a007496db9e4972687df806299e07e7e8eec1f802403",
+          "retrieved_at_utc": "2026-11-20T16:53:46.349692+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_22NOV26_55000_P.json",
+          "size_bytes": 847,
+          "sha256": "a83a7f4da261250f07ad4ac4daa849a871868956cbaa9cb0240d594027fb252d",
           "venue": "Deribit Options",
-          "symbol": "BTC-20NOV26-69000-C",
+          "symbol": "BTC-22NOV26-55000-P",
           "quote_currency": "BTC/USD",
           "schema_version": "1.0",
           "source_grade": "B",
@@ -2731,94 +2746,10 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:52.733840+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_20NOV26_72000_C.json",
-          "size_bytes": 863,
-          "sha256": "f56380b6263913d4409cb432468b71713fc50fb50dfc01073126e2562b2bc4e9",
-          "venue": "Deribit Options",
-          "symbol": "BTC-20NOV26-72000-C",
-          "quote_currency": "BTC/USD",
-          "schema_version": "1.0",
-          "source_grade": "B",
-          "license_terms_note": "Public endpoint; provider terms apply; legal review not performed."
-        },
-        {
-          "source": "Deribit public options ticker/Greeks",
-          "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:52.825839+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_21NOV26_57000_P.json",
-          "size_bytes": 886,
-          "sha256": "6239916d3744f9fc895a956b894e7a65f542abcfafcd49c5694f67dadd0560da",
-          "venue": "Deribit Options",
-          "symbol": "BTC-21NOV26-57000-P",
-          "quote_currency": "BTC/USD",
-          "schema_version": "1.0",
-          "source_grade": "B",
-          "license_terms_note": "Public endpoint; provider terms apply; legal review not performed."
-        },
-        {
-          "source": "Deribit public options ticker/Greeks",
-          "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:52.919982+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_21NOV26_60000_P.json",
-          "size_bytes": 888,
-          "sha256": "0ebb4400e348bbf97814c6caabbbd58c8031fc7c1a3245a9266bd96adbd55b82",
-          "venue": "Deribit Options",
-          "symbol": "BTC-21NOV26-60000-P",
-          "quote_currency": "BTC/USD",
-          "schema_version": "1.0",
-          "source_grade": "B",
-          "license_terms_note": "Public endpoint; provider terms apply; legal review not performed."
-        },
-        {
-          "source": "Deribit public options ticker/Greeks",
-          "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:53.007483+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_21NOV26_66000_C.json",
-          "size_bytes": 881,
-          "sha256": "22012c12b5e05e21e53c7df451f93231208244b28dde7c22b581e4497097e159",
-          "venue": "Deribit Options",
-          "symbol": "BTC-21NOV26-66000-C",
-          "quote_currency": "BTC/USD",
-          "schema_version": "1.0",
-          "source_grade": "B",
-          "license_terms_note": "Public endpoint; provider terms apply; legal review not performed."
-        },
-        {
-          "source": "Deribit public options ticker/Greeks",
-          "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:53.092115+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_21NOV26_69000_C.json",
-          "size_bytes": 870,
-          "sha256": "9a1bcc2fef0fa9282a529df88aa08392262ada3cd3e0c144bff031346c3b5d3b",
-          "venue": "Deribit Options",
-          "symbol": "BTC-21NOV26-69000-C",
-          "quote_currency": "BTC/USD",
-          "schema_version": "1.0",
-          "source_grade": "B",
-          "license_terms_note": "Public endpoint; provider terms apply; legal review not performed."
-        },
-        {
-          "source": "Deribit public options ticker/Greeks",
-          "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:53.177462+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_21NOV26_72000_C.json",
-          "size_bytes": 850,
-          "sha256": "7e78cea2024318f09e1a51c53a9ba780114f7e35f0a4c12565eb00da63df4ddf",
-          "venue": "Deribit Options",
-          "symbol": "BTC-21NOV26-72000-C",
-          "quote_currency": "BTC/USD",
-          "schema_version": "1.0",
-          "source_grade": "B",
-          "license_terms_note": "Public endpoint; provider terms apply; legal review not performed."
-        },
-        {
-          "source": "Deribit public options ticker/Greeks",
-          "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:53.264672+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:46.529585+00:00",
           "file": "data/raw/supplemental/deribit_options/ticker_BTC_22NOV26_56000_P.json",
-          "size_bytes": 875,
-          "sha256": "9e5ddb47d65134a4decb7b0e51b57085df304cbd6d1b43f9df256240ceadc7df",
+          "size_bytes": 885,
+          "sha256": "8fdfc42cf6cf8e1eecb55c906cb6e298d5083e2f022dd964cffa4f1dfab5607d",
           "venue": "Deribit Options",
           "symbol": "BTC-22NOV26-56000-P",
           "quote_currency": "BTC/USD",
@@ -2829,12 +2760,12 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:53.350548+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_22NOV26_57000_P.json",
-          "size_bytes": 881,
-          "sha256": "73e8abba0fabb679d3a7bc469f245600897c11907a5679c6241493f7fda32a8f",
+          "retrieved_at_utc": "2026-11-20T16:53:46.700786+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_22NOV26_62500_C.json",
+          "size_bytes": 883,
+          "sha256": "0f70375642119dceb8bbe46d390d1f40915b53bbc61b17f9c2dae0c660499196",
           "venue": "Deribit Options",
-          "symbol": "BTC-22NOV26-57000-P",
+          "symbol": "BTC-22NOV26-62500-C",
           "quote_currency": "BTC/USD",
           "schema_version": "1.0",
           "source_grade": "B",
@@ -2843,12 +2774,12 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:53.435205+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_22NOV26_60000_P.json",
-          "size_bytes": 882,
-          "sha256": "c088b5005a8ceac8d66adaaa1a7713508624fc96737a46669bbcf503f2f0e5c6",
+          "retrieved_at_utc": "2026-11-20T16:53:46.881177+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_22NOV26_65500_C.json",
+          "size_bytes": 869,
+          "sha256": "8bc9e07635d0eb2a45e7e6bed270db4752089df346c88ddd641ef6da17fab3c3",
           "venue": "Deribit Options",
-          "symbol": "BTC-22NOV26-60000-P",
+          "symbol": "BTC-22NOV26-65500-C",
           "quote_currency": "BTC/USD",
           "schema_version": "1.0",
           "source_grade": "B",
@@ -2857,12 +2788,12 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:53.521460+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_22NOV26_66000_C.json",
-          "size_bytes": 877,
-          "sha256": "35f38c17b85fedccd99feefaa8b0c3a8258583c19dbd3d631ba666f6841b1641",
+          "retrieved_at_utc": "2026-11-20T16:53:47.058607+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_22NOV26_68000_C.json",
+          "size_bytes": 866,
+          "sha256": "d5c97bfc19ec1950627676c109543a19f1ee7d12cf5046cec0b7e61fd4e8f90e",
           "venue": "Deribit Options",
-          "symbol": "BTC-22NOV26-66000-C",
+          "symbol": "BTC-22NOV26-68000-C",
           "quote_currency": "BTC/USD",
           "schema_version": "1.0",
           "source_grade": "B",
@@ -2871,12 +2802,12 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:53.612854+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_22NOV26_69000_C.json",
-          "size_bytes": 875,
-          "sha256": "1aa8f5453c739d4d2b5b5c7eae343974b388d5d70b3760e2ac52a58595bdbaab",
+          "retrieved_at_utc": "2026-11-20T16:53:47.239190+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_23NOV26_54000_P.json",
+          "size_bytes": 845,
+          "sha256": "1eb333bd4d2610daccb73b8e810c92ec1f725ff0430ab60f2f928eb026fec155",
           "venue": "Deribit Options",
-          "symbol": "BTC-22NOV26-69000-C",
+          "symbol": "BTC-23NOV26-54000-P",
           "quote_currency": "BTC/USD",
           "schema_version": "1.0",
           "source_grade": "B",
@@ -2885,24 +2816,10 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:53.703107+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_22NOV26_72000_C.json",
-          "size_bytes": 853,
-          "sha256": "1d0139b99d08af1abae0bb418d7f10d32b509b8c72c41fbde56149ded8b6a581",
-          "venue": "Deribit Options",
-          "symbol": "BTC-22NOV26-72000-C",
-          "quote_currency": "BTC/USD",
-          "schema_version": "1.0",
-          "source_grade": "B",
-          "license_terms_note": "Public endpoint; provider terms apply; legal review not performed."
-        },
-        {
-          "source": "Deribit public options ticker/Greeks",
-          "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:53.787626+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:47.431522+00:00",
           "file": "data/raw/supplemental/deribit_options/ticker_BTC_23NOV26_56000_P.json",
-          "size_bytes": 850,
-          "sha256": "626dc49ad1fc4b00995eee3170b1eeb6a0e1ac25f2214c04eb1994cd8653c117",
+          "size_bytes": 881,
+          "sha256": "59712b2fa6b1befed896ff2d585bcd1b598265ef5186f5589906a73d872a47b9",
           "venue": "Deribit Options",
           "symbol": "BTC-23NOV26-56000-P",
           "quote_currency": "BTC/USD",
@@ -2913,12 +2830,12 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:53.871802+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_23NOV26_57000_P.json",
-          "size_bytes": 847,
-          "sha256": "048dac06ee119706fcef440e12261c8ad526bdd9fcfb73c2aa4fd839aafc2efc",
+          "retrieved_at_utc": "2026-11-20T16:53:47.609964+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_23NOV26_62500_C.json",
+          "size_bytes": 882,
+          "sha256": "e77201decce057ce00fa431c6d449684c14bade23ae71d1c44d175a0e44e8e1d",
           "venue": "Deribit Options",
-          "symbol": "BTC-23NOV26-57000-P",
+          "symbol": "BTC-23NOV26-62500-C",
           "quote_currency": "BTC/USD",
           "schema_version": "1.0",
           "source_grade": "B",
@@ -2927,12 +2844,12 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:53.958895+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_23NOV26_60000_P.json",
-          "size_bytes": 854,
-          "sha256": "8581a7af719628d01ce3b70ac5aff5c03c51b025947378913683f2d157b0bc43",
+          "retrieved_at_utc": "2026-11-20T16:53:47.790907+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_23NOV26_65500_C.json",
+          "size_bytes": 878,
+          "sha256": "bf6a628217aa204c636a8630bc9184cd50f176a72663818f110eeb200bd84177",
           "venue": "Deribit Options",
-          "symbol": "BTC-23NOV26-60000-P",
+          "symbol": "BTC-23NOV26-65500-C",
           "quote_currency": "BTC/USD",
           "schema_version": "1.0",
           "source_grade": "B",
@@ -2941,12 +2858,12 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:54.044421+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_23NOV26_66000_C.json",
-          "size_bytes": 854,
-          "sha256": "823e7382b1bf357f82a403793af981b53c5b83f66c713fe14f43f23e2b91f881",
+          "retrieved_at_utc": "2026-11-20T16:53:47.970964+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_23NOV26_68000_C.json",
+          "size_bytes": 871,
+          "sha256": "8fa0f3dd5139f83dffce087309540455e7d436f4d96bfda6ba52fdd4fd704de0",
           "venue": "Deribit Options",
-          "symbol": "BTC-23NOV26-66000-C",
+          "symbol": "BTC-23NOV26-68000-C",
           "quote_currency": "BTC/USD",
           "schema_version": "1.0",
           "source_grade": "B",
@@ -2955,12 +2872,12 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:54.128903+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_23NOV26_69000_C.json",
-          "size_bytes": 847,
-          "sha256": "14f6113afd047b6c4e35ca1d8a5fdda65a4dafad36c6c28cb2eb19eb531bccb3",
+          "retrieved_at_utc": "2026-11-20T16:53:48.146523+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_24NOV26_53000_P.json",
+          "size_bytes": 848,
+          "sha256": "ae0c463a764917c90771c040b40fbe9f6921ac5b44cb5bf73ba62e03b3fee1d1",
           "venue": "Deribit Options",
-          "symbol": "BTC-23NOV26-69000-C",
+          "symbol": "BTC-24NOV26-53000-P",
           "quote_currency": "BTC/USD",
           "schema_version": "1.0",
           "source_grade": "B",
@@ -2969,12 +2886,54 @@
         {
           "source": "Deribit public options ticker/Greeks",
           "url": "https://www.deribit.com/api/v2/public/ticker",
-          "retrieved_at_utc": "2026-11-19T18:43:54.214672+00:00",
-          "file": "data/raw/supplemental/deribit_options/ticker_BTC_23NOV26_71000_C.json",
-          "size_bytes": 841,
-          "sha256": "2350f1fc224ba2a98678c3502269bd1a84a30322a0f3a15abb72ce63c0c57e74",
+          "retrieved_at_utc": "2026-11-20T16:53:48.328389+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_24NOV26_56000_P.json",
+          "size_bytes": 865,
+          "sha256": "b31ceb818fd4130c44a3d25c18e70e2430923e70145f4e59f6fd0fecaedc5d58",
           "venue": "Deribit Options",
-          "symbol": "BTC-23NOV26-71000-C",
+          "symbol": "BTC-24NOV26-56000-P",
+          "quote_currency": "BTC/USD",
+          "schema_version": "1.0",
+          "source_grade": "B",
+          "license_terms_note": "Public endpoint; provider terms apply; legal review not performed."
+        },
+        {
+          "source": "Deribit public options ticker/Greeks",
+          "url": "https://www.deribit.com/api/v2/public/ticker",
+          "retrieved_at_utc": "2026-11-20T16:53:48.525286+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_24NOV26_62500_C.json",
+          "size_bytes": 851,
+          "sha256": "fc74a9a5ff3a9d8933270cb2bc37c6f0b9a6ae88267a8c366b477f747fc52814",
+          "venue": "Deribit Options",
+          "symbol": "BTC-24NOV26-62500-C",
+          "quote_currency": "BTC/USD",
+          "schema_version": "1.0",
+          "source_grade": "B",
+          "license_terms_note": "Public endpoint; provider terms apply; legal review not performed."
+        },
+        {
+          "source": "Deribit public options ticker/Greeks",
+          "url": "https://www.deribit.com/api/v2/public/ticker",
+          "retrieved_at_utc": "2026-11-20T16:53:48.716412+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_24NOV26_65000_C.json",
+          "size_bytes": 856,
+          "sha256": "d4ef22eb948d7702867630f78bc23805c77e907909a534d3a68b1e1295cc7c85",
+          "venue": "Deribit Options",
+          "symbol": "BTC-24NOV26-65000-C",
+          "quote_currency": "BTC/USD",
+          "schema_version": "1.0",
+          "source_grade": "B",
+          "license_terms_note": "Public endpoint; provider terms apply; legal review not performed."
+        },
+        {
+          "source": "Deribit public options ticker/Greeks",
+          "url": "https://www.deribit.com/api/v2/public/ticker",
+          "retrieved_at_utc": "2026-11-20T16:53:48.914715+00:00",
+          "file": "data/raw/supplemental/deribit_options/ticker_BTC_24NOV26_68000_C.json",
+          "size_bytes": 843,
+          "sha256": "0cf4d9e382f927d5b9970859a3a240381e01e416e56843903c8e335e0cd648d3",
+          "venue": "Deribit Options",
+          "symbol": "BTC-24NOV26-68000-C",
           "quote_currency": "BTC/USD",
           "schema_version": "1.0",
           "source_grade": "B",
@@ -2993,7 +2952,7 @@
       "source_grade": "B",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "attribution": "The Commoner Bitcoin ETF Tracker by TFTC, tftc.io/bitcoin-etf-flows",
-      "retrieved_at_utc": "2026-11-19T18:43:54.533592+00:00",
+      "retrieved_at_utc": "2026-11-20T16:53:49.026537+00:00",
       "parser": "TFTC open JSON recursive session parser",
       "parser_version": "0.3",
       "schema": [
@@ -3007,10 +2966,10 @@
         {
           "source": "The Commoner Bitcoin ETF Tracker by TFTC",
           "url": "https://www.tftc.io/bitcoin-etf-flows/latest.json",
-          "retrieved_at_utc": "2026-11-19T18:43:54.481600+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:48.995945+00:00",
           "file": "data/raw/supplemental/etf_flows/us_spot_btc_etf_latest.json",
-          "size_bytes": 2201,
-          "sha256": "2e343178d731b25153a20d3d45b26312857dff6465f34b5c20f959964a137e65",
+          "size_bytes": 2173,
+          "sha256": "ab91a5dc901af4955064b4647e280bca56ae281e19b0fc9459cde586183a8e43",
           "venue": "US spot Bitcoin ETFs",
           "symbol": "aggregate",
           "quote_currency": "USD",
@@ -3021,10 +2980,10 @@
         {
           "source": "The Commoner Bitcoin ETF Tracker by TFTC",
           "url": "https://www.tftc.io/bitcoin-etf-flows/data.json",
-          "retrieved_at_utc": "2026-11-19T18:43:54.531778+00:00",
+          "retrieved_at_utc": "2026-11-20T16:53:49.025123+00:00",
           "file": "data/raw/supplemental/etf_flows/us_spot_btc_etf_full_history.json",
-          "size_bytes": 208594,
-          "sha256": "bf577e5e9044ce2ae315877d7487a4d10b8907ac310ac8a8401065c70e2a7a9d",
+          "size_bytes": 208925,
+          "sha256": "70d11804ceb9d29cd15fb10d5ff7bcf35081e47c6fdc2862838a115537811334",
           "venue": "US spot Bitcoin ETFs",
           "symbol": "daily history",
           "quote_currency": "USD",
@@ -3033,7 +2992,7 @@
           "license_terms_note": "Public endpoint; provider terms apply; legal review not performed."
         }
       ],
-      "updated_through": "2026-11-18",
+      "updated_through": "2026-11-19",
       "status": "PASS"
     },
     {
@@ -3045,7 +3004,7 @@
       "timezone": "Treasury observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:44:55.316418+00:00",
+      "retrieved_at_utc": "2026-11-20T16:54:49.683010+00:00",
       "parser": "Treasury OData XML parser",
       "parser_version": "1.0",
       "schema": [
@@ -3057,10 +3016,10 @@
         {
           "source": "US Department of the Treasury official daily par yield curve",
           "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026",
-          "retrieved_at_utc": "2026-11-19T18:44:55.316181+00:00",
+          "retrieved_at_utc": "2026-11-20T16:54:49.682758+00:00",
           "file": "data/raw/supplemental/fred/treasury_dgs2_yield_curve.xml",
-          "size_bytes": 342118,
-          "sha256": "72cb613ee76d503b6518b8b3756013467df96b742840d21d005cb41d09565e94",
+          "size_bytes": 343663,
+          "sha256": "8e2d50451c9fa50d718f57d09c6fb40f0f0f76f9ce04a8c2258e782b4d94d2a8",
           "venue": "United States Treasury",
           "symbol": "DGS2",
           "quote_currency": "percent",
@@ -3071,7 +3030,7 @@
       ],
       "status": "PASS",
       "fallback_for": "FRED transport failure",
-      "fred_primary_error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DGS2&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "fred_primary_error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DGS2&cosd=2025-11-20&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "US Department of the Treasury official daily par yield curve",
@@ -3082,7 +3041,7 @@
       "timezone": "Treasury observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:44:55.296874+00:00",
+      "retrieved_at_utc": "2026-11-20T16:54:49.778981+00:00",
       "parser": "Treasury OData XML parser",
       "parser_version": "1.0",
       "schema": [
@@ -3094,10 +3053,10 @@
         {
           "source": "US Department of the Treasury official daily par yield curve",
           "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/pages/xml?data=daily_treasury_yield_curve&field_tdr_date_value=2026",
-          "retrieved_at_utc": "2026-11-19T18:44:55.291452+00:00",
+          "retrieved_at_utc": "2026-11-20T16:54:49.778736+00:00",
           "file": "data/raw/supplemental/fred/treasury_dgs10_yield_curve.xml",
-          "size_bytes": 342118,
-          "sha256": "72cb613ee76d503b6518b8b3756013467df96b742840d21d005cb41d09565e94",
+          "size_bytes": 343663,
+          "sha256": "8e2d50451c9fa50d718f57d09c6fb40f0f0f76f9ce04a8c2258e782b4d94d2a8",
           "venue": "United States Treasury",
           "symbol": "DGS10",
           "quote_currency": "percent",
@@ -3108,7 +3067,7 @@
       ],
       "status": "PASS",
       "fallback_for": "FRED transport failure",
-      "fred_primary_error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DGS10&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "fred_primary_error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DGS10&cosd=2025-11-20&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "FRED / original statistical release provider",
@@ -3119,13 +3078,13 @@
       "timezone": "observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:44:54.768736+00:00",
+      "retrieved_at_utc": "2026-11-20T16:54:49.374548+00:00",
       "parser": "pandas CSV parser",
       "parser_version": "0.4",
       "schema": [],
       "objects": [],
       "status": "FAIL",
-      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DFII10&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DFII10&cosd=2025-11-20&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "FRED / original statistical release provider",
@@ -3136,13 +3095,13 @@
       "timezone": "observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:44:54.763740+00:00",
+      "retrieved_at_utc": "2026-11-20T16:54:49.369178+00:00",
       "parser": "pandas CSV parser",
       "parser_version": "0.4",
       "schema": [],
       "objects": [],
       "status": "FAIL",
-      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=FEDFUNDS&cosd=2021-11-20&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=FEDFUNDS&cosd=2021-11-21&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "FRED / original statistical release provider",
@@ -3153,13 +3112,13 @@
       "timezone": "observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:45:54.847006+00:00",
+      "retrieved_at_utc": "2026-11-20T16:55:49.617103+00:00",
       "parser": "pandas CSV parser",
       "parser_version": "0.4",
       "schema": [],
       "objects": [],
       "status": "FAIL",
-      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=CPIAUCSL&cosd=2021-11-20&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=CPIAUCSL&cosd=2021-11-21&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "FRED / original statistical release provider",
@@ -3170,13 +3129,13 @@
       "timezone": "observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:45:54.950910+00:00",
+      "retrieved_at_utc": "2026-11-20T16:55:49.615938+00:00",
       "parser": "pandas CSV parser",
       "parser_version": "0.4",
       "schema": [],
       "objects": [],
       "status": "FAIL",
-      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=PCEPILFE&cosd=2021-11-20&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=PCEPILFE&cosd=2021-11-21&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "FRED / original statistical release provider",
@@ -3187,13 +3146,13 @@
       "timezone": "observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:45:55.390926+00:00",
+      "retrieved_at_utc": "2026-11-20T16:55:49.872015+00:00",
       "parser": "pandas CSV parser",
       "parser_version": "0.4",
       "schema": [],
       "objects": [],
       "status": "FAIL",
-      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=UNRATE&cosd=2021-11-20&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=UNRATE&cosd=2021-11-21&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "FRED / original statistical release provider",
@@ -3204,13 +3163,13 @@
       "timezone": "observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:45:55.410646+00:00",
+      "retrieved_at_utc": "2026-11-20T16:55:49.935779+00:00",
       "parser": "pandas CSV parser",
       "parser_version": "0.4",
       "schema": [],
       "objects": [],
       "status": "FAIL",
-      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=PAYEMS&cosd=2021-11-20&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=PAYEMS&cosd=2021-11-21&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "FRED / original statistical release provider",
@@ -3221,13 +3180,13 @@
       "timezone": "observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:46:55.048740+00:00",
+      "retrieved_at_utc": "2026-11-20T16:56:49.906094+00:00",
       "parser": "pandas CSV parser",
       "parser_version": "0.4",
       "schema": [],
       "objects": [],
       "status": "FAIL",
-      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DTWEXBGS&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DTWEXBGS&cosd=2025-11-20&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "FRED / original statistical release provider",
@@ -3238,13 +3197,13 @@
       "timezone": "observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:46:55.045479+00:00",
+      "retrieved_at_utc": "2026-11-20T16:56:49.904850+00:00",
       "parser": "pandas CSV parser",
       "parser_version": "0.4",
       "schema": [],
       "objects": [],
       "status": "FAIL",
-      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=WALCL&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=WALCL&cosd=2025-11-20&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "FRED / original statistical release provider",
@@ -3255,13 +3214,13 @@
       "timezone": "observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:46:55.485840+00:00",
+      "retrieved_at_utc": "2026-11-20T16:56:50.024886+00:00",
       "parser": "pandas CSV parser",
       "parser_version": "0.4",
       "schema": [],
       "objects": [],
       "status": "FAIL",
-      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=RRPONTSYD&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=RRPONTSYD&cosd=2025-11-20&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "FRED / original statistical release provider",
@@ -3272,13 +3231,13 @@
       "timezone": "observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:46:55.460645+00:00",
+      "retrieved_at_utc": "2026-11-20T16:56:50.093813+00:00",
       "parser": "pandas CSV parser",
       "parser_version": "0.4",
       "schema": [],
       "objects": [],
       "status": "FAIL",
-      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=NFCI&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=NFCI&cosd=2025-11-20&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "FRED / original statistical release provider",
@@ -3289,13 +3248,13 @@
       "timezone": "observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:47:55.247144+00:00",
+      "retrieved_at_utc": "2026-11-20T16:57:50.169625+00:00",
       "parser": "pandas CSV parser",
       "parser_version": "0.4",
       "schema": [],
       "objects": [],
       "status": "FAIL",
-      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=SP500&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=SP500&cosd=2025-11-20&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "FRED / original statistical release provider",
@@ -3306,13 +3265,13 @@
       "timezone": "observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:47:55.241665+00:00",
+      "retrieved_at_utc": "2026-11-20T16:57:50.170811+00:00",
       "parser": "pandas CSV parser",
       "parser_version": "0.4",
       "schema": [],
       "objects": [],
       "status": "FAIL",
-      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=NASDAQCOM&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=NASDAQCOM&cosd=2025-11-20&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "Cboe official VIX historical daily prices",
@@ -3323,7 +3282,7 @@
       "timezone": "Cboe session date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:47:55.750215+00:00",
+      "retrieved_at_utc": "2026-11-20T16:57:50.328960+00:00",
       "parser": "Cboe VIX history CSV parser",
       "parser_version": "1.0",
       "schema": [
@@ -3337,10 +3296,10 @@
         {
           "source": "Cboe official VIX historical daily prices",
           "url": "https://cdn-api.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv",
-          "retrieved_at_utc": "2026-11-19T18:47:55.749888+00:00",
+          "retrieved_at_utc": "2026-11-20T16:57:50.328654+00:00",
           "file": "data/raw/supplemental/fred/cboe_vix_history.csv",
-          "size_bytes": 475012,
-          "sha256": "c0c3868399a0d97e7d5052d898dacfd054de654ed6d587614564b4ca40ed1883",
+          "size_bytes": 475063,
+          "sha256": "0d9c033a1ee06d41832ef98ce17d84910c8c386d890daca5cb24bbf9cd4af8d5",
           "venue": "Cboe",
           "symbol": "VIX",
           "quote_currency": "index points",
@@ -3351,7 +3310,7 @@
       ],
       "status": "PASS",
       "fallback_for": "FRED transport failure",
-      "fred_primary_error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=VIXCLS&cosd=2025-11-19&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "fred_primary_error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=VIXCLS&cosd=2025-11-20&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     },
     {
       "source": "FRED / original statistical release provider",
@@ -3362,13 +3321,13 @@
       "timezone": "observation date",
       "schema_version": "1.0",
       "source_grade": "A",
-      "retrieved_at_utc": "2026-11-19T18:47:55.574791+00:00",
+      "retrieved_at_utc": "2026-11-20T16:57:50.255812+00:00",
       "parser": "pandas CSV parser",
       "parser_version": "0.4",
       "schema": [],
       "objects": [],
       "status": "FAIL",
-      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=M2SL&cosd=2021-11-20&coed=2026-11-19 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+      "error": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=M2SL&cosd=2021-11-21&coed=2026-11-20 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
     }
   ]
 }
