@@ -1,5 +1,5 @@
 {
-  "started_at_utc": "2026-11-24T16:58:11.587460+00:00",
+  "started_at_utc": "2026-11-25T16:59:02.381470+00:00",
   "status": "COMPLETE_NOT_PROMOTED",
   "protocol": "V5.6",
   "steps": [
@@ -7,23 +7,23 @@
       "step": "binance_acquisition_and_qa",
       "status": "PASS",
       "qa": {
-        "rows": 3386,
+        "rows": 3387,
         "duplicates": 0,
         "missing_volume": 0,
         "first_timestamp_utc": "2017-08-17T00:00:00+00:00",
-        "last_timestamp_utc": "2026-11-23T00:00:00+00:00",
+        "last_timestamp_utc": "2026-11-24T00:00:00+00:00",
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 16.983,
+        "latest_candle_age_hours": 16.994,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
-        "volume_median_btc": 36245.10667,
+        "volume_median_btc": 36230.452264,
         "volume_median_scope": "full available history; descriptive only",
         "volume_robust_z_window_sessions": 90,
         "volume_robust_z_min_history_sessions": 60,
         "volume_robust_z_scope": "current volume versus median and MAD of the prior 90 completed daily sessions; current session excluded",
-        "volume_p99_btc": 386050.5210520001,
+        "volume_p99_btc": 386039.61420119985,
         "volume_max_btc": 760705.362783,
         "volume_robust_z_max": 16.306271304475462,
         "volume_robust_z_max_timestamp_utc": "2017-12-22T00:00:00+00:00",
@@ -32,9 +32,9 @@
         "volume_max_timestamp_utc": "2022-11-08T00:00:00+00:00",
         "absolute_close_return_max_timestamp_utc": "2020-03-12T00:00:00+00:00",
         "intraday_range_pct_max_timestamp_utc": "2020-03-13T00:00:00+00:00",
-        "absolute_close_return_p99": 0.11693489220341823,
+        "absolute_close_return_p99": 0.1169339076194957,
         "absolute_close_return_max": 0.5026069427414583,
-        "intraday_range_pct_p99": 0.19231069529842962,
+        "intraday_range_pct_p99": 0.19230195890363205,
         "intraday_range_pct_max": 0.45268030691602723,
         "diagnostic_note": "Zero-volume and tail metrics are descriptive QA diagnostics, not automatic rejection thresholds."
       }
@@ -46,12 +46,12 @@
         "rows": 3650,
         "duplicates": 0,
         "missing_volume": 0,
-        "first_timestamp_utc": "2016-11-26T00:00:00+00:00",
-        "last_timestamp_utc": "2026-11-23T00:00:00+00:00",
+        "first_timestamp_utc": "2016-11-27T00:00:00+00:00",
+        "last_timestamp_utc": "2026-11-24T00:00:00+00:00",
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 16.984,
+        "latest_candle_age_hours": 16.994,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 3139.841294945,
@@ -86,7 +86,7 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-24T16:59:02.797349+00:00",
+      "retrieved_at_utc": "2026-11-25T16:59:40.236376+00:00",
       "parser": "Coinbase candle array parser",
       "parser_version": "0.2",
       "schema": [
@@ -100,11 +100,11 @@
       "objects": [
         {
           "source": "Coinbase Exchange candles API",
-          "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=2026-01-28T00%3A00%3A00%2B00%3A00&end=2026-11-24T00%3A00%3A00%2B00%3A00",
-          "retrieved_at_utc": "2026-11-24T16:59:02.797312+00:00",
+          "url": "https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start=2026-01-29T00%3A00%3A00%2B00%3A00&end=2026-11-25T00%3A00%3A00%2B00%3A00",
+          "retrieved_at_utc": "2026-11-25T16:59:40.236338+00:00",
           "file": "data/raw/coinbase/coinbase_btcusd_1d_recent.json",
-          "size_bytes": 18465,
-          "sha256": "65a74f470c3c916e87a81f589e37e607b49515a28eb143b9fa513a4aea84be00",
+          "size_bytes": 18467,
+          "sha256": "bc267053dccd5858f7cc9156b01ba3d66ca65900024dbc57163aa3362389d157",
           "venue": "Coinbase",
           "symbol": "BTC-USD",
           "quote_currency": "USD",
@@ -114,22 +114,22 @@
         }
       ],
       "rows": 300,
-      "first_timestamp": "2026-01-28T00:00:00+00:00",
-      "last_timestamp": "2026-11-23T00:00:00+00:00",
+      "first_timestamp": "2026-01-29T00:00:00+00:00",
+      "last_timestamp": "2026-11-24T00:00:00+00:00",
       "qa": {
         "status": "PASS",
         "rows": 300,
         "duplicates": 0,
         "missing_volume": 0,
-        "first_timestamp_utc": "2026-01-28T00:00:00+00:00",
-        "last_timestamp_utc": "2026-11-23T00:00:00+00:00",
+        "first_timestamp_utc": "2026-01-29T00:00:00+00:00",
+        "last_timestamp_utc": "2026-11-24T00:00:00+00:00",
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 16.984,
+        "latest_candle_age_hours": 16.995,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
-        "volume_median_btc": 7321.695847545,
+        "volume_median_btc": 7366.011566900001,
         "volume_median_scope": "full available history; descriptive only",
         "volume_robust_z_window_sessions": 90,
         "volume_robust_z_min_history_sessions": 60,
@@ -162,7 +162,7 @@
       "schema_version": "1.0",
       "source_grade": "B",
       "license_terms_note": "Public endpoint; provider terms apply; legal review not performed.",
-      "retrieved_at_utc": "2026-11-24T16:59:02.977717+00:00",
+      "retrieved_at_utc": "2026-11-25T16:59:40.392012+00:00",
       "parser": "Kraken OHLC parser",
       "parser_version": "0.2",
       "schema": [
@@ -177,10 +177,10 @@
         {
           "source": "Kraken public OHLC API",
           "url": "https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=1440",
-          "retrieved_at_utc": "2026-11-24T16:59:02.977467+00:00",
+          "retrieved_at_utc": "2026-11-25T16:59:40.391706+00:00",
           "file": "data/raw/kraken/kraken_btcusd_1d_recent.json",
-          "size_bytes": 62337,
-          "sha256": "4597cff11eeb2cddc9e52b96015423a4579ce4e7f580aac8054556820a79fb05",
+          "size_bytes": 62338,
+          "sha256": "9c6a3e2ae76326c1d5b7510946565e75792e064e84e1a95b28d60401cb652599",
           "venue": "Kraken",
           "symbol": "XBT/USD",
           "quote_currency": "USD",
@@ -190,19 +190,19 @@
         }
       ],
       "rows": 720,
-      "first_timestamp": "2024-12-04T00:00:00+00:00",
-      "last_timestamp": "2026-11-23T00:00:00+00:00",
+      "first_timestamp": "2024-12-05T00:00:00+00:00",
+      "last_timestamp": "2026-11-24T00:00:00+00:00",
       "qa": {
         "status": "PASS",
         "rows": 720,
         "duplicates": 0,
         "missing_volume": 0,
-        "first_timestamp_utc": "2024-12-04T00:00:00+00:00",
-        "last_timestamp_utc": "2026-11-23T00:00:00+00:00",
+        "first_timestamp_utc": "2024-12-05T00:00:00+00:00",
+        "last_timestamp_utc": "2026-11-24T00:00:00+00:00",
         "gap_count": 0,
         "closed_candles_only": "PASS",
         "latest_age_days": 1,
-        "latest_candle_age_hours": 16.984,
+        "latest_candle_age_hours": 16.995,
         "zero_volume_rows": 0,
         "zero_volume_pct": 0.0,
         "volume_median_btc": 1693.83524465,
@@ -287,185 +287,185 @@
           "1": {
             "zero": {
               "n": 362,
-              "mae": 0.015920739310195213,
-              "rmse": 0.023254954105021087,
+              "mae": 0.01582400244690515,
+              "rmse": 0.02318199193602817,
               "p90_absolute_error": 0.03655310912917574,
               "p99_absolute_error": 0.06815537063242463,
               "worst_decile_mean_absolute_error": 0.05437381650090222,
               "max_absolute_error": 0.15102557824214516,
               "directional_accuracy": null,
-              "mean_error": 0.0009802307023590675
+              "mean_error": 0.0010769828947027255
             },
             "drift": {
               "n": 362,
-              "mae": 0.015976074817042354,
-              "rmse": 0.023312194244137722,
-              "p90_absolute_error": 0.036811962089428024,
-              "p99_absolute_error": 0.06840232148837737,
-              "worst_decile_mean_absolute_error": 0.054329518037764604,
-              "max_absolute_error": 0.15194964853480186,
-              "directional_accuracy": 0.48342541436464087,
-              "mean_error": 0.0019043009950157825
+              "mae": 0.015885281980491092,
+              "rmse": 0.02324394228420565,
+              "p90_absolute_error": 0.03681988748455529,
+              "p99_absolute_error": 0.06841024688350462,
+              "worst_decile_mean_absolute_error": 0.054329303837896296,
+              "max_absolute_error": 0.15195757392992915,
+              "directional_accuracy": 0.48066298342541436,
+              "mean_error": 0.002008978582486705
             },
             "momentum": {
               "n": 362,
-              "mae": 0.027306553723583076,
-              "rmse": 0.03248248611109853,
-              "p90_absolute_error": 0.046984178534836336,
-              "p99_absolute_error": 0.08156296350946042,
-              "worst_decile_mean_absolute_error": 0.06256442574930765,
-              "max_absolute_error": 0.13873610692941568,
-              "directional_accuracy": 0.5193370165745856,
-              "mean_error": -0.0018990554045815497
+              "mae": 0.027209979007401915,
+              "rmse": 0.032359701397688435,
+              "p90_absolute_error": 0.04690844328081794,
+              "p99_absolute_error": 0.08156319296078478,
+              "worst_decile_mean_absolute_error": 0.06224578461536177,
+              "max_absolute_error": 0.13873633638074004,
+              "directional_accuracy": 0.5220994475138122,
+              "mean_error": -0.0018023311013491403
             },
             "ridge": {
               "n": 362,
-              "mae": 0.01598198203093724,
-              "rmse": 0.02329788596229338,
-              "p90_absolute_error": 0.03711709146573665,
-              "p99_absolute_error": 0.06649062308743775,
-              "worst_decile_mean_absolute_error": 0.054116489556323255,
-              "max_absolute_error": 0.15009628437547357,
-              "directional_accuracy": 0.4861878453038674,
-              "mean_error": 0.0013450835087766779
+              "mae": 0.01588925032169183,
+              "rmse": 0.023228679781187214,
+              "p90_absolute_error": 0.03716367470396844,
+              "p99_absolute_error": 0.06649930722689423,
+              "worst_decile_mean_absolute_error": 0.0541174809387679,
+              "max_absolute_error": 0.1501203813089073,
+              "directional_accuracy": 0.48342541436464087,
+              "mean_error": 0.0014555929131845427
             }
           },
           "3": {
             "zero": {
               "n": 360,
-              "mae": 0.02851757514398542,
-              "rmse": 0.03985730995980709,
+              "mae": 0.02851503052106539,
+              "rmse": 0.03985481691948129,
               "p90_absolute_error": 0.05947007483487051,
               "p99_absolute_error": 0.13104649121476855,
               "worst_decile_mean_absolute_error": 0.09156586898606284,
               "max_absolute_error": 0.22443043818628813,
               "directional_accuracy": null,
-              "mean_error": 0.0033330262180701134
+              "mean_error": 0.003335570840990148
             },
             "drift": {
               "n": 360,
-              "mae": 0.02876982716976163,
-              "rmse": 0.04017983660976619,
-              "p90_absolute_error": 0.05977498646749715,
-              "p99_absolute_error": 0.13378990939500507,
-              "worst_decile_mean_absolute_error": 0.09208603205217493,
-              "max_absolute_error": 0.22717385636652465,
+              "mae": 0.02876726003662083,
+              "rmse": 0.04017751068156771,
+              "p90_absolute_error": 0.05977512740105322,
+              "p99_absolute_error": 0.13378973322805998,
+              "worst_decile_mean_absolute_error": 0.09208598311691239,
+              "max_absolute_error": 0.22717368019957956,
               "directional_accuracy": 0.4777777777777778,
-              "mean_error": 0.006076444398306641
+              "mean_error": 0.006078812854281587
             },
             "momentum": {
               "n": 360,
-              "mae": 0.04835085328212826,
-              "rmse": 0.05679612358640742,
-              "p90_absolute_error": 0.08275275120409321,
-              "p99_absolute_error": 0.1448007086222917,
-              "worst_decile_mean_absolute_error": 0.1077069873619019,
-              "max_absolute_error": 0.18130072748342396,
+              "mae": 0.048337929673582636,
+              "rmse": 0.05678256355783681,
+              "p90_absolute_error": 0.08276382212209384,
+              "p99_absolute_error": 0.14479821766574155,
+              "worst_decile_mean_absolute_error": 0.10769622396940126,
+              "max_absolute_error": 0.18131456613092475,
               "directional_accuracy": 0.4861111111111111,
-              "mean_error": -0.0016987733639307063
+              "mean_error": -0.001694614232135579
             },
             "ridge": {
               "n": 360,
-              "mae": 0.028738740487621282,
-              "rmse": 0.039983497592728366,
-              "p90_absolute_error": 0.06019100254745096,
-              "p99_absolute_error": 0.13255327257033384,
-              "worst_decile_mean_absolute_error": 0.09207419508890025,
-              "max_absolute_error": 0.22148164477814655,
-              "directional_accuracy": 0.45,
-              "mean_error": 0.004586916090667097
+              "mae": 0.02874632077713968,
+              "rmse": 0.03999106226544994,
+              "p90_absolute_error": 0.06019356058719086,
+              "p99_absolute_error": 0.132556095048169,
+              "worst_decile_mean_absolute_error": 0.09207491113070396,
+              "max_absolute_error": 0.22148411158103284,
+              "directional_accuracy": 0.4444444444444444,
+              "mean_error": 0.004581710475387174
             }
           },
           "7": {
             "zero": {
               "n": 356,
-              "mae": 0.04401109553309602,
-              "rmse": 0.062285155170459065,
+              "mae": 0.04404907757588808,
+              "rmse": 0.06231595367081128,
               "p90_absolute_error": 0.09730438530252924,
               "p99_absolute_error": 0.20114051204359085,
               "worst_decile_mean_absolute_error": 0.1521340685476298,
               "max_absolute_error": 0.29682393157753495,
               "directional_accuracy": null,
-              "mean_error": 0.007197765749835464
+              "mean_error": 0.007481572787573799
             },
             "drift": {
               "n": 356,
-              "mae": 0.04492700281684697,
-              "rmse": 0.06336478497442935,
+              "mae": 0.044995565281686675,
+              "rmse": 0.06341751666904749,
               "p90_absolute_error": 0.09445195373638288,
-              "p99_absolute_error": 0.20237181858507236,
-              "worst_decile_mean_absolute_error": 0.15468415646026215,
-              "max_absolute_error": 0.30331788785369057,
-              "directional_accuracy": 0.45224719101123595,
-              "mean_error": 0.0136917220259911
+              "p99_absolute_error": 0.20236881675321042,
+              "worst_decile_mean_absolute_error": 0.15467081498532023,
+              "max_absolute_error": 0.3032878695350713,
+              "directional_accuracy": 0.449438202247191,
+              "mean_error": 0.013945510745110159
             },
             "momentum": {
               "n": 356,
-              "mae": 0.07650216273749663,
-              "rmse": 0.08870325552568115,
-              "p90_absolute_error": 0.12775287636927132,
-              "p99_absolute_error": 0.24659055210822478,
-              "worst_decile_mean_absolute_error": 0.16397093513621944,
-              "max_absolute_error": 0.2850895962908665,
-              "directional_accuracy": 0.5,
-              "mean_error": -4.810106383325624e-05
+              "mae": 0.07622223043682348,
+              "rmse": 0.08851091571083977,
+              "p90_absolute_error": 0.12775769946855525,
+              "p99_absolute_error": 0.2465900697982964,
+              "worst_decile_mean_absolute_error": 0.16397522233558293,
+              "max_absolute_error": 0.28509441939015046,
+              "directional_accuracy": 0.5028089887640449,
+              "mean_error": 0.00023519114870061713
             },
             "ridge": {
               "n": 356,
-              "mae": 0.044683082146345546,
-              "rmse": 0.06295480979850378,
-              "p90_absolute_error": 0.09242637706784862,
-              "p99_absolute_error": 0.20007994417970068,
-              "worst_decile_mean_absolute_error": 0.1529156029288673,
-              "max_absolute_error": 0.2988418784439564,
+              "mae": 0.044702750429063375,
+              "rmse": 0.06296599770828845,
+              "p90_absolute_error": 0.09249083827042137,
+              "p99_absolute_error": 0.20008289366389723,
+              "worst_decile_mean_absolute_error": 0.15287996988937774,
+              "max_absolute_error": 0.2987905605583994,
               "directional_accuracy": 0.4241573033707865,
-              "mean_error": 0.010666893479033266
+              "mean_error": 0.010905597052170557
             }
           },
           "30": {
             "zero": {
               "n": 333,
-              "mae": 0.10702632192398988,
-              "rmse": 0.14208866214661744,
-              "p90_absolute_error": 0.24832189913847344,
+              "mae": 0.10785546440339411,
+              "rmse": 0.14290159734195532,
+              "p90_absolute_error": 0.24895599185891862,
               "p99_absolute_error": 0.33895628361335534,
-              "worst_decile_mean_absolute_error": 0.2958421395591672,
+              "worst_decile_mean_absolute_error": 0.2967030906144966,
               "max_absolute_error": 0.39890694414707334,
               "directional_accuracy": null,
-              "mean_error": 0.019195182481435417
+              "mean_error": 0.02002432496083962
             },
             "drift": {
               "n": 333,
-              "mae": 0.10851296853846669,
-              "rmse": 0.14859423081107986,
-              "p90_absolute_error": 0.27666104688495313,
-              "p99_absolute_error": 0.367295431359835,
-              "worst_decile_mean_absolute_error": 0.3241812873056469,
-              "max_absolute_error": 0.427246091893553,
+              "mae": 0.10932441538189981,
+              "rmse": 0.1494987622297627,
+              "p90_absolute_error": 0.27720160552955125,
+              "p99_absolute_error": 0.36720189728398794,
+              "worst_decile_mean_absolute_error": 0.32494870428512923,
+              "max_absolute_error": 0.42715255781770595,
               "directional_accuracy": 0.5405405405405406,
-              "mean_error": 0.0475343302279151
+              "mean_error": 0.04826993863147222
             },
             "momentum": {
               "n": 333,
-              "mae": 0.18451760585686247,
-              "rmse": 0.21777497231526835,
-              "p90_absolute_error": 0.35845132579244315,
-              "p99_absolute_error": 0.4875549392267856,
-              "worst_decile_mean_absolute_error": 0.42966707116075364,
-              "max_absolute_error": 0.5557418443910055,
+              "mae": 0.1844363264638074,
+              "rmse": 0.21773265573985817,
+              "p90_absolute_error": 0.3584816389574024,
+              "p99_absolute_error": 0.4875852523917449,
+              "worst_decile_mean_absolute_error": 0.4296973843257129,
+              "max_absolute_error": 0.5557721575559648,
               "directional_accuracy": 0.45045045045045046,
-              "mean_error": 0.012130547335312346
+              "mean_error": 0.012958324356835506
             },
             "ridge": {
               "n": 333,
-              "mae": 0.10958983515859241,
-              "rmse": 0.1503693990681511,
-              "p90_absolute_error": 0.27430396068957397,
-              "p99_absolute_error": 0.36914489911309106,
-              "worst_decile_mean_absolute_error": 0.32389327643815985,
-              "max_absolute_error": 0.42440122972784866,
+              "mae": 0.1104720728595657,
+              "rmse": 0.15121673033092775,
+              "p90_absolute_error": 0.2775525592536494,
+              "p99_absolute_error": 0.3690488811456879,
+              "worst_decile_mean_absolute_error": 0.32446796056278276,
+              "max_absolute_error": 0.4241812476560768,
               "directional_accuracy": 0.5045045045045045,
-              "mean_error": 0.03969468329143628
+              "mean_error": 0.04045017748424135
             }
           }
         },
@@ -473,14 +473,14 @@
           "1": {
             "ridge_vs_zero": {
               "n": 362,
-              "mean_absolute_loss_difference": 6.124272074202746e-05,
-              "hac_standard_error": 7.088913274948998e-05,
+              "mean_absolute_loss_difference": 6.524787478668272e-05,
+              "hac_standard_error": 7.078660496189809e-05,
               "normal_approx_95pct_ci": [
-                -7.769997944697291e-05,
-                0.00020018542093102782
+                -7.349387093863754e-05,
+                0.00020398962051200296
               ],
-              "z_score": 0.8639225557808516,
-              "two_sided_p_value_normal_approx": 0.38763043511441253,
+              "z_score": 0.92175454412319,
+              "two_sided_p_value_normal_approx": 0.3566566226142154,
               "hac_lags": 0,
               "interpretation": "challenger_worse",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
@@ -489,14 +489,14 @@
             },
             "ridge_vs_drift": {
               "n": 362,
-              "mean_absolute_loss_difference": 5.907213894885415e-06,
-              "hac_standard_error": 7.428826510590438e-05,
+              "mean_absolute_loss_difference": 3.968341200736895e-06,
+              "hac_standard_error": 7.377474125696835e-05,
               "normal_approx_95pct_ci": [
-                -0.00013969778571268717,
-                0.00015151221350245798
+                -0.00014063015166292106,
+                0.00014856683406439488
               ],
-              "z_score": 0.0795174565789653,
-              "two_sided_p_value_normal_approx": 0.9366210472350267,
+              "z_score": 0.05378997110833063,
+              "two_sided_p_value_normal_approx": 0.9571024998490224,
               "hac_lags": 0,
               "interpretation": "challenger_worse",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
@@ -507,14 +507,14 @@
           "3": {
             "ridge_vs_zero": {
               "n": 360,
-              "mean_absolute_loss_difference": 0.00022116534363586022,
-              "hac_standard_error": 0.00018297370186258068,
+              "mean_absolute_loss_difference": 0.00023129025607429568,
+              "hac_standard_error": 0.00018299205504767647,
               "normal_approx_95pct_ci": [
-                -0.00013746311201479793,
-                0.0005797937992865184
+                -0.00012737417181915022,
+                0.0005899546839677416
               ],
-              "z_score": 1.2087274913526247,
-              "two_sided_p_value_normal_approx": 0.22676755627767708,
+              "z_score": 1.263936054568247,
+              "two_sided_p_value_normal_approx": 0.20625297954998842,
               "hac_lags": 2,
               "interpretation": "challenger_worse",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
@@ -523,14 +523,14 @@
             },
             "ridge_vs_drift": {
               "n": 360,
-              "mean_absolute_loss_difference": -3.108668214034652e-05,
-              "hac_standard_error": 0.00018044818095099875,
+              "mean_absolute_loss_difference": -2.0939259481149462e-05,
+              "hac_standard_error": 0.00018009249102520557,
               "normal_approx_95pct_ci": [
-                -0.0003847651168043041,
-                0.000322591752523611
+                -0.00037392054189055237,
+                0.0003320420229282535
               ],
-              "z_score": -0.17227484353964312,
-              "two_sided_p_value_normal_approx": 0.8632214606063198,
+              "z_score": -0.11626947554531201,
+              "two_sided_p_value_normal_approx": 0.9074389764939497,
               "hac_lags": 2,
               "interpretation": "challenger_better",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
@@ -541,14 +541,14 @@
           "7": {
             "ridge_vs_zero": {
               "n": 356,
-              "mean_absolute_loss_difference": 0.0006719866132495282,
-              "hac_standard_error": 0.0004534692503102706,
+              "mean_absolute_loss_difference": 0.0006536728531752959,
+              "hac_standard_error": 0.00045041509181111027,
               "normal_approx_95pct_ci": [
-                -0.00021681311735860216,
-                0.0015607863438576585
+                -0.0002291407267744802,
+                0.001536486433125072
               ],
-              "z_score": 1.4818791192340928,
-              "two_sided_p_value_normal_approx": 0.13837246195733416,
+              "z_score": 1.4512676530151114,
+              "two_sided_p_value_normal_approx": 0.1467053448418179,
               "hac_lags": 6,
               "interpretation": "challenger_worse",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
@@ -557,14 +557,14 @@
             },
             "ridge_vs_drift": {
               "n": 356,
-              "mean_absolute_loss_difference": -0.0002439206705014274,
-              "hac_standard_error": 0.0004476148894122866,
+              "mean_absolute_loss_difference": -0.0002928148526233041,
+              "hac_standard_error": 0.00045098833902991437,
               "normal_approx_95pct_ci": [
-                -0.0011212458537495091,
-                0.0006334045127466543
+                -0.0011767519971219362,
+                0.0005911222918753281
               ],
-              "z_score": -0.5449342197300285,
-              "two_sided_p_value_normal_approx": 0.5857987599806862,
+              "z_score": -0.6492736669270766,
+              "two_sided_p_value_normal_approx": 0.5161615033525151,
               "hac_lags": 6,
               "interpretation": "challenger_better",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
@@ -575,14 +575,14 @@
           "30": {
             "ridge_vs_zero": {
               "n": 333,
-              "mean_absolute_loss_difference": 0.0025635132346025127,
-              "hac_standard_error": 0.006044517797529823,
+              "mean_absolute_loss_difference": 0.0026166084561716216,
+              "hac_standard_error": 0.006034433680245891,
               "normal_approx_95pct_ci": [
-                -0.00928374164855594,
-                0.014410768117760965
+                -0.009210881557110324,
+                0.014444098469453569
               ],
-              "z_score": 0.42410549864707625,
-              "two_sided_p_value_normal_approx": 0.6714888755579573,
+              "z_score": 0.43361292787710276,
+              "two_sided_p_value_normal_approx": 0.6645695453197763,
               "hac_lags": 29,
               "interpretation": "challenger_worse",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
@@ -591,14 +591,14 @@
             },
             "ridge_vs_drift": {
               "n": 333,
-              "mean_absolute_loss_difference": 0.0010768666201257278,
-              "hac_standard_error": 0.0020734374190484704,
+              "mean_absolute_loss_difference": 0.0011476574776659028,
+              "hac_standard_error": 0.0020445034836230145,
               "normal_approx_95pct_ci": [
-                -0.0029870707212092742,
-                0.00514080396146073
+                -0.002859569350235205,
+                0.005154884305567011
               ],
-              "z_score": 0.5193629719578983,
-              "two_sided_p_value_normal_approx": 0.6035076476165486,
+              "z_score": 0.5613379907928389,
+              "two_sided_p_value_normal_approx": 0.5745671475407708,
               "hac_lags": 29,
               "interpretation": "challenger_worse",
               "warning": "Asymptotic normal approximation; overlapping targets use horizon-1 HAC lags.",
@@ -611,52 +611,52 @@
         "regime_metrics": {
           "1": {
             "bear": {
-              "n": 272,
+              "n": 273,
               "sample_reliability": "DESCRIPTIVE_ONLY",
               "metrics": {
                 "zero": {
-                  "n": 272,
-                  "mae": 0.016306399701165913,
-                  "rmse": 0.02376130844499944,
-                  "p90_absolute_error": 0.03655310912917572,
-                  "p99_absolute_error": 0.06805089998336183,
+                  "n": 273,
+                  "mae": 0.016246679462548822,
+                  "rmse": 0.023717749640046474,
+                  "p90_absolute_error": 0.036481611844832215,
+                  "p99_absolute_error": 0.06804045291845551,
                   "worst_decile_mean_absolute_error": 0.05447611385119493,
                   "max_absolute_error": 0.15102557824214516,
                   "directional_accuracy": null,
-                  "mean_error": 0.0010329729123473529
+                  "mean_error": 0.0010291992920043232
                 },
                 "drift": {
-                  "n": 272,
-                  "mae": 0.016364686404339926,
-                  "rmse": 0.023819377911419325,
-                  "p90_absolute_error": 0.03681196208942802,
-                  "p99_absolute_error": 0.06835811101208904,
+                  "n": 273,
+                  "mae": 0.016308988334687927,
+                  "rmse": 0.023776431240916062,
+                  "p90_absolute_error": 0.03679814571124242,
+                  "p99_absolute_error": 0.06836161535958743,
                   "worst_decile_mean_absolute_error": 0.05445057910678652,
-                  "max_absolute_error": 0.15194964853480186,
-                  "directional_accuracy": 0.47794117647058826,
-                  "mean_error": 0.0019570432050040666
+                  "max_absolute_error": 0.15195757392992915,
+                  "directional_accuracy": 0.47619047619047616,
+                  "mean_error": 0.0019611949797883024
                 },
                 "momentum": {
-                  "n": 272,
-                  "mae": 0.027325530336944816,
-                  "rmse": 0.033111224978035154,
-                  "p90_absolute_error": 0.04835714130460051,
-                  "p99_absolute_error": 0.08377369743116862,
-                  "worst_decile_mean_absolute_error": 0.0649564047044175,
-                  "max_absolute_error": 0.13873610692941568,
-                  "directional_accuracy": 0.5330882352941176,
-                  "mean_error": -0.0029731995686666144
+                  "n": 273,
+                  "mae": 0.02731237569004168,
+                  "rmse": 0.033081760616591536,
+                  "p90_absolute_error": 0.04834592926395752,
+                  "p99_absolute_error": 0.08375515162029641,
+                  "worst_decile_mean_absolute_error": 0.06495661776636157,
+                  "max_absolute_error": 0.13873633638074004,
+                  "directional_accuracy": 0.5347985347985348,
+                  "mean_error": -0.00304910975967953
                 },
                 "ridge": {
-                  "n": 272,
-                  "mae": 0.016345713395619525,
-                  "rmse": 0.023839865271458968,
-                  "p90_absolute_error": 0.03711709146573664,
-                  "p99_absolute_error": 0.06729734673488881,
-                  "worst_decile_mean_absolute_error": 0.05440716010405499,
-                  "max_absolute_error": 0.15009628437547357,
-                  "directional_accuracy": 0.5073529411764706,
-                  "mean_error": 0.0011848855584675633
+                  "n": 273,
+                  "mae": 0.016288587593085897,
+                  "rmse": 0.023796299580176154,
+                  "p90_absolute_error": 0.03715397494889998,
+                  "p99_absolute_error": 0.06728620772452498,
+                  "worst_decile_mean_absolute_error": 0.05440639797136215,
+                  "max_absolute_error": 0.1501203813089073,
+                  "directional_accuracy": 0.5018315018315018,
+                  "mean_error": 0.0011969134233359602
                 }
               }
             },
@@ -677,138 +677,138 @@
                 },
                 "drift": {
                   "n": 70,
-                  "mae": 0.013189744493755904,
-                  "rmse": 0.01958100579534773,
-                  "p90_absolute_error": 0.034215687359539546,
-                  "p99_absolute_error": 0.05939319447839331,
-                  "worst_decile_mean_absolute_error": 0.048556048770191436,
-                  "max_absolute_error": 0.06396238325725598,
+                  "mae": 0.0131908766930598,
+                  "rmse": 0.01958226987098911,
+                  "p90_absolute_error": 0.03422361275466681,
+                  "p99_absolute_error": 0.05939620612854167,
+                  "worst_decile_mean_absolute_error": 0.04855718096949533,
+                  "max_absolute_error": 0.06395445786212872,
                   "directional_accuracy": 0.4857142857142857,
-                  "mean_error": 0.0031192470611577632
+                  "mean_error": 0.003127172456285029
                 },
                 "momentum": {
                   "n": 70,
-                  "mae": 0.026422371585048558,
-                  "rmse": 0.029587017292555386,
-                  "p90_absolute_error": 0.041345868022447725,
-                  "p99_absolute_error": 0.06795051485679005,
-                  "worst_decile_mean_absolute_error": 0.05336138402277578,
-                  "max_absolute_error": 0.0804976552897492,
+                  "mae": 0.026422555146108046,
+                  "rmse": 0.029587190482101178,
+                  "p90_absolute_error": 0.041345684461388234,
+                  "p99_absolute_error": 0.0679507443081144,
+                  "worst_decile_mean_absolute_error": 0.05336161347410013,
+                  "max_absolute_error": 0.08049788474107356,
                   "directional_accuracy": 0.4714285714285714,
-                  "mean_error": -0.0005121000385444142
+                  "mean_error": -0.0005121262615529123
                 },
                 "ridge": {
                   "n": 70,
-                  "mae": 0.013388944639919562,
-                  "rmse": 0.019603772866968204,
-                  "p90_absolute_error": 0.0339428892963023,
-                  "p99_absolute_error": 0.059033726548670055,
-                  "worst_decile_mean_absolute_error": 0.04833870256420858,
-                  "max_absolute_error": 0.06299198101254047,
-                  "directional_accuracy": 0.38571428571428573,
-                  "mean_error": 0.003082876343635569
+                  "mae": 0.013388473550550171,
+                  "rmse": 0.019607101254380893,
+                  "p90_absolute_error": 0.033960420662341936,
+                  "p99_absolute_error": 0.05905341698384192,
+                  "worst_decile_mean_absolute_error": 0.04834672830777008,
+                  "max_absolute_error": 0.06299762406102456,
+                  "directional_accuracy": 0.4,
+                  "mean_error": 0.00309878391742287
                 }
               }
             },
             "range": {
-              "n": 20,
+              "n": 19,
               "sample_reliability": "LOW_N",
               "metrics": {
                 "zero": {
-                  "n": 20,
-                  "mae": 0.02053552039056364,
-                  "rmse": 0.028018337180556182,
-                  "p90_absolute_error": 0.05090213610632995,
-                  "p99_absolute_error": 0.06881419227320597,
+                  "n": 19,
+                  "mae": 0.019773099407451002,
+                  "rmse": 0.02760056975891422,
+                  "p90_absolute_error": 0.05223419021076811,
+                  "p99_absolute_error": 0.0688873227574891,
                   "worst_decile_mean_absolute_error": 0.06654714726042939,
                   "max_absolute_error": 0.07020367147458519,
                   "directional_accuracy": null,
-                  "mean_error": -0.00398937458497854
+                  "mean_error": -0.002356103822624584
                 },
                 "drift": {
-                  "n": 20,
-                  "mae": 0.020443113361297966,
-                  "rmse": 0.02790175978659036,
-                  "p90_absolute_error": 0.05016287987220458,
-                  "p99_absolute_error": 0.06824126869175881,
+                  "n": 19,
+                  "mae": 0.019724047002830793,
+                  "rmse": 0.027536672089659334,
+                  "p90_absolute_error": 0.051674992798097716,
+                  "p99_absolute_error": 0.06829084551730735,
                   "worst_decile_mean_absolute_error": 0.06654714726042939,
-                  "max_absolute_error": 0.06927960118192847,
-                  "directional_accuracy": 0.55,
-                  "mean_error": -0.0030653042923218265
+                  "max_absolute_error": 0.06927167578680121,
+                  "directional_accuracy": 0.5263157894736842,
+                  "mean_error": -0.0014241081348406036
                 },
                 "momentum": {
-                  "n": 20,
-                  "mae": 0.030143109266734164,
-                  "rmse": 0.03351493850305004,
-                  "p90_absolute_error": 0.0472734345147765,
-                  "p99_absolute_error": 0.05783413139834716,
-                  "worst_decile_mean_absolute_error": 0.05640477078134001,
-                  "max_absolute_error": 0.05871019113135154,
-                  "directional_accuracy": 0.5,
-                  "mean_error": 0.007854961445845363
+                  "n": 19,
+                  "mae": 0.02863973563529203,
+                  "rmse": 0.03163798749572231,
+                  "p90_absolute_error": 0.0442574781567861,
+                  "p99_absolute_error": 0.05273431409686568,
+                  "worst_decile_mean_absolute_error": 0.050307174922132936,
+                  "max_absolute_error": 0.05409957988265285,
+                  "directional_accuracy": 0.5263157894736842,
+                  "mean_error": 0.011358523369096147
                 },
                 "ridge": {
-                  "n": 20,
-                  "mae": 0.02011086633982003,
-                  "rmse": 0.027386775854140354,
-                  "p90_absolute_error": 0.049389029156000394,
-                  "p99_absolute_error": 0.06504953755559868,
-                  "worst_decile_mean_absolute_error": 0.06355685589084377,
-                  "max_absolute_error": 0.06596440696302912,
-                  "directional_accuracy": 0.55,
-                  "mean_error": -0.0025584992890254777
+                  "n": 19,
+                  "mae": 0.019364792368498984,
+                  "rmse": 0.026973846407010994,
+                  "p90_absolute_error": 0.0507045653828069,
+                  "p99_absolute_error": 0.06509863286658547,
+                  "worst_decile_mean_absolute_error": 0.06356876192029087,
+                  "max_absolute_error": 0.06595918527387619,
+                  "directional_accuracy": 0.5263157894736842,
+                  "mean_error": -0.0008814528535533461
                 }
               }
             }
           },
           "3": {
             "bear": {
-              "n": 270,
+              "n": 271,
               "sample_reliability": "DESCRIPTIVE_ONLY",
               "metrics": {
                 "zero": {
-                  "n": 270,
-                  "mae": 0.029912955564344684,
-                  "rmse": 0.04171797672710111,
-                  "p90_absolute_error": 0.060750874485045375,
-                  "p99_absolute_error": 0.1297756963908008,
-                  "worst_decile_mean_absolute_error": 0.09643261187915379,
+                  "n": 271,
+                  "mae": 0.029944974549519592,
+                  "rmse": 0.0417068659587321,
+                  "p90_absolute_error": 0.06061051979040229,
+                  "p99_absolute_error": 0.12964861690840418,
+                  "worst_decile_mean_absolute_error": 0.09515325144741267,
                   "max_absolute_error": 0.22443043818628813,
                   "directional_accuracy": null,
-                  "mean_error": 0.002728316510780077
+                  "mean_error": 0.0025758500271729746
                 },
                 "drift": {
-                  "n": 270,
-                  "mae": 0.030052375944250583,
-                  "rmse": 0.041986733044484775,
-                  "p90_absolute_error": 0.06062522891163982,
-                  "p99_absolute_error": 0.13251911457103732,
-                  "worst_decile_mean_absolute_error": 0.09715281512563799,
-                  "max_absolute_error": 0.22717385636652465,
-                  "directional_accuracy": 0.4962962962962963,
-                  "mean_error": 0.005471734691016606
+                  "n": 271,
+                  "mae": 0.030073742197322614,
+                  "rmse": 0.041965705103954726,
+                  "p90_absolute_error": 0.06046089434460005,
+                  "p99_absolute_error": 0.1323918589216956,
+                  "worst_decile_mean_absolute_error": 0.09584233275836858,
+                  "max_absolute_error": 0.22717368019957956,
+                  "directional_accuracy": 0.4981549815498155,
+                  "mean_error": 0.005319092040464413
                 },
                 "momentum": {
-                  "n": 270,
-                  "mae": 0.049840854737537355,
-                  "rmse": 0.058697215546789715,
-                  "p90_absolute_error": 0.08489456867014238,
-                  "p99_absolute_error": 0.14988257857316406,
-                  "worst_decile_mean_absolute_error": 0.11115250352043787,
-                  "max_absolute_error": 0.18130072748342396,
-                  "directional_accuracy": 0.46296296296296297,
-                  "mean_error": -0.004300228937094082
+                  "n": 271,
+                  "mae": 0.04994822517430641,
+                  "rmse": 0.058788980965499116,
+                  "p90_absolute_error": 0.08484954182109361,
+                  "p99_absolute_error": 0.14981930362058435,
+                  "worst_decile_mean_absolute_error": 0.11020273304555002,
+                  "max_absolute_error": 0.18131456613092475,
+                  "directional_accuracy": 0.4612546125461255,
+                  "mean_error": -0.004583612122241606
                 },
                 "ridge": {
-                  "n": 270,
-                  "mae": 0.03016319360757616,
-                  "rmse": 0.041883875459763485,
-                  "p90_absolute_error": 0.06390801044456572,
-                  "p99_absolute_error": 0.1312686088877942,
-                  "worst_decile_mean_absolute_error": 0.09712160744928991,
-                  "max_absolute_error": 0.22148164477814655,
-                  "directional_accuracy": 0.45185185185185184,
-                  "mean_error": 0.0034209650862969372
+                  "n": 271,
+                  "mae": 0.030201980219272815,
+                  "rmse": 0.041879598801062165,
+                  "p90_absolute_error": 0.06388599582845812,
+                  "p99_absolute_error": 0.13114289484304303,
+                  "worst_decile_mean_absolute_error": 0.09593540473465947,
+                  "max_absolute_error": 0.22148411158103284,
+                  "directional_accuracy": 0.44649446494464945,
+                  "mean_error": 0.003260684803269098
                 }
               }
             },
@@ -818,7 +818,7 @@
               "metrics": {
                 "zero": {
                   "n": 70,
-                  "mae": 0.02492758593649435,
+                  "mae": 0.024927585936494353,
                   "rmse": 0.03525078728798851,
                   "p90_absolute_error": 0.059429698436606185,
                   "p99_absolute_error": 0.10600572975065363,
@@ -829,138 +829,138 @@
                 },
                 "drift": {
                   "n": 70,
-                  "mae": 0.025843884499719885,
-                  "rmse": 0.03599331366282538,
-                  "p90_absolute_error": 0.05806080574000161,
-                  "p99_absolute_error": 0.10874914793089016,
-                  "worst_decile_mean_absolute_error": 0.08160555586575527,
-                  "max_absolute_error": 0.14578964875073103,
+                  "mae": 0.02584381906628314,
+                  "rmse": 0.03599325976040899,
+                  "p90_absolute_error": 0.0580609819069467,
+                  "p99_absolute_error": 0.10874897176394507,
+                  "worst_decile_mean_absolute_error": 0.08160553069904883,
+                  "max_absolute_error": 0.14578947258378594,
                   "directional_accuracy": 0.37142857142857144,
-                  "mean_error": 0.011013079915137605
+                  "mean_error": 0.011012903748192514
                 },
                 "momentum": {
                   "n": 70,
-                  "mae": 0.04586108859306907,
-                  "rmse": 0.05268137716607776,
-                  "p90_absolute_error": 0.0781019765724226,
-                  "p99_absolute_error": 0.11057902378138611,
-                  "worst_decile_mean_absolute_error": 0.10062914536687083,
-                  "max_absolute_error": 0.11164626333797589,
+                  "mae": 0.04585041306499703,
+                  "rmse": 0.05267104563103202,
+                  "p90_absolute_error": 0.07808813792492181,
+                  "p99_absolute_error": 0.11056518513388532,
+                  "worst_decile_mean_absolute_error": 0.10061926061865598,
+                  "max_absolute_error": 0.1116324246904751,
                   "directional_accuracy": 0.5571428571428572,
-                  "mean_error": 0.0033405519402880278
+                  "mean_error": 0.003342133500002404
                 },
                 "ridge": {
                   "n": 70,
-                  "mae": 0.02567508227288161,
-                  "rmse": 0.035687473381953466,
-                  "p90_absolute_error": 0.05764615903020301,
-                  "p99_absolute_error": 0.10723069860035238,
-                  "worst_decile_mean_absolute_error": 0.08085828634719859,
-                  "max_absolute_error": 0.14362274635070169,
+                  "mae": 0.025675758249074778,
+                  "rmse": 0.03568824417680664,
+                  "p90_absolute_error": 0.05764536315906041,
+                  "p99_absolute_error": 0.10723390368325102,
+                  "worst_decile_mean_absolute_error": 0.08085927095347607,
+                  "max_absolute_error": 0.14362603146584282,
                   "directional_accuracy": 0.38571428571428573,
-                  "mean_error": 0.010917004201032603
+                  "mean_error": 0.010918875057413615
                 }
               }
             },
             "range": {
-              "n": 20,
+              "n": 19,
               "sample_reliability": "LOW_N",
               "metrics": {
                 "zero": {
-                  "n": 20,
-                  "mae": 0.022244901695354143,
-                  "rmse": 0.027394715821817024,
-                  "p90_absolute_error": 0.04070865547097838,
-                  "p99_absolute_error": 0.060386121874759446,
+                  "n": 19,
+                  "mae": 0.021336414163638195,
+                  "rmse": 0.026604977810967007,
+                  "p90_absolute_error": 0.03875154883514975,
+                  "p99_absolute_error": 0.06049544348397663,
                   "worst_decile_mean_absolute_error": 0.05699715198902733,
                   "max_absolute_error": 0.06246323244988561,
                   "directional_accuracy": null,
-                  "mean_error": -0.0057816170424227755
+                  "mean_error": -0.00400664084476307
                 },
                 "drift": {
-                  "n": 20,
-                  "mae": 0.021696218059306837,
-                  "rmse": 0.026949471454168972,
-                  "p90_absolute_error": 0.039897526678758906,
-                  "p99_absolute_error": 0.058685202603012805,
+                  "n": 19,
+                  "mae": 0.020903270687855333,
+                  "rmse": 0.02633187896961565,
+                  "p90_absolute_error": 0.04149479084844119,
+                  "p99_absolute_error": 0.05873976859547011,
                   "worst_decile_mean_absolute_error": 0.05699715198902733,
-                  "max_absolute_error": 0.05971981426964908,
-                  "directional_accuracy": 0.6,
-                  "mean_error": -0.0030381988621862458
+                  "max_absolute_error": 0.05971999043659417,
+                  "directional_accuracy": 0.5789473684210527,
+                  "mean_error": -0.0012633988314716329
                 },
                 "momentum": {
-                  "n": 20,
-                  "mae": 0.036950010045812734,
-                  "rmse": 0.04287593153260396,
-                  "p90_absolute_error": 0.05749908279235411,
-                  "p99_absolute_error": 0.08130813989427522,
-                  "worst_decile_mean_absolute_error": 0.0791418344309632,
-                  "max_absolute_error": 0.08263587550082133,
-                  "directional_accuracy": 0.55,
-                  "mean_error": 0.015783238309009302
+                  "n": 19,
+                  "mae": 0.03453456556331166,
+                  "rmse": 0.039684011548222244,
+                  "p90_absolute_error": 0.054779314286623436,
+                  "p99_absolute_error": 0.0720042125998541,
+                  "worst_decile_mean_absolute_error": 0.06555133773096486,
+                  "max_absolute_error": 0.07563395471360429,
+                  "directional_accuracy": 0.5789473684210527,
+                  "mean_error": 0.020955179818868356
                 },
                 "ridge": {
-                  "n": 20,
-                  "mae": 0.02023142711981925,
-                  "rmse": 0.025222201935218423,
-                  "p90_absolute_error": 0.039154362830943694,
-                  "p99_absolute_error": 0.05328822286242109,
-                  "worst_decile_mean_absolute_error": 0.05168497232412378,
-                  "max_absolute_error": 0.054270860289119455,
-                  "directional_accuracy": 0.65,
-                  "mean_error": -0.0018280537366150104
+                  "n": 19,
+                  "mae": 0.019296619100637746,
+                  "rmse": 0.024365584322606958,
+                  "p90_absolute_error": 0.04025952744119515,
+                  "p99_absolute_error": 0.05333946774380269,
+                  "worst_decile_mean_absolute_error": 0.051686012336587386,
+                  "max_absolute_error": 0.054269536410361294,
+                  "directional_accuracy": 0.631578947368421,
+                  "mean_error": 7.625975971072628e-05
                 }
               }
             }
           },
           "7": {
             "bear": {
-              "n": 266,
+              "n": 267,
               "sample_reliability": "DESCRIPTIVE_ONLY",
               "metrics": {
                 "zero": {
-                  "n": 266,
-                  "mae": 0.04485397571360136,
-                  "rmse": 0.06373271614762703,
-                  "p90_absolute_error": 0.08916411259011854,
-                  "p99_absolute_error": 0.20553693009250723,
+                  "n": 267,
+                  "mae": 0.04490050934888529,
+                  "rmse": 0.06370976277850747,
+                  "p90_absolute_error": 0.08897567368647072,
+                  "p99_absolute_error": 0.2054413970417086,
                   "worst_decile_mean_absolute_error": 0.15492786379716322,
                   "max_absolute_error": 0.29682393157753495,
                   "directional_accuracy": null,
-                  "mean_error": 0.0041083491963802895
+                  "mean_error": 0.004307488174425346
                 },
                 "drift": {
-                  "n": 266,
-                  "mae": 0.04526391315158618,
-                  "rmse": 0.06447782142541393,
-                  "p90_absolute_error": 0.08959409118551027,
-                  "p99_absolute_error": 0.20543258395012612,
-                  "worst_decile_mean_absolute_error": 0.15745128431470817,
-                  "max_absolute_error": 0.30331788785369057,
-                  "directional_accuracy": 0.4924812030075188,
-                  "mean_error": 0.010602305472535928
+                  "n": 267,
+                  "mae": 0.045329972957649935,
+                  "rmse": 0.06447017170627971,
+                  "p90_absolute_error": 0.08906427138783639,
+                  "p99_absolute_error": 0.2054370480454587,
+                  "worst_decile_mean_absolute_error": 0.15743905462934477,
+                  "max_absolute_error": 0.3032878695350713,
+                  "directional_accuracy": 0.49063670411985016,
+                  "mean_error": 0.010771426131961703
                 },
                 "momentum": {
-                  "n": 266,
-                  "mae": 0.07882808012452593,
-                  "rmse": 0.09170057018687432,
-                  "p90_absolute_error": 0.13176945966652648,
-                  "p99_absolute_error": 0.26883143210515115,
-                  "worst_decile_mean_absolute_error": 0.1684611031708868,
-                  "max_absolute_error": 0.2850895962908665,
-                  "directional_accuracy": 0.47368421052631576,
-                  "mean_error": -0.0060995201572646
+                  "n": 267,
+                  "mae": 0.07857647865369229,
+                  "rmse": 0.09153445054697555,
+                  "p90_absolute_error": 0.13169270537394298,
+                  "p99_absolute_error": 0.2688171140904172,
+                  "worst_decile_mean_absolute_error": 0.16846556900355708,
+                  "max_absolute_error": 0.28509441939015046,
+                  "directional_accuracy": 0.4756554307116105,
+                  "mean_error": -0.0061171310253571275
                 },
                 "ridge": {
-                  "n": 266,
-                  "mae": 0.045168832294198054,
-                  "rmse": 0.06432481160792336,
-                  "p90_absolute_error": 0.08868428941925469,
-                  "p99_absolute_error": 0.20329385484809137,
-                  "worst_decile_mean_absolute_error": 0.15612879413290026,
-                  "max_absolute_error": 0.2988418784439564,
-                  "directional_accuracy": 0.45112781954887216,
-                  "mean_error": 0.006311794869120728
+                  "n": 267,
+                  "mae": 0.045209701204439144,
+                  "rmse": 0.06429037699088748,
+                  "p90_absolute_error": 0.08855794329826697,
+                  "p99_absolute_error": 0.20319858658328516,
+                  "worst_decile_mean_absolute_error": 0.15609968261125295,
+                  "max_absolute_error": 0.2987905605583994,
+                  "directional_accuracy": 0.449438202247191,
+                  "mean_error": 0.006444818654334763
                 }
               }
             },
@@ -981,86 +981,86 @@
                 },
                 "drift": {
                   "n": 70,
-                  "mae": 0.046820251268858505,
-                  "rmse": 0.06243272980848704,
-                  "p90_absolute_error": 0.11237503355472109,
-                  "p99_absolute_error": 0.1689381803986954,
-                  "worst_decile_mean_absolute_error": 0.14949939751348332,
-                  "max_absolute_error": 0.17425916150580245,
+                  "mae": 0.04680224027768693,
+                  "rmse": 0.062420039768779245,
+                  "p90_absolute_error": 0.11235101889982567,
+                  "p99_absolute_error": 0.1689081620800761,
+                  "worst_decile_mean_absolute_error": 0.14947795585732668,
+                  "max_absolute_error": 0.17422914318718316,
                   "directional_accuracy": 0.2714285714285714,
-                  "mean_error": 0.026405338072438524
+                  "mean_error": 0.026375319753819248
                 },
                 "momentum": {
                   "n": 70,
-                  "mae": 0.07171273019681706,
-                  "rmse": 0.08169293632072502,
-                  "p90_absolute_error": 0.11259553774365283,
-                  "p99_absolute_error": 0.17906265048520464,
-                  "worst_decile_mean_absolute_error": 0.15111458232592115,
-                  "max_absolute_error": 0.19860745392505924,
+                  "mae": 0.07171645087340756,
+                  "rmse": 0.08169627819682215,
+                  "p90_absolute_error": 0.11260036084293679,
+                  "p99_absolute_error": 0.17906747358448857,
+                  "worst_decile_mean_absolute_error": 0.15111940542520505,
+                  "max_absolute_error": 0.19861227702434317,
                   "directional_accuracy": 0.5714285714285714,
-                  "mean_error": 0.012153401087512774
+                  "mean_error": 0.012152849876166041
                 },
                 "ridge": {
                   "n": 70,
-                  "mae": 0.046174849317521374,
-                  "rmse": 0.06122087012605985,
-                  "p90_absolute_error": 0.10805544222897308,
-                  "p99_absolute_error": 0.1656057227744333,
-                  "worst_decile_mean_absolute_error": 0.14659730419146721,
-                  "max_absolute_error": 0.1720121841932675,
+                  "mae": 0.04614723955703395,
+                  "rmse": 0.061194808900130696,
+                  "p90_absolute_error": 0.10805095936312469,
+                  "p99_absolute_error": 0.1655225431916227,
+                  "worst_decile_mean_absolute_error": 0.14653176277020785,
+                  "max_absolute_error": 0.1719009566893541,
                   "directional_accuracy": 0.2714285714285714,
-                  "mean_error": 0.02655965283206901
+                  "mean_error": 0.026512650050360163
                 }
               }
             },
             "range": {
-              "n": 20,
+              "n": 19,
               "sample_reliability": "LOW_N",
               "metrics": {
                 "zero": {
-                  "n": 20,
-                  "mae": 0.0344691214103907,
-                  "rmse": 0.049412359281430646,
-                  "p90_absolute_error": 0.06745006585520935,
-                  "p99_absolute_error": 0.13731300624081513,
+                  "n": 19,
+                  "mae": 0.03398029363723033,
+                  "rmse": 0.04969219103744954,
+                  "p90_absolute_error": 0.07043474112817596,
+                  "p99_absolute_error": 0.13784388109178936,
                   "worst_decile_mean_absolute_error": 0.12085588586061669,
                   "max_absolute_error": 0.14739962840932397,
                   "directional_accuracy": null,
-                  "mean_error": 0.0037893497482232702
+                  "mean_error": 0.006291781266573848
                 },
                 "drift": {
-                  "n": 20,
-                  "mae": 0.03381972578277513,
-                  "rmse": 0.050328604799197964,
-                  "p90_absolute_error": 0.07264523087613385,
-                  "p99_absolute_error": 0.14133925913203163,
+                  "n": 19,
+                  "mae": 0.03364008637630736,
+                  "rmse": 0.05091596715687826,
+                  "p90_absolute_error": 0.0743131039026978,
+                  "p99_absolute_error": 0.14198080138461264,
                   "worst_decile_mean_absolute_error": 0.12085588586061669,
-                  "max_absolute_error": 0.15389358468547962,
-                  "directional_accuracy": 0.55,
-                  "mean_error": 0.010283306024378904
+                  "max_absolute_error": 0.15386356636686033,
+                  "directional_accuracy": 0.5263157894736842,
+                  "mean_error": 0.012755719224110207
                 },
                 "momentum": {
-                  "n": 20,
-                  "mae": 0.0623304753823856,
-                  "rmse": 0.06969547298926619,
-                  "p90_absolute_error": 0.10109294298089619,
-                  "p99_absolute_error": 0.12446624271552478,
-                  "worst_decile_mean_absolute_error": 0.1195571200635025,
-                  "max_absolute_error": 0.1274750598248288,
-                  "directional_accuracy": 0.6,
-                  "mean_error": 0.03773051534909253
+                  "n": 19,
+                  "mae": 0.059739088096568145,
+                  "rmse": 0.06676540908002167,
+                  "p90_absolute_error": 0.09152453560273567,
+                  "p99_absolute_error": 0.12252017714577926,
+                  "worst_decile_mean_absolute_error": 0.11370292242874197,
+                  "max_absolute_error": 0.12747988292411272,
+                  "directional_accuracy": 0.631578947368421,
+                  "mean_error": 0.04559487059874476
                 },
                 "ridge": {
-                  "n": 20,
-                  "mae": 0.033001420080791835,
-                  "rmse": 0.04896671332965017,
-                  "p90_absolute_error": 0.0711464926863403,
-                  "p99_absolute_error": 0.13517513591017677,
-                  "worst_decile_mean_absolute_error": 0.11574975612902964,
-                  "max_absolute_error": 0.1470810138405574,
-                  "directional_accuracy": 0.6,
-                  "mean_error": 0.012965047255244926
+                  "n": 19,
+                  "mae": 0.03225695590362802,
+                  "rmse": 0.049056596258271634,
+                  "p90_absolute_error": 0.07262488537419517,
+                  "p99_absolute_error": 0.13576408465409595,
+                  "worst_decile_mean_absolute_error": 0.1157509921357919,
+                  "max_absolute_error": 0.14702144919564197,
+                  "directional_accuracy": 0.631578947368421,
+                  "mean_error": 0.016091603491585508
                 }
               }
             }
@@ -1083,136 +1083,136 @@
                 },
                 "drift": {
                   "n": 266,
-                  "mae": 0.11074636049090113,
-                  "rmse": 0.15201477008287287,
-                  "p90_absolute_error": 0.2797283227295555,
-                  "p99_absolute_error": 0.3639236844194429,
-                  "worst_decile_mean_absolute_error": 0.3271810677698664,
-                  "max_absolute_error": 0.427246091893553,
+                  "mae": 0.11072737237024045,
+                  "rmse": 0.15198797834653552,
+                  "p90_absolute_error": 0.27963478865370844,
+                  "p99_absolute_error": 0.36383015034359584,
+                  "worst_decile_mean_absolute_error": 0.3270875336940194,
+                  "max_absolute_error": 0.42715255781770595,
                   "directional_accuracy": 0.556390977443609,
-                  "mean_error": 0.043585773587127556
+                  "mean_error": 0.04349223951128047
                 },
                 "momentum": {
                   "n": 266,
-                  "mae": 0.19339502251504126,
-                  "rmse": 0.2288742062934534,
-                  "p90_absolute_error": 0.38925298219289856,
-                  "p99_absolute_error": 0.4924194369168954,
-                  "worst_decile_mean_absolute_error": 0.4441407248896076,
-                  "max_absolute_error": 0.5557418443910055,
+                  "mae": 0.19341690269425996,
+                  "rmse": 0.2288976581648149,
+                  "p90_absolute_error": 0.3892832953578578,
+                  "p99_absolute_error": 0.49244975008185465,
+                  "worst_decile_mean_absolute_error": 0.44417103805456687,
+                  "max_absolute_error": 0.5557721575559648,
                   "directional_accuracy": 0.41729323308270677,
-                  "mean_error": -0.008337569684755472
+                  "mean_error": -0.008342128055426022
                 },
                 "ridge": {
                   "n": 266,
-                  "mae": 0.11266073136905616,
-                  "rmse": 0.15339981338195616,
-                  "p90_absolute_error": 0.27649640092781186,
-                  "p99_absolute_error": 0.36317060919423944,
-                  "worst_decile_mean_absolute_error": 0.3265805545346025,
-                  "max_absolute_error": 0.42440122972784866,
-                  "directional_accuracy": 0.5037593984962406,
-                  "mean_error": 0.030589886594190995
+                  "mae": 0.11265468898266573,
+                  "rmse": 0.15336716872234102,
+                  "p90_absolute_error": 0.27632974758869827,
+                  "p99_absolute_error": 0.3631082828248102,
+                  "worst_decile_mean_absolute_error": 0.3264277901607826,
+                  "max_absolute_error": 0.4241812476560768,
+                  "directional_accuracy": 0.5075187969924813,
+                  "mean_error": 0.030441803876107374
                 }
               }
             },
             "bull": {
-              "n": 50,
+              "n": 51,
               "sample_reliability": "DESCRIPTIVE_ONLY",
               "metrics": {
                 "zero": {
-                  "n": 50,
-                  "mae": 0.10714231310763037,
-                  "rmse": 0.13616349035177636,
-                  "p90_absolute_error": 0.2498157708023067,
-                  "p99_absolute_error": 0.32896152469823253,
-                  "worst_decile_mean_absolute_error": 0.2984677341824906,
+                  "n": 51,
+                  "mae": 0.11048779704813541,
+                  "rmse": 0.14032011934833918,
+                  "p90_absolute_error": 0.26175078429335985,
+                  "p99_absolute_error": 0.3284257786279006,
+                  "worst_decile_mean_absolute_error": 0.2950167774976402,
                   "max_absolute_error": 0.35521308214450104,
                   "directional_accuracy": null,
-                  "mean_error": 0.06838651628780502
+                  "mean_error": 0.07249191781301255
                 },
                 "drift": {
-                  "n": 50,
-                  "mae": 0.11776791022697129,
-                  "rmse": 0.15237990214483466,
-                  "p90_absolute_error": 0.27815491854878643,
-                  "p99_absolute_error": 0.3573006724447122,
-                  "worst_decile_mean_absolute_error": 0.32680688192897034,
-                  "max_absolute_error": 0.3835522298909807,
-                  "directional_accuracy": 0.34,
-                  "mean_error": 0.0967256640342847
+                  "n": 51,
+                  "mae": 0.12141853665537156,
+                  "rmse": 0.1567887368248816,
+                  "p90_absolute_error": 0.28999639796399246,
+                  "p99_absolute_error": 0.35667139229853323,
+                  "worst_decile_mean_absolute_error": 0.3232623911682728,
+                  "max_absolute_error": 0.38345869581513364,
+                  "directional_accuracy": 0.3333333333333333,
+                  "mean_error": 0.10073753148364513
                 },
                 "momentum": {
-                  "n": 50,
-                  "mae": 0.1698278699854552,
-                  "rmse": 0.1849750930816019,
-                  "p90_absolute_error": 0.25334919228748837,
-                  "p99_absolute_error": 0.2789390987410229,
-                  "worst_decile_mean_absolute_error": 0.26725387745375495,
-                  "max_absolute_error": 0.28364174990574603,
-                  "directional_accuracy": 0.44,
-                  "mean_error": 0.10602689234634877
+                  "n": 51,
+                  "mae": 0.16888626813502033,
+                  "rmse": 0.1839540930171722,
+                  "p90_absolute_error": 0.2531772282020216,
+                  "p99_absolute_error": 0.27887343943323273,
+                  "worst_decile_mean_absolute_error": 0.2649330302159321,
+                  "max_absolute_error": 0.28367206307070525,
+                  "directional_accuracy": 0.45098039215686275,
+                  "mean_error": 0.10632559129336168
                 },
                 "ridge": {
-                  "n": 50,
-                  "mae": 0.12091889733618189,
-                  "rmse": 0.15797719470988106,
-                  "p90_absolute_error": 0.2867425906919152,
-                  "p99_absolute_error": 0.358218546765943,
-                  "worst_decile_mean_absolute_error": 0.32688978066424923,
-                  "max_absolute_error": 0.3856202146192428,
-                  "directional_accuracy": 0.34,
-                  "mean_error": 0.10968626246894718
+                  "n": 51,
+                  "mae": 0.12434490864069402,
+                  "rmse": 0.16182637997085408,
+                  "p90_absolute_error": 0.2947231801899646,
+                  "p99_absolute_error": 0.3574340050642075,
+                  "worst_decile_mean_absolute_error": 0.3221200137419685,
+                  "max_absolute_error": 0.3853893575153568,
+                  "directional_accuracy": 0.3333333333333333,
+                  "mean_error": 0.11324810748483692
                 }
               }
             },
             "range": {
-              "n": 17,
+              "n": 16,
               "sample_reliability": "LOW_N",
               "metrics": {
                 "zero": {
-                  "n": 17,
-                  "mae": 0.06801764953443368,
-                  "rmse": 0.07380718873638081,
-                  "p90_absolute_error": 0.10476658574118318,
-                  "p99_absolute_error": 0.11514442113318095,
+                  "n": 16,
+                  "mae": 0.072165155853349,
+                  "rmse": 0.07607758021792944,
+                  "p90_absolute_error": 0.10508901953132258,
+                  "p99_absolute_error": 0.11524493580759954,
                   "worst_decile_mean_absolute_error": 0.11172692220294897,
                   "max_absolute_error": 0.11675265592387836,
                   "directional_accuracy": null,
-                  "mean_error": -0.06370191304027004
+                  "mean_error": -0.06778687938227371
                 },
                 "drift": {
-                  "n": 17,
-                  "mae": 0.04634653655183156,
-                  "rmse": 0.05138183096583184,
-                  "p90_absolute_error": 0.0764274379947035,
-                  "p99_absolute_error": 0.08680527338670127,
-                  "worst_decile_mean_absolute_error": 0.08338777445646929,
-                  "max_absolute_error": 0.08841350817739868,
-                  "directional_accuracy": 0.8823529411764706,
-                  "mean_error": -0.03536276529379035
+                  "n": 16,
+                  "mae": 0.047450243891545466,
+                  "rmse": 0.052499989423876736,
+                  "p90_absolute_error": 0.07684340586068997,
+                  "p99_absolute_error": 0.08699932213696693,
+                  "worst_decile_mean_absolute_error": 0.08348130853231636,
+                  "max_absolute_error": 0.08850704225324575,
+                  "directional_accuracy": 0.9375,
+                  "mean_error": -0.039541265711641085
                 },
                 "momentum": {
-                  "n": 17,
-                  "mae": 0.08881725070949849,
-                  "rmse": 0.09332526177071566,
-                  "p90_absolute_error": 0.12145768560177626,
-                  "p99_absolute_error": 0.14983836567825345,
-                  "worst_decile_mean_absolute_error": 0.1384930201437367,
-                  "max_absolute_error": 0.15517735181214368,
+                  "n": 16,
+                  "mae": 0.0847000575555424,
+                  "rmse": 0.0880573009033864,
+                  "p90_absolute_error": 0.11807641923648926,
+                  "p99_absolute_error": 0.12175125092190062,
+                  "worst_decile_mean_absolute_error": 0.12154649924566109,
+                  "max_absolute_error": 0.12183900164028899,
                   "directional_accuracy": 1.0,
-                  "mean_error": 0.05623065773450161
+                  "mean_error": 0.06947018235050628
                 },
                 "ridge": {
-                  "n": 17,
-                  "mae": 0.028218570401954874,
-                  "rmse": 0.03616056829662331,
-                  "p90_absolute_error": 0.06821334087530503,
-                  "p99_absolute_error": 0.07268538496361097,
-                  "worst_decile_mean_absolute_error": 0.07201180279952057,
-                  "max_absolute_error": 0.07300236480553587,
+                  "n": 16,
+                  "mae": 0.029966415760681528,
+                  "rmse": 0.037292575185015775,
+                  "p90_absolute_error": 0.06870894508675299,
+                  "p99_absolute_error": 0.07289136652073397,
+                  "worst_decile_mean_absolute_error": 0.07215435831189801,
+                  "max_absolute_error": 0.07320722718166367,
                   "directional_accuracy": 1.0,
-                  "mean_error": -0.023699613026699082
+                  "mean_error": -0.025204013157429647
                 }
               }
             }
@@ -1223,143 +1223,143 @@
           "1": {
             "selected_alpha": 100.0,
             "validation_mae_by_alpha": {
-              "0.1": 0.01746261593936753,
-              "1.0": 0.017462568998653446,
-              "10.0": 0.01746211274750846,
-              "100.0": 0.01745876074228063
+              "0.1": 0.01746736878228155,
+              "1.0": 0.01746732608810155,
+              "10.0": 0.017466911331636237,
+              "100.0": 0.017463883962268653
             },
             "validation_folds": [
               {
                 "fold": 1,
-                "train_rows": 2352,
+                "train_rows": 2353,
                 "validation_rows": 200,
-                "validation_start": "2024-03-29T00:00:00+00:00",
-                "validation_end": "2024-10-14T00:00:00+00:00"
+                "validation_start": "2024-03-30T00:00:00+00:00",
+                "validation_end": "2024-10-15T00:00:00+00:00"
               },
               {
                 "fold": 2,
-                "train_rows": 2552,
+                "train_rows": 2553,
                 "validation_rows": 201,
-                "validation_start": "2024-10-15T00:00:00+00:00",
-                "validation_end": "2025-05-03T00:00:00+00:00"
+                "validation_start": "2024-10-16T00:00:00+00:00",
+                "validation_end": "2025-05-04T00:00:00+00:00"
               },
               {
                 "fold": 3,
-                "train_rows": 2753,
+                "train_rows": 2754,
                 "validation_rows": 201,
-                "validation_start": "2025-05-04T00:00:00+00:00",
-                "validation_end": "2025-11-20T00:00:00+00:00"
+                "validation_start": "2025-05-05T00:00:00+00:00",
+                "validation_end": "2025-11-21T00:00:00+00:00"
               }
             ],
-            "final_train_rows": 2957,
+            "final_train_rows": 2958,
             "final_holdout_rows": 362
           },
           "3": {
             "selected_alpha": 100.0,
             "validation_mae_by_alpha": {
-              "0.1": 0.03141285487378222,
-              "1.0": 0.03141263694590194,
-              "10.0": 0.03141051215269248,
-              "100.0": 0.03139340743016619
+              "0.1": 0.031310326152541576,
+              "1.0": 0.03131010056178482,
+              "10.0": 0.031307901139032236,
+              "100.0": 0.031290205863605224
             },
             "validation_folds": [
               {
                 "fold": 1,
-                "train_rows": 2350,
+                "train_rows": 2351,
                 "validation_rows": 200,
-                "validation_start": "2024-03-29T00:00:00+00:00",
-                "validation_end": "2024-10-14T00:00:00+00:00"
+                "validation_start": "2024-03-30T00:00:00+00:00",
+                "validation_end": "2024-10-15T00:00:00+00:00"
               },
               {
                 "fold": 2,
-                "train_rows": 2550,
+                "train_rows": 2551,
                 "validation_rows": 200,
-                "validation_start": "2024-10-15T00:00:00+00:00",
-                "validation_end": "2025-05-02T00:00:00+00:00"
+                "validation_start": "2024-10-16T00:00:00+00:00",
+                "validation_end": "2025-05-03T00:00:00+00:00"
               },
               {
                 "fold": 3,
-                "train_rows": 2750,
+                "train_rows": 2751,
                 "validation_rows": 200,
-                "validation_start": "2025-05-03T00:00:00+00:00",
-                "validation_end": "2025-11-18T00:00:00+00:00"
+                "validation_start": "2025-05-04T00:00:00+00:00",
+                "validation_end": "2025-11-19T00:00:00+00:00"
               }
             ],
-            "final_train_rows": 2955,
+            "final_train_rows": 2956,
             "final_holdout_rows": 360
           },
           "7": {
             "selected_alpha": 100.0,
             "validation_mae_by_alpha": {
-              "0.1": 0.046543263361348605,
-              "1.0": 0.04654250636947249,
-              "10.0": 0.04653509771503334,
-              "100.0": 0.04647556964170671
+              "0.1": 0.0466506884316861,
+              "1.0": 0.04664991695548622,
+              "10.0": 0.046642367662020484,
+              "100.0": 0.04658174448021581
             },
             "validation_folds": [
               {
                 "fold": 1,
-                "train_rows": 2346,
+                "train_rows": 2347,
                 "validation_rows": 198,
-                "validation_start": "2024-03-29T00:00:00+00:00",
-                "validation_end": "2024-10-12T00:00:00+00:00"
+                "validation_start": "2024-03-30T00:00:00+00:00",
+                "validation_end": "2024-10-13T00:00:00+00:00"
               },
               {
                 "fold": 2,
-                "train_rows": 2544,
+                "train_rows": 2545,
                 "validation_rows": 199,
-                "validation_start": "2024-10-13T00:00:00+00:00",
-                "validation_end": "2025-04-29T00:00:00+00:00"
+                "validation_start": "2024-10-14T00:00:00+00:00",
+                "validation_end": "2025-04-30T00:00:00+00:00"
               },
               {
                 "fold": 3,
-                "train_rows": 2743,
+                "train_rows": 2744,
                 "validation_rows": 199,
-                "validation_start": "2025-04-30T00:00:00+00:00",
-                "validation_end": "2025-11-14T00:00:00+00:00"
+                "validation_start": "2025-05-01T00:00:00+00:00",
+                "validation_end": "2025-11-15T00:00:00+00:00"
               }
             ],
-            "final_train_rows": 2951,
+            "final_train_rows": 2952,
             "final_holdout_rows": 356
           },
           "30": {
             "selected_alpha": 100.0,
             "validation_mae_by_alpha": {
-              "0.1": 0.09424890465702643,
-              "1.0": 0.09424779119076264,
-              "10.0": 0.09423678733855315,
-              "100.0": 0.09413778246160391
+              "0.1": 0.09447046028206606,
+              "1.0": 0.09446933916612137,
+              "10.0": 0.094458263075718,
+              "100.0": 0.09435890278287294
             },
             "validation_folds": [
               {
                 "fold": 1,
-                "train_rows": 2323,
+                "train_rows": 2324,
                 "validation_rows": 191,
-                "validation_start": "2024-03-29T00:00:00+00:00",
-                "validation_end": "2024-10-05T00:00:00+00:00"
+                "validation_start": "2024-03-30T00:00:00+00:00",
+                "validation_end": "2024-10-06T00:00:00+00:00"
               },
               {
                 "fold": 2,
-                "train_rows": 2514,
+                "train_rows": 2515,
                 "validation_rows": 191,
-                "validation_start": "2024-10-06T00:00:00+00:00",
-                "validation_end": "2025-04-14T00:00:00+00:00"
+                "validation_start": "2024-10-07T00:00:00+00:00",
+                "validation_end": "2025-04-15T00:00:00+00:00"
               },
               {
                 "fold": 3,
-                "train_rows": 2705,
+                "train_rows": 2706,
                 "validation_rows": 191,
-                "validation_start": "2025-04-15T00:00:00+00:00",
-                "validation_end": "2025-10-22T00:00:00+00:00"
+                "validation_start": "2025-04-16T00:00:00+00:00",
+                "validation_end": "2025-10-23T00:00:00+00:00"
               }
             ],
-            "final_train_rows": 2928,
+            "final_train_rows": 2929,
             "final_holdout_rows": 333
           }
         },
         "validation_method": "three purged expanding chronological folds; alpha chosen by weighted mean MAE",
-        "holdout_start_utc": "2025-11-24T00:00:00+00:00",
-        "holdout_end_utc": "2026-11-23T00:00:00+00:00",
+        "holdout_start_utc": "2025-11-25T00:00:00+00:00",
+        "holdout_end_utc": "2026-11-24T00:00:00+00:00",
         "holdout_is_untouched": false,
         "holdout_training_and_tuning_excluded_in_this_run": true,
         "holdout_globally_unseen": false,
@@ -1379,8 +1379,8 @@
           "target": "log(Open[t+h+2]/Open[t+2]); signal after close t; one complete daily bar reserved for execution latency; entry at first open not passed at the 16:00 UTC run",
           "target_unit": "natural-log return units",
           "horizon_unit": "daily sessions",
-          "historical_window_start_utc": "2025-11-24T00:00:00+00:00",
-          "historical_window_end_utc": "2026-11-23T00:00:00+00:00",
+          "historical_window_start_utc": "2025-11-25T00:00:00+00:00",
+          "historical_window_end_utc": "2026-11-24T00:00:00+00:00",
           "sample_role": "historical_continuity_diagnostic_only",
           "data_qa_status": "PASS",
           "calibration_status": "NOT_CALIBRATED"
@@ -1397,7 +1397,7 @@
     "No calibrated probability or live trading claim is permitted."
   ],
   "supplemental_data": {
-    "retrieved_at_utc": "2026-11-24T16:59:02.996694+00:00",
+    "retrieved_at_utc": "2026-11-25T16:59:40.429304+00:00",
     "coverage": {
       "spot_ohlcv": {
         "status": "PASS",
@@ -1446,15 +1446,15 @@
     },
     "spot_live": {
       "status": "PARTIAL",
-      "retrieved_at_utc": "2026-11-24T16:59:03.209173+00:00",
+      "retrieved_at_utc": "2026-11-25T16:59:40.645959+00:00",
       "venues": {
         "Bitstamp_BTCUSD_USD": {
-          "last_trade_price": 59388.45,
-          "price_change_24h_pct": -2.9172659912382937,
-          "base_volume_24h_btc": 1520.95186179,
-          "last_trade_timestamp_utc": "2026-11-24T16:59:02+00:00",
+          "last_trade_price": 58501.62,
+          "price_change_24h_pct": -2.078669994002691,
+          "base_volume_24h_btc": 1612.06545739,
+          "last_trade_timestamp_utc": "2026-11-25T16:59:40+00:00",
           "snapshot_type": "24h ticker last-trade snapshot",
-          "last_trade_age_seconds": 1.209173,
+          "last_trade_age_seconds": 0.645959,
           "status": "PASS"
         }
       },
@@ -1464,7 +1464,7 @@
     },
     "cvd": {
       "status": "PARTIAL",
-      "retrieved_at_utc": "2026-11-24T16:59:04.246959+00:00",
+      "retrieved_at_utc": "2026-11-25T16:59:41.717374+00:00",
       "markets": {
         "spot": {
           "status": "PASS",
@@ -1472,37 +1472,37 @@
           "24h": {
             "status": "PASS",
             "hours": 24,
-            "start_candle_open_utc": "2026-11-23T16:00:00+00:00",
-            "end_candle_close_utc": "2026-11-24T15:59:59.999000+00:00",
-            "total_volume_btc": 21797.4537,
-            "taker_buy_volume_btc": 10930.91578,
-            "taker_sell_volume_btc": 10866.537919999999,
-            "cumulative_delta_btc": 64.37786000000051,
-            "delta_pct_of_total_volume": 0.29534578160384173,
+            "start_candle_open_utc": "2026-11-24T16:00:00+00:00",
+            "end_candle_close_utc": "2026-11-25T15:59:59.999000+00:00",
+            "total_volume_btc": 22983.8466,
+            "taker_buy_volume_btc": 11845.958560000001,
+            "taker_sell_volume_btc": 11137.88804,
+            "cumulative_delta_btc": 708.0705200000011,
+            "delta_pct_of_total_volume": 3.080731142714819,
             "method": "sum(hourly taker-buy base volume minus taker-sell base volume)"
           },
           "7d": {
             "status": "PASS",
             "hours": 168,
-            "start_candle_open_utc": "2026-11-17T16:00:00+00:00",
-            "end_candle_close_utc": "2026-11-24T15:59:59.999000+00:00",
-            "total_volume_btc": 195822.80454999997,
-            "taker_buy_volume_btc": 94630.07949000006,
-            "taker_sell_volume_btc": 101192.72505999991,
-            "cumulative_delta_btc": -6562.645569999848,
-            "delta_pct_of_total_volume": -3.351318343683608,
+            "start_candle_open_utc": "2026-11-18T16:00:00+00:00",
+            "end_candle_close_utc": "2026-11-25T15:59:59.999000+00:00",
+            "total_volume_btc": 200270.1123599999,
+            "taker_buy_volume_btc": 96737.58649000005,
+            "taker_sell_volume_btc": 103532.52586999987,
+            "cumulative_delta_btc": -6794.9393799998215,
+            "delta_pct_of_total_volume": -3.392887385904807,
             "method": "sum(hourly taker-buy base volume minus taker-sell base volume)"
           },
           "30d": {
             "status": "PASS",
             "hours": 720,
-            "start_candle_open_utc": "2026-10-25T16:00:00+00:00",
-            "end_candle_close_utc": "2026-11-24T15:59:59.999000+00:00",
-            "total_volume_btc": 604112.4417000003,
-            "taker_buy_volume_btc": 301813.36502999975,
-            "taker_sell_volume_btc": 302299.07667000056,
-            "cumulative_delta_btc": -485.711640000809,
-            "delta_pct_of_total_volume": -0.08040086687074248,
+            "start_candle_open_utc": "2026-10-26T16:00:00+00:00",
+            "end_candle_close_utc": "2026-11-25T15:59:59.999000+00:00",
+            "total_volume_btc": 612951.2094300002,
+            "taker_buy_volume_btc": 306045.76276999956,
+            "taker_sell_volume_btc": 306905.4466600006,
+            "cumulative_delta_btc": -859.6838900010334,
+            "delta_pct_of_total_volume": -0.1402532333365451,
             "method": "sum(hourly taker-buy base volume minus taker-sell base volume)"
           }
         },
@@ -1518,9 +1518,31 @@
     },
     "news": {
       "status": "PARTIAL",
-      "retrieved_at_utc": "2026-11-24T16:59:15.285293+00:00",
+      "retrieved_at_utc": "2026-11-25T16:59:53.064703+00:00",
       "window": "7d for GDELT; latest items for official RSS",
       "articles": [
+        {
+          "title": "SEC Investor Advisory Committee to Host Dec. 3 Virtual Meeting",
+          "url": "https://www.sec.gov/newsroom/press-releases/2026-118-sec-investor-advisory-committee-host-dec-3-virtual-meeting",
+          "published_at_utc": "2026-11-25T14:10:24+00:00",
+          "source": "SEC",
+          "snippet": "The Securities and Exchange Commission\u2019s Investor Advisory Committee will hold a virtual public meeting on Dec. 3, at 9:30 a.m. ET to discuss the trading of tokenized securities, bankruptcy, and accounting oversight. The meeting will be webcast\u2026",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "regulatory"
+          ]
+        },
+        {
+          "title": "First Lady Melania Trump Secures Reunification of Nine Additional Children with their Families",
+          "url": "https://www.whitehouse.gov/briefings-statements/2026/11/first-lady-melania-trump-secures-reunification-of-nine-additional-children-with-their-families/",
+          "published_at_utc": "2026-11-25T12:01:00+00:00",
+          "source": "White House",
+          "snippet": "Bringing Total to 43 Amid Russia-Ukraine War First Lady Melania Trump has successfully facilitated her seventh reunion of Russian and Ukrainian children with their families, bringing the total number of children reunited through her humanitarian efforts to 43. \u201cWe can heal the world through peace, and peace begins with our children. Every child reunited with [\u2026] The post First Lady Melania Trump Secures Reunification of Nine Additional Children with their Families appeared first on The White Hou",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "geopolitical"
+          ]
+        },
         {
           "title": "President Trump Stands with Victims\u2019 Families as Newsom Grants Mass Clemency to Depraved Killers",
           "url": "https://www.whitehouse.gov/releases/2026/11/president-trump-stands-with-victims-families-as-newsom-grants-mass-clemency-to-depraved-killers/",
@@ -1555,33 +1577,11 @@
           ]
         },
         {
-          "title": "WHAT THEY ARE SAYING: Send the Bipartisan American Affordability and Jobs Act to President Trump\u2019s Desk",
-          "url": "https://www.whitehouse.gov/releases/2026/11/what-they-are-saying-send-the-bipartisan-american-affordability-and-jobs-act-to-president-trumps-desk/",
-          "published_at_utc": "2026-11-20T22:57:43+00:00",
-          "source": "White House",
-          "snippet": "\u201cLast night, landmark permitting reform legislation passed the Senate. It\u2019s one of the biggest things that you will see. It\u2019s a big deal\u2026 It\u2019s projected to put at least $1,300 a year back in the pockets of hardworking Americans.\u201d \u2013 President Donald J. Trump President Donald J. Trump is committed to fixing America\u2019s broken permitting system \u2014 [\u2026] The post WHAT THEY ARE SAYING: Send the Bipartisan American Affordability and Jobs Act to President Trump\u2019s Desk appeared first on The White House .",
-          "date_semantics": "publisher RSS publication/update date",
-          "keyword_tags": [
-            "regulatory"
-          ]
-        },
-        {
           "title": "Federal Reserve announces College Fed Challenge winners",
           "url": "https://www.federalreserve.gov/newsevents/pressreleases/other20261120b.htm",
           "published_at_utc": "2026-11-20T21:15:00+00:00",
           "source": "Federal Reserve",
           "snippet": "Federal Reserve announces College Fed Challenge winners",
-          "date_semantics": "publisher RSS publication/update date",
-          "keyword_tags": [
-            "macro_monetary"
-          ]
-        },
-        {
-          "title": "H.R. 10167 \u2013 Common Cents Act",
-          "url": "https://www.whitehouse.gov/briefings-statements/2026/11/h-r-10167-common-cents-act/",
-          "published_at_utc": "2026-11-20T19:41:38+00:00",
-          "source": "White House",
-          "snippet": "On Friday, November 20, 2026, the President signed into law: H.R. 10167, the \u201cCommon Cents Act,\u201d which directs the Department of the Treasury to stop production of the penny except for collector needs; provides rounding guidance for cash transactions; allows the nickel to be composed of cost-saving materials; and provides procedures for the Secretary of [\u2026] The post H.R. 10167 \u2013 Common Cents Act appeared first on The White House .",
           "date_semantics": "publisher RSS publication/update date",
           "keyword_tags": [
             "macro_monetary"
@@ -1754,17 +1754,6 @@
           ]
         },
         {
-          "title": "Isabel Schnabel: Navigating stormy waters: reflections on monetary policy",
-          "url": "https://www.ecb.europa.eu//press/key/date/2026/html/ecb.sp261105_1~5e97d9d5a0.en.html",
-          "published_at_utc": "2026-11-05T08:00:00+00:00",
-          "source": "ECB",
-          "snippet": "",
-          "date_semantics": "publisher RSS publication/update date",
-          "keyword_tags": [
-            "macro_monetary"
-          ]
-        },
-        {
           "title": "SEC Adopts Amendments to Update Definitions of Small Entity for Investment Companies and Investment Advisers",
           "url": "https://www.sec.gov/newsroom/press-releases/2026-112-sec-adopts-amendments-update-definitions-small-entity-investment-companies-investment-advisers",
           "published_at_utc": "2026-11-04T16:28:00+00:00",
@@ -1852,13 +1841,24 @@
           "keyword_tags": [
             "regulatory"
           ]
+        },
+        {
+          "title": "SEC Announces Roundtable on Machine-Understandable Data in the Age of Super Intelligence",
+          "url": "https://www.sec.gov/newsroom/press-releases/2026-106-sec-announces-roundtable-machine-understandable-data-age-super-intelligence",
+          "published_at_utc": "2026-10-19T17:19:43+00:00",
+          "source": "SEC",
+          "snippet": "The Securities and Exchange Commission announced today that it will host a roundtable on November 9, 2026, to discuss the use of machine-understandable data and Super Intelligence (SI) and related risks and costs.\u201cIn the age of SI, high-quality\u2026",
+          "date_semantics": "publisher RSS publication/update date",
+          "keyword_tags": [
+            "regulatory"
+          ]
         }
       ],
       "source_status": {
         "Federal Reserve": {
           "status": "PASS",
           "article_count": 20,
-          "relevant_article_count": 12
+          "relevant_article_count": 11
         },
         "SEC": {
           "status": "PASS",
@@ -1868,12 +1868,12 @@
         "White House": {
           "status": "PASS",
           "article_count": 30,
-          "relevant_article_count": 3
+          "relevant_article_count": 2
         },
         "ECB": {
           "status": "PASS",
           "article_count": 15,
-          "relevant_article_count": 6
+          "relevant_article_count": 5
         },
         "CFTC": {
           "status": "NOT_CONFIGURED",
@@ -1901,7 +1901,7 @@
       },
       "symbol": "BTCUSDT perpetual",
       "quote_currency": "USDT",
-      "retrieved_at_utc": "2026-11-24T16:59:15.456333+00:00",
+      "retrieved_at_utc": "2026-11-25T16:59:53.184377+00:00",
       "status": "FAIL",
       "errors": {
         "premium_index": "HTTPError: 451 Client Error:  for url: https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT",
@@ -1921,7 +1921,7 @@
       "venue": "Bybit Linear",
       "symbol": "BTCUSDT perpetual",
       "quote_currency": "USDT",
-      "retrieved_at_utc": "2026-11-24T16:59:15.647853+00:00",
+      "retrieved_at_utc": "2026-11-25T16:59:53.247604+00:00",
       "status": "FAIL",
       "errors": {
         "ticker": "HTTPError: 403 Client Error: Forbidden for url: https://api.bybit.com/v5/market/tickers?category=linear&symbol=BTCUSDT",
@@ -1934,49 +1934,34 @@
       "venue": "OKX",
       "instrument": "BTC-USDT-SWAP",
       "quote_currency": "USDT",
-      "retrieved_at_utc": "2026-11-24T16:59:16.926726+00:00",
+      "retrieved_at_utc": "2026-11-25T16:59:54.387509+00:00",
       "status": "PASS",
-      "last_price_usdt": 59438.3,
-      "ticker_timestamp_utc": "2026-11-24T16:59:15.368000+00:00",
-      "volume_24h_contracts": 15132759.14,
-      "volume_24h_base_currency": 151327.5914,
-      "open_interest_contracts": 3016591.9600000135,
-      "open_interest_btc": 30165.919600000136,
-      "open_interest_usd": 1793013995.552648,
-      "open_interest_timestamp_utc": "2026-11-24T16:59:16.049000+00:00",
+      "last_price_usdt": 58571.1,
+      "ticker_timestamp_utc": "2026-11-25T16:59:52.366000+00:00",
+      "volume_24h_contracts": 14270924.04,
+      "volume_24h_base_currency": 142709.2404,
+      "open_interest_contracts": 3129906.47000001,
+      "open_interest_btc": 31299.0647000001,
+      "open_interest_usd": 1833508599.8454158,
+      "open_interest_timestamp_utc": "2026-11-25T16:59:53.563000+00:00",
       "open_interest_history": {
-        "timestamp_utc": "2026-11-24T00:00:00+00:00",
-        "contracts": 3013855.9500000137,
-        "btc": 30138.559500000138,
-        "usd": 1794883827.8868082,
+        "timestamp_utc": "2026-11-25T00:00:00+00:00",
+        "contracts": 3126390.45000001,
+        "btc": 31263.9045000001,
+        "usd": 1827715994.5840557,
         "history_rows": 100,
-        "change_1d_pct": 2.2719628339362696,
-        "change_7d_pct": -3.380916531076883,
-        "change_30d_pct": 1.0015056076394302
+        "change_1d_pct": 1.85318832549477,
+        "change_7d_pct": -5.0879484398662855,
+        "change_30d_pct": -1.6477329899936999
       },
-      "funding_rate_predicted_current": 3.49152388516e-05,
-      "settled_funding_rate": 2.50961202131e-05,
+      "funding_rate_predicted_current": 5.69710718507e-05,
+      "settled_funding_rate": 3.84025138293e-05,
       "funding_settlement_state": "settled",
       "funding_rate_unit": "fraction per provider funding interval",
-      "funding_timestamp_utc": "2026-11-25T00:00:00+00:00",
-      "last_settled_funding_time_utc": "2026-11-24T16:00:00+00:00",
-      "next_funding_time_utc": "2026-11-25T08:00:00+00:00",
+      "funding_timestamp_utc": "2026-11-26T00:00:00+00:00",
+      "last_settled_funding_time_utc": "2026-11-25T16:00:00+00:00",
+      "next_funding_time_utc": "2026-11-26T08:00:00+00:00",
       "funding_history": [
-        {
-          "funding_time_utc": "2026-10-22T16:00:00+00:00",
-          "funding_rate": 7.81879787428e-05,
-          "funding_rate_field": "realizedRate"
-        },
-        {
-          "funding_time_utc": "2026-10-23T00:00:00+00:00",
-          "funding_rate": 6.68879046611e-05,
-          "funding_rate_field": "realizedRate"
-        },
-        {
-          "funding_time_utc": "2026-10-23T08:00:00+00:00",
-          "funding_rate": 7.53334163283e-05,
-          "funding_rate_field": "realizedRate"
-        },
         {
           "funding_time_utc": "2026-10-23T16:00:00+00:00",
           "funding_rate": 6.85721961385e-05,
@@ -2461,15 +2446,24 @@
           "funding_time_utc": "2026-11-24T16:00:00+00:00",
           "funding_rate": 2.50961202131e-05,
           "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-25T00:00:00+00:00",
+          "funding_rate": 5.55010476859e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-25T08:00:00+00:00",
+          "funding_rate": 6.29761552989e-05,
+          "funding_rate_field": "realizedRate"
+        },
+        {
+          "funding_time_utc": "2026-11-25T16:00:00+00:00",
+          "funding_rate": 3.84025138293e-05,
+          "funding_rate_field": "realizedRate"
         }
       ],
       "daily_taker_volume": [
-        {
-          "timestamp_utc": "2026-10-26T00:00:00+00:00",
-          "sell_volume_btc": 35159.9525,
-          "buy_volume_btc": 34873.8954,
-          "delta_btc": -286.0570999999982
-        },
         {
           "timestamp_utc": "2026-10-27T00:00:00+00:00",
           "sell_volume_btc": 29164.7293,
@@ -2640,17 +2634,23 @@
         },
         {
           "timestamp_utc": "2026-11-24T00:00:00+00:00",
-          "sell_volume_btc": 58996.6937,
-          "buy_volume_btc": 58296.6226,
-          "delta_btc": -700.071100000001
+          "sell_volume_btc": 69176.5597,
+          "buy_volume_btc": 68966.696,
+          "delta_btc": -209.8637000000017
+        },
+        {
+          "timestamp_utc": "2026-11-25T00:00:00+00:00",
+          "sell_volume_btc": 0.0,
+          "buy_volume_btc": 59570.9064,
+          "delta_btc": 59570.9064
         }
       ],
       "daily_taker_volume_history_rows": 30,
       "daily_taker_volume_summary": {
         "closed_daily_rows": 29,
         "cumulative_delta_btc": {
-          "1d": 3870.5494000000035,
-          "7d": -4674.7514999999985,
+          "1d": -209.8637000000017,
+          "7d": -5056.545599999998,
           "30d": null
         },
         "measurement_note": "OKX BTC-USDT perpetual contract taker volume in BTC; buy minus sell. Completed UTC daily bars only; exchange-specific derivatives delta proxy, not spot CVD or total-market CVD."
@@ -2669,180 +2669,180 @@
       "status": "PARTIAL",
       "venue": "Deribit",
       "instrument_scope": "active BTC options",
-      "retrieved_at_utc": "2026-11-24T16:59:19.840335+00:00",
+      "retrieved_at_utc": "2026-11-25T16:59:57.086505+00:00",
       "open_interest_unit": "BTC underlying base currency; provider reports an 8-hour delay",
       "implied_volatility_unit": "percent",
-      "total_call_open_interest_btc": 240801.39999999997,
-      "total_put_open_interest_btc": 194252.5,
-      "put_call_open_interest_ratio": 0.8066917385031815,
-      "total_call_volume_usd_24h": 14004487.079999998,
-      "total_put_volume_usd_24h": 27311015.45,
-      "put_call_volume_ratio": 1.9501617798629154,
+      "total_call_open_interest_btc": 242175.9,
+      "total_put_open_interest_btc": 195355.6,
+      "put_call_open_interest_ratio": 0.8066682109986998,
+      "total_call_volume_usd_24h": 14854949.4,
+      "total_put_volume_usd_24h": 50290650.330000006,
+      "put_call_volume_ratio": 3.3854474341057,
       "expiry_term_structure": [
         {
-          "expiry_date": "2026-11-25",
-          "call_open_interest_btc": 2678.0,
-          "put_open_interest_btc": 2984.5,
-          "call_volume_usd_24h": 331509.62999999995,
-          "put_volume_usd_24h": 638971.0800000001,
-          "days_to_expiry": 1,
-          "underlying_price_usd": 59386.87,
-          "nearest_atm_instrument": "BTC-25NOV26-59500-P",
-          "nearest_atm_mark_iv_pct": 58.28
-        },
-        {
           "expiry_date": "2026-11-26",
-          "call_open_interest_btc": 421.9,
-          "put_open_interest_btc": 1054.5,
-          "call_volume_usd_24h": 136901.00999999998,
-          "put_volume_usd_24h": 387578.86,
-          "days_to_expiry": 2,
-          "underlying_price_usd": 59393.36,
-          "nearest_atm_instrument": "BTC-26NOV26-59500-P",
-          "nearest_atm_mark_iv_pct": 60.94
+          "call_open_interest_btc": 858.7,
+          "put_open_interest_btc": 1749.1,
+          "call_volume_usd_24h": 455946.59999999986,
+          "put_volume_usd_24h": 837796.2500000001,
+          "days_to_expiry": 1,
+          "underlying_price_usd": 58523.66,
+          "nearest_atm_instrument": "BTC-26NOV26-58500-C",
+          "nearest_atm_mark_iv_pct": 63.17
         },
         {
           "expiry_date": "2026-11-27",
-          "call_open_interest_btc": 58960.99999999999,
-          "put_open_interest_btc": 53409.30000000001,
-          "call_volume_usd_24h": 559873.68,
-          "put_volume_usd_24h": 5732112.980000001,
-          "days_to_expiry": 3,
-          "underlying_price_usd": 59401.57,
-          "nearest_atm_instrument": "BTC-27NOV26-59500-P",
-          "nearest_atm_mark_iv_pct": 57.88
+          "call_open_interest_btc": 59935.20000000001,
+          "put_open_interest_btc": 52706.700000000004,
+          "call_volume_usd_24h": 886160.5400000002,
+          "put_volume_usd_24h": 23544536.35,
+          "days_to_expiry": 2,
+          "underlying_price_usd": 58528.18,
+          "nearest_atm_instrument": "BTC-27NOV26-58500-P",
+          "nearest_atm_mark_iv_pct": 62.0
         },
         {
           "expiry_date": "2026-11-28",
-          "call_open_interest_btc": 3.4,
-          "put_open_interest_btc": 40.800000000000004,
-          "call_volume_usd_24h": 32142.27,
-          "put_volume_usd_24h": 118478.40000000001,
+          "call_open_interest_btc": 418.1,
+          "put_open_interest_btc": 367.9,
+          "call_volume_usd_24h": 365105.99,
+          "put_volume_usd_24h": 404692.60000000003,
+          "days_to_expiry": 3,
+          "underlying_price_usd": 58530.05,
+          "nearest_atm_instrument": "BTC-28NOV26-58500-P",
+          "nearest_atm_mark_iv_pct": 61.56
+        },
+        {
+          "expiry_date": "2026-11-29",
+          "call_open_interest_btc": 19.700000000000003,
+          "put_open_interest_btc": 30.6,
+          "call_volume_usd_24h": 97118.17,
+          "put_volume_usd_24h": 182841.62000000002,
           "days_to_expiry": 4,
-          "underlying_price_usd": 59405.66,
-          "nearest_atm_instrument": "BTC-28NOV26-59500-C",
-          "nearest_atm_mark_iv_pct": 56.9
+          "underlying_price_usd": 58531.63,
+          "nearest_atm_instrument": "BTC-29NOV26-58500-P",
+          "nearest_atm_mark_iv_pct": 55.68
         },
         {
           "expiry_date": "2026-12-04",
-          "call_open_interest_btc": 9690.900000000001,
-          "put_open_interest_btc": 14793.699999999999,
-          "call_volume_usd_24h": 699657.88,
-          "put_volume_usd_24h": 1839099.54,
-          "days_to_expiry": 10,
-          "underlying_price_usd": 59438.38,
+          "call_open_interest_btc": 9992.3,
+          "put_open_interest_btc": 14918.0,
+          "call_volume_usd_24h": 928840.3400000001,
+          "put_volume_usd_24h": 2042624.3399999999,
+          "days_to_expiry": 9,
+          "underlying_price_usd": 58551.2,
           "nearest_atm_instrument": "BTC-4DEC26-59000-P",
-          "nearest_atm_mark_iv_pct": 54.76
+          "nearest_atm_mark_iv_pct": 57.1
         },
         {
           "expiry_date": "2026-12-11",
-          "call_open_interest_btc": 3759.5,
-          "put_open_interest_btc": 4715.6,
-          "call_volume_usd_24h": 245567.55000000002,
-          "put_volume_usd_24h": 1247168.5500000003,
-          "days_to_expiry": 17,
-          "underlying_price_usd": 59482.65,
+          "call_open_interest_btc": 4482.7,
+          "put_open_interest_btc": 5134.799999999999,
+          "call_volume_usd_24h": 2227048.4299999997,
+          "put_volume_usd_24h": 4092700.9200000004,
+          "days_to_expiry": 16,
+          "underlying_price_usd": 58586.26,
           "nearest_atm_instrument": "BTC-11DEC26-59000-P",
-          "nearest_atm_mark_iv_pct": 54.15
+          "nearest_atm_mark_iv_pct": 56.85
         },
         {
           "expiry_date": "2026-12-25",
-          "call_open_interest_btc": 96947.89999999998,
-          "put_open_interest_btc": 65610.49999999999,
-          "call_volume_usd_24h": 1986582.3600000003,
-          "put_volume_usd_24h": 7776239.46,
-          "days_to_expiry": 31,
-          "underlying_price_usd": 59589.11,
-          "nearest_atm_instrument": "BTC-25DEC26-60000-C",
-          "nearest_atm_mark_iv_pct": 50.23
+          "call_open_interest_btc": 97264.4,
+          "put_open_interest_btc": 66193.2,
+          "call_volume_usd_24h": 1935054.6099999999,
+          "put_volume_usd_24h": 7254636.089999998,
+          "days_to_expiry": 30,
+          "underlying_price_usd": 58706.0,
+          "nearest_atm_instrument": "BTC-25DEC26-58000-C",
+          "nearest_atm_mark_iv_pct": 53.23
         },
         {
           "expiry_date": "2027-01-29",
-          "call_open_interest_btc": 12572.299999999997,
-          "put_open_interest_btc": 12453.300000000001,
-          "call_volume_usd_24h": 1201233.23,
-          "put_volume_usd_24h": 4403287.659999998,
-          "days_to_expiry": 66,
-          "underlying_price_usd": 59850.14,
-          "nearest_atm_instrument": "BTC-29JAN27-60000-P",
-          "nearest_atm_mark_iv_pct": 48.21
+          "call_open_interest_btc": 13228.5,
+          "put_open_interest_btc": 13665.500000000002,
+          "call_volume_usd_24h": 2996551.39,
+          "put_volume_usd_24h": 5255164.819999999,
+          "days_to_expiry": 65,
+          "underlying_price_usd": 58959.28,
+          "nearest_atm_instrument": "BTC-29JAN27-59000-C",
+          "nearest_atm_mark_iv_pct": 49.21
         },
         {
           "expiry_date": "2027-03-26",
-          "call_open_interest_btc": 34038.9,
-          "put_open_interest_btc": 21874.300000000003,
-          "call_volume_usd_24h": 7582365.72,
-          "put_volume_usd_24h": 3189577.6699999995,
-          "days_to_expiry": 122,
-          "underlying_price_usd": 60319.28,
+          "call_open_interest_btc": 34187.70000000001,
+          "put_open_interest_btc": 22984.999999999996,
+          "call_volume_usd_24h": 3218975.56,
+          "put_volume_usd_24h": 4920006.160000001,
+          "days_to_expiry": 121,
+          "underlying_price_usd": 59430.7,
           "nearest_atm_instrument": "BTC-26MAR27-60000-C",
-          "nearest_atm_mark_iv_pct": 47.75
+          "nearest_atm_mark_iv_pct": 47.97
         },
         {
           "expiry_date": "2027-06-25",
-          "call_open_interest_btc": 12821.300000000003,
-          "put_open_interest_btc": 10895.200000000004,
-          "call_volume_usd_24h": 735940.3500000001,
-          "put_volume_usd_24h": 1894720.03,
-          "days_to_expiry": 213,
-          "underlying_price_usd": 61165.17,
-          "nearest_atm_instrument": "BTC-25JUN27-62000-C",
-          "nearest_atm_mark_iv_pct": 46.52
+          "call_open_interest_btc": 12848.4,
+          "put_open_interest_btc": 11182.600000000004,
+          "call_volume_usd_24h": 897705.3500000002,
+          "put_volume_usd_24h": 1292975.1199999999,
+          "days_to_expiry": 212,
+          "underlying_price_usd": 60275.93,
+          "nearest_atm_instrument": "BTC-25JUN27-60000-C",
+          "nearest_atm_mark_iv_pct": 47.46
         },
         {
           "expiry_date": "2027-09-24",
-          "call_open_interest_btc": 8906.299999999997,
-          "put_open_interest_btc": 6420.800000000001,
-          "call_volume_usd_24h": 492713.4,
-          "put_volume_usd_24h": 83781.22,
-          "days_to_expiry": 304,
-          "underlying_price_usd": 62019.4,
+          "call_open_interest_btc": 8940.199999999999,
+          "put_open_interest_btc": 6422.200000000003,
+          "call_volume_usd_24h": 846442.4200000002,
+          "put_volume_usd_24h": 462676.06000000006,
+          "days_to_expiry": 303,
+          "underlying_price_usd": 61124.53,
           "nearest_atm_instrument": "BTC-24SEP27-62000-P",
-          "nearest_atm_mark_iv_pct": 46.54
+          "nearest_atm_mark_iv_pct": 46.9
         }
       ],
       "top_strikes_by_open_interest": [
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 80000.0,
-          "call_open_interest_btc": 8400.0,
-          "put_open_interest_btc": 3431.8
+          "call_open_interest_btc": 8403.0,
+          "put_open_interest_btc": 3417.8
         },
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 60000.0,
-          "call_open_interest_btc": 1410.9,
-          "put_open_interest_btc": 6872.1
+          "call_open_interest_btc": 1569.4,
+          "put_open_interest_btc": 7061.1
         },
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 70000.0,
-          "call_open_interest_btc": 3947.6,
-          "put_open_interest_btc": 3187.9
+          "call_open_interest_btc": 3860.2,
+          "put_open_interest_btc": 3183.7
         },
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 100000.0,
           "call_open_interest_btc": 6504.5,
-          "put_open_interest_btc": 299.1
+          "put_open_interest_btc": 299.6
         },
         {
           "expiry_date": "2026-12-04",
           "strike_usd": 58000.0,
-          "call_open_interest_btc": 32.0,
-          "put_open_interest_btc": 6441.4
+          "call_open_interest_btc": 32.1,
+          "put_open_interest_btc": 6359.1
         },
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 90000.0,
-          "call_open_interest_btc": 5736.4,
+          "call_open_interest_btc": 5732.7,
           "put_open_interest_btc": 645.1
         },
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 40000.0,
           "call_open_interest_btc": 257.5,
-          "put_open_interest_btc": 5607.0
+          "put_open_interest_btc": 5693.2
         },
         {
           "expiry_date": "2026-12-25",
@@ -2853,13 +2853,13 @@
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 75000.0,
-          "call_open_interest_btc": 3128.7,
+          "call_open_interest_btc": 3130.2,
           "put_open_interest_btc": 2223.4
         },
         {
           "expiry_date": "2026-11-27",
           "strike_usd": 65000.0,
-          "call_open_interest_btc": 2210.4,
+          "call_open_interest_btc": 2217.0,
           "put_open_interest_btc": 2988.3
         },
         {
@@ -2871,44 +2871,50 @@
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 88000.0,
-          "call_open_interest_btc": 4552.2,
+          "call_open_interest_btc": 4553.2,
           "put_open_interest_btc": 192.7
         },
         {
           "expiry_date": "2026-11-27",
           "strike_usd": 68000.0,
-          "call_open_interest_btc": 1803.9,
-          "put_open_interest_btc": 2892.9
+          "call_open_interest_btc": 1838.9,
+          "put_open_interest_btc": 2881.9
         },
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 72000.0,
-          "call_open_interest_btc": 2473.4,
+          "call_open_interest_btc": 2483.2,
           "put_open_interest_btc": 2068.5
         },
         {
           "expiry_date": "2026-11-27",
           "strike_usd": 70000.0,
-          "call_open_interest_btc": 1388.9,
-          "put_open_interest_btc": 3013.8
+          "call_open_interest_btc": 1387.9,
+          "put_open_interest_btc": 3011.8
         },
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 78000.0,
-          "call_open_interest_btc": 2438.1,
+          "call_open_interest_btc": 2410.2,
           "put_open_interest_btc": 1582.7
         },
         {
           "expiry_date": "2026-11-27",
-          "strike_usd": 75000.0,
-          "call_open_interest_btc": 742.3,
-          "put_open_interest_btc": 3080.7
+          "strike_usd": 63000.0,
+          "call_open_interest_btc": 1012.5,
+          "put_open_interest_btc": 2933.9
         },
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 68000.0,
-          "call_open_interest_btc": 2531.5,
+          "call_open_interest_btc": 2565.2,
           "put_open_interest_btc": 1258.6
+        },
+        {
+          "expiry_date": "2026-11-27",
+          "strike_usd": 75000.0,
+          "call_open_interest_btc": 735.3,
+          "put_open_interest_btc": 3080.6
         },
         {
           "expiry_date": "2026-12-25",
@@ -2919,86 +2925,74 @@
         {
           "expiry_date": "2026-11-27",
           "strike_usd": 73000.0,
-          "call_open_interest_btc": 1742.8,
-          "put_open_interest_btc": 1978.9
+          "call_open_interest_btc": 1737.8,
+          "put_open_interest_btc": 1976.8
         },
         {
           "expiry_date": "2026-12-25",
-          "strike_usd": 85000.0,
-          "call_open_interest_btc": 2858.9,
-          "put_open_interest_btc": 741.0
+          "strike_usd": 55000.0,
+          "call_open_interest_btc": 83.8,
+          "put_open_interest_btc": 3623.1
         },
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 50000.0,
           "call_open_interest_btc": 260.1,
-          "put_open_interest_btc": 3323.0
+          "put_open_interest_btc": 3348.4
         },
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 20000.0,
           "call_open_interest_btc": 6.6,
-          "put_open_interest_btc": 3554.0
+          "put_open_interest_btc": 3562.9
         },
         {
           "expiry_date": "2026-11-27",
           "strike_usd": 69000.0,
-          "call_open_interest_btc": 785.7,
+          "call_open_interest_btc": 815.9,
           "put_open_interest_btc": 2742.3
         },
         {
           "expiry_date": "2026-12-25",
-          "strike_usd": 55000.0,
-          "call_open_interest_btc": 83.4,
-          "put_open_interest_btc": 3384.7
-        },
-        {
-          "expiry_date": "2026-11-27",
-          "strike_usd": 63000.0,
-          "call_open_interest_btc": 505.3,
-          "put_open_interest_btc": 2937.4
-        },
-        {
-          "expiry_date": "2026-11-27",
-          "strike_usd": 64000.0,
-          "call_open_interest_btc": 774.1,
-          "put_open_interest_btc": 2559.3
-        },
-        {
-          "expiry_date": "2027-03-26",
-          "strike_usd": 60000.0,
-          "call_open_interest_btc": 1028.0,
-          "put_open_interest_btc": 2296.8
+          "strike_usd": 85000.0,
+          "call_open_interest_btc": 2736.0,
+          "put_open_interest_btc": 741.0
         },
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 62000.0,
-          "call_open_interest_btc": 1105.9,
-          "put_open_interest_btc": 2208.8
+          "call_open_interest_btc": 1204.5,
+          "put_open_interest_btc": 2214.3
         },
         {
-          "expiry_date": "2026-12-25",
-          "strike_usd": 30000.0,
-          "call_open_interest_btc": 340.6,
-          "put_open_interest_btc": 2862.1
+          "expiry_date": "2027-03-26",
+          "strike_usd": 60000.0,
+          "call_open_interest_btc": 1018.1,
+          "put_open_interest_btc": 2320.1
         },
         {
           "expiry_date": "2027-03-26",
           "strike_usd": 50000.0,
           "call_open_interest_btc": 21.6,
-          "put_open_interest_btc": 3167.6
+          "put_open_interest_btc": 3220.8
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 30000.0,
+          "call_open_interest_btc": 340.6,
+          "put_open_interest_btc": 2802.8
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 82000.0,
+          "call_open_interest_btc": 1690.9,
+          "put_open_interest_btc": 1410.0
         },
         {
           "expiry_date": "2026-12-25",
           "strike_usd": 45000.0,
           "call_open_interest_btc": 67.9,
-          "put_open_interest_btc": 3058.8
-        },
-        {
-          "expiry_date": "2026-12-25",
-          "strike_usd": 82000.0,
-          "call_open_interest_btc": 1689.7,
-          "put_open_interest_btc": 1410.0
+          "put_open_interest_btc": 3014.6
         },
         {
           "expiry_date": "2026-12-25",
@@ -3007,22 +3001,28 @@
           "put_open_interest_btc": 81.5
         },
         {
-          "expiry_date": "2026-12-25",
-          "strike_usd": 58000.0,
-          "call_open_interest_btc": 209.8,
-          "put_open_interest_btc": 2793.1
+          "expiry_date": "2026-12-04",
+          "strike_usd": 60000.0,
+          "call_open_interest_btc": 113.3,
+          "put_open_interest_btc": 2884.8
         },
         {
           "expiry_date": "2026-11-27",
           "strike_usd": 80000.0,
           "call_open_interest_btc": 2099.2,
-          "put_open_interest_btc": 896.2
+          "put_open_interest_btc": 881.1
         },
         {
           "expiry_date": "2026-11-27",
           "strike_usd": 72000.0,
-          "call_open_interest_btc": 1374.7,
+          "call_open_interest_btc": 1376.3,
           "put_open_interest_btc": 1597.6
+        },
+        {
+          "expiry_date": "2026-12-25",
+          "strike_usd": 58000.0,
+          "call_open_interest_btc": 205.8,
+          "put_open_interest_btc": 2766.6
         },
         {
           "expiry_date": "2026-11-27",
@@ -3031,74 +3031,19 @@
           "put_open_interest_btc": 322.1
         },
         {
-          "expiry_date": "2026-12-04",
-          "strike_usd": 60000.0,
-          "call_open_interest_btc": 49.8,
-          "put_open_interest_btc": 2902.7
+          "expiry_date": "2026-12-25",
+          "strike_usd": 35000.0,
+          "call_open_interest_btc": 91.9,
+          "put_open_interest_btc": 2825.7
         },
         {
-          "expiry_date": "2026-12-25",
-          "strike_usd": 66000.0,
-          "call_open_interest_btc": 1508.7,
-          "put_open_interest_btc": 1411.8
+          "expiry_date": "2026-11-27",
+          "strike_usd": 74000.0,
+          "call_open_interest_btc": 648.4,
+          "put_open_interest_btc": 2243.7
         }
       ],
       "sampled_25d_skew": [
-        {
-          "expiry_date": "2026-11-25",
-          "call_25d_instrument": null,
-          "put_25d_instrument": null,
-          "call_25d_mark_iv_pct": null,
-          "put_25d_mark_iv_pct": null,
-          "put_minus_call_25d_skew_vol_points": null,
-          "greeks_samples": [
-            {
-              "instrument_name": "BTC-25NOV26-51000-P",
-              "expiry_date": "2026-11-25",
-              "option_type": "put",
-              "delta": -0.00277,
-              "gamma": 0.0,
-              "mark_iv_pct": 133.93,
-              "ticker_timestamp_utc": "2026-11-24T16:59:16.037000+00:00"
-            },
-            {
-              "instrument_name": "BTC-25NOV26-53000-P",
-              "expiry_date": "2026-11-25",
-              "option_type": "put",
-              "delta": -0.0063,
-              "gamma": 1e-05,
-              "mark_iv_pct": 111.18,
-              "ticker_timestamp_utc": "2026-11-24T16:59:16.037000+00:00"
-            },
-            {
-              "instrument_name": "BTC-25NOV26-56500-P",
-              "expiry_date": "2026-11-25",
-              "option_type": "put",
-              "delta": -0.06476,
-              "gamma": 6e-05,
-              "mark_iv_pct": 80.27,
-              "ticker_timestamp_utc": "2026-11-24T16:59:16.037000+00:00"
-            },
-            {
-              "instrument_name": "BTC-25NOV26-62500-C",
-              "expiry_date": "2026-11-25",
-              "option_type": "call",
-              "delta": 0.01395,
-              "gamma": 3e-05,
-              "mark_iv_pct": 55.83,
-              "ticker_timestamp_utc": "2026-11-24T16:59:16.037000+00:00"
-            },
-            {
-              "instrument_name": "BTC-25NOV26-65000-C",
-              "expiry_date": "2026-11-25",
-              "option_type": "call",
-              "delta": 0.00163,
-              "gamma": 0.0,
-              "mark_iv_pct": 73.75,
-              "ticker_timestamp_utc": "2026-11-24T16:59:16.037000+00:00"
-            }
-          ]
-        },
         {
           "expiry_date": "2026-11-26",
           "call_25d_instrument": null,
@@ -3108,13 +3053,49 @@
           "put_minus_call_25d_skew_vol_points": null,
           "greeks_samples": [
             {
-              "instrument_name": "BTC-26NOV26-62500-C",
+              "instrument_name": "BTC-26NOV26-52000-P",
+              "expiry_date": "2026-11-26",
+              "option_type": "put",
+              "delta": -0.00344,
+              "gamma": 0.0,
+              "mark_iv_pct": 106.56,
+              "ticker_timestamp_utc": "2026-11-25T16:59:53.346000+00:00"
+            },
+            {
+              "instrument_name": "BTC-26NOV26-53000-P",
+              "expiry_date": "2026-11-26",
+              "option_type": "put",
+              "delta": -0.00541,
+              "gamma": 1e-05,
+              "mark_iv_pct": 94.64,
+              "ticker_timestamp_utc": "2026-11-25T16:59:53.346000+00:00"
+            },
+            {
+              "instrument_name": "BTC-26NOV26-56000-P",
+              "expiry_date": "2026-11-26",
+              "option_type": "put",
+              "delta": -0.08318,
+              "gamma": 8e-05,
+              "mark_iv_pct": 77.7,
+              "ticker_timestamp_utc": "2026-11-25T16:59:54.682000+00:00"
+            },
+            {
+              "instrument_name": "BTC-26NOV26-61500-C",
               "expiry_date": "2026-11-26",
               "option_type": "call",
-              "delta": 0.08824,
-              "gamma": 7e-05,
-              "mark_iv_pct": 55.74,
-              "ticker_timestamp_utc": "2026-11-24T16:59:17.044000+00:00"
+              "delta": 0.02003,
+              "gamma": 3e-05,
+              "mark_iv_pct": 58.16,
+              "ticker_timestamp_utc": "2026-11-25T16:59:53.346000+00:00"
+            },
+            {
+              "instrument_name": "BTC-26NOV26-64000-C",
+              "expiry_date": "2026-11-26",
+              "option_type": "call",
+              "delta": 0.00553,
+              "gamma": 1e-05,
+              "mark_iv_pct": 84.59,
+              "ticker_timestamp_utc": "2026-11-25T16:59:53.346000+00:00"
             }
           ]
         },
@@ -3125,7 +3106,17 @@
           "call_25d_mark_iv_pct": null,
           "put_25d_mark_iv_pct": null,
           "put_minus_call_25d_skew_vol_points": null,
-          "greeks_samples": []
+          "greeks_samples": [
+            {
+              "instrument_name": "BTC-27NOV26-64000-C",
+              "expiry_date": "2026-11-27",
+              "option_type": "call",
+              "delta": 0.02376,
+              "gamma": 2e-05,
+              "mark_iv_pct": 66.91,
+              "ticker_timestamp_utc": "2026-11-25T16:59:55.350000+00:00"
+            }
+          ]
         },
         {
           "expiry_date": "2026-11-28",
@@ -3134,15 +3125,24 @@
           "call_25d_mark_iv_pct": null,
           "put_25d_mark_iv_pct": null,
           "put_minus_call_25d_skew_vol_points": null,
+          "greeks_samples": []
+        },
+        {
+          "expiry_date": "2026-11-29",
+          "call_25d_instrument": null,
+          "put_25d_instrument": null,
+          "call_25d_mark_iv_pct": null,
+          "put_25d_mark_iv_pct": null,
+          "put_minus_call_25d_skew_vol_points": null,
           "greeks_samples": [
             {
-              "instrument_name": "BTC-28NOV26-53000-P",
-              "expiry_date": "2026-11-28",
+              "instrument_name": "BTC-29NOV26-53000-P",
+              "expiry_date": "2026-11-29",
               "option_type": "put",
-              "delta": -0.07163,
-              "gamma": 3e-05,
-              "mark_iv_pct": 80.43,
-              "ticker_timestamp_utc": "2026-11-24T16:59:18.051000+00:00"
+              "delta": -0.0832,
+              "gamma": 4e-05,
+              "mark_iv_pct": 73.87,
+              "ticker_timestamp_utc": "2026-11-25T16:59:55.350000+00:00"
             }
           ]
         }
@@ -3154,27 +3154,7 @@
       "ticker_greeks_sample_count": 7,
       "ticker_greeks_errors": [
         {
-          "instrument_name": "BTC-25NOV26-68000-C",
-          "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
-        },
-        {
-          "instrument_name": "BTC-26NOV26-52000-P",
-          "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
-        },
-        {
-          "instrument_name": "BTC-26NOV26-53000-P",
-          "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
-        },
-        {
-          "instrument_name": "BTC-26NOV26-56000-P",
-          "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
-        },
-        {
-          "instrument_name": "BTC-26NOV26-65000-C",
-          "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
-        },
-        {
-          "instrument_name": "BTC-26NOV26-68000-C",
+          "instrument_name": "BTC-26NOV26-67000-C",
           "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
         },
         {
@@ -3190,15 +3170,19 @@
           "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
         },
         {
-          "instrument_name": "BTC-27NOV26-62500-C",
+          "instrument_name": "BTC-27NOV26-61500-C",
           "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
         },
         {
-          "instrument_name": "BTC-27NOV26-65000-C",
+          "instrument_name": "BTC-27NOV26-67000-C",
           "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
         },
         {
-          "instrument_name": "BTC-27NOV26-68000-C",
+          "instrument_name": "BTC-28NOV26-52000-P",
+          "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
+        },
+        {
+          "instrument_name": "BTC-28NOV26-53000-P",
           "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
         },
         {
@@ -3206,20 +3190,40 @@
           "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
         },
         {
-          "instrument_name": "BTC-28NOV26-62500-C",
+          "instrument_name": "BTC-28NOV26-61500-C",
           "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
         },
         {
-          "instrument_name": "BTC-28NOV26-65000-C",
+          "instrument_name": "BTC-28NOV26-64000-C",
           "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
         },
         {
           "instrument_name": "BTC-28NOV26-67000-C",
           "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
+        },
+        {
+          "instrument_name": "BTC-29NOV26-51000-P",
+          "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
+        },
+        {
+          "instrument_name": "BTC-29NOV26-56000-P",
+          "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
+        },
+        {
+          "instrument_name": "BTC-29NOV26-61000-C",
+          "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
+        },
+        {
+          "instrument_name": "BTC-29NOV26-64000-C",
+          "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
+        },
+        {
+          "instrument_name": "BTC-29NOV26-66000-C",
+          "error": "HTTPError: 429 Client Error: Too Many Requests for url: https://www.deribit.com/api/v2/public/ticker"
         }
       ],
       "greeks_status": "PASS",
-      "raw_option_instruments": 958,
+      "raw_option_instruments": 956,
       "open_interest_delay_hours": 8
     },
     "us_spot_etf_flows": {
@@ -3227,34 +3231,34 @@
       "source_url": "https://www.tftc.io/bitcoin-etf-flows/latest.json",
       "license": "https://creativecommons.org/licenses/by/4.0/",
       "status": "PASS",
-      "retrieved_at_utc": "2026-11-24T16:59:20.251178+00:00",
-      "updated_through": "2026-11-23",
+      "retrieved_at_utc": "2026-11-25T16:59:57.459608+00:00",
+      "updated_through": "2026-11-24",
       "business_sessions_behind_approx": 1,
       "latest_session": {
-        "date": "2026-11-23",
-        "netFlowUsd": -569739636.2999997,
-        "vendorNetFlowUsd": -569739636.2999997,
-        "totalNetAssetsUsd": 74124798305.68867,
-        "btcCloseUsd": 61234,
+        "date": "2026-11-24",
+        "netFlowUsd": -231556490.06999975,
+        "vendorNetFlowUsd": -231556490.06999975,
+        "totalNetAssetsUsd": 72009917872.68272,
+        "btcCloseUsd": 59680,
         "perEtfUsd": {
-          "BTC": -61082376,
-          "ARKB": 0,
-          "BITB": -12603549.299999753,
+          "BTC": 3957345,
+          "ARKB": -15798177.6,
+          "BITB": -10340296.31999976,
           "BRRR": 0,
           "BTCO": 0,
           "BTCW": 0,
-          "EZBC": 0,
-          "FBTC": 13287729,
+          "EZBC": 6879731.4,
+          "FBTC": -44030500.65,
           "GBTC": 0,
           "HODL": 0,
-          "IBIT": -509341439.99999994,
-          "MSBT": 0
+          "IBIT": -175297200,
+          "MSBT": 3072608.1
         }
       },
-      "cumulative_net_flow_usd": 52326295773.85499,
-      "last_21_sessions_net_flow_usd": -4909228746.98,
-      "last_30_sessions_net_flow_usd": -4767678114.765001,
-      "history_rows_available": 736,
+      "cumulative_net_flow_usd": 52094739283.78499,
+      "last_21_sessions_net_flow_usd": -5251129357.049999,
+      "last_30_sessions_net_flow_usd": -5174852012.08,
+      "history_rows_available": 737,
       "history_coverage_start": "2024-01-11",
       "full_history_error": null,
       "global_etp_flows": {
@@ -3264,14 +3268,14 @@
     },
     "macro": {
       "status": "PARTIAL",
-      "retrieved_at_utc": "2026-11-24T17:03:21.668996+00:00",
+      "retrieved_at_utc": "2026-11-25T17:03:58.575180+00:00",
       "series": {
         "DGS2": {
           "label": "US Treasury 2Y yield",
           "value": 4.63,
           "unit": "percent",
-          "observation_date": "2026-11-23",
-          "retrieved_at_utc": "2026-11-24T17:00:21.117220+00:00",
+          "observation_date": "2026-11-24",
+          "retrieved_at_utc": "2026-11-25T17:00:58.016200+00:00",
           "age_calendar_days": 1,
           "status": "PASS",
           "previous_value": null,
@@ -3280,10 +3284,10 @@
         },
         "DGS10": {
           "label": "US Treasury 10Y yield",
-          "value": 4.92,
+          "value": 4.91,
           "unit": "percent",
-          "observation_date": "2026-11-23",
-          "retrieved_at_utc": "2026-11-24T17:00:20.992568+00:00",
+          "observation_date": "2026-11-24",
+          "retrieved_at_utc": "2026-11-25T17:00:58.096242+00:00",
           "age_calendar_days": 1,
           "status": "PASS",
           "previous_value": null,
@@ -3292,10 +3296,10 @@
         },
         "VIXCLS": {
           "label": "CBOE VIX",
-          "value": 26.62,
+          "value": 26.36,
           "unit": "index points",
-          "observation_date": "2026-11-23",
-          "retrieved_at_utc": "2026-11-24T17:03:21.667399+00:00",
+          "observation_date": "2026-11-24",
+          "retrieved_at_utc": "2026-11-25T17:03:58.573026+00:00",
           "age_calendar_days": 1,
           "status": "PASS",
           "previous_value": null,
@@ -3304,33 +3308,33 @@
         }
       },
       "errors": {
-        "DFII10": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DFII10&cosd=2025-11-24&coed=2026-11-24 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
-        "FEDFUNDS": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=FEDFUNDS&cosd=2021-11-25&coed=2026-11-24 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
-        "CPIAUCSL": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=CPIAUCSL&cosd=2021-11-25&coed=2026-11-24 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
-        "PCEPILFE": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=PCEPILFE&cosd=2021-11-25&coed=2026-11-24 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
-        "UNRATE": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=UNRATE&cosd=2021-11-25&coed=2026-11-24 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
-        "PAYEMS": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=PAYEMS&cosd=2021-11-25&coed=2026-11-24 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
-        "DTWEXBGS": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DTWEXBGS&cosd=2025-11-24&coed=2026-11-24 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
-        "WALCL": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=WALCL&cosd=2025-11-24&coed=2026-11-24 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
-        "RRPONTSYD": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=RRPONTSYD&cosd=2025-11-24&coed=2026-11-24 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
-        "NFCI": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=NFCI&cosd=2025-11-24&coed=2026-11-24 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
-        "SP500": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=SP500&cosd=2025-11-24&coed=2026-11-24 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
-        "NASDAQCOM": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=NASDAQCOM&cosd=2025-11-24&coed=2026-11-24 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
-        "M2SL": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=M2SL&cosd=2021-11-25&coed=2026-11-24 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
+        "DFII10": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DFII10&cosd=2025-11-25&coed=2026-11-25 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+        "FEDFUNDS": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=FEDFUNDS&cosd=2021-11-26&coed=2026-11-25 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+        "CPIAUCSL": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=CPIAUCSL&cosd=2021-11-26&coed=2026-11-25 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+        "PCEPILFE": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=PCEPILFE&cosd=2021-11-26&coed=2026-11-25 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+        "UNRATE": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=UNRATE&cosd=2021-11-26&coed=2026-11-25 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+        "PAYEMS": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=PAYEMS&cosd=2021-11-26&coed=2026-11-25 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+        "DTWEXBGS": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=DTWEXBGS&cosd=2025-11-25&coed=2026-11-25 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+        "WALCL": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=WALCL&cosd=2025-11-25&coed=2026-11-25 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+        "RRPONTSYD": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=RRPONTSYD&cosd=2025-11-25&coed=2026-11-25 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+        "NFCI": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=NFCI&cosd=2025-11-25&coed=2026-11-25 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+        "SP500": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=SP500&cosd=2025-11-25&coed=2026-11-25 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+        "NASDAQCOM": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=NASDAQCOM&cosd=2025-11-25&coed=2026-11-25 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))",
+        "M2SL": "ConnectionError: HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Max retries exceeded with url: /graph/fredgraph.csv?id=M2SL&cosd=2021-11-26&coed=2026-11-25 (Caused by ReadTimeoutError(\"HTTPSConnectionPool(host='fred.stlouisfed.org', port=443): Read timed out. (read timeout=30)\"))"
       },
       "acquisition_method": "4-worker bounded concurrency; 8s connect/30s read timeout; 2 bounded retries for transient HTTP/network errors",
       "source_note": "FRED observation dates are not release timestamps; monthly/weekly series naturally lag the run date."
     }
   },
-  "supplemental_acquisition_seconds": 258.672,
+  "supplemental_acquisition_seconds": 258.146,
   "cross_checks": [
     {
       "venue": "Coinbase",
       "status": "PASS",
       "overlap_rows": 300,
-      "overlap_start_utc": "2026-01-28T00:00:00+00:00",
-      "overlap_end_utc": "2026-11-23T00:00:00+00:00",
-      "return_correlation": 0.9999367836411113,
+      "overlap_start_utc": "2026-01-29T00:00:00+00:00",
+      "overlap_end_utc": "2026-11-24T00:00:00+00:00",
+      "return_correlation": 0.999935982927781,
       "median_absolute_log_basis": 0.0006287805020273266,
       "p99_absolute_log_basis": 0.002296685409266289,
       "warning": "USDT/USD quote basis is not FX-adjusted; venues remain separate.",
@@ -3338,8 +3342,8 @@
         "primary_series": "Binance spot BTCUSDT / USDT",
         "secondary_series": "Coinbase Exchange BTC-USD / USD",
         "timeframe": "1 daily session",
-        "overlap_start_utc": "2026-01-28T00:00:00+00:00",
-        "overlap_end_utc": "2026-11-23T00:00:00+00:00",
+        "overlap_start_utc": "2026-01-29T00:00:00+00:00",
+        "overlap_end_utc": "2026-11-24T00:00:00+00:00",
         "overlap_rows_unit": "daily observations",
         "return_correlation_unit": "dimensionless",
         "absolute_log_basis_unit": "log price-ratio units; USDT/USD not FX-adjusted",
@@ -3350,9 +3354,9 @@
       "venue": "Kraken",
       "status": "PASS",
       "overlap_rows": 720,
-      "overlap_start_utc": "2024-12-04T00:00:00+00:00",
-      "overlap_end_utc": "2026-11-23T00:00:00+00:00",
-      "return_correlation": 0.9998188606328174,
+      "overlap_start_utc": "2024-12-05T00:00:00+00:00",
+      "overlap_end_utc": "2026-11-24T00:00:00+00:00",
+      "return_correlation": 0.9998187020208793,
       "median_absolute_log_basis": 0.0004412674828866463,
       "p99_absolute_log_basis": 0.001998935241858722,
       "warning": "USDT/USD quote basis is not FX-adjusted; venues remain separate.",
@@ -3360,8 +3364,8 @@
         "primary_series": "Binance spot BTCUSDT / USDT",
         "secondary_series": "Kraken XBT/USD / USD",
         "timeframe": "1 daily session",
-        "overlap_start_utc": "2024-12-04T00:00:00+00:00",
-        "overlap_end_utc": "2026-11-23T00:00:00+00:00",
+        "overlap_start_utc": "2024-12-05T00:00:00+00:00",
+        "overlap_end_utc": "2026-11-24T00:00:00+00:00",
         "overlap_rows_unit": "daily observations",
         "return_correlation_unit": "dimensionless",
         "absolute_log_basis_unit": "log price-ratio units; USDT/USD not FX-adjusted",
@@ -3379,13 +3383,13 @@
     "robust_volume_z": "dimensionless rolling score versus prior 90 completed sessions; minimum 60 sessions"
   },
   "performance": {
-    "acquisition_and_qa_seconds": 310.082,
-    "walk_forward_seconds": 0.123,
-    "pre_report_review_seconds": 0.009,
-    "total_seconds_before_report": 310.24
+    "acquisition_and_qa_seconds": 296.194,
+    "walk_forward_seconds": 0.279,
+    "pre_report_review_seconds": 0.016,
+    "total_seconds_before_report": 296.539
   },
   "market_snapshot": {
-    "as_of_utc": "2026-11-24T17:03:21.669033+00:00",
+    "as_of_utc": "2026-11-25T17:03:58.575215+00:00",
     "warning": "These are last closed daily candles, not live spot quotes; USD and USDT are not converted or combined.",
     "venues": [
       {
@@ -3393,95 +3397,95 @@
         "symbol": "BTCUSDT",
         "quote_currency": "USDT",
         "snapshot_type": "latest_closed_daily_candle_not_realtime_spot",
-        "candle_open_timestamp_utc": "2026-11-23T00:00:00+00:00",
-        "candle_close_timestamp_utc": "2026-11-24T00:00:00+00:00",
-        "retrieved_at_utc": "2026-11-24T16:59:00.476328+00:00",
-        "open_quote_per_btc": 61271.09,
-        "high_quote_per_btc": 64603.12,
-        "low_quote_per_btc": 60386.0,
-        "close_quote_per_btc": 61270.93,
-        "volume_btc": 27493.88421,
-        "prior_30d_median_volume_btc": 16836.930845000003,
-        "volume_vs_prior_30d_median": 1.6329510682859847,
-        "intraday_range_pct": 6.882723973084211,
-        "prior_close_quote_per_btc": 61271.08,
-        "close_change_1d_pct": -0.0002448137032984299,
-        "close_change_7d_pct": -5.566862255014304,
-        "close_change_30d_pct": -24.252288592051052,
-        "volume_7d_btc": 201211.14112,
-        "volume_30d_btc": 592429.14725,
-        "sma_20_quote_per_btc": 68610.21100000001,
-        "sma_50_quote_per_btc": 76256.8408,
-        "sma_200_quote_per_btc": 72291.1815,
-        "high_20d_quote_per_btc": 81196.01,
+        "candle_open_timestamp_utc": "2026-11-24T00:00:00+00:00",
+        "candle_close_timestamp_utc": "2026-11-25T00:00:00+00:00",
+        "retrieved_at_utc": "2026-11-25T16:59:38.180906+00:00",
+        "open_quote_per_btc": 61270.92,
+        "high_quote_per_btc": 61682.01,
+        "low_quote_per_btc": 59260.0,
+        "close_quote_per_btc": 59832.0,
+        "volume_btc": 19707.39868,
+        "prior_30d_median_volume_btc": 17953.68676,
+        "volume_vs_prior_30d_median": 1.0976797659134383,
+        "intraday_range_pct": 3.9529519060591913,
+        "prior_close_quote_per_btc": 61270.93,
+        "close_change_1d_pct": -2.348470963310012,
+        "close_change_7d_pct": -7.876148911387448,
+        "close_change_30d_pct": -25.353777954437508,
+        "volume_7d_btc": 192601.77646999998,
+        "volume_30d_btc": 605883.62098,
+        "sma_20_quote_per_btc": 67576.61050000001,
+        "sma_50_quote_per_btc": 75738.1434,
+        "sma_200_quote_per_btc": 72189.37565,
+        "high_20d_quote_per_btc": 80918.01,
         "low_20d_quote_per_btc": 55130.0,
-        "high_50d_quote_per_btc": 86999.11,
+        "high_50d_quote_per_btc": 86698.99,
         "low_50d_quote_per_btc": 55130.0,
-        "atr_14_quote_per_btc": 3097.4476305096955,
-        "atr_14_pct_of_close": 5.0553298774960576
+        "atr_14_quote_per_btc": 3049.2020854732887,
+        "atr_14_pct_of_close": 5.096273040301659
       },
       {
         "venue": "Bitstamp",
         "symbol": "BTC/USD",
         "quote_currency": "USD",
         "snapshot_type": "latest_closed_daily_candle_not_realtime_spot",
-        "candle_open_timestamp_utc": "2026-11-23T00:00:00+00:00",
-        "candle_close_timestamp_utc": "2026-11-24T00:00:00+00:00",
-        "retrieved_at_utc": "2026-11-24T16:59:02.541998+00:00",
-        "open_quote_per_btc": 61170.53,
-        "high_quote_per_btc": 64504.62,
-        "low_quote_per_btc": 60282.25,
-        "close_quote_per_btc": 61209.32,
-        "volume_btc": 1807.11204406,
-        "prior_30d_median_volume_btc": 1589.91162556,
-        "volume_vs_prior_30d_median": 1.1366116298592996,
-        "intraday_range_pct": 6.902621245884257,
-        "prior_close_quote_per_btc": 61169.55,
-        "close_change_1d_pct": 0.0650160087821483,
-        "close_change_7d_pct": -5.573085639266983,
-        "close_change_30d_pct": -24.219583654969323,
-        "volume_7d_btc": 11214.36014328,
-        "volume_30d_btc": 49905.82642138,
-        "sma_20_quote_per_btc": 68520.4075,
-        "sma_50_quote_per_btc": 76160.3014,
-        "sma_200_quote_per_btc": 72231.97834999999,
-        "high_20d_quote_per_btc": 81105.28,
+        "candle_open_timestamp_utc": "2026-11-24T00:00:00+00:00",
+        "candle_close_timestamp_utc": "2026-11-25T00:00:00+00:00",
+        "retrieved_at_utc": "2026-11-25T16:59:39.994295+00:00",
+        "open_quote_per_btc": 61173.03,
+        "high_quote_per_btc": 61589.8,
+        "low_quote_per_btc": 59196.83,
+        "close_quote_per_btc": 59743.5,
+        "volume_btc": 1261.8199085,
+        "prior_30d_median_volume_btc": 1601.3660957299999,
+        "volume_vs_prior_30d_median": 0.7879646708298679,
+        "intraday_range_pct": 3.911805578373347,
+        "prior_close_quote_per_btc": 61209.32,
+        "close_change_1d_pct": -2.394766025827444,
+        "close_change_7d_pct": -7.913006163640746,
+        "close_change_30d_pct": -25.365601554363305,
+        "volume_7d_btc": 11350.33458948,
+        "volume_30d_btc": 50262.32265275,
+        "sma_20_quote_per_btc": 67485.87600000002,
+        "sma_50_quote_per_btc": 75640.0502,
+        "sma_200_quote_per_btc": 72129.70085,
+        "high_20d_quote_per_btc": 80821.81,
         "low_20d_quote_per_btc": 55081.31,
-        "high_50d_quote_per_btc": 86968.58,
+        "high_50d_quote_per_btc": 86676.87,
         "low_50d_quote_per_btc": 55081.31,
-        "atr_14_quote_per_btc": 3090.0395241734614,
-        "atr_14_pct_of_close": 5.048315394082897
+        "atr_14_quote_per_btc": 3040.248843875357,
+        "atr_14_pct_of_close": 5.088836181133273
       }
     ]
   },
   "cycle_comparison": {
     "status": "PASS",
     "source": "Bitstamp BTC/USD daily OHLCV; same venue and quote currency",
-    "latest_closed_session_utc": "2026-11-23T00:00:00+00:00",
-    "current_cycle_elapsed_sessions": 947,
-    "comparison_horizon_days": 947,
+    "latest_closed_session_utc": "2026-11-24T00:00:00+00:00",
+    "current_cycle_elapsed_sessions": 948,
+    "comparison_horizon_days": 948,
     "cycles": [
       {
         "cycle": "2012 cycle",
         "halving_date": "2012-11-28",
         "status": "INSUFFICIENT_HISTORY",
-        "first_available_session_utc": "2016-11-26T00:00:00+00:00"
+        "first_available_session_utc": "2016-11-27T00:00:00+00:00"
       },
       {
         "cycle": "2016 cycle",
         "halving_date": "2016-07-09",
         "status": "INSUFFICIENT_HISTORY",
-        "first_available_session_utc": "2016-11-26T00:00:00+00:00"
+        "first_available_session_utc": "2016-11-27T00:00:00+00:00"
       },
       {
         "cycle": "2020 cycle",
         "halving_date": "2020-05-11",
         "status": "PASS",
-        "elapsed_sessions": 947,
-        "comparison_target_session_utc": "2022-12-14T00:00:00+00:00",
+        "elapsed_sessions": 948,
+        "comparison_target_session_utc": "2022-12-15T00:00:00+00:00",
         "start_close_usd": 8571.98,
-        "close_at_same_elapsed_horizon_usd": 17803.0,
-        "return_at_same_elapsed_horizon_pct": 107.68830538568687,
+        "close_at_same_elapsed_horizon_usd": 17362.0,
+        "return_at_same_elapsed_horizon_pct": 102.54363635939421,
         "maximum_close_return_pct": 688.1376298124821,
         "days_to_maximum_close": 546,
         "maximum_close_drawdown_from_peak_pct": -76.66336091416392
@@ -3490,11 +3494,11 @@
         "cycle": "2024 cycle (current)",
         "halving_date": "2024-04-20",
         "status": "PASS",
-        "elapsed_sessions": 947,
-        "comparison_target_session_utc": "2026-11-23T00:00:00+00:00",
+        "elapsed_sessions": 948,
+        "comparison_target_session_utc": "2026-11-24T00:00:00+00:00",
         "start_close_usd": 64990.0,
-        "close_at_same_elapsed_horizon_usd": 61209.32,
-        "return_at_same_elapsed_horizon_pct": -5.817325742421908,
+        "close_at_same_elapsed_horizon_usd": 59743.5,
+        "return_at_same_elapsed_horizon_pct": -8.072780427758119,
         "maximum_close_return_pct": 91.91875673180489,
         "days_to_maximum_close": 534,
         "maximum_close_drawdown_from_peak_pct": -53.076959463793216
@@ -3516,37 +3520,37 @@
     "minimum_per_horizon": 200,
     "by_horizon": {
       "1": {
-        "n": 5,
+        "n": 6,
         "minimum_for_probabilistic_claims": 200,
         "sample_gate": "NOT_MET",
         "models": {
           "ridge": {
-            "mae": 0.02764043367467926,
-            "rmse": 0.02980809581555352,
-            "mean_error": 0.010317273613895766,
-            "directional_accuracy": 0.4
+            "mae": 0.023204917751909308,
+            "rmse": 0.027214176159972243,
+            "mean_error": 0.00842650498856988,
+            "directional_accuracy": 0.5
           },
           "zero": {
-            "mae": 0.027090945832291463,
-            "rmse": 0.02977866296986898,
-            "mean_error": 0.011653795790113547,
+            "mae": 0.02257625062002627,
+            "rmse": 0.027184075758500622,
+            "mean_error": 0.009711958918211338,
             "directional_accuracy": null
           },
           "drift": {
-            "mae": 0.027243888800207717,
-            "rmse": 0.030078814875017876,
-            "mean_error": 0.012388440002225849,
-            "directional_accuracy": 0.4
+            "mae": 0.022821882451907666,
+            "rmse": 0.02745961353473464,
+            "mean_error": 0.010442341786922776,
+            "directional_accuracy": 0.3333333333333333
           },
           "momentum": {
-            "mae": 0.024737359777495787,
-            "rmse": 0.02959450764741248,
-            "mean_error": -0.011177770837826562,
-            "directional_accuracy": 0.6
+            "mae": 0.024420017627988174,
+            "rmse": 0.02857893839164484,
+            "mean_error": -0.013120360178263816,
+            "directional_accuracy": 0.6666666666666666
           }
         },
-        "ridge_mae_difference_vs_zero": 0.0005494878423877962,
-        "ridge_relative_mae_lift_vs_zero": -0.020283080767627748,
+        "ridge_mae_difference_vs_zero": 0.0006286671318830386,
+        "ridge_relative_mae_lift_vs_zero": -0.0278463923201393,
         "active_model_version": "ridge-challenger-0.4-multifold-alpha-100",
         "by_model_version": {
           "ridge-challenger-0.3-alpha-100": {
@@ -3583,72 +3587,72 @@
             "ridge_relative_mae_lift_vs_zero": -0.10412795145099962
           },
           "ridge-challenger-0.4-multifold-alpha-100": {
-            "n": 5,
+            "n": 6,
             "minimum_for_probabilistic_claims": 200,
             "sample_gate": "NOT_MET",
             "models": {
               "ridge": {
-                "mae": 0.02764043367467926,
-                "rmse": 0.02980809581555352,
-                "mean_error": 0.010317273613895766,
-                "directional_accuracy": 0.4
+                "mae": 0.023204917751909308,
+                "rmse": 0.027214176159972243,
+                "mean_error": 0.00842650498856988,
+                "directional_accuracy": 0.5
               },
               "zero": {
-                "mae": 0.027090945832291463,
-                "rmse": 0.02977866296986898,
-                "mean_error": 0.011653795790113547,
+                "mae": 0.02257625062002627,
+                "rmse": 0.027184075758500622,
+                "mean_error": 0.009711958918211338,
                 "directional_accuracy": null
               },
               "drift": {
-                "mae": 0.027243888800207717,
-                "rmse": 0.030078814875017876,
-                "mean_error": 0.012388440002225849,
-                "directional_accuracy": 0.4
+                "mae": 0.022821882451907666,
+                "rmse": 0.02745961353473464,
+                "mean_error": 0.010442341786922776,
+                "directional_accuracy": 0.3333333333333333
               },
               "momentum": {
-                "mae": 0.024737359777495787,
-                "rmse": 0.02959450764741248,
-                "mean_error": -0.011177770837826562,
-                "directional_accuracy": 0.6
+                "mae": 0.024420017627988174,
+                "rmse": 0.02857893839164484,
+                "mean_error": -0.013120360178263816,
+                "directional_accuracy": 0.6666666666666666
               }
             },
-            "ridge_mae_difference_vs_zero": 0.0005494878423877962,
-            "ridge_relative_mae_lift_vs_zero": -0.020283080767627748
+            "ridge_mae_difference_vs_zero": 0.0006286671318830386,
+            "ridge_relative_mae_lift_vs_zero": -0.0278463923201393
           }
         }
       },
       "3": {
-        "n": 3,
+        "n": 4,
         "minimum_for_probabilistic_claims": 200,
         "sample_gate": "NOT_MET",
         "models": {
           "ridge": {
-            "mae": 0.05048018313446089,
-            "rmse": 0.06166387989170769,
-            "mean_error": 0.05048018313446089,
-            "directional_accuracy": 0.6666666666666666
+            "mae": 0.04828757734727513,
+            "rmse": 0.05733019781921882,
+            "mean_error": 0.027432697354416204,
+            "directional_accuracy": 0.5
           },
           "zero": {
-            "mae": 0.05158548738122474,
-            "rmse": 0.06234079013451997,
-            "mean_error": 0.05158548738122474,
+            "mae": 0.04833664067260468,
+            "rmse": 0.05733305809913823,
+            "mean_error": 0.029041590399232427,
             "directional_accuracy": null
           },
           "drift": {
-            "mae": 0.053808221767059926,
-            "rmse": 0.06419536167266522,
-            "mean_error": 0.053808221767059926,
-            "directional_accuracy": 0.0
+            "mae": 0.04945169706626506,
+            "rmse": 0.05849528239997607,
+            "mean_error": 0.031260635584324827,
+            "directional_accuracy": 0.25
           },
           "momentum": {
-            "mae": 0.0299976575740166,
-            "rmse": 0.036418323025440416,
-            "mean_error": 0.010056146301639738,
-            "directional_accuracy": 1.0
+            "mae": 0.04252643855201968,
+            "rmse": 0.050982694400610554,
+            "mean_error": -0.012486085645277423,
+            "directional_accuracy": 0.75
           }
         },
-        "ridge_mae_difference_vs_zero": -0.0011053042467638469,
-        "ridge_relative_mae_lift_vs_zero": 0.021426651232263838,
+        "ridge_mae_difference_vs_zero": -4.906332532954999e-05,
+        "ridge_relative_mae_lift_vs_zero": 0.0010150338262410186,
         "active_model_version": "ridge-challenger-0.4-multifold-alpha-100",
         "by_model_version": {
           "ridge-challenger-0.3-alpha-100": {
@@ -3685,37 +3689,106 @@
             "ridge_relative_mae_lift_vs_zero": 0.05819772527841216
           },
           "ridge-challenger-0.4-multifold-alpha-100": {
-            "n": 3,
+            "n": 4,
             "minimum_for_probabilistic_claims": 200,
             "sample_gate": "NOT_MET",
             "models": {
               "ridge": {
-                "mae": 0.05048018313446089,
-                "rmse": 0.06166387989170769,
-                "mean_error": 0.05048018313446089,
-                "directional_accuracy": 0.6666666666666666
+                "mae": 0.04828757734727513,
+                "rmse": 0.05733019781921882,
+                "mean_error": 0.027432697354416204,
+                "directional_accuracy": 0.5
               },
               "zero": {
-                "mae": 0.05158548738122474,
-                "rmse": 0.06234079013451997,
-                "mean_error": 0.05158548738122474,
+                "mae": 0.04833664067260468,
+                "rmse": 0.05733305809913823,
+                "mean_error": 0.029041590399232427,
                 "directional_accuracy": null
               },
               "drift": {
-                "mae": 0.053808221767059926,
-                "rmse": 0.06419536167266522,
-                "mean_error": 0.053808221767059926,
+                "mae": 0.04945169706626506,
+                "rmse": 0.05849528239997607,
+                "mean_error": 0.031260635584324827,
+                "directional_accuracy": 0.25
+              },
+              "momentum": {
+                "mae": 0.04252643855201968,
+                "rmse": 0.050982694400610554,
+                "mean_error": -0.012486085645277423,
+                "directional_accuracy": 0.75
+              }
+            },
+            "ridge_mae_difference_vs_zero": -4.906332532954999e-05,
+            "ridge_relative_mae_lift_vs_zero": 0.0010150338262410186
+          }
+        }
+      },
+      "7": {
+        "n": 1,
+        "minimum_for_probabilistic_claims": 200,
+        "sample_gate": "NOT_MET",
+        "models": {
+          "ridge": {
+            "mae": 0.05480620633441045,
+            "rmse": 0.05480620633441045,
+            "mean_error": 0.05480620633441045,
+            "directional_accuracy": 1.0
+          },
+          "zero": {
+            "mae": 0.05727845633441045,
+            "rmse": 0.05727845633441045,
+            "mean_error": 0.05727845633441045,
+            "directional_accuracy": null
+          },
+          "drift": {
+            "mae": 0.06259152438420959,
+            "rmse": 0.06259152438420959,
+            "mean_error": 0.06259152438420959,
+            "directional_accuracy": 0.0
+          },
+          "momentum": {
+            "mae": 0.007835924337082162,
+            "rmse": 0.007835924337082162,
+            "mean_error": -0.007835924337082162,
+            "directional_accuracy": 1.0
+          }
+        },
+        "ridge_mae_difference_vs_zero": -0.0024722500000000022,
+        "ridge_relative_mae_lift_vs_zero": 0.0431619522978447,
+        "active_model_version": "ridge-challenger-0.3-alpha-100",
+        "by_model_version": {
+          "ridge-challenger-0.3-alpha-100": {
+            "n": 1,
+            "minimum_for_probabilistic_claims": 200,
+            "sample_gate": "NOT_MET",
+            "models": {
+              "ridge": {
+                "mae": 0.05480620633441045,
+                "rmse": 0.05480620633441045,
+                "mean_error": 0.05480620633441045,
+                "directional_accuracy": 1.0
+              },
+              "zero": {
+                "mae": 0.05727845633441045,
+                "rmse": 0.05727845633441045,
+                "mean_error": 0.05727845633441045,
+                "directional_accuracy": null
+              },
+              "drift": {
+                "mae": 0.06259152438420959,
+                "rmse": 0.06259152438420959,
+                "mean_error": 0.06259152438420959,
                 "directional_accuracy": 0.0
               },
               "momentum": {
-                "mae": 0.0299976575740166,
-                "rmse": 0.036418323025440416,
-                "mean_error": 0.010056146301639738,
+                "mae": 0.007835924337082162,
+                "rmse": 0.007835924337082162,
+                "mean_error": -0.007835924337082162,
                 "directional_accuracy": 1.0
               }
             },
-            "ridge_mae_difference_vs_zero": -0.0011053042467638469,
-            "ridge_relative_mae_lift_vs_zero": 0.021426651232263838
+            "ridge_mae_difference_vs_zero": -0.0024722500000000022,
+            "ridge_relative_mae_lift_vs_zero": 0.0431619522978447
           }
         }
       }
@@ -3724,17 +3797,17 @@
   },
   "ledger": {
     "invalidations_created": 0,
-    "score_events_created": 2,
+    "score_events_created": 3,
     "forecast_events_created": 4,
     "duplicate_forecasts_suppressed": 0,
-    "events_proposed": 6,
-    "events_appended": 6,
+    "events_proposed": 7,
+    "events_appended": 7,
     "persistence_status": "VERIFIED_IN_WORKSPACE_PENDING_WORKFLOW_COMMIT",
-    "existing_events_before_run": 48,
-    "total_events_proposed": 54,
-    "total_events_after_run": 54,
+    "existing_events_before_run": 54,
+    "total_events_proposed": 61,
+    "total_events_after_run": 61,
     "append_only": true,
-    "ledger_sha256_after_append": "ce3a1b41280581c07f7776d078fcaa1aac61314dc84a6325e3710fed64e8cbce"
+    "ledger_sha256_after_append": "1d6e67fa751b16cd7303804fa7357ae4416d56255ebe27c3e30c58d7d10303c7"
   },
   "risk": {
     "overlay_version": "1.1",
@@ -3786,23 +3859,23 @@
       {
         "statement": "binance_acquisition_and_qa: PASS.",
         "evidence": {
-          "rows": 3386,
+          "rows": 3387,
           "duplicates": 0,
           "missing_volume": 0,
           "first_timestamp_utc": "2017-08-17T00:00:00+00:00",
-          "last_timestamp_utc": "2026-11-23T00:00:00+00:00",
+          "last_timestamp_utc": "2026-11-24T00:00:00+00:00",
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 16.983,
+          "latest_candle_age_hours": 16.994,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
-          "volume_median_btc": 36245.10667,
+          "volume_median_btc": 36230.452264,
           "volume_median_scope": "full available history; descriptive only",
           "volume_robust_z_window_sessions": 90,
           "volume_robust_z_min_history_sessions": 60,
           "volume_robust_z_scope": "current volume versus median and MAD of the prior 90 completed daily sessions; current session excluded",
-          "volume_p99_btc": 386050.5210520001,
+          "volume_p99_btc": 386039.61420119985,
           "volume_max_btc": 760705.362783,
           "volume_robust_z_max": 16.306271304475462,
           "volume_robust_z_max_timestamp_utc": "2017-12-22T00:00:00+00:00",
@@ -3811,9 +3884,9 @@
           "volume_max_timestamp_utc": "2022-11-08T00:00:00+00:00",
           "absolute_close_return_max_timestamp_utc": "2020-03-12T00:00:00+00:00",
           "intraday_range_pct_max_timestamp_utc": "2020-03-13T00:00:00+00:00",
-          "absolute_close_return_p99": 0.11693489220341823,
+          "absolute_close_return_p99": 0.1169339076194957,
           "absolute_close_return_max": 0.5026069427414583,
-          "intraday_range_pct_p99": 0.19231069529842962,
+          "intraday_range_pct_p99": 0.19230195890363205,
           "intraday_range_pct_max": 0.45268030691602723,
           "diagnostic_note": "Zero-volume and tail metrics are descriptive QA diagnostics, not automatic rejection thresholds."
         }
@@ -3824,12 +3897,12 @@
           "rows": 3650,
           "duplicates": 0,
           "missing_volume": 0,
-          "first_timestamp_utc": "2016-11-26T00:00:00+00:00",
-          "last_timestamp_utc": "2026-11-23T00:00:00+00:00",
+          "first_timestamp_utc": "2016-11-27T00:00:00+00:00",
+          "last_timestamp_utc": "2026-11-24T00:00:00+00:00",
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 16.984,
+          "latest_candle_age_hours": 16.994,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
           "volume_median_btc": 3139.841294945,
@@ -3860,15 +3933,15 @@
           "rows": 300,
           "duplicates": 0,
           "missing_volume": 0,
-          "first_timestamp_utc": "2026-01-28T00:00:00+00:00",
-          "last_timestamp_utc": "2026-11-23T00:00:00+00:00",
+          "first_timestamp_utc": "2026-01-29T00:00:00+00:00",
+          "last_timestamp_utc": "2026-11-24T00:00:00+00:00",
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 16.984,
+          "latest_candle_age_hours": 16.995,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
-          "volume_median_btc": 7321.695847545,
+          "volume_median_btc": 7366.011566900001,
           "volume_median_scope": "full available history; descriptive only",
           "volume_robust_z_window_sessions": 90,
           "volume_robust_z_min_history_sessions": 60,
@@ -3896,12 +3969,12 @@
           "rows": 720,
           "duplicates": 0,
           "missing_volume": 0,
-          "first_timestamp_utc": "2024-12-04T00:00:00+00:00",
-          "last_timestamp_utc": "2026-11-23T00:00:00+00:00",
+          "first_timestamp_utc": "2024-12-05T00:00:00+00:00",
+          "last_timestamp_utc": "2026-11-24T00:00:00+00:00",
           "gap_count": 0,
           "closed_candles_only": "PASS",
           "latest_age_days": 1,
-          "latest_candle_age_hours": 16.984,
+          "latest_candle_age_hours": 16.995,
           "zero_volume_rows": 0,
           "zero_volume_pct": 0.0,
           "volume_median_btc": 1693.83524465,
@@ -3950,12 +4023,12 @@
         "statement": "Il ledger prospettico conteggia esclusivamente eventi SCORE maturati.",
         "evidence": {
           "matured_by_horizon": {
-            "1": 5,
-            "3": 3,
-            "7": 0,
+            "1": 6,
+            "3": 4,
+            "7": 1,
             "30": 0
           },
-          "new_score_events": 2
+          "new_score_events": 3
         }
       },
       {
@@ -4040,31 +4113,31 @@
         "evidence": {
           "status": "PASS",
           "source": "Bitstamp BTC/USD daily OHLCV; same venue and quote currency",
-          "latest_closed_session_utc": "2026-11-23T00:00:00+00:00",
-          "current_cycle_elapsed_sessions": 947,
-          "comparison_horizon_days": 947,
+          "latest_closed_session_utc": "2026-11-24T00:00:00+00:00",
+          "current_cycle_elapsed_sessions": 948,
+          "comparison_horizon_days": 948,
           "cycles": [
             {
               "cycle": "2012 cycle",
               "halving_date": "2012-11-28",
               "status": "INSUFFICIENT_HISTORY",
-              "first_available_session_utc": "2016-11-26T00:00:00+00:00"
+              "first_available_session_utc": "2016-11-27T00:00:00+00:00"
             },
             {
               "cycle": "2016 cycle",
               "halving_date": "2016-07-09",
               "status": "INSUFFICIENT_HISTORY",
-              "first_available_session_utc": "2016-11-26T00:00:00+00:00"
+              "first_available_session_utc": "2016-11-27T00:00:00+00:00"
             },
             {
               "cycle": "2020 cycle",
               "halving_date": "2020-05-11",
               "status": "PASS",
-              "elapsed_sessions": 947,
-              "comparison_target_session_utc": "2022-12-14T00:00:00+00:00",
+              "elapsed_sessions": 948,
+              "comparison_target_session_utc": "2022-12-15T00:00:00+00:00",
               "start_close_usd": 8571.98,
-              "close_at_same_elapsed_horizon_usd": 17803.0,
-              "return_at_same_elapsed_horizon_pct": 107.68830538568687,
+              "close_at_same_elapsed_horizon_usd": 17362.0,
+              "return_at_same_elapsed_horizon_pct": 102.54363635939421,
               "maximum_close_return_pct": 688.1376298124821,
               "days_to_maximum_close": 546,
               "maximum_close_drawdown_from_peak_pct": -76.66336091416392
@@ -4073,11 +4146,11 @@
               "cycle": "2024 cycle (current)",
               "halving_date": "2024-04-20",
               "status": "PASS",
-              "elapsed_sessions": 947,
-              "comparison_target_session_utc": "2026-11-23T00:00:00+00:00",
+              "elapsed_sessions": 948,
+              "comparison_target_session_utc": "2026-11-24T00:00:00+00:00",
               "start_close_usd": 64990.0,
-              "close_at_same_elapsed_horizon_usd": 61209.32,
-              "return_at_same_elapsed_horizon_pct": -5.817325742421908,
+              "close_at_same_elapsed_horizon_usd": 59743.5,
+              "return_at_same_elapsed_horizon_pct": -8.072780427758119,
               "maximum_close_return_pct": 91.91875673180489,
               "days_to_maximum_close": 534,
               "maximum_close_drawdown_from_peak_pct": -53.076959463793216
@@ -4112,11 +4185,11 @@
     ],
     "FORECAST": {
       "new_point_forecasts_issued_this_run": 4,
-      "new_forecasts_scored_this_run": 2,
+      "new_forecasts_scored_this_run": 3,
       "matured_prospective_counts_by_horizon": {
-        "1": 5,
-        "3": 3,
-        "7": 0,
+        "1": 6,
+        "3": 4,
+        "7": 1,
         "30": 0
       },
       "calibrated_probabilities_published": false,
@@ -4127,9 +4200,9 @@
   "economic_validation": {
     "status": "BLOCKED_INSUFFICIENT_PROSPECTIVE_EVIDENCE",
     "matured_prospective_forecasts_by_horizon": {
-      "1": 5,
-      "3": 3,
-      "7": 0,
+      "1": 6,
+      "3": 4,
+      "7": 1,
       "30": 0
     },
     "minimum_required_per_horizon": 200,
@@ -4149,30 +4222,30 @@
     "observed_drivers": [
       {
         "name": "Variazione close-to-close",
-        "value": -0.0002448137032984299,
+        "value": -2.348470963310012,
         "unit": "%",
         "window": "1 sessione giornaliera",
-        "timestamp_utc": "2026-11-23T00:00:00+00:00",
+        "timestamp_utc": "2026-11-24T00:00:00+00:00",
         "source": "Binance spot BTCUSDT",
         "qa_status": "PASS",
         "interpretation": "Osservazione descrittiva; non attribuzione causale."
       },
       {
         "name": "Ampiezza intraday high-low/open",
-        "value": 6.882723973084211,
+        "value": 3.9529519060591913,
         "unit": "%",
         "window": "candela giornaliera",
-        "timestamp_utc": "2026-11-23T00:00:00+00:00",
+        "timestamp_utc": "2026-11-24T00:00:00+00:00",
         "source": "Binance spot BTCUSDT",
         "qa_status": "PASS",
         "interpretation": "Osservazione descrittiva; non attribuzione causale."
       },
       {
         "name": "Volume rispetto alla mediana precedente",
-        "value": 1.6329510682859847,
+        "value": 1.0976797659134383,
         "unit": "multiplo",
         "window": "volume giornaliero / mediana 30 sessioni precedenti",
-        "timestamp_utc": "2026-11-23T00:00:00+00:00",
+        "timestamp_utc": "2026-11-24T00:00:00+00:00",
         "source": "Binance spot BTCUSDT",
         "qa_status": "PASS",
         "interpretation": "Osservazione descrittiva; non attribuzione causale."
@@ -4185,8 +4258,8 @@
   "longitudinal_comparison": {
     "status": "COMPARISON_AVAILABLE",
     "comparison_performed": true,
-    "previous_run_started_at_utc": "2026-11-23T16:54:37.679766+00:00",
-    "previous_run_finished_at_utc": "2026-11-23T16:59:46.830399+00:00",
+    "previous_run_started_at_utc": "2026-11-24T16:58:11.587460+00:00",
+    "previous_run_finished_at_utc": "2026-11-24T17:03:21.827124+00:00",
     "previous_run_status": "COMPLETE_NOT_PROMOTED",
     "current_run_status": "COMPLETE_NOT_PROMOTED",
     "same_venue_price_snapshots": [
@@ -4194,9 +4267,9 @@
         "venue": "Binance",
         "symbol": "BTCUSDT",
         "quote_currency": "USDT",
-        "previous_candle_open_timestamp_utc": "2026-11-22T00:00:00+00:00",
-        "current_candle_open_timestamp_utc": "2026-11-23T00:00:00+00:00",
-        "close_change_since_previous_report_pct": -0.0002448137032984299,
+        "previous_candle_open_timestamp_utc": "2026-11-23T00:00:00+00:00",
+        "current_candle_open_timestamp_utc": "2026-11-24T00:00:00+00:00",
+        "close_change_since_previous_report_pct": -2.348470963310012,
         "unit": "%",
         "comparison_type": "same_venue_same_quote_only"
       },
@@ -4204,9 +4277,9 @@
         "venue": "Bitstamp",
         "symbol": "BTC/USD",
         "quote_currency": "USD",
-        "previous_candle_open_timestamp_utc": "2026-11-22T00:00:00+00:00",
-        "current_candle_open_timestamp_utc": "2026-11-23T00:00:00+00:00",
-        "close_change_since_previous_report_pct": 0.0650160087821483,
+        "previous_candle_open_timestamp_utc": "2026-11-23T00:00:00+00:00",
+        "current_candle_open_timestamp_utc": "2026-11-24T00:00:00+00:00",
+        "close_change_since_previous_report_pct": -2.394766025827444,
         "unit": "%",
         "comparison_type": "same_venue_same_quote_only"
       }
@@ -4216,16 +4289,16 @@
     },
     "prospective_matured_counts": {
       "1": {
-        "previous_matured": 4,
-        "current_matured": 5
+        "previous_matured": 5,
+        "current_matured": 6
       },
       "3": {
-        "previous_matured": 2,
-        "current_matured": 3
+        "previous_matured": 3,
+        "current_matured": 4
       },
       "7": {
         "previous_matured": 0,
-        "current_matured": 0
+        "current_matured": 1
       },
       "30": {
         "previous_matured": 0,
@@ -4235,9 +4308,9 @@
     "interpretation_policy": "Compare price snapshots only within identical venue/symbol/quote. Compare MAE only on identical holdout windows; all such historical results remain continuity diagnostics."
   },
   "code_provenance": {
-    "commit_sha": "98f0e558e37815b0bd4402913668c7934269bb32",
+    "commit_sha": "ffbb0e2225cedd45e6e6d3db6f9ba8edf791f3d4",
     "ref": "refs/heads/main",
-    "workflow_run_id": "45443172119",
+    "workflow_run_id": "45659731420",
     "event_name": "schedule"
   },
   "anomaly_event_cross_venue_checks": {
@@ -4382,47 +4455,12 @@
       "quote_basis_caveat": "The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged."
     }
   },
-  "rotating_event_review": {
-    "timestamp_utc": "2020-03-12T00:00:00+00:00",
-    "venues": {
-      "Binance_BTCUSDT": {
-        "status": "PASS",
-        "open": 7934.58,
-        "high": 7966.17,
-        "low": 4410.0,
-        "close": 4800.0,
-        "volume_btc": 261505.608653,
-        "intraday_range_pct": 44.818629341439625,
-        "close_log_return": -0.5026069427414592,
-        "volume_vs_prior_90d_median": 5.083543066164295,
-        "quote_currency": "USDT"
-      },
-      "Bitstamp_BTCUSD": {
-        "status": "PASS",
-        "open": 7956.29,
-        "high": 7969.9,
-        "low": 4776.59,
-        "close": 4841.67,
-        "volume_btc": 58513.38918903,
-        "intraday_range_pct": 40.13566624645406,
-        "close_log_return": -0.4939694596760823,
-        "volume_vs_prior_90d_median": 10.054439449782079,
-        "quote_currency": "USD"
-      }
-    },
-    "absolute_close_return_difference": 0.008637483065376927,
-    "volume_comparison_policy": "Venue volumes are not expected to match; compare each venue with its own trailing median.",
-    "binance_usdt_to_bitstamp_usd_close_price_ratio": 0.9913934654778207,
-    "implied_usd_per_usdt_if_btc_prices_were_at_parity": 1.00868125,
-    "binance_usdt_to_bitstamp_usd_open_price_ratio": 0.9972713412909786,
-    "quote_basis_caveat": "The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged."
-  },
   "pre_report_review": {
     "version": "pre-report-review-1.0",
     "executed_before_report_serialization": true,
-    "reviewed_at_utc": "2026-11-24T17:03:21.817144+00:00",
-    "run_id": "45443172119",
-    "rotating_adversarial_lens": "outlier_close_return",
+    "reviewed_at_utc": "2026-11-25T17:03:58.902643+00:00",
+    "run_id": "45659731420",
+    "rotating_adversarial_lens": "ledger_replay",
     "checks": [
       {
         "check_id": "primary_sources_acquired_and_qa",
@@ -4457,7 +4495,7 @@
         "category": "lineage",
         "status": "PASS",
         "blocking": true,
-        "evidence": "monthly_archives=111; daily_current_month_objects=23; expected month/day archive keys derived from parsed first/last UTC timestamps."
+        "evidence": "monthly_archives=111; daily_current_month_objects=24; expected month/day archive keys derived from parsed first/last UTC timestamps."
       },
       {
         "check_id": "bitstamp_pagination_accounting",
@@ -4471,7 +4509,7 @@
         "category": "lineage",
         "status": "PASS",
         "blocking": true,
-        "evidence": "verified_objects=165; errors=[]"
+        "evidence": "verified_objects=166; errors=[]"
       },
       {
         "check_id": "raw_manifest_provenance",
@@ -4548,7 +4586,7 @@
         "category": "ledger",
         "status": "PASS",
         "blocking": true,
-        "evidence": "events=54; unique_event_ids=54; invalidated=4; active_forecasts=36; scores must map to non-invalidated forecasts; active entries must be future at issue."
+        "evidence": "events=61; unique_event_ids=61; invalidated=4; active_forecasts=40; scores must map to non-invalidated forecasts; active entries must be future at issue."
       },
       {
         "check_id": "risk_fail_closed",
@@ -4597,35 +4635,19 @@
         "category": "operations",
         "status": "PASS",
         "blocking": true,
-        "evidence": "acquisition_and_qa_seconds=310.082; walk_forward_seconds=0.123; measured stages must be non-negative and remain within the 120-minute workflow budget."
+        "evidence": "acquisition_and_qa_seconds=296.194; walk_forward_seconds=0.279; measured stages must be non-negative and remain within the 120-minute workflow budget."
       },
       {
-        "check_id": "rotating_red_team_outlier_close_return",
+        "check_id": "rotating_red_team_ledger_replay",
         "category": "red_team",
         "status": "PASS",
-        "blocking": false,
-        "evidence": "event=2020-03-12T00:00:00+00:00; screening_thresholds=2% absolute log-return difference and 2% raw quote-price ratio gap; thresholds are WARN-only, not calibrated FX or data rejection rules; context={'timestamp_utc': '2020-03-12T00:00:00+00:00', 'venues': {'Binance_BTCUSDT': {'status': 'PASS', 'open': 7934.58, 'high': 7966.17, 'low': 4410.0, 'close': 4800.0, 'volume_btc': 261505.608653, 'intraday_range_pct': 44.818629341439625, 'close_log_return': -0.5026069427414592, 'volume_vs_prior_90d_median': 5.083543066164295, 'quote_currency': 'USDT'}, 'Bitstamp_BTCUSD': {'status': 'PASS', 'open': 7956.29, 'high': 7969.9, 'low': 4776.59, 'close': 4841.67, 'volume_btc': 58513.38918903, 'intraday_range_pct': 40.13566624645406, 'close_log_return': -0.4939694596760823, 'volume_vs_prior_90d_median': 10.054439449782079, 'quote_currency': 'USD'}}, 'absolute_close_return_difference': 0.008637483065376927, 'volume_comparison_policy': 'Venue volumes are not expected to match; compare each venue with its own trailing median.', 'binance_usdt_to_bitstamp_usd_close_price_ratio': 0.9913934654778207, 'implied_usd_per_usdt_if_btc_prices_were_at_parity': 1.00868125, 'binance_usdt_to_bitstamp_usd_open_price_ratio': 0.9972713412909786, 'quote_basis_caveat': 'The implied USD-per-USDT figure is a diagnostic under a BTC-price-parity assumption, not an observed USDT/USD exchange rate. USD and USDT candles are not converted or merged.'}"
+        "blocking": true,
+        "evidence": "Adversarial replay lens: duplicate ids, orphan scores and backdated entries."
       }
     ],
     "review_cycles": [
       {
         "cycle": 1,
-        "review_lens": "data",
-        "status": "PASS",
-        "checks_reviewed": 7,
-        "failures": [],
-        "warnings": []
-      },
-      {
-        "cycle": 2,
-        "review_lens": "quant",
-        "status": "PASS",
-        "checks_reviewed": 5,
-        "failures": [],
-        "warnings": []
-      },
-      {
-        "cycle": 3,
         "review_lens": "ledger",
         "status": "PASS",
         "checks_reviewed": 1,
@@ -4633,7 +4655,7 @@
         "warnings": []
       },
       {
-        "cycle": 4,
+        "cycle": 2,
         "review_lens": "risk",
         "status": "PASS",
         "checks_reviewed": 1,
@@ -4641,7 +4663,7 @@
         "warnings": []
       },
       {
-        "cycle": 5,
+        "cycle": 3,
         "review_lens": "operations",
         "status": "PASS",
         "checks_reviewed": 1,
@@ -4649,7 +4671,7 @@
         "warnings": []
       },
       {
-        "cycle": 6,
+        "cycle": 4,
         "review_lens": "red_team",
         "status": "PASS",
         "checks_reviewed": 1,
@@ -4657,8 +4679,24 @@
         "warnings": []
       },
       {
-        "cycle": 7,
+        "cycle": 5,
         "review_lens": "protocol",
+        "status": "PASS",
+        "checks_reviewed": 5,
+        "failures": [],
+        "warnings": []
+      },
+      {
+        "cycle": 6,
+        "review_lens": "data",
+        "status": "PASS",
+        "checks_reviewed": 7,
+        "failures": [],
+        "warnings": []
+      },
+      {
+        "cycle": 7,
+        "review_lens": "quant",
         "status": "PASS",
         "checks_reviewed": 5,
         "failures": [],
@@ -4674,13 +4712,13 @@
   },
   "post_persistence_verification": {
     "status": "PASS",
-    "events_before": 48,
-    "events_after": 54,
-    "new_events_proposed": 6,
+    "events_before": 54,
+    "events_after": 61,
+    "new_events_proposed": 7,
     "all_prior_event_ids_preserved": true,
     "all_proposed_event_ids_present": true,
     "event_ids_unique": true,
-    "ledger_sha256": "ce3a1b41280581c07f7776d078fcaa1aac61314dc84a6325e3710fed64e8cbce"
+    "ledger_sha256": "1d6e67fa751b16cd7303804fa7357ae4416d56255ebe27c3e30c58d7d10303c7"
   },
-  "finished_at_utc": "2026-11-24T17:03:21.827124+00:00"
+  "finished_at_utc": "2026-11-25T17:03:58.920474+00:00"
 }
