@@ -14,7 +14,8 @@ class DataValidationError(ValueError):
 
 
 def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
-                   require_closed: bool = True, now: pd.Timestamp | None = None) -> dict[str, int | float | str | None]:
+                   require_closed: bool = True, now: pd.Timestamp | None = None,
+                   allow_stale: bool = False) -> dict[str, int | float | str | None]:
     """Validate without repairing rows; input timestamps must explicitly be UTC-aware."""
     missing = [column for column in REQUIRED_OHLCV if column not in frame.columns]
     if missing:
@@ -75,8 +76,12 @@ def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
     latest_age = current.floor("D") - ts.max().floor("D")
     # Daily crypto trades every day. At a 16:00 UTC run, yesterday's close is
     # expected (age=1 day); two missing daily sessions must block research.
-    if latest_age > pd.Timedelta(days=1):
-        raise DataValidationError(f"stale daily data; latest candle age={latest_age}")
+    stale_error = (
+        f"stale daily data; latest candle age={latest_age}"
+        if latest_age > pd.Timedelta(days=1) else None
+    )
+    if stale_error and not allow_stale:
+        raise DataValidationError(stale_error)
 
     close_returns = np.abs(np.diff(np.log(c)))
     intraday_range_pct = (h - l) / o
@@ -105,6 +110,8 @@ def validate_ohlcv(frame: pd.DataFrame, *, require_daily: bool = True,
         "gap_count": 0, "closed_candles_only": "PASS",
         "latest_age_days": int(latest_age / pd.Timedelta(days=1)),
         "latest_candle_age_hours": round(exact_age_hours, 3),
+        "freshness_status": "FAIL" if stale_error else "PASS",
+        "freshness_error": stale_error,
         "zero_volume_rows": int(np.count_nonzero(volume == 0)),
         "zero_volume_pct": float(np.mean(volume == 0) * 100.0),
         "volume_median_btc": volume_median,

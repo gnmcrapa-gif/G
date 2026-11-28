@@ -187,10 +187,223 @@ def test_treasury_xml_parser_reads_official_nominal_yield_fields():
       <entry><content><m:properties>
         <d:NEW_DATE>2026-11-17T00:00:00</d:NEW_DATE>
         <d:BC_2YEAR>4.25</d:BC_2YEAR><d:BC_10YEAR>4.50</d:BC_10YEAR>
+        <d:TC_10YEAR>2.10</d:TC_10YEAR>
       </m:properties></content></entry>
     </feed>"""
     assert _parse_treasury_yield_xml(payload, "DGS2") == (date(2026, 11, 17), 4.25)
     assert _parse_treasury_yield_xml(payload, "DGS10") == (date(2026, 11, 17), 4.50)
+    assert _parse_treasury_yield_xml(payload, "DFII10") == (date(2026, 11, 17), 2.10)
+
+
+def test_dfii10_fallback_requests_official_real_yield_curve(monkeypatch, tmp_path):
+    from datetime import date
+
+    from btc_quant import supplemental
+
+    payload = b"""<?xml version="1.0"?>
+    <feed xmlns="http://www.w3.org/2005/Atom" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:d="http://schemas.microsoft.com/ado/2007/08/dataservices">
+      <entry><content><m:properties>
+        <d:NEW_DATE>2026-11-17T00:00:00</d:NEW_DATE>
+        <d:TC_10YEAR>2.10</d:TC_10YEAR>
+      </m:properties></content></entry>
+    </feed>"""
+
+    class FakeResponse:
+        content = payload
+        url = "https://home.treasury.gov/test-real-yield.xml"
+
+        def raise_for_status(self):
+            return None
+
+    captured = {}
+
+    def fake_get(url, **kwargs):
+        captured.update(kwargs)
+        return FakeResponse()
+
+    monkeypatch.setattr(supplemental.requests, "get", fake_get)
+    observation, manifest = supplemental._treasury_yield_fallback(
+        "DFII10",
+        {"label": "US 10Y real yield", "max_age_days": 5},
+        tmp_path,
+        date(2026, 11, 17),
+    )
+    assert captured["params"]["data"] == "daily_treasury_real_yield_curve"
+    assert observation["value"] == pytest.approx(2.10)
+    assert observation["status"] == "PASS"
+    assert "real yield curve" in manifest["source"]
+
+
+def test_bls_monthly_parser_orders_rows_and_preserves_footnotes():
+    from datetime import date
+
+    from btc_quant.supplemental import _parse_bls_monthly_series
+
+    payload = {
+        "status": "REQUEST_SUCCEEDED",
+        "Results": {
+            "series": [{
+                "seriesID": "LNS14000000",
+                "data": [
+                    {"year": "2026", "period": "M10", "value": "4.2", "footnotes": [{"code": "P", "text": "Preliminary."}]},
+                    {"year": "2026", "period": "M08", "value": "4.1", "footnotes": []},
+                    {"year": "2026", "period": "M09", "value": "-", "footnotes": []},
+                    {"year": "2026", "period": "M13", "value": "4.0", "footnotes": []},
+                ],
+            }],
+        },
+    }
+    observation_date, value, previous, footnotes = _parse_bls_monthly_series(
+        payload, "LNS14000000",
+    )
+    assert observation_date == date(2026, 10, 1)
+    assert value == pytest.approx(4.2)
+    assert previous == pytest.approx(4.1)
+    assert footnotes == [{"code": "P", "text": "Preliminary."}]
+
+
+def test_bls_monthly_parser_rejects_failed_or_empty_series():
+    from btc_quant.supplemental import _parse_bls_monthly_series
+
+    with pytest.raises(RuntimeError, match="REQUEST_FAILED"):
+        _parse_bls_monthly_series({"status": "REQUEST_FAILED"}, "LNS14000000")
+    with pytest.raises(ValueError, match="no valid monthly observations"):
+        _parse_bls_monthly_series({
+            "status": "REQUEST_SUCCEEDED",
+            "Results": {"series": [{"seriesID": "LNS14000000", "data": []}]},
+        }, "LNS14000000")
+
+
+def test_bls_cpi_fallback_uses_official_v1_api_and_month_end_freshness(monkeypatch, tmp_path):
+    import json
+    from datetime import date
+
+    from btc_quant import supplemental
+
+    payload = {
+        "status": "REQUEST_SUCCEEDED",
+        "message": [],
+        "Results": {
+            "series": [{
+                "seriesID": "CUSR0000SA0",
+                "data": [
+                    {"year": "2026", "period": "M10", "value": "326.5", "footnotes": []},
+                    {"year": "2026", "period": "M09", "value": "325.8", "footnotes": []},
+                ],
+            }],
+        },
+    }
+
+    encoded_payload = json.dumps(payload).encode("utf-8")
+
+    class FakeResponse:
+        content = encoded_payload
+        url = "https://api.bls.gov/publicAPI/v1/timeseries/data/"
+
+        def raise_for_status(self):
+            return None
+
+        def json(self):
+            return payload
+
+    captured = {}
+
+    def fake_post(url, **kwargs):
+        captured["url"] = url
+        captured.update(kwargs)
+        return FakeResponse()
+
+    monkeypatch.setattr(supplemental.requests, "post", fake_post)
+    observation, manifest = supplemental._bls_macro_fallback(
+        "CPIAUCSL",
+        {
+            "label": "US CPI index", "unit": "index 1982-84=100",
+            "lookback_days": 1825, "max_age_days": 45, "frequency": "monthly",
+        },
+        tmp_path,
+        date(2026, 11, 18),
+    )
+    assert captured["url"] == "https://api.bls.gov/publicAPI/v1/timeseries/data/"
+    assert captured["json"]["seriesid"] == ["CUSR0000SA0"]
+    assert observation["observation_date"] == "2026-10-01"
+    assert observation["freshness_reference_date"] == "2026-10-31"
+    assert observation["freshness_basis"] == "observation_period_end_not_publication_date"
+    assert observation["publication_date"] is None
+    assert "not publication date" in observation["source_method"]
+    assert observation["age_calendar_days"] == 18
+    assert observation["status"] == "PASS"
+    assert observation["source_url"] == "https://api.bls.gov/publicAPI/v1/timeseries/data/"
+    assert manifest["source_grade"] == "A"
+
+
+def test_fed_h6_m2_parser_extracts_sa_m2_and_release_date():
+    from datetime import date
+
+    from btc_quant.supplemental import _parse_fed_h6_m2_html
+
+    html = b"""<html><body><p>Release Date: October 27, 2026</p>
+    <table>
+    <thead>
+    <tr><th rowspan="3">Date</th><th colspan="3">Seasonally adjusted</th><th colspan="7">Not seasonally adjusted</th></tr>
+    <tr><th>M1</th><th>M2</th><th>Monetary base</th><th colspan="3">M1</th><th colspan="2">M2</th><th colspan="2">Memorandum: Reserves</th></tr>
+    <tr><th>Currency</th><th>Reserve balances</th><th>Monetary base</th><th>Total reserves</th><th>Borrowings</th><th>Nonborrowed</th><th>Other</th><th>Reserves</th><th>Borrowings</th><th>Nonborrowed</th></tr>
+    </thead><tbody>
+    <tr><td>Aug. 2026</td><td>19967.3</td><td>23,300.9</td><td>2475.6</td><td>2936.0</td><td>5411.6</td><td>19932.1</td><td>23242.5</td><td>2936.0</td><td>5501.1</td><td>2930.5</td></tr>
+    <tr><td>Sept. 2026</td><td>20061.2</td><td>23,413.9</td><td>2483.0</td><td>2966.8</td><td>5449.8</td><td>20009.7</td><td>23339.6</td><td>2966.8</td><td>6295.0</td><td>2960.5</td></tr>
+    </tbody></table></body></html>"""
+    observation_date, value, previous, release_date = _parse_fed_h6_m2_html(html)
+    assert observation_date == date(2026, 9, 1)
+    assert value == pytest.approx(23413.9)
+    assert previous == pytest.approx(23300.9)
+    assert release_date == date(2026, 10, 27)
+
+
+def test_fed_h6_m2_fallback_uses_release_date_for_freshness(monkeypatch, tmp_path):
+    from datetime import date
+
+    from btc_quant import supplemental
+
+    html = b"""<html><body><p>Release Date: October 27, 2026</p>
+    <table><thead>
+    <tr><th rowspan="3">Date</th><th colspan="2">Seasonally adjusted</th><th>Not seasonally adjusted</th></tr>
+    <tr><th>M1</th><th>M2</th><th>Other</th></tr>
+    <tr><th>Currency</th><th>Reserve balances</th><th>Other</th></tr>
+    </thead><tbody>
+    <tr><td>Sept. 2026</td><td>20061.2</td><td>23,413.9</td><td>0</td></tr>
+    </tbody></table></body></html>"""
+
+    class FakeResponse:
+        content = html
+        url = "https://www.federalreserve.gov/releases/h6/current/default.htm"
+
+        def raise_for_status(self):
+            return None
+
+    monkeypatch.setattr(supplemental.requests, "get", lambda *args, **kwargs: FakeResponse())
+    observation, manifest = supplemental._fed_h6_m2_fallback(
+        {"label": "US M2 money stock", "unit": "billions of USD", "max_age_days": 45},
+        tmp_path,
+        date(2026, 11, 18),
+    )
+    assert observation["value"] == pytest.approx(23413.9)
+    assert observation["freshness_reference_date"] == "2026-10-27"
+    assert observation["age_calendar_days"] == 22
+    assert observation["status"] == "PASS"
+    assert observation["source_url"] == FakeResponse.url
+    assert manifest["source_grade"] == "A"
+
+
+def test_monthly_macro_freshness_uses_period_end_not_first_of_month():
+    from datetime import date
+
+    from btc_quant.supplemental import _freshness_reference_date
+
+    assert _freshness_reference_date(
+        date(2026, 10, 1), {"frequency": "monthly"},
+    ) == date(2026, 10, 31)
+    assert _freshness_reference_date(
+        date(2026, 11, 17), {"frequency": "daily"},
+    ) == date(2026, 11, 17)
 
 
 def test_treasury_xml_parser_rejects_unsupported_series():
@@ -248,3 +461,66 @@ def test_fred_session_retries_transient_http_failures_with_bounded_policy():
     assert retry.status_forcelist == (429, 500, 502, 503, 504)
     assert retry.allowed_methods == frozenset({"GET"})
     session.close()
+
+
+def test_deribit_greeks_sampling_is_bounded_parallel_and_deterministic(monkeypatch, tmp_path):
+    import threading
+    import time
+    from datetime import UTC, datetime, timedelta
+
+    from btc_quant import supplemental
+
+    today = datetime.now(UTC).date()
+    rows = []
+    for offset in range(2, 6):
+        expiry = (today + timedelta(days=offset)).strftime("%d%b%y").upper()
+        for strike, side in ((97000, "P"), (98000, "P"), (99000, "P"),
+                             (101000, "C"), (102000, "C"), (103000, "C")):
+            rows.append({
+                "instrument_name": f"BTC-{expiry}-{strike}-{side}",
+                "open_interest": 10.0, "volume_usd": 1000.0,
+                "underlying_price": 100000.0,
+            })
+
+    active = 0
+    max_active = 0
+    lock = threading.Lock()
+
+    class FakeSession:
+        def __init__(self):
+            self.headers = {}
+        def close(self):
+            return None
+
+    def fake_request_json(session, method, url, directory, filename, *, params=None,
+                          body=None, source, venue, symbol, quote):
+        nonlocal active, max_active
+        if body["method"] == "public/get_book_summary_by_currency":
+            return {"result": rows}, {"file": filename, "sha256": "book"}
+        instrument = body["params"]["instrument_name"]
+        with lock:
+            active += 1
+            max_active = max(max_active, active)
+        time.sleep(0.02)
+        with lock:
+            active -= 1
+        delta = 0.25 if instrument.endswith("-C") else -0.25
+        return {
+            "result": {
+                "greeks": {"delta": delta, "gamma": 0.0001},
+                "mark_iv": 60.0, "timestamp": 1794950400000,
+            }
+        }, {"file": filename, "sha256": instrument}
+
+    monkeypatch.setattr(supplemental.requests, "Session", FakeSession)
+    monkeypatch.setattr(supplemental, "_request_json", fake_request_json)
+    summary, manifest = supplemental._deribit_options(tmp_path)
+    assert summary["ticker_greeks_sample_count"] == 24
+    assert summary["greeks_status"] == "PASS"
+    assert len(summary["sampled_25d_skew"]) == 4
+    assert all(row["call_25d_instrument"] and row["put_25d_instrument"]
+               for row in summary["sampled_25d_skew"])
+    assert all(row["put_minus_call_25d_skew_vol_points"] == 0
+               for row in summary["sampled_25d_skew"])
+    assert 1 < max_active <= 4
+    assert len(manifest["objects"]) == 25
